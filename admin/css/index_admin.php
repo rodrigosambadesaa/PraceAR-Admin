@@ -44,61 +44,6 @@
         text-transform: uppercase;
     }
 
-    @media screen and (max-width: 600px) {
-        table {
-            border: 0;
-        }
-
-        table caption {
-            font-size: 1.3em;
-        }
-
-        table thead {
-            border: none;
-            clip: rect(0 0 0 0);
-            height: 1px;
-            margin: -1px;
-            overflow: hidden;
-            padding: 0;
-            position: absolute;
-            width: 1px;
-        }
-
-        table tr {
-            border-bottom: 3px solid #ddd;
-            display: block;
-            margin-bottom: .625em;
-        }
-
-        table td {
-            border-bottom: 1px solid #ddd;
-            display: block;
-            font-size: .8em;
-            text-align: right;
-            position: relative;
-            padding-left: 50%;
-        }
-
-        table td::before {
-            /*
-            * aria-label has no advantage, it won't be read inside a table
-            content: attr(aria-label);
-            */
-            content: attr(data-label);
-            position: absolute;
-            left: 0;
-            width: 45%;
-            padding-left: .625em;
-            font-weight: bold;
-            text-transform: uppercase;
-            text-align: left;
-        }
-
-        table td:last-child {
-            border-bottom: 0;
-        }
-    }
-
     /* Estilos del contenedor flotante para la imagen y nombre ampliados */
     .zoomed-container {
         position: fixed;
@@ -158,18 +103,6 @@
         cursor: pointer;
     }
 
-    @media (max-width: 600px) {
-        .zoomed-container p {
-            font-size: 1.2rem;
-        }
-
-        .zoomed-container .close-button {
-            font-size: 1.5rem;
-            top: 5px;
-            right: 10px;
-        }
-    }
-
     /* Estilos de paginación */
     .pagination {
         display: flex;
@@ -200,17 +133,6 @@
         border-color: #1e7dbd;
         font-weight: bold;
         border-radius: 5px;
-    }
-
-    @media (max-width: 600px) {
-        .pagination {
-            gap: 5px;
-        }
-
-        .pagination a {
-            padding: 6px 8px;
-            font-size: 0.9em;
-        }
     }
 
     /* Estilos del menú de navegación (banderas de selección de idioma) */
@@ -252,27 +174,6 @@
         transform: scale(1.1);
     }
 
-    @media (max-width: 600px) {
-        .nav-menu {
-            justify-content: center;
-            padding: 10px;
-        }
-
-        .nav-menu ul {
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .nav-menu a {
-            width: 28px;
-            height: 28px;
-        }
-
-        .nav-menu img:hover {
-            transform: scale(1.05);
-        }
-    }
-
     /* Estilos adicionales para tablas específicas */
     .tabla_puestos {
         width: 100%;
@@ -299,9 +200,97 @@
         text-align: center;
     }
 
-
     .different-background-color {
         background-color: lightblue;
         color: black;
+    }
+
+    @media (max-width: 600px) {
+        table {
+            border: 0;
+        }
+
+        table caption {
+            font-size: 1.3em;
+        }
+
+        table thead {
+            border: none;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+
+        table tr {
+            border-bottom: 3px solid #ddd;
+            display: block;
+            margin-bottom: .625em;
+        }
+
+        table td {
+            border-bottom: 1px solid #ddd;
+            display: block;
+            font-size: .8em;
+            text-align: right;
+            position: relative;
+            padding-left: 50%;
+        }
+
+        table td::before {
+            content: attr(data-label);
+            position: absolute;
+            left: 0;
+            width: 45%;
+            padding-left: .625em;
+            font-weight: bold;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        table td:last-child {
+            border-bottom: 0;
+        }
+
+        .zoomed-container p {
+            font-size: 1.2rem;
+        }
+
+        .zoomed-container .close-button {
+            font-size: 1.5rem;
+            top: 5px;
+            right: 10px;
+        }
+
+        .pagination {
+            gap: 5px;
+        }
+
+        .pagination a {
+            padding: 6px 8px;
+            font-size: 0.9em;
+        }
+
+        .nav-menu {
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .nav-menu ul {
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .nav-menu a {
+            width: 28px;
+            height: 28px;
+        }
+
+        .nav-menu img:hover {
+            transform: scale(1.05);
+        }
     }
 </style>
