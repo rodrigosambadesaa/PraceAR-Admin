@@ -74,20 +74,20 @@ $result = $conexion->query($sql);
 
         <thead style="font-size: .95em;">
             <tr>
-                <th>Editar</th>
-                <th>Activo</th>
-                <th>Imagen</th>
-                <th>Caseta</th>
-                <th>Nombre</th>
-                <th>Tipo Unity</th>
-                <th>Contacto</th>
-                <th>Teléfono</th>
-                <th>ID Nave</th>
-                <th>Puesto padre</th>
-                <th style="border-style:none;"></th>
-                <th>Editar Traducción</th>
-                <th>Tipo</th>
-                <th>Descripción</th>
+                <th scope="col">Editar</th>
+                <th scope="col">Activo</th>
+                <th scope="col">Imagen</th>
+                <th scope="col">Caseta</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Tipo Unity</th>
+                <th scope="col">Contacto</th>
+                <th scope="col">Teléfono</th>
+                <th scope="col">ID Nave</th>
+                <th scope="col">Puesto padre</th>
+                <th scope="col" style="border-style:none;"></th>
+                <th scope="col">Editar Traducción</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Descripción</th>
             </tr>
         </thead>
         <tbody style="font-size: .9em;">
@@ -96,15 +96,15 @@ $result = $conexion->query($sql);
                 while ($row = $result->fetch_assoc()):
                     ?>
                     <tr id="row_<?= $row['id'] ?>">
-                        <td>
+                        <td scope="row" data-label="Editar">
                             <a href="<?= "?page=edit&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
                                 <img loading="lazy" width='15' height='15' src="<?= PENCIL_IMAGE_URL ?>">
                             </a>
                         </td>
-                        <td>
+                        <td data-label="Activo">
                             <?= $row['activo'] ? "Sí" : "No" ?>
                         </td>
-                        <td>
+                        <td data-label="Imagen">
                             <?php
                             $imagenPath = "assets/" . $row["caseta"] . ".jpg";
                             if (file_exists($imagenPath)): ?>
@@ -112,23 +112,23 @@ $result = $conexion->query($sql);
                                     src="<?= $imagenPath ?>" alt="Imagen del puesto">
                             <?php endif; ?>
                         </td>
-                        <td><?= $row['caseta'] ?></td>
-                        <td><?= $row['nombre'] ?></td>
-                        <td><?= $row['tipo_unity'] ?></td>
-                        <td><?= $row['contacto'] ?></td>
-                        <td><?= $row['telefono'] ?></td>
-                        <td><?= $row['nave'] ?></td>
-                        <td><?= $row["caseta_padre"] ?? "Ninguno" ?></td>
-                        <td style="border-style: none;"></td>
-                        <td class="different-background-color">
+                        <td data-label="Caseta"><?= $row['caseta'] ?></td>
+                        <td data-label="Nombre"><?= $row['nombre'] ?></td>
+                        <td data-label="Tipo Unity"><?= $row['tipo_unity'] ?></td>
+                        <td data-label="Información de Contacto"><?= $row['contacto'] ?></td>
+                        <td data-label="Teléfono"><?= $row['telefono'] ?></td>
+                        <td data-label="Nave"><?= $row['nave'] ?></td>
+                        <td data-label="Caseta padre"><?= $row["caseta_padre"] ?? "Ninguno" ?></td>
+                        <td data-label="" style="border-style: none;"></td>
+                        <td data-label="Idioma de la traducción" class="different-background-color">
                             <a
                                 href="<?= "?page=language&codigo_idioma=" . getLanguage() . "&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
                                 <img loading="lazy" style="box-shadow: 0 0 2px 1px black;" width="15" height="15"
                                     src="<?= FLAG_IMAGES_URL . (getLanguage()) . ".png" ?>" alt="<?= getLanguage() ?>">
                             </a>
                         </td>
-                        <td class="different-background-color"><?= $row['tipo'] ?></td>
-                        <td class="different-background-color">
+                        <td data-label="Tipo" class="different-background-color"><?= $row['tipo'] ?></td>
+                        <td data-label="Descripción" class="different-background-color">
                             <?= $row['descripcion'] ? truncateText($row['descripcion'], 30) : '' ?>
                         </td>
                     </tr>
