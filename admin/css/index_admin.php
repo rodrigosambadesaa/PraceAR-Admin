@@ -295,6 +295,7 @@
         text-align: center;
     }
 
+
     .different-background-color {
         background-color: lightblue;
         color: black;
