@@ -85,7 +85,7 @@ $result = $conexion->query($sql);
                 <th>ID Nave</th>
                 <th>Puesto padre</th>
                 <th style="border-style:none;"></th>
-                <th>Editar</th>
+                <th>Editar Traducción</th>
                 <th>Tipo</th>
                 <th>Descripción</th>
             </tr>
