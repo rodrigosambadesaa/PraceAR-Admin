@@ -1,3 +1,7 @@
+<?php
+// Source: https://codepen.io/AllThingsSmitty/pen/MyqmdM
+?>
+
 <style>
     /* Estilos generales */
     /* Estilos del contenedor flotante para la imagen y nombre ampliados */
