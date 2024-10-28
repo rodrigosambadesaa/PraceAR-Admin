@@ -7,8 +7,7 @@
         style="text-align: center; margin-right: 10px;">Cambiar contraseña</a>
     <a href="./admin/logout_session.php" class="enlace_cierre_sesion" style="display: flex; align-items: center;"
         title="Cerrar sesión">
-        <img src="./img/logout_icon.png"
-            alt="Cerrar sesión" style="width: 24px; height: 24px;" />
+        <img id="imagenBotonCierreSesion" src="./img/logout_icon.png" alt="Cerrar sesión">
         <span class="texto-azul" style="margin-left: 5px;"></span>
     </a>
 </nav>

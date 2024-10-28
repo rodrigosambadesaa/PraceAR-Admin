@@ -170,6 +170,10 @@
         transition: transform 0.3s ease;
     }
 
+    #imagenBotonCierreSesion {
+        height: 24px;
+    }
+
     .nav-menu img:hover {
         transform: scale(1.1);
     }
@@ -291,6 +295,18 @@
 
         .nav-menu img:hover {
             transform: scale(1.05);
+        }
+
+        #imagenBotonCierreSesion {
+            max-width: 20px;
+            max-height: 20px;
+        }
+    }
+
+    @media screen and (max-width: 532px) {
+        #imagenBotonCierreSesion {
+            max-width: 20px;
+            max-height: 20px;
         }
     }
 </style>
