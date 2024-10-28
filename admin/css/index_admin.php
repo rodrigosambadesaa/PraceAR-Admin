@@ -171,7 +171,8 @@
     }
 
     #imagenBotonCierreSesion {
-        height: 24px;
+        max-width: 32px;
+        max-height: 32px;
     }
 
     .nav-menu img:hover {
@@ -297,13 +298,6 @@
             transform: scale(1.05);
         }
 
-        #imagenBotonCierreSesion {
-            max-width: 20px;
-            max-height: 20px;
-        }
-    }
-
-    @media screen and (max-width: 532px) {
         #imagenBotonCierreSesion {
             max-width: 20px;
             max-height: 20px;
