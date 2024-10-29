@@ -39,7 +39,7 @@
     }
 
     table th {
-        font-size: .85em;
+        /* font-size: 1em; */
         letter-spacing: .1em;
         text-transform: uppercase;
     }
@@ -208,6 +208,12 @@
     .different-background-color {
         background-color: lightblue;
         color: black;
+    }
+
+    input,
+    input::placeholder {
+        font-size: 0.em;
+        /* Adjust the size as needed */
     }
 
     @media (max-width: 600px) {

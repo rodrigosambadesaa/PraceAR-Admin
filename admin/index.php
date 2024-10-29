@@ -41,11 +41,12 @@ $result = $conexion->query($sql);
 ?>
 <main>
     <table class="tabla_puestos">
-        <caption style="font-size: 1.75rem; font-weight: bold;">Lista de puestos del Mercado de Abastos
+        <caption style="font-size: 1.75rem; font-weight: bold;"><span
+                style="font-size: 1.95rem; font-weight: bold;">Lista de puestos del Mercado de Abastos</span>
             <search role="search">
                 <form id="formularioBusqueda" action="#" method="GET" style="display: flex;">
                     <input value="<?= $_GET['caseta'] ?? "" ?>" type="text" id="inputBusqueda"
-                        placeholder="P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta">
+                        placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta">
                     <input type="hidden" name="lang" value="<?= getLanguage() ?>">
                     <input type="submit" value="Buscar">
                     <input id="inputReseteo" type="reset" value="Reiniciar">
@@ -90,7 +91,7 @@ $result = $conexion->query($sql);
                 <th scope="col">Descripción</th>
             </tr>
         </thead>
-        <tbody style="font-size: .9em;">
+        <tbody style="font-size: .85em;">
             <?php
             if ($result->num_rows > 0):
                 while ($row = $result->fetch_assoc()):
