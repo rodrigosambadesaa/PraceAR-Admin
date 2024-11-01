@@ -11,6 +11,15 @@
         padding: 0;
     }
 
+    #cabeceraTabla {
+        font-size: 1.75em;
+    }
+
+    #textoCabeceraTabla {
+        font-weight: bold;
+        margin-bottom: 100px;
+    }
+
     /* Estilos de tablas */
     table {
         border: 1px solid #ccc;
@@ -20,6 +29,22 @@
         width: 100%;
         table-layout: fixed;
     }
+
+    thead {
+        font-size: .95em;
+    }
+
+    tbody {
+        font-size: .85em;
+    }
+
+    #formularioBusqueda {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        /* margin-top: 20px; */
+    }
+
 
     table caption {
         font-size: 1.5em;
@@ -42,6 +67,14 @@
         /* font-size: 1em; */
         letter-spacing: .1em;
         text-transform: uppercase;
+    }
+
+    #imagenBandera {
+        box-shadow: 0 0 2px 1px black;
+    }
+
+    #contenedorSeparacion {
+        margin-top: 35px;
     }
 
     /* Estilos del contenedor flotante para la imagen y nombre ampliados */
@@ -92,6 +125,9 @@
 
     .zoomable {
         cursor: pointer;
+        width: 25px;
+        aspect-ratio: 1/1;
+        object-fit: contain;
     }
 
     .zoomed-container .close-button {
@@ -111,6 +147,12 @@
         margin-top: 20px;
         flex-wrap: wrap;
         /* Permite que los elementos se envuelvan en pantallas pequeñas */
+        font-size: .7em;
+    }
+
+    #celdaEspecial,
+    #celdaEspecialDato {
+        border-style: none;
     }
 
     .pagination a {

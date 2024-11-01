@@ -41,10 +41,10 @@ $result = $conexion->query($sql);
 ?>
 <main>
     <table class="tabla_puestos">
-        <caption style="font-size: 1.75rem; font-weight: bold;"><span
-                style="font-size: 1.95rem; font-weight: bold;">Lista de puestos del Mercado de Abastos</span>
+        <caption id="cabeceraTabla"><span id="textoCabeceraTabla">Lista de puestos del Mercado de Abastos</span>
+            <div id="contenedorSeparacion"></div>
             <search role="search">
-                <form id="formularioBusqueda" action="#" method="GET" style="display: flex;">
+                <form id="formularioBusqueda" action="#" method="GET">
                     <input value="<?= $_GET['caseta'] ?? "" ?>" type="text" id="inputBusqueda"
                         placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta">
                     <input type="hidden" name="lang" value="<?= getLanguage() ?>">
@@ -53,7 +53,7 @@ $result = $conexion->query($sql);
                 </form>
             </search>
             <!-- Paginación superior -->
-            <div class="pagination" style="font-size: .7em;">
+            <div class="pagination">
                 <?php if ($current_page > 1): ?>
                     <a href="?page=<?= $current_page - 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">&laquo;
                         Anterior</a>
@@ -73,7 +73,7 @@ $result = $conexion->query($sql);
             </div>
         </caption>
 
-        <thead style="font-size: .95em;">
+        <thead>
             <tr>
                 <th scope="col">Editar</th>
                 <th scope="col">Activo</th>
@@ -85,13 +85,13 @@ $result = $conexion->query($sql);
                 <th scope="col">Teléfono</th>
                 <th scope="col">ID Nave</th>
                 <th scope="col">Puesto padre</th>
-                <th scope="col" style="border-style:none;"></th>
+                <th scope="col" id="celdaEspecial"></th>
                 <th scope="col">Editar Traducción</th>
                 <th scope="col">Tipo</th>
                 <th scope="col">Descripción</th>
             </tr>
         </thead>
-        <tbody style="font-size: .85em;">
+        <tbody>
             <?php
             if ($result->num_rows > 0):
                 while ($row = $result->fetch_assoc()):
@@ -109,8 +109,7 @@ $result = $conexion->query($sql);
                             <?php
                             $imagenPath = "assets/" . $row["caseta"] . ".jpg";
                             if (file_exists($imagenPath)): ?>
-                                <img loading="lazy" class="zoomable" style="width: 25px; aspect-ratio: 1/1; object-fit: contain;"
-                                    src="<?= $imagenPath ?>" alt="Imagen del puesto">
+                                <img loading="lazy" class="zoomable" src="<?= $imagenPath ?>" alt="Imagen del puesto">
                             <?php endif; ?>
                         </td>
                         <td data-label="Caseta"><?= $row['caseta'] ?></td>
@@ -120,11 +119,11 @@ $result = $conexion->query($sql);
                         <td data-label="Teléfono"><?= $row['telefono'] ?></td>
                         <td data-label="Nave"><?= $row['nave'] ?></td>
                         <td data-label="Caseta padre"><?= $row["caseta_padre"] ?? "Ninguno" ?></td>
-                        <td data-label="" style="border-style: none;"></td>
+                        <td data-label="" id="celdaEspecialDato"></td>
                         <td data-label="Idioma de la traducción" class="different-background-color">
                             <a
                                 href="<?= "?page=language&codigo_idioma=" . getLanguage() . "&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
-                                <img loading="lazy" style="box-shadow: 0 0 2px 1px black;" width="15" height="15"
+                                <img id="imagenBandera" loading="lazy" width="15" height="15"
                                     src="<?= FLAG_IMAGES_URL . (getLanguage()) . ".png" ?>" alt="<?= getLanguage() ?>">
                             </a>
                         </td>
