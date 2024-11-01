@@ -7,7 +7,7 @@ require_once(CSS_ADMIN . 'index_admin.php');
 $custom_lang = getLanguage();
 
 $results_per_page = 50;
-$current_page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
+$current_page = (isset($_GET['page']) && is_numeric($_GET['page'])) ? (int) $_GET['page'] : 1;
 $start_from = ($current_page - 1) * $results_per_page;
 $caseta = isset($_GET['caseta']) ? limpiarInput($_GET['caseta']) : '';
 
@@ -38,135 +38,143 @@ if (!empty($caseta)) {
 
 $sql .= " ORDER BY p.caseta LIMIT $start_from, $results_per_page";
 $result = $conexion->query($sql);
-?>
-<main>
-    <table class="tabla_puestos">
-        <caption id="cabeceraTabla"><span id="textoCabeceraTabla">Lista de puestos del Mercado de Abastos</span>
-            <div id="contenedorSeparacion"></div>
-            <search role="search">
-                <form id="formularioBusqueda" action="#" method="GET">
-                    <input value="<?= $_GET['caseta'] ?? "" ?>" type="text" id="inputBusqueda"
-                        placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta">
-                    <input type="hidden" name="lang" value="<?= getLanguage() ?>">
-                    <input type="submit" value="Buscar">
-                    <input id="inputReseteo" type="reset" value="Reiniciar">
-                </form>
-            </search>
-            <!-- Paginación superior -->
-            <div class="pagination">
-                <?php if ($current_page > 1): ?>
-                    <a href="?page=<?= $current_page - 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">&laquo;
-                        Anterior</a>
-                <?php endif; ?>
+$resultados_encontrados = $result->num_rows > 0;
+if ($resultados_encontrados):
+    ?>
+    <main>
+        <table class="tabla_puestos">
+            <caption id="cabeceraTabla">
+                <span id="textoCabeceraTabla">Lista de puestos del Mercado de Abastos</span>
+                <div id="contenedorSeparacion"></div>
+                <search role="search">
+                    <form id="formularioBusqueda" action="#" method="GET">
+                        <input value="<?= $_GET['caseta'] ?? "" ?>" type="text" id="inputBusqueda"
+                            placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta">
+                        <input type="hidden" name="lang" value="<?= getLanguage() ?>">
+                        <input type="submit" value="Buscar">
+                        <input id="inputReseteo" type="reset" value="Reiniciar">
+                    </form>
+                </search>
+                <!-- Paginación superior -->
+                <div class="pagination">
+                    <?php if ($current_page > 1) { ?>
+                        <a href="?page=<?= $current_page - 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">&laquo;
+                            Anterior</a>
+                    <?php } ?>
 
-                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                    <a class="<?= $i == $current_page ? 'active' : '' ?>"
-                        href="?page=<?= $i ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">
-                        <?= $i ?>
-                    </a>
-                <?php endfor; ?>
+                    <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+                        <a class="<?= $i == $current_page ? 'active' : '' ?>"
+                            href="?page=<?= $i ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">
+                            <?= $i ?>
+                        </a>
+                    <?php } ?>
 
-                <?php if ($current_page < $total_pages): ?>
-                    <a href="?page=<?= $current_page + 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Siguiente
-                        &raquo;</a>
-                <?php endif; ?>
-            </div>
-        </caption>
+                    <?php if ($current_page < $total_pages) { ?>
+                        <a href="?page=<?= $current_page + 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Siguiente
+                            &raquo;</a>
+                    <?php } ?>
+                </div>
+            </caption>
 
-        <thead>
-            <tr>
-                <th scope="col">Editar</th>
-                <th scope="col">Activo</th>
-                <th scope="col">Imagen</th>
-                <th scope="col">Caseta</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Tipo Unity</th>
-                <th scope="col">Contacto</th>
-                <th scope="col">Teléfono</th>
-                <th scope="col">ID Nave</th>
-                <th scope="col">Puesto padre</th>
-                <th scope="col" id="celdaEspecial"></th>
-                <th scope="col">Editar Traducción</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Descripción</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            if ($result->num_rows > 0):
-                while ($row = $result->fetch_assoc()):
-                    ?>
-                    <tr id="row_<?= $row['id'] ?>">
-                        <td scope="row" data-label="Editar">
-                            <a href="<?= "?page=edit&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
-                                <img loading="lazy" width='15' height='15' src="<?= PENCIL_IMAGE_URL ?>">
-                            </a>
-                        </td>
-                        <td data-label="Activo">
-                            <?= $row['activo'] ? "Sí" : "No" ?>
-                        </td>
-                        <td data-label="Imagen">
-                            <?php
-                            $imagenPath = "assets/" . $row["caseta"] . ".jpg";
-                            if (file_exists($imagenPath)): ?>
-                                <img loading="lazy" class="zoomable" src="<?= $imagenPath ?>" alt="Imagen del puesto">
-                            <?php endif; ?>
-                        </td>
-                        <td data-label="Caseta"><?= $row['caseta'] ?></td>
-                        <td data-label="Nombre"><?= $row['nombre'] ?></td>
-                        <td data-label="Tipo Unity"><?= $row['tipo_unity'] ?></td>
-                        <td data-label="Información de Contacto"><?= $row['contacto'] ?></td>
-                        <td data-label="Teléfono"><?= $row['telefono'] ?></td>
-                        <td data-label="Nave"><?= $row['nave'] ?></td>
-                        <td data-label="Caseta padre"><?= $row["caseta_padre"] ?? "Ninguno" ?></td>
-                        <td data-label="" id="celdaEspecialDato"></td>
-                        <td data-label="Idioma de la traducción" class="different-background-color">
-                            <a
-                                href="<?= "?page=language&codigo_idioma=" . getLanguage() . "&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
-                                <img id="imagenBandera" loading="lazy" width="15" height="15"
-                                    src="<?= FLAG_IMAGES_URL . (getLanguage()) . ".png" ?>" alt="<?= getLanguage() ?>">
-                            </a>
-                        </td>
-                        <td data-label="Tipo" class="different-background-color"><?= $row['tipo'] ?></td>
-                        <td data-label="Descripción" class="different-background-color">
-                            <?= $row['descripcion'] ? truncateText($row['descripcion'], 30) : '' ?>
-                        </td>
-                    </tr>
-                    <?php
-                endwhile;
-            endif;
-            ?>
-        </tbody>
-    </table>
+            <thead>
+                <tr>
+                    <th scope="col">Editar</th>
+                    <th scope="col">Activo</th>
+                    <th scope="col">Imagen</th>
+                    <th scope="col">Caseta</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Tipo Unity</th>
+                    <th scope="col">Contacto</th>
+                    <th scope="col">Teléfono</th>
+                    <th scope="col">ID Nave</th>
+                    <th scope="col">Puesto padre</th>
+                    <th scope="col" id="celdaEspecial"></th>
+                    <th scope="col">Editar Traducción</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Descripción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if ($result->num_rows > 0) {
+                    $resultados_encontrados = true;
+                    while ($row = $result->fetch_assoc()) {
+                        ?>
+                        <tr id="row_<?= $row['id'] ?>">
+                            <td scope="row" data-label="Editar">
+                                <a href="<?= "?page=edit&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
+                                    <img loading="lazy" width='15' height='15' src="<?= PENCIL_IMAGE_URL ?>">
+                                </a>
+                            </td>
+                            <td data-label="Activo">
+                                <?= $row['activo'] ? "Sí" : "No" ?>
+                            </td>
+                            <td data-label="Imagen">
+                                <?php
+                                $imagenPath = "assets/" . $row["caseta"] . ".jpg";
+                                if (file_exists($imagenPath)) {
+                                    ?>
+                                    <img loading="lazy" class="zoomable" src="<?= $imagenPath ?>" alt="Imagen del puesto">
+                                <?php } ?>
+                            </td>
+                            <td data-label="Caseta"><?= $row['caseta'] ?></td>
+                            <td data-label="Nombre"><?= $row['nombre'] ?></td>
+                            <td data-label="Tipo Unity"><?= $row['tipo_unity'] ?></td>
+                            <td data-label="Información de Contacto"><?= $row['contacto'] ?></td>
+                            <td data-label="Teléfono"><?= $row['telefono'] ?></td>
+                            <td data-label="Nave"><?= $row['nave'] ?></td>
+                            <td data-label="Caseta padre"><?= $row["caseta_padre"] ?? "Ninguno" ?></td>
+                            <td data-label="" id="celdaEspecialDato"></td>
+                            <td data-label="Idioma de la traducción" class="different-background-color">
+                                <a
+                                    href="<?= "?page=language&codigo_idioma=" . getLanguage() . "&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
+                                    <img id="imagenBandera" loading="lazy" width="15" height="15"
+                                        src="<?= FLAG_IMAGES_URL . (getLanguage()) . ".png" ?>" alt="<?= getLanguage() ?>">
+                                </a>
+                            </td>
+                            <td data-label="Tipo" class="different-background-color"><?= $row['tipo'] ?></td>
+                            <td data-label="Descripción" class="different-background-color">
+                                <?= $row['descripcion'] ? truncateText($row['descripcion'], 30) : '' ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
 
-    <!-- Contenedor para mostrar la imagen ampliada y el nombre del puesto -->
-    <div id="zoomed-image-container" class="zoomed-container">
-        <span class="close-button">&times;</span>
-        <img id="zoomed-image" src="" alt="Imagen del puesto ampliada">
-        <p id="zoomed-name"></p>
-    </div>
+        <!-- Contenedor para mostrar la imagen ampliada y el nombre del puesto -->
+        <div id="zoomed-image-container" class="zoomed-container">
+            <span class="close-button">&times;</span>
+            <img id="zoomed-image" src="" alt="Imagen del puesto ampliada">
+            <p id="zoomed-name"></p>
+        </div>
 
-    <!-- Paginación inferior -->
-    <div class="pagination">
-        <?php if ($current_page > 1): ?>
-            <a href="?page=<?= $current_page - 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">&laquo;
-                Anterior</a>
-        <?php endif; ?>
+        <!-- Paginación inferior -->
+        <div class="pagination">
+            <?php if ($current_page > 1) { ?>
+                <a href="?page=<?= $current_page - 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">&laquo;
+                    Anterior</a>
+            <?php } ?>
 
-        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-            <a class="<?= $i == $current_page ? 'active' : '' ?>"
-                href="?page=<?= $i ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">
-                <?= $i ?>
-            </a>
-        <?php endfor; ?>
+            <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+                <a class="<?= $i == $current_page ? 'active' : '' ?>"
+                    href="?page=<?= $i ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">
+                    <?= $i ?>
+                </a>
+            <?php } ?>
 
-        <?php if ($current_page < $total_pages): ?>
-            <a href="?page=<?= $current_page + 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Siguiente
-                &raquo;</a>
-        <?php endif; ?>
-    </div>
+            <?php if ($current_page < $total_pages) { ?>
+                <a href="?page=<?= $current_page + 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Siguiente
+                    &raquo;</a>
+            <?php } ?>
+        </div>
+    </main>
 
-</main>
+<?php else: ?>
+    <h2>No se encontraron resultados</h2>
+<?php endif; ?>
 
 <script>
     const zoomableImages = document.querySelectorAll('.zoomable');

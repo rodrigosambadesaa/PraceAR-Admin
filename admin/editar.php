@@ -48,15 +48,17 @@ require_once(CSS_ADMIN . 'editar_admin.php');
         <label for="imagen">Imagen</label>
         <?php
         $imagenPath = "assets/" . $fila["caseta"] . ".jpg";
-        if (file_exists($imagenPath)): ?>
+        if (file_exists($imagenPath)) {
+            ?>
             <div style="display: flex;gap: 2rem;">
                 <button style="width: 200px; height: 96px; background-color: red" id="eliminar_imagen"
                     name="eliminar_imagen" type="submit" value="1">Eliminar</button>
-                <img src="<?= $imagenPath ?>" alt="Imagen del puesto" class="zoomable" style="object-fit: cover; height: 100px;">
+                <img src="<?= $imagenPath ?>" alt="Imagen del puesto" class="zoomable"
+                    style="object-fit: cover; height: 100px;">
             </div>
-        <?php else: ?>
+        <?php } else { ?>
             <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
-        <?php endif; ?>
+        <?php } ?>
 
     </div>
     <div>
@@ -70,10 +72,10 @@ require_once(CSS_ADMIN . 'editar_admin.php');
     <div>
         <label for="tipo_unity">Tipo en Unity</label>
         <select name="tipo_unity" id="tipo_unity">
-            <?php foreach (UNITY_TYPE as $key => $value): ?>
+            <?php foreach (UNITY_TYPE as $key => $value) { ?>
                 <?php $selected = $key === $fila["tipo_unity"] ? "selected" : ""; ?>
                 <option value="<?= $key ?>" <?= $selected ?>><?= $value ?></option>
-            <?php endforeach; ?>
+            <?php } ?>
         </select>
     </div>
     <div>
@@ -82,14 +84,14 @@ require_once(CSS_ADMIN . 'editar_admin.php');
             <?php
             $sql_naves = "SELECT * FROM naves";
             $resultado_naves = $conexion->query($sql_naves);
-            while ($fila_naves = $resultado_naves->fetch_assoc()):
-                if ($fila["id_nave"] == $fila_naves["id"]):
+            while ($fila_naves = $resultado_naves->fetch_assoc()) {
+                if ($fila["id_nave"] == $fila_naves["id"]) {
                     ?>
                     <option value="<?= $fila_naves["id"] ?>" selected><?= $fila_naves["tipo"] ?></option>
-                <?php else: ?>
+                <?php } else { ?>
                     <option value="<?= $fila_naves["id"] ?>"><?= $fila_naves["tipo"] ?></option>
-                <?php endif; ?>
-            <?php endwhile; ?>
+                <?php }
+            } ?>
         </select>
     </div>
     <div>
