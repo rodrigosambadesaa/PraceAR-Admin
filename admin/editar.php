@@ -52,7 +52,7 @@ require_once(CSS_ADMIN . 'editar_admin.php');
             ?>
             <div style="display: flex;gap: 2rem;">
                 <button style="width: 200px; height: 96px; background-color: red" id="eliminar_imagen"
-                    name="eliminar_imagen" type="submit" value="1">Eliminar</button>
+                    name="eliminar_imagen" value="eliminar">Eliminar</button>
                 <img src="<?= $imagenPath ?>" alt="Imagen del puesto" class="zoomable"
                     style="object-fit: cover; height: 100px;">
             </div>
