@@ -54,6 +54,11 @@ require_once(CSS_ADMIN . 'editar_admin.php');
                 <div style="display: flex; flex-direction: column; align-items: center;">
                     <label for="eliminar_imagen" style="margin-bottom: 0.5em; color: red;">Eliminar imagen</label>
                     <input type="checkbox" id="eliminar_imagen" name="eliminar_imagen" value="1" style="margin-top: 0.5em;">
+                    <script>
+                        document.getElementById('eliminar_imagen').addEventListener('click', function () {
+                            document.getElementById('formulario').submit();
+                        });
+                    </script>
                 </div>
                 <img src="<?= $imagenPath ?>" alt="Imagen del puesto" class="zoomable"
                     style="object-fit: cover; height: 100px;">
