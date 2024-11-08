@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (isset($eliminar_imagen) && $eliminar_imagen === 'eliminar') {
+    if (isset($eliminar_imagen) && $eliminar_imagen == 1) {
         $isImagen = deleteImage($caseta);
     }
 

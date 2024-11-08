@@ -51,8 +51,10 @@ require_once(CSS_ADMIN . 'editar_admin.php');
         if (file_exists($imagenPath)) {
             ?>
             <div style="display: flex;gap: 2rem;">
-                <button style="width: 200px; height: 96px; background-color: red" id="eliminar_imagen"
-                    name="eliminar_imagen" value="eliminar">Eliminar</button>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <label for="eliminar_imagen">Eliminar imagen</label>
+                    <input type="checkbox" id="eliminar_imagen" name="eliminar_imagen" value="1">
+                </div>
                 <img src="<?= $imagenPath ?>" alt="Imagen del puesto" class="zoomable"
                     style="object-fit: cover; height: 100px;">
             </div>
@@ -124,6 +126,7 @@ require_once(CSS_ADMIN . 'editar_admin.php');
     zoomedContainer.addEventListener('click', function () {
         zoomedContainer.classList.remove('show');
     });
+
 </script>
 
 </body>
