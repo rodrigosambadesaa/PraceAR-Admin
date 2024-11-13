@@ -22,13 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($newPassword === $confirmPassword) {
             $newPassword = md5($newPassword);
 
-            $sql = "SELECT * FROM usuarios WHERE login = '$login' AND password = '$oldPassword'";
-            $resultado = $conexion->query($sql);
+            $sql = "SELECT * FROM usuarios WHERE login = ? AND password = ?";
+            $stmt = $conexion->prepare($sql);
+            $stmt->bind_param('ss', $login, $oldPassword);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
 
             if ($resultado->num_rows > 0) {
                 // Contraseña antigua correcta, actualiza la contraseña en la base de datos
-                $updateSql = "UPDATE usuarios SET password = '$newPassword' WHERE login = '$login'";
-                $updateResult = $conexion->query($updateSql);
+                $updateSql = "UPDATE usuarios SET password = ? WHERE login = ?";
+                $updateStmt = $conexion->prepare($updateSql);
+                $updateStmt->bind_param('ss', $newPassword, $login);
+                $updateResult = $updateStmt->execute();
 
                 if ($updateResult) {
                     $err = '<p style="color: green">Contraseña actualizada correctamente</p>';

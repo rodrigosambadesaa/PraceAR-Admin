@@ -4,12 +4,11 @@ require_once 'conexion.php';
 require_once(HELPERS . 'update_puestos_traducciones.php');
 extract($_GET);
 
-
-$sql_seleccion = "SELECT id, tipo, descripcion FROM puestos_traducciones WHERE codigo_idioma = '$codigo_idioma' AND puesto_id = $id";
-// echo $sql_seleccion;
-
-$resultado = $conexion->query($sql_seleccion);
-
+$sql_seleccion = "SELECT id, tipo, descripcion FROM puestos_traducciones WHERE codigo_idioma = ? AND puesto_id = ?";
+$stmt = $conexion->prepare($sql_seleccion);
+$stmt->bind_param('si', $codigo_idioma, $id);
+$stmt->execute();
+$resultado = $stmt->get_result();
 
 $data = $resultado->fetch_assoc();
 if (!$data)

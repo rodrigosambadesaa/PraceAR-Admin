@@ -14,13 +14,19 @@ $caseta = isset($_GET['caseta']) ? limpiarInput($_GET['caseta']) : '';
 $sql_total = "SELECT COUNT(p.id) as total FROM puestos p 
               RIGHT JOIN puestos_traducciones pt ON p.id = pt.puesto_id
               INNER JOIN naves n on p.id_nave = n.id
-              WHERE pt.codigo_idioma = '" . $custom_lang . "'";
+              WHERE pt.codigo_idioma = ?";
+
+$params = [$custom_lang];
 
 if (!empty($caseta)) {
-    $sql_total .= " AND p.caseta LIKE '%$caseta%'";
+    $sql_total .= " AND p.caseta LIKE ?";
+    $params[] = "%$caseta%";
 }
 
-$result_total = $conexion->query($sql_total);
+$stmt_total = $conexion->prepare($sql_total);
+$stmt_total->bind_param(str_repeat('s', count($params)), ...$params);
+$stmt_total->execute();
+$result_total = $stmt_total->get_result();
 $row_total = $result_total->fetch_assoc();
 $total_results = $row_total['total'];
 
@@ -30,14 +36,23 @@ $sql = "SELECT p.id, p.caseta, p.imagen, p.nombre, pt.descripcion, p.contacto, p
         FROM puestos p 
         RIGHT JOIN puestos_traducciones pt ON p.id = pt.puesto_id
         INNER JOIN naves n on p.id_nave = n.id
-        WHERE pt.codigo_idioma = '" . $custom_lang . "'";
+        WHERE pt.codigo_idioma = ?";
+
+$params = [$custom_lang];
 
 if (!empty($caseta)) {
-    $sql .= " AND p.caseta LIKE '%$caseta%'";
+    $sql .= " AND p.caseta LIKE ?";
+    $params[] = "%$caseta%";
 }
 
-$sql .= " ORDER BY p.caseta LIMIT $start_from, $results_per_page";
-$result = $conexion->query($sql);
+$sql .= " ORDER BY p.caseta LIMIT ?, ?";
+$params[] = $start_from;
+$params[] = $results_per_page;
+
+$stmt = $conexion->prepare($sql);
+$stmt->bind_param(str_repeat('s', count($params) - 2) . 'ii', ...$params);
+$stmt->execute();
+$result = $stmt->get_result();
 $resultados_encontrados = $result->num_rows > 0;
 if ($resultados_encontrados):
     ?>

@@ -14,16 +14,18 @@ require_once(CSS_ADMIN . 'editar_admin.php');
         die('Error en la conexión: ' . $conexion->connect_error);
     }
 
-    $sql = "SELECT * FROM puestos WHERE id = $id";
+    $sql = "SELECT * FROM puestos WHERE id = ?";
 
-    $resultado = $conexion->query($sql);
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
     if ($resultado->num_rows <= 0) {
         echo "<h2>Error al obtener los datos del puesto</h2>";
         exit;
     }
 
-    $resultado = $conexion->query($sql);
     $fila = $resultado->fetch_assoc();
     ?>
     <h2 id="cabecera_tabla">Datos del puesto <?= $fila["id"] ?></h2>

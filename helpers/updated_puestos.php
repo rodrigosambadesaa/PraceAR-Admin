@@ -3,6 +3,7 @@ require_once HELPERS . "clean-input.php";
 require_once HELPERS . "get-language.php";
 require_once HELPERS . "save-image.php";
 require_once HELPERS . "delete-image.php";
+require_once HELPERS . "verify-malicious-photo.php";
 
 $mensaje = '';
 
@@ -11,6 +12,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Comprobar si hay una imagen para subir en el formulario
     if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+        // Verificar si la imagen es maliciosa
+        $maliciosa = checkVirusTotal($_FILES['imagen']['tmp_name']);
+
+        if ($maliciosa) {
+            $mensaje = '<span id="mensaje_error">La imagen es maliciosa</span>';
+            return;
+        }
+
         $isImagen = saveImage($_FILES['imagen'], $caseta);
         if (!$isImagen["success"]) {
             $conexion->close();

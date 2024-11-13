@@ -12,11 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $password = md5($password);
 
-
-
-
-    $sql = "SELECT * FROM usuarios WHERE login = '$login' AND password = '$password'";
-    $resultado = $conexion->query($sql);
+    $sql = "SELECT * FROM usuarios WHERE login = ? AND password = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param('ss', $login, $password);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
     if ($resultado->num_rows > 0) {
         $_SESSION['id'] = $resultado->fetch_assoc()['id'];

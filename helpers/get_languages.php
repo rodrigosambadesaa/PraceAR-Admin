@@ -4,8 +4,10 @@ function getLanguages($conexion)
 {
     $sql = "SELECT DISTINCT codigo_idioma, nombre_idioma FROM puestos_traducciones";
 
+    $stmt = $conexion->prepare($sql);
+    $stmt->execute();
 
-    $resultado = $conexion->query($sql);
+    $resultado = $stmt->get_result();
 
     return $resultado->fetch_all(MYSQLI_ASSOC);
 }

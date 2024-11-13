@@ -8,20 +8,20 @@ try {
     } else {
         if (isset($_GET['id_nave'])) {
             $id_nave = $_GET['id_nave'];
-			// $sql = "SELECT * FROM `puestos` WHERE id='" . $id . "';";
-			$sql = "SELECT 
+            // $sql = "SELECT * FROM `puestos` WHERE id='" . $id . "';";
+            $sql = "SELECT 
                     p.id, p.caseta, pt.descripcion, 
                     p.contacto, p.telefono, 
                     p.id_nave, p.nombre, p.tipo_unity, pt.tipo
                     FROM puestos p 
                     INNER JOIN puestos_traducciones pt ON p.id = pt.puesto_id
-                    WHERE pt.codigo_idioma = '".$custom_lang."'
+                    WHERE pt.codigo_idioma = '" . $custom_lang . "'
                     AND p.caseta BETWEEN 'NC038' AND 'NC057'
                     AND p.id_nave = '" . $id_nave . "' 
                     AND p.caseta_padre IS NULL
                     AND p.activo = 1
                     ORDER BY p.caseta";
-    
+
             $resultado = $conn->query($sql);
 
             if ($resultado->num_rows > 0) {
