@@ -58,6 +58,9 @@ define('BASE_URL', $protocolo . $_SERVER['HTTP_HOST'] . '/');
 define('FLAG_IMAGES_URL', BASE_URL . 'appventurers/img/flags/');
 define('PENCIL_IMAGE_URL', BASE_URL . 'appventurers/img/pencil.png');
 
+define('JS', BASE_URL . 'appventurers/js/');
+define('JS_ADMIN', BASE_URL . 'appventurers/admin/js/');
+
 
 
 

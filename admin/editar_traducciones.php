@@ -16,11 +16,12 @@ if (!$data)
 ?>
 
 <h2>Traducción</h2>
-<form class="pure-form" action="#" method="POST">
+<form class="pure-form" action="#" method="POST" id="formulario">
     <label for="tipo">Tipo</label>
     <input type="text" name="tipo" value="<?= $data['tipo'] ?? "" ?>">
     <label for="descripcion">Descripción</label>
-    <textarea name="descripcion" id="" cols="30" rows="10" maxlength="450"><?= $data['descripcion'] ?? "" ?></textarea>
+    <textarea name="descripcion" id="descripcion" cols="30" rows="10"
+        maxlength="450"><?= $data['descripcion'] ?? "" ?></textarea>
     <input type="hidden" name="id_traduccion" value="<?= $data['id'] ?? "" ?>">
     <input type="submit" name="submit" value="Actualizar">
 </form>

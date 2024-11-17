@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <h1>Inicio de sesión</h1>
         </header>
 
-        <form method="POST">
+        <form method="POST" id="formulario">
             <div class="form-group">
                 <label for="login">Usuario:</label>
                 <input type="text" id="login" name="login" required>
@@ -62,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </form>
         <?= $err ?>
     </main>
+    <script type="module" src="./js/main_formulario_login.js"></script>
 </body>
 
 </html>

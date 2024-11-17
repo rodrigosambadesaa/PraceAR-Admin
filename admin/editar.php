@@ -136,6 +136,8 @@ require_once(CSS_ADMIN . 'editar_admin.php');
 
 </script>
 
+<script type="module" src="<?= JS_ADMIN ?>editar_admin.js"></script>
+
 </body>
 
 </html>

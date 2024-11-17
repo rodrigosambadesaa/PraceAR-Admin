@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2 style="text-align: center;">Cambiar contraseña</h2>
     </header>
 
-    <form method="POST">
+    <form method="POST" id="formulario">
         <div class="form-group">
             <label for="login">Usuario:</label>
             <input type="text" id="login" name="login" value="<?= $_SESSION['nombre_usuario'] ?>" readonly>
@@ -94,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?= $err ?>
     </div>
 </main>
+<script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
 </body>
 
 </html>
