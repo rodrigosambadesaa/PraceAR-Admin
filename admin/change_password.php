@@ -5,7 +5,7 @@ require_once(HELPERS . 'verify-strong-password.php');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_SESSION['id'];
-    var_dump($user_id);
+    // var_dump($user_id);
     echo $user_id;
     $old_password = limpiarInput($_POST['old_password']);
     $new_password = limpiarInput($_POST['new_password']);
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!esContrasenhaFuerte($new_password)) {
-        echo "La nueva contraseña no cumple con los requisitos mínimos.";
+        echo "La nueva contraseña no cumple con los requisitos mínimos. <ul><li>Al menos 12 caracteres</li><li>Al menos una letra mayúscula</li><li>Al menos una letra minúscula</li><li>Al menos un número</li><li>Al menos un caracter especial</li></ul>";
         exit;
     }
 
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->get_result();
     $usuario = $result->fetch_assoc();
 
-    var_dump($usuario);
+    // var_dump($usuario);
 
     if ($usuario) {
         $stored_password = $usuario['password'];
@@ -91,6 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="password" name="confirm_password" required>
         <button type="submit">Cambiar contraseña</button>
     </form>
+
+    <?= $err ?? '' ?>
 </body>
 
 </html>
