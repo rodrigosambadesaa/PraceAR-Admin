@@ -5,6 +5,8 @@ const formulario = document.getElementById('formulario');
 
 formulario.addEventListener('submit', (e) => {
     e.preventDefault();
+
+    // Campos obligatorios
     let caseta = document.getElementById('caseta').value;
     let tipoUnity = document.getElementById('tipo_unity').value;
     let idNave = document.getElementById('id_nave').value;
@@ -44,6 +46,20 @@ formulario.addEventListener('submit', (e) => {
         alert('El value de ID de nave debe estar entre 1 y 12');
         return;
     }
+
+    // Campos opcionales
+    let nombre = document.getElementById('nombre').value;
+    let eliminar_imagen = document.getElementById('eliminar_imagen').value;
+    let contacto = document.getElementById('contacto').value;
+    let telefono = document.getElementById('telefono').value;
+    let caseta_padre = document.getElementById('caseta_padre').value;
+
+    // Limpiar inputs
+    nombre = limpiarInput(nombre);
+    eliminar_imagen = limpiarInput(eliminar_imagen);
+    contacto = limpiarInput(contacto);
+    telefono = limpiarInput(telefono);
+    caseta_padre = limpiarInput(caseta_padre);
 
     // Enviar formulario
     formulario.submit();
