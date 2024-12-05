@@ -8,8 +8,11 @@ try {
     } else {
         if (isset($_GET['id'])) {
             $id = $_GET['id'];
-			$sql = "SELECT * FROM `puestos` WHERE id='" . $id . "';";
-            $resultado = $conn->query($sql);
+            $sql = "SELECT * FROM `puestos` WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $resultado = $stmt->get_result();
 
             if ($resultado->num_rows > 0) {
                 $puesto = [];
@@ -20,6 +23,7 @@ try {
             } else {
                 echo json_encode(["codigo" => 203, "mensaje" => "El puesto no existe en el sistema", "respuesta" => ""]);
             }
+            $stmt->close();
         } else {
             echo json_encode(["codigo" => 402, "mensaje" => "Faltan datos para ejecutar la acción solicitada", "respuesta" => ""]);
         }
