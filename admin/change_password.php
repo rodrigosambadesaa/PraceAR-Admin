@@ -6,18 +6,32 @@ require_once(HELPERS . 'verify-strong-password.php');
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_SESSION['id'];
     // var_dump($user_id);
-    echo $user_id;
+    // echo $user_id;
     $old_password = limpiarInput($_POST['old_password']);
     $new_password = limpiarInput($_POST['new_password']);
     $new_password_confirm = limpiarInput($_POST['confirm_password']);
+    $nombre_usuario = $_SESSION['nombre_usuario'];
+
+    // Verificar que la contraseña no contenga información del nombre de usuario
+
 
     if ($new_password !== $new_password_confirm) {
-        echo "La nueva contraseña y la confirmación no coinciden.";
+        echo "<p style='color: red;'>Las contraseñas no coinciden.</p>";
         exit;
     }
 
     if (!esContrasenhaFuerte($new_password)) {
-        echo "La nueva contraseña no cumple con los requisitos mínimos. <ul><li>Al menos 12 caracteres</li><li>Al menos una letra mayúscula</li><li>Al menos una letra minúscula</li><li>Al menos un número</li><li>Al menos un caracter especial</li></ul>";
+        echo "<p style='color: red;'>La nueva contraseña no cumple con los requisitos mínimos de seguridad. La contraseña debe tener al menos 12 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.</p>";
+        exit;
+    }
+
+    if (haSidoFiltradaEnBrechasDeSeguridad($new_password)) {
+        echo "<p style='color: red;'>La nueva contraseña ha sido filtrada en brechas de seguridad. Por favor, elige una contraseña más segura.</p>";
+        exit;
+    }
+
+    if (contrasenhaSimilarAUsuario($new_password, $nombre_usuario)) {
+        echo "<p style='color: red;'>La contraseña no puede contener información del nombre de usuario.</p>";
         exit;
     }
 
@@ -44,9 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $update_stmt->bind_param('si', $hashed_new_password, $user_id);
                 $update_stmt->execute();
 
-                echo "Contraseña actualizada correctamente.";
+                echo "<p style='color: green;'>Contraseña actualizada correctamente.</p>";
             } else {
-                echo "La contraseña actual no es correcta.";
+                echo "<p style='color: red;'>La contraseña actual no es correcta.</p>";
             }
         } else {
             // Contraseña en bcrypt
@@ -58,13 +72,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $update_stmt->bind_param('si', $hashed_new_password, $user_id);
                 $update_stmt->execute();
 
-                echo "Contraseña actualizada correctamente.";
+                echo "<p style='color: green;'>Contraseña actualizada correctamente.</p>";
             } else {
-                echo "La contraseña actual no es correcta.";
+                echo "<p style='color: red;'>La contraseña actual no es correcta.</p>";
             }
         }
     } else {
-        echo "Usuario no encontrado.";
+        echo "<p style='color: red;'>No se ha encontrado el usuario.</p>";
     }
 }
 ?>
@@ -83,6 +97,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <body>
     <form method="POST">
+        <label for="nombre_usuario">Nombre de usuario:</label>
+        <input disabled type="text" name="nombre_usuario" value="<?= $_SESSION['nombre_usuario'] ?>">
         <label for="old_password">Contraseña actual:</label>
         <input type="password" name="old_password" required>
         <label for="new_password">Nueva contraseña:</label>
