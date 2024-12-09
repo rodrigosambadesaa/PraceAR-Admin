@@ -49,18 +49,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $update_stmt->bind_param('si', $hashed_new_password, $user_id);
                 $update_stmt->execute();
 
-                echo "<p style='color: green;'>Contraseña actualizada correctamente.</p>";
-                echo "<p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>";
-                echo "<ul>";
-                echo "<li>Utiliza una contraseña única para cada cuenta.</li>";
-                echo "<li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>";
-                echo "<li>No compartas tu contraseña con nadie.</li>";
-                echo "<li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>";
-                echo "<li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>";
-                echo "<li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>";
-                echo "<li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>";
-                echo "<li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>";
-                echo "</ul>";
+                echo "<p style='color: green;'>Contraseña actualizada correctamente.</p>
+                      <p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
+                      <ul>
+                          <li>Utiliza una contraseña única para cada cuenta.</li>
+                          <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
+                          <li>No compartas tu contraseña con nadie.</li>
+                          <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                          <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                          <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                          <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                          <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+                      </ul>";
             } else {
                 echo "<p style='color: red;'>La contraseña actual no es correcta.</p>";
             }
@@ -73,18 +73,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $update_stmt->bind_param('si', $hashed_new_password, $user_id);
                 $update_stmt->execute();
 
-                echo "<p style='color: green;'>Contraseña actualizada correctamente.</p>";
-                echo "<p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>";
-                echo "<ul>";
-                echo "<li>Utiliza una contraseña única para cada cuenta.</li>";
-                echo "<li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>";
-                echo "<li>No compartas tu contraseña con nadie.</li>";
-                echo "<li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>";
-                echo "<li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>";
-                echo "<li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>";
-                echo "<li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>";
-                echo "<li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>";
-                echo "</ul>";
+                echo "<p style='color: green;'>Contraseña actualizada correctamente.</p>
+                      <p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
+                      <ul>
+                          <li>Utiliza una contraseña única para cada cuenta.</li>
+                          <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
+                          <li>No compartas tu contraseña con nadie.</li>
+                          <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                          <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                          <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                          <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                          <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+                      </ul>";
             } else {
                 echo "<p style='color: red;'>La contraseña actual no es correcta.</p>";
             }
