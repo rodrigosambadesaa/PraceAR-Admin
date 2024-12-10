@@ -1,6 +1,9 @@
 <?php
 require_once HELPERS . 'clean-input.php';
 
+$pepper_config = include 'pepper.php';
+$pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
+
 $err = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -15,45 +18,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = $stmt->get_result();
     $usuario = $result->fetch_assoc();
 
-    var_dump($usuario);
-
     if ($result->num_rows === 1) {
-        // Verificar si la contraseña está almacenada en MD5 o en Bcrypt y si está en MD5, convertirla a Bcrypt
+        $salt = $usuario['salt'] ?? '';
 
+        $stored_password = $usuario['password'];
+
+        // Caso 1: Contraseñas almacenadas en MD5
         if (strlen($usuario['password']) === 32 && ctype_xdigit($usuario['password'])) {
             // Contraseña almacenada en MD5
             if (md5($password) === $usuario['password']) {
-                // Convertir la contraseña a Bcrypt
-                $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+                // Migrar a bcrypt con salt y pepper
+                $new_salt = bin2hex(random_bytes(16));
+                $new_hashed_password = password_hash($password . $new_salt . $pepper, PASSWORD_BCRYPT, ['cost' => 12]);
 
-                $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
+                // Actualizar hash y salt en la base de datos
+                $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
                 $update_stmt = $conexion->prepare($update_sql);
-                $update_stmt->bind_param('si', $hashed_password, $usuario['id']);
+                $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $usuario['id']);
                 $update_stmt->execute();
 
                 echo "Inicio de sesión correcto";
 
                 $_SESSION['id'] = $usuario['id'];
-                var_dump($_SESSION['id']);
                 $_SESSION['login'] = 'logueado';
                 $_SESSION['nombre_usuario'] = $login;
 
                 header("Location: $protocolo/$servidor/$subdominio");
                 $err = '<p style="color: green;">Inicio de sesión correcto</p>';
                 exit;
-
             } else {
                 $err = '<p style="color: red;">Inicio de sesión incorrecto</p>';
             }
-        } else {
-            // Contraseña en bcrypt
-            if (password_verify($password, $usuario['password'])) {
+
+        }// Caso 2: Contraseña en bcrypt sin salt y pepper  
+        elseif (empty($salt) && password_verify($password, $stored_password)) {
+            // Migrar a bcrypt con salt y pepper
+            $new_salt = bin2hex(random_bytes(16));
+            $new_hashed_password = password_hash($password . $new_salt . $pepper, PASSWORD_BCRYPT, ['cost' => 12]);
+
+            // Actualizar hash y salt en la base de datos
+            $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
+            $update_stmt = $conexion->prepare($update_sql);
+            $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $usuario['id']);
+            $update_stmt->execute();
+
+            // Inicio de sesión correcto
+            echo "Inicio de sesión correcto";
+            $_SESSION['id'] = $usuario['id'];
+            $_SESSION['login'] = 'logueado';
+            $_SESSION['nombre_usuario'] = $login;
+
+            header("Location: $protocolo/$servidor/$subdominio");
+            // $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+            exit;
+
+        } elseif (empty($salt) && !password_verify($password, $stored_password)) {
+            $err = '<p style="color: red;">Inicio de sesión incorrecto</p>';
+        }
+
+        // Caso 3: Contraseña en bcrypt con salt y pepper 
+        else {
+            // Caso 1: Verificación con pepper válido
+
+            if (!empty($salt) && password_verify($password . $salt . $pepper, $stored_password)) {
+                // Inicio de sesión correcto
                 echo "Inicio de sesión correcto";
                 $_SESSION['id'] = $usuario['id'];
                 $_SESSION['login'] = 'logueado';
                 $_SESSION['nombre_usuario'] = $login;
+
                 header("Location: $protocolo/$servidor/$subdominio");
-                $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+                // $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+                exit;
+            } // Caso 2: Verificación con pepper vacío (migración)
+            elseif (!empty($salt) && password_verify($password . $salt, $stored_password)) {
+                // Migrar a bcrypt con salt y pepper
+                $new_salt = bin2hex(random_bytes(16));
+                $new_hashed_password = password_hash($password . $new_salt . $pepper, PASSWORD_BCRYPT, ['cost' => 12]);
+
+                // Actualizar hash y salt en la base de datos
+                $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
+                $update_stmt = $conexion->prepare($update_sql);
+                $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $usuario['id']);
+                $update_stmt->execute();
+
+                // Inicio de sesión correcto después de migración
+                echo "Inicio de sesión correcto";
+                $_SESSION['id'] = $usuario['id'];
+                $_SESSION['login'] = 'logueado';
+                $_SESSION['nombre_usuario'] = $login;
+
+                header("Location: $protocolo/$servidor/$subdominio");
+                // $err = '<p style="color: green;">Inicio de sesión correcto</p>';
                 exit;
             } else {
                 $err = '<p style="color: red;">Inicio de sesión incorrecto</p>';
@@ -77,20 +133,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body class="container" style="diplay: grid; place-content: center;min-height: 100vh;max-width: 600px;">
-    <form method="POST">
+    <form method="POST" id="formulario">
         <div id="form-group">
             <label for="login">Usuario:</label>
-            <input type="text" name="login" required>
+            <input type="text" name="login" id="login" required>
         </div>
         <div id="form-group">
             <label for="password">Contraseña:</label>
-            <input type="password" name="password" required>
+            <input type="password" name="password" id="password" required>
         </div>
         <div id="form-group">
             <button type="submit">Iniciar sesión</button>
         </div>
     </form>
     <?= $err ?>
+    <script type="module" src="./js/main_formulario_login.js"></script>
 </body>
 
 </html>
