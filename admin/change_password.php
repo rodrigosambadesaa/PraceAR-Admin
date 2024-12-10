@@ -1,7 +1,14 @@
 <?php
-require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
-require_once(HELPERS . 'clean-input.php');
-require_once(HELPERS . 'verify-strong-password.php');
+require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php';
+require_once HELPERS . 'clean-input.php';
+require_once HELPERS . 'verify-strong-password.php';
+
+// Importar pepper de forma segura
+$pepper_config = include dirname(__FILE__) . '/../pepper.php'; // Ruta ajustada
+$pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
+if (empty($pepper)) {
+    die("Error: El valor del pepper no está definido.");
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_SESSION['id'];
@@ -30,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    $sql = "SELECT password FROM usuarios WHERE id = ?";
+    $sql = "SELECT password, salt FROM usuarios WHERE id = ?";
     $stmt = $conexion->prepare($sql);
     $stmt->bind_param('i', $user_id);
     $stmt->execute();
@@ -39,18 +46,85 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($usuario) {
         $stored_password = $usuario['password'];
+        $salt = $usuario['salt'];
 
-        if (strlen($stored_password) === 32 && ctype_xdigit($stored_password)) {
-            if (md5($old_password) === $stored_password) {
-                $hashed_new_password = password_hash($new_password, PASSWORD_BCRYPT, ['cost' => 12]);
+        // Verificar password con salt y pepper
+        if (password_verify("{$old_password}{$salt}{$pepper}", $stored_password)) {
+            $new_salt = bin2hex(random_bytes(16));
+            $new_hashed_password = password_hash("{$new_password}{$new_salt}{$pepper}", PASSWORD_BCRYPT, ['cost' => 12]);
 
-                $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
+            $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
+            $update_stmt = $conexion->prepare($update_sql);
+            $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $user_id);
+            $update_stmt->execute();
+
+            echo "<p style='color: green;'>Contraseña cambiada correctamente.</p><p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
+                  <ul>
+                      <li>Utiliza una contraseña única para cada cuenta.</li>
+                      <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
+                      <li>No compartas tu contraseña con nadie.</li>
+                      <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                      <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                      <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                      <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                      <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+                  </ul>";
+        } // Caso especial: contraseña antigua en bcrypt con salt pero sin pepper (migración)
+        elseif (password_verify("{$old_password}{$salt}", $stored_password)) {
+            $new_salt = bin2hex(random_bytes(16));
+            $new_hashed_password = password_hash("{$new_password}{$new_salt}{$pepper}", PASSWORD_BCRYPT, ['cost' => 12]);
+
+            $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
+            $update_stmt = $conexion->prepare($update_sql);
+            $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $user_id);
+            $update_stmt->execute();
+
+            echo "<p style='color: green;'>Contraseña cambiada correctamente.</p><p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
+                  <ul>
+                      <li>Utiliza una contraseña única para cada cuenta.</li>
+                      <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
+                      <li>No compartas tu contraseña con nadie.</li>
+                      <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                      <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                      <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                      <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                      <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+                    </ul>";
+        }
+        // Caso 2: contraseña antigua en bcrypt sin salt y pepper
+        elseif (empty($salt) && password_verify($old_password, $stored_password)) {
+            $new_salt = bin2hex(random_bytes(16));
+            $new_hashed_password = password_hash("{$new_password}{$new_salt}{$pepper}", PASSWORD_BCRYPT, ['cost' => 12]);
+
+            $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
+            $update_stmt = $conexion->prepare($update_sql);
+            $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $user_id);
+            $update_stmt->execute();
+
+            echo "<p style='color: green;'>Contraseña cambiada correctamente.</p><p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
+                  <ul>
+                      <li>Utiliza una contraseña única para cada cuenta.</li>
+                      <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
+                      <li>No compartas tu contraseña con nadie.</li>
+                      <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                      <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                      <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                      <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                      <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+                  </ul>";
+        }
+        // Caso 3: Contraseña antigua en MD5
+        elseif (strlen($old_password) === 32 && ctype_xdigit($old_password)) {
+            if (md5($old_password) == $stored_password) {
+                $new_salt = bin2hex(random_bytes(16));
+                $new_hashed_password = password_hash($new_password . $new_salt . $pepper, PASSWORD_BCRYPT, ['cost' => 12]);
+
+                $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
                 $update_stmt = $conexion->prepare($update_sql);
-                $update_stmt->bind_param('si', $hashed_new_password, $user_id);
+                $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $user_id);
                 $update_stmt->execute();
 
-                echo "<p style='color: green;'>Contraseña actualizada correctamente.</p>
-                      <p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
+                echo "<p style='color: green;'>Contraseña cambiada correctamente.</p><p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
                       <ul>
                           <li>Utiliza una contraseña única para cada cuenta.</li>
                           <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
@@ -62,35 +136,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                           <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
                       </ul>";
             } else {
-                echo "<p style='color: red;'>La contraseña actual no es correcta.</p>";
+                echo "<p style='color: red;'>La contraseña actual es incorrecta.</p>";
             }
         } else {
-            if (password_verify($old_password, $stored_password)) {
-                $hashed_new_password = password_hash($new_password, PASSWORD_BCRYPT, ['cost' => 12]);
-
-                $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
-                $update_stmt = $conexion->prepare($update_sql);
-                $update_stmt->bind_param('si', $hashed_new_password, $user_id);
-                $update_stmt->execute();
-
-                echo "<p style='color: green;'>Contraseña actualizada correctamente.</p>
-                      <p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
-                      <ul>
-                          <li>Utiliza una contraseña única para cada cuenta.</li>
-                          <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
-                          <li>No compartas tu contraseña con nadie.</li>
-                          <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
-                          <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
-                          <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
-                          <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
-                          <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
-                      </ul>";
-            } else {
-                echo "<p style='color: red;'>La contraseña actual no es correcta.</p>";
-            }
+            echo "<p style='color: red;'>No se ha encontrado el usuario.</p>";
         }
-    } else {
-        echo "<p style='color: red;'>No se ha encontrado el usuario.</p>";
     }
 }
 ?>
@@ -108,19 +158,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </header>
 
 <body>
-    <form method="POST">
+    <form method="POST" id="formulario">
         <label for="nombre_usuario">Nombre de usuario:</label>
-        <input disabled type="text" name="nombre_usuario" value="<?= $_SESSION['nombre_usuario'] ?>">
+        <input disabled type="text" id="nombre_usuario" name="nombre_usuario"
+            value="<?= $_SESSION['nombre_usuario'] ?>">
         <label for="old_password">Contraseña actual:</label>
-        <input type="password" name="old_password" required>
+        <input type="password" id="old_password" name="old_password" required>
         <label for="new_password">Nueva contraseña:</label>
-        <input type="password" name="new_password" required>
+        <input type="password" id="new_password" name="new_password" required>
         <label for="confirm_password">Confirmar nueva contraseña:</label>
-        <input type="password" name="confirm_password" required>
+        <input type="password" id="confirm_password" name="confirm_password" required>
         <button type="submit">Cambiar contraseña</button>
     </form>
 
     <?= $err ?? '' ?>
+    <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
 </body>
 
 </html>
