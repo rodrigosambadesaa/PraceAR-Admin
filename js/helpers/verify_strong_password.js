@@ -2,9 +2,42 @@ const crypto = require('crypto');
 const fetch = require('node-fetch');
 
 function verifyStrongPassword(password) {
-    // La contraseña debe tener al menos 12 caracteres, un número, una letra minúscula, una letra mayúscula y un carácter especial y un máximo de 255 caracteres
-    const strongPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z0-9]).{12,255}$/;
-    return strongPassword.test(password);
+    // Al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos, y un máximo de 255 caracteres
+
+    const minusculas = /[a-z]/;
+    const mayusculas = /[A-Z]/;
+    const numeros = /[0-9]/;
+    // Caracteres especiales permitidos: !@#$%^&*()-_=+[]{}|;:,.<>
+
+    if (password.length < 16 || password.length > 255) {
+        return false;
+    }
+
+    if (!minusculas.test(password)) {
+        return false;
+    }
+
+    if (!mayusculas.test(password)) {
+        return false;
+    }
+
+    if (!numeros.test(password)) {
+        return false;
+    }
+
+    let caracteres_especiales = 0;
+    const especiales = /[!@#$%^&*()\-_=+\[\]{}|;:,.<>]/;
+    for (let caracter of password) {
+        if (especiales.test(caracter)) {
+            caracteres_especiales++;
+        }
+    }
+
+    if (caracteres_especiales < 3) {
+        return false;
+    }
+
+    return true;
 }
 
 async function haSidoFiltradaEnBrechas(password) {

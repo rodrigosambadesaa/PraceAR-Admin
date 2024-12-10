@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (!esContrasenhaFuerte($new_password)) {
-        echo "<p style='color: red;'>La nueva contraseña no cumple con los requisitos mínimos de seguridad. La contraseña debe tener al menos 12 caracteres, una letra mayúscula, una letra minúscula, un número y un carácter especial.</p>";
+        echo "<p style='color: red;'>La nueva contraseña no cumple con los requisitos mínimos de seguridad. La contraseña debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</p>";
         exit;
     }
 
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "<p style='color: green;'>Contraseña cambiada correctamente.</p><p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
                   <ul>
                       <li>Utiliza una contraseña única para cada cuenta.</li>
-                      <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
+                      <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
                       <li>No compartas tu contraseña con nadie.</li>
                       <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
                       <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
@@ -82,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "<p style='color: green;'>Contraseña cambiada correctamente.</p><p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
                   <ul>
                       <li>Utiliza una contraseña única para cada cuenta.</li>
-                      <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
+                      <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
                       <li>No compartas tu contraseña con nadie.</li>
                       <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
                       <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo "<p style='color: green;'>Contraseña cambiada correctamente.</p><p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
                   <ul>
                       <li>Utiliza una contraseña única para cada cuenta.</li>
-                      <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
+                      <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
                       <li>No compartas tu contraseña con nadie.</li>
                       <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
                       <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
@@ -127,7 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo "<p style='color: green;'>Contraseña cambiada correctamente.</p><p><strong>Consejos para mantener tus contraseñas seguras:</strong></p>
                       <ul>
                           <li>Utiliza una contraseña única para cada cuenta.</li>
-                          <li>Utiliza una combinación de letras mayúsculas, minúsculas, números y caracteres especiales, y al menos 12 caracteres de longitud.</li>
+                          <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
                           <li>No compartas tu contraseña con nadie.</li>
                           <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
                           <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
