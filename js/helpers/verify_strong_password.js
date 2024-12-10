@@ -95,8 +95,5 @@ function contrasenhaSimilarAUsuario(contrasenha, usuario) {
     return false;
 }
 
-module.exports = {
-    verifyStrongPassword,
-    haSidoFiltradaEnBrechas,
-    contrasenhaSimilarAUsuario
-};
+// Exportar funciones usando ES Modules
+export { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario };
