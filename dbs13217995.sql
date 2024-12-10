@@ -9618,6 +9618,7 @@ VALUES
 CREATE TABLE `usuarios` (
   `login` varchar(100) NOT NULL,
   `password` varchar(300) NOT NULL,
+  `salt` varchar(64) NOT NULL,
   `id` int(10) UNSIGNED NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
