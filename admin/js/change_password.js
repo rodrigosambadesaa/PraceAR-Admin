@@ -25,7 +25,7 @@ formulario.addEventListener('submit', (e) => {
 
     // La nueva contraseña debe ser segura
     if (!verifyStrongPassword(newPassword)) {
-        alert('La nueva contraseña debe tener al menos 12 caracteres, una letra mayúscula, una letra minúscula, un número y un caracter especial');
+        alert('La nueva contraseña debe tener al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos válidos: !@#$%^&*()-_=+[]{}|;:,.<> y un máximo de 255 caracteres');
         return;
     }
 
