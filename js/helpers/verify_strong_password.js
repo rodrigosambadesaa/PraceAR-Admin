@@ -1,3 +1,6 @@
+import crypto from 'crypto';
+import fetch from 'node-fetch';
+
 function verifyStrongPassword(password) {
     // Al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos, y un máximo de 255 caracteres
 
@@ -37,30 +40,47 @@ function verifyStrongPassword(password) {
     return true;
 }
 
+async function sha1Hash(password) {
+    // Codificar la contraseña como UTF-8
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+
+    // Generar el hash SHA-1
+    const hashBuffer = await window.crypto.subtle.digest('SHA-1', data);
+
+    // Convertir el hash a formato hexadecimal
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 async function haSidoFiltradaEnBrechas(password) {
-    const hash = crypto.createHash('sha1').update(password).digest('hex');
+    const hash = await sha1Hash(password);
     const hash_prefix = hash.substring(0, 5);
-    const hash_suffix = hash.substring(5);
+    const hash_suffix = hash.substring(5).toUpperCase();
 
     const url = `https://api.pwnedpasswords.com/range/${hash_prefix}`;
-    const response = await fetch(url);
+    try {
+        const response = await fetch(url);
 
-    if (!response.ok) {
+        if (!response.ok) {
+            console.error('Error al acceder a la API de brechas de seguridad.');
+            return false;
+        }
+
+        const data = await response.text();
+        const hashes = data.split('\n');
+
+        // Verificar si el sufijo del hash aparece en la respuesta
+        return hashes.some((hashLine) => {
+            const [hashPart] = hashLine.split(':');
+            return hashPart.trim() === hash_suffix;
+        });
+    } catch (error) {
+        console.error('Error al comprobar la contraseña:', error);
         return false;
     }
-
-    const data = await response.text();
-    const hashes = data.split('\n');
-
-    for (let hash of hashes) {
-        const [hashPart, count] = hash.split(':');
-        if (hashPart.toUpperCase() === hash_suffix.toUpperCase()) {
-            return true;
-        }
-    }
-
-    return false;
 }
+
 
 function contrasenhaSimilarAUsuario(contrasenha, usuario) {
     // Aseguramos que todos los valores sean minúsculas para comparaciones insensibles a mayúsculas
