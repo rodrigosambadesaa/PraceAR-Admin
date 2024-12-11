@@ -1,6 +1,3 @@
-import crypto from 'crypto';
-import fetch from 'node-fetch';
-
 function verifyStrongPassword(password) {
     // Al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos, y un máximo de 255 caracteres
 
@@ -45,21 +42,24 @@ async function sha1Hash(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
 
-    // Generar el hash SHA-1
+    // Generar el hash SHA-1 con Web Crypto API
     const hashBuffer = await window.crypto.subtle.digest('SHA-1', data);
 
-    // Convertir el hash a formato hexadecimal
+    // Convertir el hash a cadena hexadecimal (mayúsculas para comparación uniforme)
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
 }
 
 async function haSidoFiltradaEnBrechas(password) {
+    // Generar el hash SHA-1 de la contraseña
     const hash = await sha1Hash(password);
-    const hash_prefix = hash.substring(0, 5);
-    const hash_suffix = hash.substring(5).toUpperCase();
+    const hash_prefix = hash.substring(0, 5); // Primeros 5 caracteres del hash
+    const hash_suffix = hash.substring(5);    // Resto del hash
 
     const url = `https://api.pwnedpasswords.com/range/${hash_prefix}`;
+
     try {
+        // Realizar la petición HTTP a la API de HIBP
         const response = await fetch(url);
 
         if (!response.ok) {
@@ -67,19 +67,34 @@ async function haSidoFiltradaEnBrechas(password) {
             return false;
         }
 
+        // Leer y procesar la respuesta
         const data = await response.text();
         const hashes = data.split('\n');
 
-        // Verificar si el sufijo del hash aparece en la respuesta
+        // Comparar hash_suffix con la respuesta (ambos en mayúsculas)
         return hashes.some((hashLine) => {
             const [hashPart] = hashLine.split(':');
             return hashPart.trim() === hash_suffix;
         });
+
     } catch (error) {
         console.error('Error al comprobar la contraseña:', error);
         return false;
     }
 }
+
+// Ejemplo de uso
+(async () => {
+    const password = 'mBL3dNbywXF@DXhmNP1a)}[,/&';
+    const filtrada = await haSidoFiltradaEnBrechas(password);
+
+    if (filtrada) {
+        console.log('La contraseña ha sido filtrada en brechas de seguridad.');
+    } else {
+        console.log('La contraseña no ha sido encontrada en brechas conocidas.');
+    }
+})();
+
 
 
 function contrasenhaSimilarAUsuario(contrasenha, usuario) {

@@ -3,7 +3,7 @@ import { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuar
 
 const formulario = document.getElementById('formulario');
 
-formulario.addEventListener('submit', (e) => {
+formulario.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     let usuario = document.getElementById('nombre_usuario').value;
@@ -29,7 +29,7 @@ formulario.addEventListener('submit', (e) => {
         return;
     }
 
-    if (haSidoFiltradaEnBrechas(newPassword)) {
+    if (await haSidoFiltradaEnBrechas(newPassword)) {
         alert('La nueva contraseña ha sido filtrada en brechas');
         return;
     }
