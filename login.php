@@ -133,6 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body class="container" style="diplay: grid; place-content: center;min-height: 100vh;max-width: 600px;">
+    <h1 style="text-align: center;">Inicio de sesión</h1>
     <form method="POST" id="formulario">
         <div id="form-group">
             <label for="login">Usuario:</label>
