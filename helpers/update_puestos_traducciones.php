@@ -1,9 +1,12 @@
 <?php
+require_once HELPERS . "clean-input.php";
+
 $mensaje = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     extract($_REQUEST);
     // Limpiar intros, tabulaciones y que haya más de un espacio en blanco,
-    $descripcion = preg_replace('/\s\s+/', ' ', trim($descripcion));
+    $descripcion = htmlspecialchars(preg_replace('/\s\s+/', ' ', trim($descripcion)), ENT_QUOTES, 'UTF-8');
+    $tipo = limpiarInput($tipo);
 
     $sql_actualizacion = "UPDATE puestos_traducciones 
                           SET tipo = ?, 
