@@ -39,3 +39,9 @@ Clonar el repositorio en una carpeta llamada appventurers
 
 ### Página de cambio de contraseña
 ![Página de cambio de contraseña](https://github.com/user-attachments/assets/74a76e2e-696a-4c07-b649-64d44c4eb7b0)
+
+## 🚨 Seguridad
+Necesitamos expertos PHP en ciberseguridad para:
+- Implementar protección avanzada (CSRF, reCAPTCHA, XSS).
+- Auditar y mejorar la seguridad del código actual.
+
