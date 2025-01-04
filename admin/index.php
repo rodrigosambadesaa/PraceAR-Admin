@@ -72,7 +72,11 @@ if ($resultados_encontrados):
                 </search>
                 <!-- Paginación superior -->
                 <div class="pagination">
-                    <?php if ($current_page > 1) { ?>
+                    <?php if ($current_page > 1) {
+                        $firstPage = 1;
+                        ?>
+                        <a href="?page=<?= $firstPage ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Primera
+                            &laquo;</a>
                         <a href="?page=<?= $current_page - 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">&laquo;
                             Anterior</a>
                     <?php } ?>
@@ -84,8 +88,12 @@ if ($resultados_encontrados):
                         </a>
                     <?php } ?>
 
-                    <?php if ($current_page < $total_pages) { ?>
+                    <?php if ($current_page < $total_pages) {
+                        $lastPage = $total_pages;
+                        ?>
                         <a href="?page=<?= $current_page + 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Siguiente
+                            &raquo;</a>
+                        <a href="?page=<?= $lastPage ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Última
                             &raquo;</a>
                     <?php } ?>
                 </div>
@@ -168,7 +176,11 @@ if ($resultados_encontrados):
 
         <!-- Paginación inferior -->
         <div class="pagination">
-            <?php if ($current_page > 1) { ?>
+            <?php if ($current_page > 1) {
+                $firstPage = 1;
+                ?>
+                <a href="?page=<?= $firstPage ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Primera
+                    &laquo;</a>
                 <a href="?page=<?= $current_page - 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">&laquo;
                     Anterior</a>
             <?php } ?>
@@ -180,10 +192,13 @@ if ($resultados_encontrados):
                 </a>
             <?php } ?>
 
-            <?php if ($current_page < $total_pages) { ?>
+            <?php if ($current_page < $total_pages) {
+                $lastPage = $total_pages;
+                ?>
                 <a href="?page=<?= $current_page + 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Siguiente
                     &raquo;</a>
-            <?php } ?>
+                <a href="?page=<?= $lastPage ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Última
+                <?php } ?>
         </div>
     </main>
 

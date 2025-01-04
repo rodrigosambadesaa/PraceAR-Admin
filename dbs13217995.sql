@@ -9617,9 +9617,18 @@ VALUES
 --
 CREATE TABLE `usuarios` (
   `login` varchar(100) NOT NULL,
+  `email` varchar(500) DEFAULT NULL,
   `password` varchar(300) NOT NULL,
   `salt` varchar(64) NOT NULL,
   `id` int(10) UNSIGNED NOT NULL
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
+
+CREATE TABLE `old_passwords` (
+  `id` int(10) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  `user_id` int(10) UNSIGNED NOT NULL,
+  `password` varchar(300) NOT NULL,
+  `salt` varchar(64) NOT NULL,
+  FOREIGN KEY (`user_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
 --
