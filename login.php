@@ -44,10 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['nombre_usuario'] = $login;
 
                 header("Location: $protocolo/$servidor/$subdominio");
-                $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+                $err = '<span style="color: green;">Inicio de sesión correcto</span>';
                 exit;
             } else {
-                $err = '<p style="color: red;">Inicio de sesión incorrecto</p>';
+                $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
             }
 
         }// Caso 2: Contraseña en bcrypt sin salt y pepper  
@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit;
 
         } elseif (empty($salt) && !password_verify($password, $stored_password)) {
-            $err = '<p style="color: red;">Inicio de sesión incorrecto</p>';
+            $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
         }
 
         // Caso 3: Contraseña en bcrypt con salt y pepper 
@@ -112,11 +112,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // $err = '<p style="color: green;">Inicio de sesión correcto</p>';
                 exit;
             } else {
-                $err = '<p style="color: red;">Inicio de sesión incorrecto</p>';
+                $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
             }
         }
     } else {
-        $err = '<p style="color: red;">Inicio de sesión incorrecto</p>';
+        $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
     }
 }
 ?>
