@@ -198,7 +198,8 @@ if ($resultados_encontrados):
                 <a href="?page=<?= $current_page + 1 ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Siguiente
                     &raquo;</a>
                 <a href="?page=<?= $lastPage ?>&caseta=<?= $_GET['caseta'] ?? '' ?>&lang=<?= getLanguage() ?>">Última
-                <?php } ?>
+                    &raquo;</a>
+            <?php } ?>
         </div>
     </main>
 
