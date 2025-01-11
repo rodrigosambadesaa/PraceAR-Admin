@@ -1,10 +1,13 @@
 <?php
 
+// require_once('constants.php');
+require_once(VIRUSTOTAL_API_KEY_FILE);
+
 function checkVirusTotal($file)
 {
     // Verifica con la API de VirusTotal si el archivo es malicioso
     $total = 0;
-    $apiKey = "1d7d62b2b3dc21f9d8114da33fc9d32c3d82bca763096022777f16f82d1f9117";
+    $apiKey = VIRUSTOTAL_API_KEY;
     $url = 'https://www.virustotal.com/vtapi/v2/file/scan';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
