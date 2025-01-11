@@ -119,49 +119,46 @@ if ($resultados_encontrados):
             </thead>
             <tbody>
                 <?php
-                if ($result->num_rows > 0) {
-                    $resultados_encontrados = true;
-                    while ($row = $result->fetch_assoc()) {
-                        ?>
-                        <tr id="row_<?= $row['id'] ?>">
-                            <td scope="row" data-label="Editar">
-                                <a href="<?= "?page=edit&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
-                                    <img loading="lazy" width='15' height='15' src="<?= PENCIL_IMAGE_URL ?>">
-                                </a>
-                            </td>
-                            <td data-label="Activo">
-                                <?= $row['activo'] ? "Sí" : "No" ?>
-                            </td>
-                            <td data-label="Imagen">
-                                <?php
-                                $imagenPath = "assets/" . $row["caseta"] . ".jpg";
-                                if (file_exists($imagenPath)) {
-                                    ?>
-                                    <img loading="lazy" class="zoomable" src="<?= $imagenPath ?>" alt="Imagen del puesto">
-                                <?php } ?>
-                            </td>
-                            <td data-label="Caseta"><?= $row['caseta'] ?></td>
-                            <td data-label="Nombre"><?= $row['nombre'] ?></td>
-                            <td data-label="Tipo Unity"><?= $row['tipo_unity'] ?></td>
-                            <td data-label="Información de Contacto"><?= $row['contacto'] ?></td>
-                            <td data-label="Teléfono"><?= $row['telefono'] ?></td>
-                            <td data-label="Nave"><?= $row['nave'] ?></td>
-                            <td data-label="Caseta padre"><?= $row["caseta_padre"] ?? "Ninguno" ?></td>
-                            <td data-label="" id="celdaEspecialDato"></td>
-                            <td data-label="Idioma de la traducción" class="different-background-color">
-                                <a
-                                    href="<?= "?page=language&codigo_idioma=" . getLanguage() . "&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
-                                    <img id="imagenBandera" loading="lazy" width="15" height="15"
-                                        src="<?= FLAG_IMAGES_URL . (getLanguage()) . ".png" ?>" alt="<?= getLanguage() ?>">
-                                </a>
-                            </td>
-                            <td data-label="Tipo" class="different-background-color"><?= $row['tipo'] ?></td>
-                            <td data-label="Descripción" class="different-background-color">
-                                <?= $row['descripcion'] ? truncateText($row['descripcion'], 30) : '' ?>
-                            </td>
-                        </tr>
-                        <?php
-                    }
+                while ($row = $result->fetch_assoc()) {
+                    ?>
+                    <tr id="row_<?= $row['id'] ?>">
+                        <td scope="row" data-label="Editar">
+                            <a href="<?= "?page=edit&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
+                                <img loading="lazy" width='15' height='15' src="<?= PENCIL_IMAGE_URL ?>">
+                            </a>
+                        </td>
+                        <td data-label="Activo">
+                            <?= $row['activo'] ? "Sí" : "No" ?>
+                        </td>
+                        <td data-label="Imagen">
+                            <?php
+                            $imagenPath = "assets/" . $row["caseta"] . ".jpg";
+                            if (file_exists($imagenPath)) {
+                                ?>
+                                <img loading="lazy" class="zoomable" src="<?= $imagenPath ?>" alt="Imagen del puesto">
+                            <?php } ?>
+                        </td>
+                        <td data-label="Caseta"><?= $row['caseta'] ?></td>
+                        <td data-label="Nombre"><?= $row['nombre'] ?></td>
+                        <td data-label="Tipo Unity"><?= $row['tipo_unity'] ?></td>
+                        <td data-label="Información de Contacto"><?= $row['contacto'] ?></td>
+                        <td data-label="Teléfono"><?= $row['telefono'] ?></td>
+                        <td data-label="Nave"><?= $row['nave'] ?></td>
+                        <td data-label="Caseta padre"><?= $row["caseta_padre"] ?? "Ninguno" ?></td>
+                        <td data-label="" id="celdaEspecialDato"></td>
+                        <td data-label="Idioma de la traducción" class="different-background-color">
+                            <a
+                                href="<?= "?page=language&codigo_idioma=" . getLanguage() . "&id=" . $row['id'] . "&lang=" . ($_REQUEST['lang'] ?? 'gl') ?>">
+                                <img id="imagenBandera" loading="lazy" width="15" height="15"
+                                    src="<?= FLAG_IMAGES_URL . (getLanguage()) . ".png" ?>" alt="<?= getLanguage() ?>">
+                            </a>
+                        </td>
+                        <td data-label="Tipo" class="different-background-color"><?= $row['tipo'] ?></td>
+                        <td data-label="Descripción" class="different-background-color">
+                            <?= $row['descripcion'] ? truncateText($row['descripcion'], 30) : '' ?>
+                        </td>
+                    </tr>
+                    <?php
                 }
                 ?>
             </tbody>
@@ -204,7 +201,9 @@ if ($resultados_encontrados):
     </main>
 
 <?php else: ?>
-    <h2>No se encontraron resultados</h2>
+    <header>
+        <h2>No se encontraron resultados</h2>
+    </header>
 <?php endif; ?>
 
 <script>

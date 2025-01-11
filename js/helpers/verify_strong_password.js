@@ -52,7 +52,7 @@ async function sha1Hash(password) {
 
 async function haSidoFiltradaEnBrechas(password) {
     // Generar el hash SHA-1 de la contraseña
-    const hash = await sha1Hash(password);
+    const hash = (await sha1Hash(password)).toUpperCase();
     const hash_prefix = hash.substring(0, 5); // Primeros 5 caracteres del hash
     const hash_suffix = hash.substring(5);    // Resto del hash
 
@@ -69,13 +69,17 @@ async function haSidoFiltradaEnBrechas(password) {
 
         // Leer y procesar la respuesta
         const data = await response.text();
+        console.log(`Datos recibidos de la API:\n${data}`);
+
         const hashes = data.split('\n');
 
         // Comparar hash_suffix con la respuesta (ambos en mayúsculas)
-        return hashes.some((hashLine) => {
+        const filtrada = hashes.some((hashLine) => {
             const [hashPart] = hashLine.split(':');
             return hashPart.trim() === hash_suffix;
         });
+
+        return filtrada;
 
     } catch (error) {
         console.error('Error al comprobar la contraseña:', error);
@@ -83,19 +87,14 @@ async function haSidoFiltradaEnBrechas(password) {
     }
 }
 
-// Ejemplo de uso
-(async () => {
-    const password = 'mBL3dNbywXF@DXhmNP1a)}[,/&';
-    const filtrada = await haSidoFiltradaEnBrechas(password);
+const randomPassword = "abT.,*/-29C";
+const randomPassword2 = "_saras";
 
-    if (filtrada) {
-        console.log('La contraseña ha sido filtrada en brechas de seguridad.');
-    } else {
-        console.log('La contraseña no ha sido encontrada en brechas conocidas.');
-    }
-})();
+const filtrada1 = await haSidoFiltradaEnBrechas(randomPassword);
+const filtrada2 = await haSidoFiltradaEnBrechas(randomPassword2);
 
-
+console.log(`La contraseña aleatoria 1 ${filtrada1 ? 'ha sido filtrada en brechas' : 'no ha sido filtrada en brechas'}`);
+console.log(`La contraseña aleatoria 2 ${filtrada2 ? 'ha sido filtrada en brechas' : 'no ha sido filtrada en brechas'}`);
 
 function contrasenhaSimilarAUsuario(contrasenha, usuario) {
     // Aseguramos que todos los valores sean minúsculas para comparaciones insensibles a mayúsculas
