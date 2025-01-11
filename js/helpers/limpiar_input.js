@@ -22,4 +22,28 @@ function limpiarInput(input) {
     return input;
 }
 
-export { limpiarInput };
+function limpiarTextarea(textarea) {
+    // Eliminar espacios innecesarios al inicio y final del textarea
+    textarea = textarea.trim();
+
+    // Quitar barras invertidas (previene escape no deseado)
+    textarea = textarea.replace(/\\/g, '');
+
+    // Convertir caracteres especiales en entidades HTML (previene XSS)
+    textarea = textarea
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    // Eliminar etiquetas HTML (adicional para prevenir XSS)
+    textarea = textarea.replace(/<\/?[^>]+(>|$)/g, "");
+
+    // Codificar caracteres UTF-8 para prevenir caracteres no deseados
+    textarea = unescape(encodeURIComponent(textarea));
+
+    return textarea;
+}
+
+export { limpiarInput, limpiarTextarea };

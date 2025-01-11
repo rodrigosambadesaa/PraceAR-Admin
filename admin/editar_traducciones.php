@@ -26,6 +26,7 @@ if (!$data)
     <input type="submit" name="submit" value="Actualizar">
 </form>
 <?= $mensaje ?>
+<script src="./js/editar_traducciones.js"></script>
 </body>
 
 </html>
