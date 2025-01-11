@@ -1,5 +1,6 @@
 import { limpiarInput } from "../../js/helpers/limpiar_input.js";
 import { UNITY_TYPE } from "../../js/constants.js";
+import { verifyMaliciousPhoto } from "./helpers/verify_malicious_photo.js";
 
 const formulario = document.getElementById('formulario');
 
@@ -49,10 +50,13 @@ formulario.addEventListener('submit', (e) => {
 
     // Campos opcionales
     let nombre = document.getElementById('nombre').value;
-    let eliminar_imagen = document.getElementById('eliminar_imagen').value;
+    // Si existe el campo eliminar_imagen, se recoge su valor
+    let eliminar_imagen = document.getElementById('eliminar_imagen') ? document.getElementById('eliminar_imagen').value : '';
     let contacto = document.getElementById('contacto').value;
     let telefono = document.getElementById('telefono').value;
     let caseta_padre = document.getElementById('caseta_padre').value;
+    // Verificar si existe el campo <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg"> y, en caso de que se haya subido una foto, recogerla
+    // let foto = document.getElementById('imagen') ? document.getElementById('imagen').files[0] : '';
 
     // Limpiar inputs
     nombre = limpiarInput(nombre);
@@ -60,6 +64,33 @@ formulario.addEventListener('submit', (e) => {
     contacto = limpiarInput(contacto);
     telefono = limpiarInput(telefono);
     caseta_padre = limpiarInput(caseta_padre);
+
+    console.log('Caseta padre:', caseta_padre);
+    console.log(caseta_padre === '');
+
+    // Caseta padre, si se ha introducido, debe ser una cadena de exactamente 5 caracteres
+    if (caseta_padre !== '' && caseta_padre.length !== 5) {
+        alert('Caseta padre, si se ha introducido, debe ser una cadena de exactamente 5 caracteres');
+        return;
+    }
+
+    // Las dos primeras letras de caseta padre, si se ha introducido, deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números se cuentan 001, 002, 003, ..., 370
+    const letrasPadre = caseta_padre.substring(0, 2);
+    const numeroPadre = caseta_padre.substring(2);
+
+    if (caseta_padre !== '' && (!['CE', 'CO', 'MC', 'NA', 'NC'].includes(letrasPadre) || isNaN(numeroPadre) || numeroPadre < 1 || numeroPadre > 370)) {
+        alert('Las dos primeras letras de caseta padre, si se ha introducido, deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números se cuentan 001, 002, 003, ..., 370');
+        return;
+    }
+
+    // Comprobar si la foto, si se ha subido, es maliciosa
+    /*if (foto !== '') {
+        const esMaliciosa = verifyMaliciousPhoto(foto);
+        if (esMaliciosa) {
+            alert('La foto es maliciosa');
+            return;
+        }
+    }*/
 
     // Enviar formulario
     formulario.submit();
