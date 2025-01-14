@@ -36,12 +36,10 @@ if (isset($_SESSION['login'])) {
             break;
 
         case 'edit':
-            // Pasar el id del puesto seleccionado y mantener el número de página actual
             require_once(ADMIN . 'editar.php');
             break;
 
         case 'language':
-            // Pasar el id del puesto y el idioma seleccionado, manteniendo la paginación
             require_once(ADMIN . 'editar_traducciones.php');
             break;
 
