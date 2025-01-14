@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['nombre_usuario'] = $login;
 
             header("Location: $protocolo/$servidor/$subdominio");
-            // $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+            $err = '<p style="color: green;">Inicio de sesión correcto</p>';
             exit;
 
         } elseif (empty($salt) && !password_verify($password, $stored_password)) {
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['nombre_usuario'] = $login;
 
                 header("Location: $protocolo/$servidor/$subdominio");
-                // $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+                $err = '<p style="color: green;">Inicio de sesión correcto</p>';
                 exit;
             } // Caso 2: Verificación con pepper vacío (migración)
             elseif (!empty($salt) && password_verify($password . $salt, $stored_password)) {
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['nombre_usuario'] = $login;
 
                 header("Location: $protocolo/$servidor/$subdominio");
-                // $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+                $err = '<p style="color: green;">Inicio de sesión correcto</p>';
                 exit;
             } else {
                 $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
