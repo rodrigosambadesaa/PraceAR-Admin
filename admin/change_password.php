@@ -74,18 +74,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $user_id);
             $update_stmt->execute();
 
-            echo "<span style='color: green;'>Contraseña cambiada correctamente.</span><br>
-                  <span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
-                  <ul>
-                      <li>Utiliza una contraseña única para cada cuenta.</li>
-                      <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
-                      <li>No compartas tu contraseña con nadie.</li>
-                      <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
-                      <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
-                      <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
-                      <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
-                      <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
-                  </ul>";
+            echo "<div style=\"color: green; padding: 10px; border: 1px solid green; border-radius: 5px; background-color: #e6ffe6; margin-bottom: 20px;\">
+                <strong>¡Éxito!</strong> Contraseña cambiada correctamente.
+            </div>
+            <span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
+            <ul>
+                <li>Utiliza una contraseña única para cada cuenta.</li>
+                <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
+                <li>No compartas tu contraseña con nadie.</li>
+                <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+            </ul>";
 
             // Update table old passwords
             $insert_sql = "INSERT INTO old_passwords (user_id, password, salt) VALUES (?, ?, ?)";
@@ -103,18 +105,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $user_id);
             $update_stmt->execute();
 
-            echo "<span style='color: green;'>Contraseña cambiada correctamente.</span><br>
-                  <span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
-                  <ul>
-                      <li>Utiliza una contraseña única para cada cuenta.</li>
-                      <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
-                      <li>No compartas tu contraseña con nadie.</li>
-                      <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
-                      <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
-                      <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
-                      <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
-                      <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
-                  </ul>";
+            echo "<div style=\"color: green; padding: 10px; border: 1px solid green; border-radius: 5px; background-color: #e6ffe6; margin-bottom: 20px;\">
+                <strong>¡Éxito!</strong> Contraseña cambiada correctamente.
+            </div>
+            <span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
+            <ul>
+                <li>Utiliza una contraseña única para cada cuenta.</li>
+                <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
+                <li>No compartas tu contraseña con nadie.</li>
+                <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+            </ul>";
 
             // Update table old passwords
             $insert_sql = "INSERT INTO old_passwords (user_id, password, salt) VALUES (?, ?, ?)";
@@ -133,18 +137,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $user_id);
             $update_stmt->execute();
 
-            echo "<span style='color: green;'>Contraseña cambiada correctamente.</span><br>
-                  <span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
-                  <ul>
-                      <li>Utiliza una contraseña única para cada cuenta.</li>
-                      <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
-                      <li>No compartas tu contraseña con nadie.</li>
-                      <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
-                      <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
-                      <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
-                      <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
-                      <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
-                  </ul>";
+            echo "<div style=\"color: green; padding: 10px; border: 1px solid green; border-radius: 5px; background-color: #e6ffe6; margin-bottom: 20px;\">
+                <strong>¡Éxito!</strong> Contraseña cambiada correctamente.
+            </div>
+            <span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
+            <ul>
+                <li>Utiliza una contraseña única para cada cuenta.</li>
+                <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
+                <li>No compartas tu contraseña con nadie.</li>
+                <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+            </ul>";
 
             // Update table old passwords
             $insert_sql = "INSERT INTO old_passwords (user_id, password, salt) VALUES (?, ?, ?)";
@@ -163,18 +169,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $user_id);
                 $update_stmt->execute();
 
-                echo "<span style='color: green;'>Contraseña cambiada correctamente.</span><br>
-                      <span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
-                      <ul>
-                          <li>Utiliza una contraseña única para cada cuenta.</li>
-                          <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
-                          <li>No compartas tu contraseña con nadie.</li>
-                          <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
-                          <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
-                          <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
-                          <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
-                          <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
-                      </ul>";
+                echo "<div style=\"color: green; padding: 10px; border: 1px solid green; border-radius: 5px; background-color: #e6ffe6; margin-bottom: 20px;\">
+                <strong>¡Éxito!</strong> Contraseña cambiada correctamente.
+            </div>
+            <span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
+            <ul>
+                <li>Utiliza una contraseña única para cada cuenta.</li>
+                <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
+                <li>No compartas tu contraseña con nadie.</li>
+                <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+            </ul>";
 
                 // Update table old passwords
                 $insert_sql = "INSERT INTO old_passwords (user_id, password, salt) VALUES (?, ?, ?)";
@@ -213,6 +221,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="generar_contrasenha_sugerida">Generar contraseña sugerida</label>
         <button type="button" id="generar_contrasenha_sugerida">Generar</button>
         <div id="contrasenha_sugerida"></div>
+        <label for="copiar_contrasenha_sugerida">Copiar contraseña sugerida</label>
+        <button type="button" id="copiar_contrasenha_sugerida">Copiar</button>
         <label for="new_password">Nueva contraseña:</label>
         <input type="password" id="new_password" name="new_password" required>
         <label for="confirm_password">Confirmar nueva contraseña:</label>
@@ -256,6 +266,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             divContrasenhaSugerida.textContent = `Contraseña sugerida: ${contrasenha}`;
             divContrasenhaSugerida.style.marginTop = "10px";
             divContrasenhaSugerida.style.fontWeight = "bold";
+        });
+
+        document.getElementById("copiar_contrasenha_sugerida").addEventListener("click", () => {
+            const contrasenhaSugerida = document.getElementById("contrasenha_sugerida").textContent;
+            if (contrasenhaSugerida) {
+                navigator.clipboard.writeText(contrasenhaSugerida.split(": ")[1]);
+                alert("Contraseña copiada al portapapeles");
+            }
         });
     </script>
 </body>
