@@ -243,29 +243,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             let tieneMinuscula = false;
             let tieneNumero = false;
             let tieneEspecial = false;
+            let caracteresEspeciales = 0;
 
-            while (!(tieneMayuscula && tieneMinuscula && tieneNumero && tieneEspecial)) {
-                contrasenha = "";
-                tieneMayuscula = false;
-                tieneMinuscula = false;
-                tieneNumero = false;
-                tieneEspecial = false;
+            // Se debe generar una contraseña de entre 16 y 255 caracteres con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos válidos
+            while (contrasenha.length < longitud || !tieneMayuscula || !tieneMinuscula || !tieneNumero || caracteresEspeciales < 3) {
+                const caracter = caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+                contrasenha += caracter;
 
-                for (let i = 0; i < longitud; i++) {
-                    const caracter = caracteres.charAt(Math.floor(Math.random() * caracteres.length));
-                    contrasenha += caracter;
-
-                    if (/[A-Z]/.test(caracter)) tieneMayuscula = true;
-                    if (/[a-z]/.test(caracter)) tieneMinuscula = true;
-                    if (/[0-9]/.test(caracter)) tieneNumero = true;
-                    if (/[!@#$%^&*()\-_=+\[\]{}|;:,.<>?]/.test(caracter)) tieneEspecial = true;
-                }
+                if (/[A-Z]/.test(caracter)) tieneMayuscula = true;
+                if (/[a-z]/.test(caracter)) tieneMinuscula = true;
+                if (/[0-9]/.test(caracter)) tieneNumero = true;
+                if (/[^a-zA-Z0-9]/.test(caracter)) caracteresEspeciales++;
             }
 
-            const divContrasenhaSugerida = document.getElementById("contrasenha_sugerida");
-            divContrasenhaSugerida.textContent = `Contraseña sugerida: ${contrasenha}`;
-            divContrasenhaSugerida.style.marginTop = "10px";
-            divContrasenhaSugerida.style.fontWeight = "bold";
+            document.getElementById("contrasenha_sugerida").innerHTML = "<strong>Contraseña sugerida: " + contrasenha + "</strong>";
         });
 
         document.getElementById("copiar_contrasenha_sugerida").addEventListener("click", () => {
