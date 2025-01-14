@@ -8,6 +8,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $descripcion = htmlspecialchars(preg_replace('/\s\s+/', ' ', trim($descripcion)), ENT_QUOTES, 'UTF-8');
     $tipo = limpiarInput($tipo);
 
+    // El tipo, si se proporciona, debe ser un string de un máximo de 50 caracteres
+    if (!empty($tipo) && strlen($tipo) > 50) {
+        $mensaje = '<span id="mensaje_error">El tipo no puede tener más de 50 caracteres</span>';
+        return;
+    }
+
     $sql_actualizacion = "UPDATE puestos_traducciones 
                           SET tipo = ?, 
                           descripcion = ? 

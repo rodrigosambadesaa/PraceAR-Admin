@@ -17,6 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_password_confirm = limpiarInput($_POST['confirm_password']);
     $nombre_usuario = $_SESSION['nombre_usuario'];
 
+    // La contraesña antigua, la nueva y la confirmación de la nueva contraseña deben ser strings de entre 16 y 255 caracteres y con una letra mayúscula, una minúscula, un número y al menos tres caracteres especiales válidos distintos
+    if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,255}$/', $old_password) || !preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,255}$/', $new_password) || !preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,255}$/', $new_password_confirm)) {
+        echo "<span style='color: red;'>Las contraseñas deben tener entre 16 y 255 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</span>";
+    }
+
     if ($new_password !== $new_password_confirm) {
         echo "<span style='color: red;'>Las contraseñas no coinciden.</span>";
         exit;
@@ -202,9 +207,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" id="formulario">
         <label for="nombre_usuario">Nombre de usuario:</label>
         <input disabled type="text" id="nombre_usuario" name="nombre_usuario"
-            value="<?= $_SESSION['nombre_usuario'] ?>">
+            value="<?= htmlspecialchars($_SESSION['nombre_usuario']) ?>">
         <label for="old_password">Contraseña actual:</label>
         <input type="password" id="old_password" name="old_password" required>
+        <label for="generar_contrasenha_sugerida">Generar contraseña sugerida</label>
+        <button type="button" id="generar_contrasenha_sugerida">Generar</button>
+        <div id="contrasenha_sugerida"></div>
         <label for="new_password">Nueva contraseña:</label>
         <input type="password" id="new_password" name="new_password" required>
         <label for="confirm_password">Confirmar nueva contraseña:</label>
@@ -212,8 +220,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit">Cambiar contraseña</button>
     </form>
 
-    <?= $err ?? '' ?>
-    <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
+    <?= htmlspecialchars($err ?? '') ?>
+    <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>change_password.js"></script>
+    <script>
+        document.getElementById("generar_contrasenha_sugerida").addEventListener("click", () => {
+            const caracteres = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
+            const longitudMinima = 16;
+            const longitudMaxima = 255;
+            const longitud = Math.floor(Math.random() * (longitudMaxima - longitudMinima + 1)) + longitudMinima;
+            let contrasenha = "";
+            let tieneMayuscula = false;
+            let tieneMinuscula = false;
+            let tieneNumero = false;
+            let tieneEspecial = false;
+
+            while (!(tieneMayuscula && tieneMinuscula && tieneNumero && tieneEspecial)) {
+                contrasenha = "";
+                tieneMayuscula = false;
+                tieneMinuscula = false;
+                tieneNumero = false;
+                tieneEspecial = false;
+
+                for (let i = 0; i < longitud; i++) {
+                    const caracter = caracteres.charAt(Math.floor(Math.random() * caracteres.length));
+                    contrasenha += caracter;
+
+                    if (/[A-Z]/.test(caracter)) tieneMayuscula = true;
+                    if (/[a-z]/.test(caracter)) tieneMinuscula = true;
+                    if (/[0-9]/.test(caracter)) tieneNumero = true;
+                    if (/[!@#$%^&*()\-_=+\[\]{}|;:,.<>?]/.test(caracter)) tieneEspecial = true;
+                }
+            }
+
+            const divContrasenhaSugerida = document.getElementById("contrasenha_sugerida");
+            divContrasenhaSugerida.textContent = `Contraseña sugerida: ${contrasenha}`;
+            divContrasenhaSugerida.style.marginTop = "10px";
+            divContrasenhaSugerida.style.fontWeight = "bold";
+        });
+    </script>
 </body>
 
 </html>
