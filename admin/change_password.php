@@ -273,6 +273,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (contrasenhaSugerida) {
                 navigator.clipboard.writeText(contrasenhaSugerida.split(": ")[1]);
                 alert("Contraseña copiada al portapapeles");
+            } else {
+                alert("Primero debes generar una contraseña sugerida.");
             }
         });
     </script>
