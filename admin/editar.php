@@ -51,24 +51,28 @@ require_once(CSS_ADMIN . 'editar_admin.php');
         $imagenPath = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
         if (file_exists($imagenPath)) {
             ?>
-            <div style="display: flex;gap: 2rem;">
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <label for="eliminar_imagen" style="margin-bottom: 0.5em; color: red;">Eliminar imagen</label>
-                    <input type="checkbox" id="eliminar_imagen" name="eliminar_imagen" value="1" style="margin-top: 0.5em;">
-                    <script>
-                        document.getElementById('eliminar_imagen').addEventListener('click', function () {
-                            document.getElementById('formulario').submit();
-                        });
-                    </script>
-                </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
                 <img src="<?= htmlspecialchars($imagenPath) ?>" alt="Imagen del puesto" class="zoomable"
                     style="object-fit: cover; height: 100px;">
+                <a href="#" id="eliminar_imagen_link" style="margin-top: 1em; color: red; text-decoration: none;">
+                    Eliminar imagen
+                </a>
             </div>
+            <script>
+                document.getElementById('eliminar_imagen_link').addEventListener('click', function (event) {
+                    event.preventDefault(); // Previene la acción predeterminada del enlace
+                    if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
+                        document.getElementById('eliminar_imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
+                        document.getElementById('formulario').submit(); // Envía el formulario
+                    }
+                });
+            </script>
+            <input type="checkbox" id="eliminar_imagen" name="eliminar_imagen" value="1" style="display: none;">
         <?php } else { ?>
             <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
         <?php } ?>
-
     </div>
+
     <div>
         <label for="contacto">Contacto</label>
         <input type="text" id="contacto" name="contacto" value="<?= htmlspecialchars($fila["contacto"]) ?>">
@@ -96,7 +100,8 @@ require_once(CSS_ADMIN . 'editar_admin.php');
                 if ($fila["id_nave"] == $fila_naves["id"]) {
                     ?>
                     <option value="<?= htmlspecialchars($fila_naves["id"]) ?>" selected>
-                        <?= htmlspecialchars($fila_naves["tipo"]) ?></option>
+                        <?= htmlspecialchars($fila_naves["tipo"]) ?>
+                    </option>
                 <?php } else { ?>
                     <option value="<?= htmlspecialchars($fila_naves["id"]) ?>"><?= htmlspecialchars($fila_naves["tipo"]) ?>
                     </option>
