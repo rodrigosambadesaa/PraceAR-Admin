@@ -17,9 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $new_password_confirm = limpiarInput($_POST['confirm_password']);
     $nombre_usuario = $_SESSION['nombre_usuario'];
 
-    // La contraesña antigua, la nueva y la confirmación de la nueva contraseña deben ser strings de entre 16 y 255 caracteres y con una letra mayúscula, una minúscula, un número y al menos tres caracteres especiales válidos distintos
-    if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,255}$/', $old_password) || !preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,255}$/', $new_password) || !preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,255}$/', $new_password_confirm)) {
-        echo "<span style='color: red;'>Las contraseñas deben tener entre 16 y 255 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</span>";
+    if (empty($old_password) || empty($new_password) || empty($new_password_confirm) || empty($nombre_usuario)) {
+        echo "<span style='color: red;'>Por favor, rellena todos los campos.</span>";
+        exit;
     }
 
     if ($new_password !== $new_password_confirm) {
