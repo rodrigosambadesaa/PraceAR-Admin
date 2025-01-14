@@ -6,12 +6,12 @@ require_once(CSS_ADMIN . 'editar_admin.php');
 
 <form id="formulario" action="#" method="post" enctype="multipart/form-data">
     <?php
-    $id = $_GET['id'];
+    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
     $conexion = new mysqli($servidor_bd, $usuario, $clave, $bd);
 
     if ($conexion->connect_error) {
-        die('Error en la conexión: ' . $conexion->connect_error);
+        die('Error en la conexión: ' . htmlspecialchars($conexion->connect_error));
     }
 
     $sql = "SELECT * FROM puestos WHERE id = ?";
@@ -28,28 +28,27 @@ require_once(CSS_ADMIN . 'editar_admin.php');
 
     $fila = $resultado->fetch_assoc();
     ?>
-    <h2 id="cabecera_tabla">Datos del puesto <?= $fila["id"] ?></h2>
+    <h2 id="cabecera_tabla">Datos del puesto <?= htmlspecialchars($fila["id"]) ?></h2>
     <div style="display:flex; align-items: center; gap: .5em;">
         <label for="activo">Activo</label>
         <?php
         $activo = $fila["activo"];
         ?>
-        <input type="checkbox" id="activo" name="activo" value="<?= $activo ?>" <?= $activo == 1 ? "checked" : "" ?>>
+        <input type="checkbox" id="activo" name="activo" value="1" <?= $activo == 1 ? "checked" : "" ?>>
     </div>
     <div>
         <label for="caseta">Caseta</label>
-        <input type="text" id="caseta" disabled value="<?= $fila["caseta"] ?>">
-        <input type="hidden" name="caseta" value="<?= $fila["caseta"] ?>">
+        <input type="text" id="caseta" disabled value="<?= htmlspecialchars($fila["caseta"]) ?>">
+        <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>">
     </div>
     <div>
         <label for="nombre">Nombre</label>
-        <input id="nombre" type="text" name="nombre" value="<?= $fila["nombre"] ?>">
+        <input id="nombre" type="text" name="nombre" value="<?= htmlspecialchars($fila["nombre"]) ?>">
     </div>
     <div>
-
         <label for="imagen">Imagen</label>
         <?php
-        $imagenPath = "assets/" . $fila["caseta"] . ".jpg";
+        $imagenPath = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
         if (file_exists($imagenPath)) {
             ?>
             <div style="display: flex;gap: 2rem;">
@@ -62,7 +61,7 @@ require_once(CSS_ADMIN . 'editar_admin.php');
                         });
                     </script>
                 </div>
-                <img src="<?= $imagenPath ?>" alt="Imagen del puesto" class="zoomable"
+                <img src="<?= htmlspecialchars($imagenPath) ?>" alt="Imagen del puesto" class="zoomable"
                     style="object-fit: cover; height: 100px;">
             </div>
         <?php } else { ?>
@@ -72,18 +71,18 @@ require_once(CSS_ADMIN . 'editar_admin.php');
     </div>
     <div>
         <label for="contacto">Contacto</label>
-        <input type="text" id="contacto" name="contacto" value="<?= $fila["contacto"] ?>">
+        <input type="text" id="contacto" name="contacto" value="<?= htmlspecialchars($fila["contacto"]) ?>">
     </div>
     <div>
         <label for="telefono">Teléfono</label>
-        <input type="text" id="telefono" name="telefono" value="<?= $fila["telefono"] ?>">
+        <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"]) ?>">
     </div>
     <div>
         <label for="tipo_unity">Tipo en Unity</label>
         <select name="tipo_unity" id="tipo_unity">
             <?php foreach (UNITY_TYPE as $key => $value) { ?>
                 <?php $selected = $key === $fila["tipo_unity"] ? "selected" : ""; ?>
-                <option value="<?= $key ?>" <?= $selected ?>><?= $value ?></option>
+                <option value="<?= htmlspecialchars($key) ?>" <?= $selected ?>><?= htmlspecialchars($value) ?></option>
             <?php } ?>
         </select>
     </div>
@@ -96,16 +95,18 @@ require_once(CSS_ADMIN . 'editar_admin.php');
             while ($fila_naves = $resultado_naves->fetch_assoc()) {
                 if ($fila["id_nave"] == $fila_naves["id"]) {
                     ?>
-                    <option value="<?= $fila_naves["id"] ?>" selected><?= $fila_naves["tipo"] ?></option>
+                    <option value="<?= htmlspecialchars($fila_naves["id"]) ?>" selected>
+                        <?= htmlspecialchars($fila_naves["tipo"]) ?></option>
                 <?php } else { ?>
-                    <option value="<?= $fila_naves["id"] ?>"><?= $fila_naves["tipo"] ?></option>
+                    <option value="<?= htmlspecialchars($fila_naves["id"]) ?>"><?= htmlspecialchars($fila_naves["tipo"]) ?>
+                    </option>
                 <?php }
             } ?>
         </select>
     </div>
     <div>
         <label for="caseta_padre">Caseta padre</label>
-        <input name="caseta_padre" type="text" id="caseta_padre" value="<?= $fila["caseta_padre"] ?>">
+        <input name="caseta_padre" type="text" id="caseta_padre" value="<?= htmlspecialchars($fila["caseta_padre"]) ?>">
     </div>
     <div id="div-botones">
         <input id="actualizar" type="submit" value="Actualizar">
@@ -116,7 +117,7 @@ require_once(CSS_ADMIN . 'editar_admin.php');
     <img id="zoomed-image" src="" alt="">
 </div>
 
-<div id="mensaje"><?= $mensaje ?></div>
+<div id="mensaje"><?= htmlspecialchars($mensaje) ?></div>
 
 <script>
     const zoomableImage = document.querySelector('.zoomable');
@@ -136,7 +137,7 @@ require_once(CSS_ADMIN . 'editar_admin.php');
 
 </script>
 
-<script type="module" src="<?= JS_ADMIN ?>editar_admin.js"></script>
+<script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>editar_admin.js"></script>
 
 </body>
 

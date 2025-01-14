@@ -10,6 +10,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $login = limpiarInput($_POST['login']);
     $password = limpiarInput($_POST['password']);
 
+    // El login debe ser un string
+    if (!is_string($login)) {
+        $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
+        exit;
+    }
+
+    // La contraseña debe ser un string de un mínimo de 16 caracteres y un máximo de 255, con una letra mayúscula, una minúscula, un número y al menos tres caracteres especiales válidos distintos
+    if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,255}$/', $password)) {
+        $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
+        exit;
+    }
+
     // Consulta para obtener los datos del usuario
     $sql = "SELECT * FROM usuarios WHERE login = ?";
     $stmt = $conexion->prepare($sql);
