@@ -1,9 +1,9 @@
 <?php
-require_once HELPERS . "clean-input.php";
-require_once HELPERS . "get-language.php";
-require_once HELPERS . "save-image.php";
-require_once HELPERS . "delete-image.php";
-require_once HELPERS . "verify-malicious-photo.php";
+require_once HELPERS . "clean_input.php";
+require_once HELPERS . "get_language.php";
+require_once HELPERS . "save_image.php";
+require_once HELPERS . "delete_image.php";
+require_once HELPERS . "verify_malicious_photo.php";
 
 $mensaje = '';
 

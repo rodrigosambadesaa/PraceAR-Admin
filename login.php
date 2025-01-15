@@ -1,5 +1,5 @@
 <?php
-require_once HELPERS . 'clean-input.php';
+require_once HELPERS . 'clean_input.php';
 
 $pepper_config = include 'pepper.php';
 $pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
@@ -55,8 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['login'] = 'logueado';
                 $_SESSION['nombre_usuario'] = $login;
 
-                header("Location: $protocolo/$servidor/$subdominio");
                 $err = '<span style="color: green;">Inicio de sesión correcto</span>';
+                header("Location: $protocolo/$servidor/$subdominio");
                 exit;
             } else {
                 $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
@@ -80,8 +80,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['login'] = 'logueado';
             $_SESSION['nombre_usuario'] = $login;
 
-            header("Location: $protocolo/$servidor/$subdominio");
             $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+            header("Location: $protocolo/$servidor/$subdominio");
             exit;
 
         } elseif (empty($salt) && !password_verify($password, $stored_password)) {
@@ -99,8 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['login'] = 'logueado';
                 $_SESSION['nombre_usuario'] = $login;
 
-                header("Location: $protocolo/$servidor/$subdominio");
                 $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+                header("Location: $protocolo/$servidor/$subdominio");
                 exit;
             } // Caso 2: Verificación con pepper vacío (migración)
             elseif (!empty($salt) && password_verify($password . $salt, $stored_password)) {
@@ -120,8 +120,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['login'] = 'logueado';
                 $_SESSION['nombre_usuario'] = $login;
 
-                header("Location: $protocolo/$servidor/$subdominio");
                 $err = '<p style="color: green;">Inicio de sesión correcto</p>';
+                header("Location: $protocolo/$servidor/$subdominio");
                 exit;
             } else {
                 $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
@@ -142,6 +142,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Formulario de inicio de sesión</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
+
+    <!-- Iconos para dispositivos Apple -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
+
+    <!-- Icono para Android (PWA) -->
+    <link rel="icon" sizes="192x192" href="icon-192x192.png">
+
+    <!-- Manifesto Web (PWA) -->
+    <link rel="manifest" href="/manifest.json">
 </head>
 
 <body class="container" style="diplay: grid; place-content: center;min-height: 100vh;max-width: 600px;">
