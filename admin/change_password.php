@@ -36,9 +36,9 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_id = $_SESSION['id'];
-        $old_password = limpiarInput($_POST['old_password']);
-        $new_password = limpiarInput($_POST['new_password']);
-        $new_password_confirm = limpiarInput($_POST['confirm_password']);
+        $old_password = limpiar_input($_POST['old_password']);
+        $new_password = limpiar_input($_POST['new_password']);
+        $new_password_confirm = limpiar_input($_POST['confirm_password']);
         $nombre_usuario = $_SESSION['nombre_usuario'];
 
         if (empty($old_password) || empty($new_password) || empty($new_password_confirm) || empty($nombre_usuario)) {
@@ -51,17 +51,17 @@
             exit;
         }
 
-        if (!esContrasenhaFuerte($new_password)) {
+        if (!es_contrasenha_fuerte($new_password)) {
             echo "<span style='color: red;'>La nueva contraseña no cumple con los requisitos mínimos de seguridad. La contraseña debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</span>";
             exit;
         }
 
-        if (haSidoFiltradaEnBrechasDeSeguridad($new_password)) {
+        if (ha_sido_filtrada_en_brechas_de_seguridad($new_password)) {
             echo "<span style='color: red;'>La nueva contraseña ha sido filtrada en brechas de seguridad. Por favor, elige una contraseña diferente.</span>";
             exit;
         }
 
-        if (contrasenhaSimilarAUsuario($new_password, $nombre_usuario)) {
+        if (contrasenha_similar_a_usuario($new_password, $nombre_usuario)) {
             echo "<span style='color: red;'>La nueva contraseña es similar a tu nombre de usuario. Por favor, elige una contraseña diferente.</span>";
             exit;
         }

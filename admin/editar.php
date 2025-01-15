@@ -35,6 +35,12 @@
         <?php
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
+        // El ID debe ser un número natural entre 1 y 370
+        if (!$id || $id < 1 || $id > 370) {
+            echo "<h2>Error al obtener el ID del puesto</h2>";
+            exit;
+        }
+
         $conexion = new mysqli($servidor_bd, $usuario, $clave, $bd);
 
         if ($conexion->connect_error) {
@@ -75,11 +81,11 @@
         <div>
             <label for="imagen">Imagen</label>
             <?php
-            $imagenPath = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
-            if (file_exists($imagenPath)) {
+            $ruta_de_imagen = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
+            if (file_exists($ruta_de_imagen)) {
                 ?>
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <img src="<?= htmlspecialchars($imagenPath) ?>" alt="Imagen del puesto" class="zoomable"
+                    <img src="<?= htmlspecialchars($ruta_de_imagen) ?>" alt="Imagen del puesto" class="zoomable"
                         style="object-fit: cover; height: 100px;">
                     <a href="#" id="eliminar_imagen_link" style="margin-top: 1em; color: red; text-decoration: none;">
                         Eliminar imagen

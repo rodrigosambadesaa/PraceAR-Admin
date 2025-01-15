@@ -7,7 +7,7 @@ function checkVirusTotal($file)
 {
     // Verifica con la API de VirusTotal si el archivo es malicioso
     $total = 0;
-    $apiKey = VIRUSTOTAL_API_KEY;
+    $api_key = VIRUSTOTAL_API_KEY;
     $url = 'https://www.virustotal.com/vtapi/v2/file/scan';
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
@@ -16,7 +16,7 @@ function checkVirusTotal($file)
     curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
     curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:');
     curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, 'apikey=' . $apiKey . '&file=' . $file);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, 'apikey=' . $api_key . '&file=' . $file);
     $result = curl_exec($ch);
 
     $positives = json_decode($result, true);

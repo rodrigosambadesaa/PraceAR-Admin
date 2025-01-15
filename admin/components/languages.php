@@ -23,7 +23,7 @@
 <nav style="position: fixed; right: 1rem;top: 1rem">
     <ul class="flags">
         <?php
-        foreach (LANGUAGES as $keyLanguage => $textLanguage):
+        foreach (LANGUAGES as $key_language => $text_language):
             ?>
             <li>
                 <?php
@@ -32,8 +32,9 @@
                 $codigo_idioma = isset($_REQUEST['codigo_idioma']) ? "&codigo_idioma=" . $_REQUEST['codigo_idioma'] : '';
                 $id = isset($_REQUEST['id']) ? "&id=" . $_REQUEST['id'] : '';
                 ?>
-                <a href="<?= "?lang=$keyLanguage$caseta$page$id$codigo_idioma" ?>">
-                    <img width="15" height="15" src="<?= FLAG_IMAGES_URL . "$keyLanguage.png" ?>" alt="<?= $textLanguage ?>">
+                <a href="<?= "?lang=$key_language$caseta$page$id$codigo_idioma" ?>">
+                    <img width="15" height="15" src="<?= FLAG_IMAGES_URL . "$key_language.png" ?>"
+                        alt="<?= $text_language ?>">
                 </a>
             </li>
             <?php

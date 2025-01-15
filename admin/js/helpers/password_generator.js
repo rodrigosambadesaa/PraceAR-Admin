@@ -1,7 +1,7 @@
-function generatePassword() {
+function generateSecurePassword() {
 
     // Random length between 16 and 255
-    const length = Math.floor(Math.random() * 240) + 16;
+    const passwordLength = Math.floor(Math.random() * 240) + 16;
 
     const lowerCase = 'abcdefghijklmnopqrstuvwxyz';
     const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -27,7 +27,7 @@ function generatePassword() {
     }
 
     const allChars = lowerCase + upperCase + numbers + specialChars;
-    while (password.length < length) {
+    while (password.length < passwordLength) {
         password += getRandomChar(allChars);
     }
 
@@ -35,10 +35,10 @@ function generatePassword() {
     if (password.match(/[a-z]/) && password.match(/[A-Z]/) && password.match(/[0-9]/) && password.match(/[!@#$%^&*()-_=+[]{}|;:,.<>?]/)) {
         return password;
     } else {
-        return generatePassword();
+        return generateSecurePassword();
     }
 }
 
-console.log(generatePassword(16)); // Ejemplo de uso
+console.log(generateSecurePassword(16)); // Ejemplo de uso
 
-export { generatePassword }; // Exportar para poder usar la función en otros archivos
+export { generateSecurePassword as generatePassword }; // Exportar para poder usar la función en otros archivos

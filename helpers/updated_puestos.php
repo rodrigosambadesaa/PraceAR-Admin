@@ -29,16 +29,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return;
         }
 
-        $isImagen = saveImage($_FILES['imagen'], $caseta);
-        if (!$isImagen["success"]) {
+        $es_imagen = save_image($_FILES['imagen'], $caseta);
+        if (!$es_imagen["success"]) {
             $conexion->close();
-            $mensaje = $isImagen["message"];
+            $mensaje = $es_imagen["message"];
             return;
         }
     }
 
     if (isset($eliminar_imagen) && $eliminar_imagen == 1) {
-        $isImagen = deleteImage($caseta);
+        $es_imagen = delete_image($caseta);
     }
 
     $activo = isset($activo) ? 1 : 0;
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
-    $nombre = limpiarInput($nombre);
+    $nombre = limpiar_input($nombre);
 
     if (!empty($nombre) && strlen($nombre) > 50) {
         $mensaje = '<span id="mensaje_error">El nombre no puede tener más de 50 caracteres</span>';
@@ -58,14 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // $imagen = limpiarInput($imagen);
 
-    $contacto = limpiarInput($contacto);
+    $contacto = limpiar_input($contacto);
 
     if (!empty($contacto) && strlen($contacto) > 250) {
         $mensaje = '<span id="mensaje_error">El contacto no puede tener más de 250 caracteres</span>';
         return;
     }
 
-    $telefono = limpiarInput($telefono);
+    $telefono = limpiar_input($telefono);
 
     if (!empty($telefono) && strlen($telefono) > 15) {
         $mensaje = '<span id="mensaje_error">El teléfono no puede tener más de 15 caracteres</span>';
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensaje = "<span id='mensaje_correcto'>Puesto actualizado correctamente</span>";
         $conexion->close();
 
-        header("Location: $protocolo/$servidor/$subdominio/?lang=" . getLanguage() . "#row_" . $_GET['id']);
+        header("Location: $protocolo/$servidor/$subdominio/?lang=" . get_language() . "#row_" . $_GET['id']);
     } else {
         $mensaje = '<span id="mensaje_error">Error al actualizar el puesto</span>';
     }

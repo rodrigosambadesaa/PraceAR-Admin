@@ -16,12 +16,12 @@
 
     <?php
 
-    $custom_lang = getLanguage();
+    $custom_lang = get_language();
 
     $results_per_page = 50;
     $current_page = (isset($_GET['page']) && is_numeric($_GET['page'])) ? (int) $_GET['page'] : 1;
     $start_from = ($current_page - 1) * $results_per_page;
-    $caseta = isset($_GET['caseta']) ? limpiarInput($_GET['caseta']) : '';
+    $caseta = isset($_GET['caseta']) ? limpiar_input($_GET['caseta']) : '';
 
     $sql_total = "SELECT COUNT(p.id) as total FROM puestos p 
               RIGHT JOIN puestos_traducciones pt ON p.id = pt.puesto_id
@@ -80,7 +80,7 @@
                         <form id="formularioBusqueda" action="#" method="GET">
                             <input value="<?= htmlspecialchars($_GET['caseta'] ?? "") ?>" type="text" id="inputBusqueda"
                                 placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta">
-                            <input type="hidden" name="lang" value="<?= htmlspecialchars(getLanguage()) ?>">
+                            <input type="hidden" name="lang" value="<?= htmlspecialchars(get_language()) ?>">
                             <input type="submit" value="Buscar">
                             <input id="inputReseteo" type="reset" value="Reiniciar">
                         </form>
@@ -88,31 +88,31 @@
                     <!-- Paginación superior -->
                     <div class="pagination">
                         <?php if ($current_page > 1) {
-                            $firstPage = 1;
+                            $first_page = 1;
                             ?>
                             <a
-                                href="?page=<?= $firstPage ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">Primera
+                                href="?page=<?= $first_page ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Primera
                                 &laquo;</a>
                             <a
-                                href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">&laquo;
+                                href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">&laquo;
                                 Anterior</a>
                         <?php } ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
                             <a class="<?= $i == $current_page ? 'active' : '' ?>"
-                                href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">
+                                href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">
                                 <?= $i ?>
                             </a>
                         <?php } ?>
 
                         <?php if ($current_page < $total_pages) {
-                            $lastPage = $total_pages;
+                            $last_page = $total_pages;
                             ?>
                             <a
-                                href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">Siguiente
+                                href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Siguiente
                                 &raquo;</a>
                             <a
-                                href="?page=<?= $lastPage ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">Última
+                                href="?page=<?= $last_page ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Última
                                 &raquo;</a>
                         <?php } ?>
                     </div>
@@ -152,10 +152,10 @@
                             </td>
                             <td data-label="Imagen">
                                 <?php
-                                $imagenPath = "assets/" . htmlspecialchars($row["caseta"]) . ".jpg";
-                                if (file_exists($imagenPath)) {
+                                $ruta_de_imagen = "assets/" . htmlspecialchars($row["caseta"]) . ".jpg";
+                                if (file_exists($ruta_de_imagen)) {
                                     ?>
-                                    <img loading="lazy" class="zoomable" src="<?= htmlspecialchars($imagenPath) ?>"
+                                    <img loading="lazy" class="zoomable" src="<?= htmlspecialchars($ruta_de_imagen) ?>"
                                         alt="Imagen del puesto">
                                 <?php } ?>
                             </td>
@@ -169,15 +169,15 @@
                             <td data-label="" id="celdaEspecialDato"></td>
                             <td data-label="Idioma de la traducción" class="different-background-color">
                                 <a
-                                    href="<?= "?page=language&codigo_idioma=" . htmlspecialchars(getLanguage()) . "&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>">
+                                    href="<?= "?page=language&codigo_idioma=" . htmlspecialchars(get_language()) . "&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>">
                                     <img id="imagenBandera" loading="lazy" width="15" height="15"
-                                        src="<?= htmlspecialchars(FLAG_IMAGES_URL . (getLanguage()) . ".png") ?>"
-                                        alt="<?= htmlspecialchars(getLanguage()) ?>">
+                                        src="<?= htmlspecialchars(FLAG_IMAGES_URL . (get_language()) . ".png") ?>"
+                                        alt="<?= htmlspecialchars(get_language()) ?>">
                                 </a>
                             </td>
                             <td data-label="Tipo" class="different-background-color"><?= htmlspecialchars($row['tipo']) ?></td>
                             <td data-label="Descripción" class="different-background-color">
-                                <?= htmlspecialchars($row['descripcion'] ? htmlspecialchars(truncateText($row['descripcion'], 30)) : '') ?>
+                                <?= htmlspecialchars($row['descripcion'] ? htmlspecialchars(truncar_texto($row['descripcion'], 30)) : '') ?>
                             </td>
                         </tr>
                         <?php
@@ -196,31 +196,31 @@
             <!-- Paginación inferior -->
             <div class="pagination">
                 <?php if ($current_page > 1) {
-                    $firstPage = 1;
+                    $first_page = 1;
                     ?>
                     <a
-                        href="?page=<?= $firstPage ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">Primera
+                        href="?page=<?= $first_page ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Primera
                         &laquo;</a>
                     <a
-                        href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">&laquo;
+                        href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">&laquo;
                         Anterior</a>
                 <?php } ?>
 
                 <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
                     <a class="<?= $i == $current_page ? 'active' : '' ?>"
-                        href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">
+                        href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">
                         <?= $i ?>
                     </a>
                 <?php } ?>
 
                 <?php if ($current_page < $total_pages) {
-                    $lastPage = $total_pages;
+                    $last_page = $total_pages;
                     ?>
                     <a
-                        href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">Siguiente
+                        href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Siguiente
                         &raquo;</a>
                     <a
-                        href="?page=<?= $lastPage ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(getLanguage()) ?>">Última
+                        href="?page=<?= $last_page ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Última
                         &raquo;</a>
                 <?php } ?>
             </div>
