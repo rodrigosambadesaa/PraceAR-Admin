@@ -17,7 +17,7 @@
 
     #textoCabeceraTabla {
         font-weight: bold;
-        margin-bottom: 100px;
+        /* margin-bottom: 100px; */
     }
 
     /* Estilos de tablas */

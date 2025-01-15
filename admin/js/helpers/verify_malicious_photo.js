@@ -1,7 +1,7 @@
+import { apiKey } from './api_key.js';
+
 async function verifyMaliciousPhoto(photo) {
     // Verificar mediante llamada a la API de VirusTotal si la foto es maliciosa
-
-    const apiKey = '1d7d62b2b3dc21f9d8114da33fc9d32c3d82bca763096022777f16f82d1f9117';
 
     // Crear un objeto FormData con la foto
     const formData = new FormData();

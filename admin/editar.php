@@ -1,148 +1,176 @@
-<?php
-require_once(HELPERS . "updated_puestos.php");
-require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
-require_once(CSS_ADMIN . 'editar_admin.php');
-?>
+<!DOCTYPE html>
+<html lang="es">
 
-<form id="formulario" action="#" method="post" enctype="multipart/form-data">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Datos Generales de Puesto - Página de administración</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel='icon' href='./img/favicon.png' type='image/png'>
+
+    <!-- Iconos para dispositivos Apple -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
+
+    <!-- Icono para Android (PWA) -->
+    <link rel="icon" sizes="192x192" href="icon-192x192.png">
+
+    <!-- Manifesto Web (PWA) -->
+    <link rel="manifest" href="/manifest.json">
+
     <?php
-    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+    require_once(CSS_ADMIN . 'editar_admin.php'); ?>
 
-    $conexion = new mysqli($servidor_bd, $usuario, $clave, $bd);
+</head>
 
-    if ($conexion->connect_error) {
-        die('Error en la conexión: ' . htmlspecialchars($conexion->connect_error));
-    }
+<body>
 
-    $sql = "SELECT * FROM puestos WHERE id = ?";
-
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-
-    if ($resultado->num_rows <= 0) {
-        echo "<h2>Error al obtener los datos del puesto</h2>";
-        exit;
-    }
-
-    $fila = $resultado->fetch_assoc();
+    <?php
+    require_once(HELPERS . "updated_puestos.php");
+    require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
     ?>
-    <h2 id="cabecera_tabla">Datos del puesto <?= htmlspecialchars($fila["id"]) ?></h2>
-    <div style="display:flex; align-items: center; gap: .5em;">
-        <label for="activo">Activo</label>
+
+    <form id="formulario" action="#" method="post" enctype="multipart/form-data">
         <?php
-        $activo = $fila["activo"];
+        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+        $conexion = new mysqli($servidor_bd, $usuario, $clave, $bd);
+
+        if ($conexion->connect_error) {
+            die('Error en la conexión: ' . htmlspecialchars($conexion->connect_error));
+        }
+
+        $sql = "SELECT * FROM puestos WHERE id = ?";
+
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+
+        if ($resultado->num_rows <= 0) {
+            echo "<h2>Error al obtener los datos del puesto</h2>";
+            exit;
+        }
+
+        $fila = $resultado->fetch_assoc();
         ?>
-        <input type="checkbox" id="activo" name="activo" value="1" <?= $activo == 1 ? "checked" : "" ?>>
-    </div>
-    <div>
-        <label for="caseta">Caseta</label>
-        <input type="text" id="caseta" disabled value="<?= htmlspecialchars($fila["caseta"]) ?>">
-        <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>">
-    </div>
-    <div>
-        <label for="nombre">Nombre</label>
-        <input id="nombre" type="text" name="nombre" value="<?= htmlspecialchars($fila["nombre"]) ?>">
-    </div>
-    <div>
-        <label for="imagen">Imagen</label>
-        <?php
-        $imagenPath = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
-        if (file_exists($imagenPath)) {
-            ?>
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <img src="<?= htmlspecialchars($imagenPath) ?>" alt="Imagen del puesto" class="zoomable"
-                    style="object-fit: cover; height: 100px;">
-                <a href="#" id="eliminar_imagen_link" style="margin-top: 1em; color: red; text-decoration: none;">
-                    Eliminar imagen
-                </a>
-            </div>
-            <script>
-                document.getElementById('eliminar_imagen_link').addEventListener('click', function (event) {
-                    event.preventDefault(); // Previene la acción predeterminada del enlace
-                    if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
-                        document.getElementById('eliminar_imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
-                        document.getElementById('formulario').submit(); // Envía el formulario
-                    }
-                });
-            </script>
-            <input type="checkbox" id="eliminar_imagen" name="eliminar_imagen" value="1" style="display: none;">
-        <?php } else { ?>
-            <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
-        <?php } ?>
-    </div>
-
-    <div>
-        <label for="contacto">Contacto</label>
-        <input type="text" id="contacto" name="contacto" value="<?= htmlspecialchars($fila["contacto"]) ?>">
-    </div>
-    <div>
-        <label for="telefono">Teléfono</label>
-        <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"]) ?>">
-    </div>
-    <div>
-        <label for="tipo_unity">Tipo en Unity</label>
-        <select name="tipo_unity" id="tipo_unity">
-            <?php foreach (UNITY_TYPE as $key => $value) { ?>
-                <?php $selected = $key === $fila["tipo_unity"] ? "selected" : ""; ?>
-                <option value="<?= htmlspecialchars($key) ?>" <?= $selected ?>><?= htmlspecialchars($value) ?></option>
-            <?php } ?>
-        </select>
-    </div>
-    <div>
-        <label for="id_nave">ID Nave</label>
-        <select id="id_nave" name="id_nave">
+        <h2 id="cabecera_tabla" style="text-align: center;">Datos del puesto <?= htmlspecialchars($fila["id"]) ?></h2>
+        <div style="display:flex; align-items: center; gap: .5em;">
+            <label for="activo">Activo</label>
             <?php
-            $sql_naves = "SELECT * FROM naves";
-            $resultado_naves = $conexion->query($sql_naves);
-            while ($fila_naves = $resultado_naves->fetch_assoc()) {
-                if ($fila["id_nave"] == $fila_naves["id"]) {
-                    ?>
-                    <option value="<?= htmlspecialchars($fila_naves["id"]) ?>" selected>
-                        <?= htmlspecialchars($fila_naves["tipo"]) ?>
-                    </option>
-                <?php } else { ?>
-                    <option value="<?= htmlspecialchars($fila_naves["id"]) ?>"><?= htmlspecialchars($fila_naves["tipo"]) ?>
-                    </option>
-                <?php }
-            } ?>
-        </select>
+            $activo = $fila["activo"];
+            ?>
+            <input type="checkbox" id="activo" name="activo" value="1" <?= $activo == 1 ? "checked" : "" ?>>
+        </div>
+        <div>
+            <label for="caseta">Caseta</label>
+            <input type="text" id="caseta" disabled value="<?= htmlspecialchars($fila["caseta"]) ?>">
+            <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>">
+        </div>
+        <div>
+            <label for="nombre">Nombre</label>
+            <input id="nombre" type="text" name="nombre" value="<?= htmlspecialchars($fila["nombre"]) ?>">
+        </div>
+        <div>
+            <label for="imagen">Imagen</label>
+            <?php
+            $imagenPath = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
+            if (file_exists($imagenPath)) {
+                ?>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <img src="<?= htmlspecialchars($imagenPath) ?>" alt="Imagen del puesto" class="zoomable"
+                        style="object-fit: cover; height: 100px;">
+                    <a href="#" id="eliminar_imagen_link" style="margin-top: 1em; color: red; text-decoration: none;">
+                        Eliminar imagen
+                    </a>
+                </div>
+                <script>
+                    document.getElementById('eliminar_imagen_link').addEventListener('click', function (event) {
+                        event.preventDefault(); // Previene la acción predeterminada del enlace
+                        if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
+                            document.getElementById('eliminar_imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
+                            document.getElementById('formulario').submit(); // Envía el formulario
+                        }
+                    });
+                </script>
+                <input type="checkbox" id="eliminar_imagen" name="eliminar_imagen" value="1" style="display: none;">
+            <?php } else { ?>
+                <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
+            <?php } ?>
+        </div>
+
+        <div>
+            <label for="contacto">Contacto</label>
+            <input type="text" id="contacto" name="contacto" value="<?= htmlspecialchars($fila["contacto"]) ?>">
+        </div>
+        <div>
+            <label for="telefono">Teléfono</label>
+            <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"]) ?>">
+        </div>
+        <div>
+            <label for="tipo_unity">Tipo en Unity</label>
+            <select name="tipo_unity" id="tipo_unity">
+                <?php foreach (UNITY_TYPE as $key => $value) { ?>
+                    <?php $selected = $key === $fila["tipo_unity"] ? "selected" : ""; ?>
+                    <option value="<?= htmlspecialchars($key) ?>" <?= $selected ?>><?= htmlspecialchars($value) ?></option>
+                <?php } ?>
+            </select>
+        </div>
+        <div>
+            <label for="id_nave">ID Nave</label>
+            <select id="id_nave" name="id_nave">
+                <?php
+                $sql_naves = "SELECT * FROM naves";
+                $resultado_naves = $conexion->query($sql_naves);
+                while ($fila_naves = $resultado_naves->fetch_assoc()) {
+                    if ($fila["id_nave"] == $fila_naves["id"]) {
+                        ?>
+                        <option value="<?= htmlspecialchars($fila_naves["id"]) ?>" selected>
+                            <?= htmlspecialchars($fila_naves["tipo"]) ?>
+                        </option>
+                    <?php } else { ?>
+                        <option value="<?= htmlspecialchars($fila_naves["id"]) ?>"><?= htmlspecialchars($fila_naves["tipo"]) ?>
+                        </option>
+                    <?php }
+                } ?>
+            </select>
+        </div>
+        <div>
+            <label for="caseta_padre">Caseta padre</label>
+            <input name="caseta_padre" type="text" id="caseta_padre"
+                value="<?= htmlspecialchars($fila["caseta_padre"]) ?>">
+        </div>
+        <div id="div-botones">
+            <input id="actualizar" type="submit" value="Actualizar">
+        </div>
+    </form>
+
+    <div id="zoomed-image-container" class="zoomed-container">
+        <img id="zoomed-image" src="" alt="">
     </div>
-    <div>
-        <label for="caseta_padre">Caseta padre</label>
-        <input name="caseta_padre" type="text" id="caseta_padre" value="<?= htmlspecialchars($fila["caseta_padre"]) ?>">
-    </div>
-    <div id="div-botones">
-        <input id="actualizar" type="submit" value="Actualizar">
-    </div>
-</form>
 
-<div id="zoomed-image-container" class="zoomed-container">
-    <img id="zoomed-image" src="" alt="">
-</div>
+    <div id="mensaje"><?= htmlspecialchars($mensaje) ?></div>
 
-<div id="mensaje"><?= htmlspecialchars($mensaje) ?></div>
+    <script>
+        const zoomableImage = document.querySelector('.zoomable');
+        const zoomedContainer = document.getElementById('zoomed-image-container');
+        const zoomedImage = document.getElementById('zoomed-image');
 
-<script>
-    const zoomableImage = document.querySelector('.zoomable');
-    const zoomedContainer = document.getElementById('zoomed-image-container');
-    const zoomedImage = document.getElementById('zoomed-image');
+        if (zoomableImage) {
+            zoomableImage.addEventListener('click', function () {
+                zoomedImage.src = this.src;
+                zoomedContainer.classList.add('show');
+            });
+        }
 
-    if (zoomableImage) {
-        zoomableImage.addEventListener('click', function () {
-            zoomedImage.src = this.src;
-            zoomedContainer.classList.add('show');
+        zoomedContainer.addEventListener('click', function () {
+            zoomedContainer.classList.remove('show');
         });
-    }
 
-    zoomedContainer.addEventListener('click', function () {
-        zoomedContainer.classList.remove('show');
-    });
+    </script>
 
-</script>
-
-<script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>editar_admin.js"></script>
+    <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>editar_admin.js"></script>
 
 </body>
 
