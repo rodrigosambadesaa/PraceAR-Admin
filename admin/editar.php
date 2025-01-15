@@ -61,7 +61,7 @@
             <?php
             $activo = $fila["activo"];
             ?>
-            <input type="checkbox" id="activo" name="activo" value="1" <?= $activo == 1 ? "checked" : "" ?>>
+            <input type="checkbox" id="activo" name="activo" value="<?= $activo ?>" <?= $activo == 1 ? "checked" : "" ?>>
         </div>
         <div>
             <label for="caseta">Caseta</label>
