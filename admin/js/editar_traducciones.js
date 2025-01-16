@@ -1,5 +1,4 @@
 import { limpiarTextarea } from '../../js/helpers/limpiar_input.js';
-import { limpiarInput } from '../js/helpers/limpiar_input.js';
 
 const formulario = document.getElementById('formulario');
 
@@ -7,9 +6,8 @@ let errorExist = false;
 let errorMessages = '';
 
 formulario.addEventListener('submit', (e) => {
-    e.preventDefault();
+    e.preventDefault();  // Evitar el envío del formulario de forma predeterminada
 
-    let tipo = limpiarInput(document.getElementById('tipo').value);
     let descripcion = limpiarTextarea(document.getElementById('descripcion').value);
 
     // La descripción, si se ha introducido, debe tener un máximo de 450 caracteres
@@ -28,6 +26,6 @@ formulario.addEventListener('submit', (e) => {
         return;
     }
 
-    // Enviar formulario
-    formulario.submit();
+    // Si no hay errores, enviar el formulario
+    formulario.submit();  // Enviar el formulario manualmente
 });

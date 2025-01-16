@@ -1,4 +1,4 @@
-import { API_KEY } from './api_key.js';
+import API_KEY from './api_key.js';
 
 async function verifyMaliciousPhoto(photo) {
     // Verificar mediante llamada a la API de VirusTotal si la foto es maliciosa

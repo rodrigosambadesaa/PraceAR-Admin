@@ -1,17 +1,17 @@
 import { limpiarInput } from "../../js/helpers/limpiar_input.js";
 import { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario } from "../../js/helpers/verify_strong_password.js";
 
-const formulario = document.getElementById('formulario');
+const formulario = document.getElementById('formulario-cambio-contrasena');
 let errorExist = false;
 let errorMessages = '';
 
 formulario.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    let usuario = document.getElementById('nombre-usuario').value;
-    let password = document.getElementById('old-password').value;
-    let newPassword = document.getElementById('new-password').value;
-    let newPasswordConfirmation = document.getElementById('confirm-password').value;
+    let usuario = document.getElementById('nombre-usuario-input').value;
+    let password = document.getElementById('contrasena-actual-input').value;
+    let newPassword = document.getElementById('nueva-contrasena-input').value;
+    let newPasswordConfirmation = document.getElementById('confirmar-nueva-contrasena-input').value;
 
     // Limpiar inputs
     usuario = limpiarInput(usuario);

@@ -2,7 +2,7 @@ import { limpiarInput } from "../../js/helpers/limpiar_input.js";
 import { UNITY_TYPE } from "../../js/constants.js";
 import { verifyMaliciousPhoto } from "./helpers/verify_malicious_photo.js";
 
-const formulario = document.getElementById('formulario');
+const formulario = document.getElementById('formulario-editar');
 let errorExist = false;
 let errorMessages = '';
 
@@ -11,8 +11,8 @@ formulario.addEventListener('submit', (e) => {
 
     // Campos obligatorios
     let caseta = document.getElementById('caseta').value;
-    let tipoUnity = document.getElementById('tipo_unity').value;
-    let idNave = document.getElementById('id_nave').value;
+    let tipoUnity = document.getElementById('tipo-unity').value;
+    let idNave = document.getElementById('id-nave').value;
 
     // Limpiar inputs
     caseta = limpiarInput(caseta);
@@ -63,10 +63,10 @@ formulario.addEventListener('submit', (e) => {
     // Campos opcionales
     let nombre = document.getElementById('nombre').value;
     // Si existe el campo eliminar_imagen, se recoge su valor
-    let eliminar_imagen = document.getElementById('eliminar_imagen') ? document.getElementById('eliminar_imagen').value : '';
+    let eliminar_imagen = document.getElementById('eliminar-imagen') ? document.getElementById('eliminar-imagen').value : '';
     let contacto = document.getElementById('contacto').value;
     let telefono = document.getElementById('telefono').value;
-    let caseta_padre = document.getElementById('caseta_padre').value;
+    let caseta_padre = document.getElementById('caseta-padre').value;
     // Verificar si existe el campo <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg"> y, en caso de que se haya subido una foto, recogerla
     // let foto = document.getElementById('imagen') ? document.getElementById('imagen').files[0] : '';
 
@@ -107,6 +107,17 @@ formulario.addEventListener('submit', (e) => {
             return;
         }
     }*/
+
+    // Verificar si se ha subido una foto y, en caso de que se haya subido, si es maliciosa
+    const foto = document.getElementById('imagen') ? document.getElementById('imagen').files[0] : '';
+    if (foto !== '') {
+        verifyMaliciousPhoto(foto).then(esMaliciosa => {
+            if (esMaliciosa) {
+                alert('La foto es maliciosa');
+                return;
+            }
+        });
+    }
 
     // Si hay errores, no enviar formulario y mostrar mensajes de error creando un div con los mensajes
     if (errorExist) {
