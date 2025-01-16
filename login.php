@@ -167,7 +167,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="password" name="password" id="password" required>
         </div>
         <div id="form-group">
-            <button type="submit">Iniciar sesión</button>
+            <input type="submit" value="Iniciar sesión">
         </div>
     </form>
     <?= $err ?>

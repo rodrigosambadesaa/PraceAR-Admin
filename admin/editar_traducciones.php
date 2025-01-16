@@ -60,15 +60,15 @@
     </h2>
     <form class="pure-form" action="#" method="POST" id="formulario">
         <label for="tipo">Tipo</label>
-        <input type="text" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>">
+        <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>">
         <label for="descripcion">Descripción</label>
         <textarea name="descripcion" id="descripcion" cols="30" rows="10"
             maxlength="450"><?= htmlspecialchars($data['descripcion'] ?? "") ?></textarea>
         <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars($data['id'] ?? "") ?>">
-        <input type="submit" name="submit" value="Actualizar">
+        <input type="submit" value="Actualizar">
     </form>
     <?= htmlspecialchars($mensaje ?? "") ?>
-    <script src="./js/editar_traducciones.js"></script>
+    <script type="module" src="<?= JS_ADMIN . 'editar_traducciones.js' ?>"></script>
 </body>
 
 </html>

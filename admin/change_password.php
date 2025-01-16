@@ -243,7 +243,7 @@
         <input type="password" id="nueva-contrasena-input" name="new_password" required>
         <label for="confirmar-nueva-contrasena-input">Confirmar nueva contraseña:</label>
         <input type="password" id="confirmar-nueva-contrasena-input" name="confirm_password" required>
-        <button type="submit">Cambiar contraseña</button>
+        <input type="submit" value="Cambiar contraseña">
     </form>
 
 
