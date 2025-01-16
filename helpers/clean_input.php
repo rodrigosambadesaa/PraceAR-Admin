@@ -1,5 +1,5 @@
 <?php
-function limpiarInput($input)
+function limpiar_input($input)
 {
   // Eliminar espacios innecesarios al inicio y final del input
   $input = trim($input);

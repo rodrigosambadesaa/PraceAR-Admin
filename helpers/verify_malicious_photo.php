@@ -3,7 +3,7 @@
 // require_once('constants.php');
 require_once(VIRUSTOTAL_API_KEY_FILE);
 
-function checkVirusTotal($file)
+function check_virus_total($file)
 {
     // Verifica con la API de VirusTotal si el archivo es malicioso
     $total = 0;

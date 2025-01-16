@@ -36,9 +36,9 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user_id = $_SESSION['id'];
-        $old_password = limpiarInput($_POST['old_password']);
-        $new_password = limpiarInput($_POST['new_password']);
-        $new_password_confirm = limpiarInput($_POST['confirm_password']);
+        $old_password = limpiar_input($_POST['old_password']);
+        $new_password = limpiar_input($_POST['new_password']);
+        $new_password_confirm = limpiar_input($_POST['confirm_password']);
         $nombre_usuario = $_SESSION['nombre_usuario'];
 
         if (empty($old_password) || empty($new_password) || empty($new_password_confirm) || empty($nombre_usuario)) {
@@ -51,17 +51,17 @@
             exit;
         }
 
-        if (!esContrasenhaFuerte($new_password)) {
+        if (!es_contrasenha_fuerte($new_password)) {
             echo "<span style='color: red;'>La nueva contraseña no cumple con los requisitos mínimos de seguridad. La contraseña debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</span>";
             exit;
         }
 
-        if (haSidoFiltradaEnBrechasDeSeguridad($new_password)) {
+        if (ha_sido_filtrada_en_brechas_de_seguridad($new_password)) {
             echo "<span style='color: red;'>La nueva contraseña ha sido filtrada en brechas de seguridad. Por favor, elige una contraseña diferente.</span>";
             exit;
         }
 
-        if (contrasenhaSimilarAUsuario($new_password, $nombre_usuario)) {
+        if (contrasenha_similar_a_usuario($new_password, $nombre_usuario)) {
             echo "<span style='color: red;'>La nueva contraseña es similar a tu nombre de usuario. Por favor, elige una contraseña diferente.</span>";
             exit;
         }
@@ -227,68 +227,70 @@
         <h2 style="text-align: center;">Cambiar contraseña</h2>
     </header>
 
-    <form method="POST" id="formulario">
-        <label for="nombre_usuario">Nombre de usuario:</label>
-        <input disabled type="text" id="nombre_usuario" name="nombre_usuario"
+    <form method="POST" id="formulario-cambio-contrasena">
+        <label for="nombre-usuario-input">Nombre de usuario:</label>
+        <input disabled type="text" id="nombre-usuario-input" name="nombre_usuario"
             value="<?= htmlspecialchars($_SESSION['nombre_usuario']) ?>">
-        <label for="old_password">Contraseña actual:</label>
-        <input type="password" id="old_password" name="old_password" required>
-        <label for="generar_contrasenha_sugerida">Generar contraseña sugerida</label>
-        <button type="button" id="generar_contrasenha_sugerida">Generar</button>
-        <div id="contrasenha_sugerida"></div>
-        <label for="copiar_contrasenha_sugerida">Copiar contraseña sugerida</label>
-        <button type="button" id="copiar_contrasenha_sugerida">Copiar</button>
-        <span id="texto_copiar_contrasenha_sugerida"></span>
-        <label for="new_password">Nueva contraseña:</label>
-        <input type="password" id="new_password" name="new_password" required>
-        <label for="confirm_password">Confirmar nueva contraseña:</label>
-        <input type="password" id="confirm_password" name="confirm_password" required>
+        <label for="contrasena-actual-input">Contraseña actual:</label>
+        <input type="password" id="contrasena-actual-input" name="old_password" required>
+        <label for="generar-contrasena-sugerida-btn">Generar contraseña sugerida</label>
+        <button type="button" id="generar-contrasena-sugerida-btn">Generar</button>
+        <div id="contrasena-sugerida"></div>
+        <label for="copiar-contrasena-sugerida-btn">Copiar contraseña sugerida</label>
+        <button type="button" id="copiar-contrasena-sugerida-btn">Copiar</button>
+        <span id="texto-copiar-contrasena-sugerida"></span>
+        <label for="nueva-contrasena-input">Nueva contraseña:</label>
+        <input type="password" id="nueva-contrasena-input" name="new_password" required>
+        <label for="confirmar-nueva-contrasena-input">Confirmar nueva contraseña:</label>
+        <input type="password" id="confirmar-nueva-contrasena-input" name="confirm_password" required>
         <button type="submit">Cambiar contraseña</button>
     </form>
+
 
     <?= htmlspecialchars($err ?? '') ?>
     <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>change_password.js"></script>
     <script type="module">
         import { generatePassword } from "<?= htmlspecialchars(JS_ADMIN) ?>/helpers/password_generator.js";
 
-        document.getElementById("generar_contrasenha_sugerida").addEventListener("click", async () => {
+        document.getElementById("generar-contrasena-sugerida-btn").addEventListener("click", async () => {
             // console.log("Generando contraseña...");
 
             try {
                 // Esperar que la Promise de generatePassword se resuelva
-                const contrasenhaSugerida = generatePassword();
-                // console.log("Contraseña generada:", contrasenhaSugerida);  // Depuración
+                const contrasenaSugerida = generatePassword();
+                // console.log("Contraseña generada:", contrasenaSugerida);  // Depuración
 
                 // Verificar que la contraseña es válida antes de mostrarla
-                if (contrasenhaSugerida) {
-                    document.getElementById("contrasenha_sugerida").innerHTML = `<strong>${contrasenhaSugerida}</strong>`;
+                if (contrasenaSugerida) {
+                    document.getElementById("contrasena-sugerida").innerHTML = `<strong>${contrasenaSugerida}</strong>`;
                 } else {
                     console.log("Error: No se generó una contraseña válida.");
-                    document.getElementById("contrasenha_sugerida").innerHTML = "<span style='color: red;'>Error generando la contraseña.</span>";
+                    document.getElementById("contrasena-sugerida").innerHTML = "<span style='color: red;'>Error generando la contraseña.</span>";
                 }
             } catch (error) {
                 console.error("Error generando la contraseña:", error);
-                document.getElementById("contrasenha_sugerida").innerHTML = "<span style='color: red;'>Error generando la contraseña.</span>";
+                document.getElementById("contrasena-sugerida").innerHTML = "<span style='color: red;'>Error generando la contraseña.</span>";
             }
         });
 
-        document.getElementById("copiar_contrasenha_sugerida").addEventListener("click", () => {
-            const contrasenhaSugerida = document.getElementById("contrasenha_sugerida").innerText;
-            if (contrasenhaSugerida) {
-                navigator.clipboard.writeText(contrasenhaSugerida)
+        document.getElementById("copiar-contrasena-sugerida-btn").addEventListener("click", () => {
+            const contrasenaSugerida = document.getElementById("contrasena-sugerida").innerText;
+            if (contrasenaSugerida) {
+                navigator.clipboard.writeText(contrasenaSugerida)
                     .then(() => {
                         // Mostrar mensaje de éxito en verde
-                        document.getElementById("texto_copiar_contrasenha_sugerida").innerHTML = "<span style='color: green;'>Contraseña copiada al portapapeles.</span>";
+                        document.getElementById("texto-copiar-contrasena-sugerida").innerHTML = "<span style='color: green;'>Contraseña copiada al portapapeles.</span>";
                     })
                     .catch((error) => {
-                        document.getElementById("texto_copiar_contrasenha_sugerida").innerHTML = "<span style='color: red;'>Error copiando la contraseña al portapapeles.</span>";
+                        document.getElementById("texto-copiar-contrasena-sugerida").innerHTML = "<span style='color: red;'>Error copiando la contraseña al portapapeles.</span>";
                         console.error("Error copiando la contraseña al portapapeles:", error);
                     });
             } else {
                 console.log("Error: No hay una contraseña sugerida para copiar.");
-                document.getElementById("texto_copiar_contrasenha_sugerida").innerHTML = "<span style='color: red;'>Primero debes generar una contraseña sugerida.</span>";
+                document.getElementById("texto-copiar-contrasena-sugerida").innerHTML = "<span style='color: red;'>Primero debes generar una contraseña sugerida.</span>";
             }
         });
+
     </script>
 
 

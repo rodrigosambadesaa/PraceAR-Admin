@@ -1,5 +1,5 @@
 <?php
-function truncateText(string $texto, int $limite = 50)
+function truncate_text(string $texto, int $limite = 50)
 {
     // Si el texto es mayor que el límite, lo cortamos
     if (strlen($texto) > $limite) {

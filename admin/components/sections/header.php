@@ -21,14 +21,22 @@ require_once(HELPERS . 'get_language.php');
 
     <!-- Manifesto Web (PWA) -->
     <link rel="manifest" href="/manifest.json">
+
+    <style>
+        #cabecera_pagina_edicion {
+            font-size: 2.5rem;
+            margin: 0;
+            padding: 10px;
+        }
+    </style>
 </head>
 
 <body class="container">
     <header style="display:flex; justify-content: space-around">
         <h1 id="cabecera_pagina_edicion">Admin: PraceAR
-            <strong style="font-size: .8rem">Idioma actual: <img style="box-shadow: 0 0 2px 1px black;" width="15"
-                    height="15" src="<?= FLAG_IMAGES_URL . (getLanguage()) . ".png" ?>"
-                    alt="<?= getLanguage() ?>"></strong>
+            <strong style="font-size: 0.95rem">Idioma actual: <img style="box-shadow: 0 0 2px 1px black;" width="15"
+                    height="15" src="<?= FLAG_IMAGES_URL . (get_language()) . ".png" ?>"
+                    alt="<?= get_language() ?>"></strong>
         </h1>
         <?php
         require_once(COMPONENT_ADMIN . "main_menu.php");
