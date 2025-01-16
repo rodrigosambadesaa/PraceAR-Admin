@@ -1,4 +1,4 @@
-import { apiKey } from './api_key.js';
+import { API_KEY } from './api_key.js';
 
 async function verifyMaliciousPhoto(photo) {
     // Verificar mediante llamada a la API de VirusTotal si la foto es maliciosa
@@ -13,7 +13,7 @@ async function verifyMaliciousPhoto(photo) {
             method: 'POST',
             body: formData,
             headers: {
-                'x-apikey': apiKey
+                'x-apikey': API_KEY // Usar la API key de VirusTotal
             }
         });
 

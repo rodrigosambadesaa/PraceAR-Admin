@@ -8,10 +8,10 @@ let errorMessages = '';
 formulario.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    let usuario = document.getElementById('nombre_usuario').value;
-    let password = document.getElementById('old_password').value;
-    let newPassword = document.getElementById('new_password').value;
-    let newPasswordConfirmation = document.getElementById('confirm_password').value;
+    let usuario = document.getElementById('nombre-usuario').value;
+    let password = document.getElementById('old-password').value;
+    let newPassword = document.getElementById('new-password').value;
+    let newPasswordConfirmation = document.getElementById('confirm-password').value;
 
     // Limpiar inputs
     usuario = limpiarInput(usuario);

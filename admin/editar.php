@@ -31,7 +31,7 @@
     require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
     ?>
 
-    <form id="formulario" action="#" method="post" enctype="multipart/form-data">
+    <form id="formulario-editar" action="#" method="post" enctype="multipart/form-data">
         <?php
         $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
@@ -55,7 +55,7 @@
 
         $fila = $resultado->fetch_assoc();
         ?>
-        <h2 id="cabecera_tabla" style="text-align: center;">Datos del puesto <?= htmlspecialchars($fila["id"]) ?></h2>
+        <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <?= htmlspecialchars($fila["id"]) ?></h2>
         <div style="display:flex; align-items: center; gap: .5em;">
             <label for="activo">Activo</label>
             <?php
@@ -75,26 +75,26 @@
         <div>
             <label for="imagen">Imagen</label>
             <?php
-            $imagenPath = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
-            if (file_exists($imagenPath)) {
+            $ruta_a_imagen = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
+            if (file_exists($ruta_a_imagen)) {
                 ?>
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <img src="<?= htmlspecialchars($imagenPath) ?>" alt="Imagen del puesto" class="zoomable"
+                    <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto" class="zoomable"
                         style="object-fit: cover; height: 100px;">
-                    <a href="#" id="eliminar_imagen_link" style="margin-top: 1em; color: red; text-decoration: none;">
+                    <a href="#" id="eliminar-imagen-link" style="margin-top: 1em; color: red; text-decoration: none;">
                         Eliminar imagen
                     </a>
                 </div>
                 <script>
-                    document.getElementById('eliminar_imagen_link').addEventListener('click', function (event) {
+                    document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {
                         event.preventDefault(); // Previene la acción predeterminada del enlace
                         if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
-                            document.getElementById('eliminar_imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
-                            document.getElementById('formulario').submit(); // Envía el formulario
+                            document.getElementById('eliminar-imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
+                            document.getElementById('formulario-editar').submit(); // Envía el formulario
                         }
                     });
                 </script>
-                <input type="checkbox" id="eliminar_imagen" name="eliminar_imagen" value="1" style="display: none;">
+                <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1" style="display: none;">
             <?php } else { ?>
                 <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
             <?php } ?>
@@ -109,8 +109,8 @@
             <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"]) ?>">
         </div>
         <div>
-            <label for="tipo_unity">Tipo en Unity</label>
-            <select name="tipo_unity" id="tipo_unity">
+            <label for="tipo-unity">Tipo en Unity</label>
+            <select name="tipo_unity" id="tipo-unity">
                 <?php foreach (UNITY_TYPE as $key => $value) { ?>
                     <?php $selected = $key === $fila["tipo_unity"] ? "selected" : ""; ?>
                     <option value="<?= htmlspecialchars($key) ?>" <?= $selected ?>><?= htmlspecialchars($value) ?></option>
@@ -118,8 +118,8 @@
             </select>
         </div>
         <div>
-            <label for="id_nave">ID Nave</label>
-            <select id="id_nave" name="id_nave">
+            <label for="id-nave">ID Nave</label>
+            <select id="id-nave" name="id_nave">
                 <?php
                 $sql_naves = "SELECT * FROM naves";
                 $resultado_naves = $conexion->query($sql_naves);
@@ -137,8 +137,8 @@
             </select>
         </div>
         <div>
-            <label for="caseta_padre">Caseta padre</label>
-            <input name="caseta_padre" type="text" id="caseta_padre"
+            <label for="caseta-padre">Caseta padre</label>
+            <input name="caseta_padre" type="text" id="caseta-padre"
                 value="<?= htmlspecialchars($fila["caseta_padre"]) ?>">
         </div>
         <div id="div-botones">

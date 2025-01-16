@@ -1,6 +1,6 @@
 <?php
 
-function deleteImage($caseta)
+function delete_image($caseta)
 {
     $imagenPath = ASSETS . $caseta . ".jpg";
     if (file_exists($imagenPath)) {

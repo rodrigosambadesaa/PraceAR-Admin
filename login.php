@@ -7,8 +7,8 @@ $pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
 $err = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $login = limpiarInput($_POST['login']);
-    $password = limpiarInput($_POST['password']);
+    $login = limpiar_input($_POST['login']);
+    $password = limpiar_input($_POST['password']);
 
     // El login debe ser un string
     if (!is_string($login)) {

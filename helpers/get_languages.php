@@ -1,6 +1,6 @@
 <?php
 
-function getLanguages($conexion)
+function get_languages($conexion)
 {
     $sql = "SELECT DISTINCT codigo_idioma, nombre_idioma FROM puestos_traducciones";
 

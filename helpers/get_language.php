@@ -1,5 +1,5 @@
 <?php
-function getLanguage()
+function get_language()
 {
   return $_REQUEST['lang'] ?? 'gl';
 }

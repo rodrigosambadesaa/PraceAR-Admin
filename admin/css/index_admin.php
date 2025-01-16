@@ -11,13 +11,13 @@
         padding: 0;
     }
 
-    #cabeceraTabla {
+    #cabecera-tabla {
         font-size: 1.75em;
     }
 
-    #textoCabeceraTabla {
+    #texto-cabecera-tabla {
         font-weight: bold;
-        /* margin-bottom: 100px; */
+        font-size: 2.15rem;
     }
 
     /* Estilos de tablas */
@@ -38,13 +38,11 @@
         font-size: .85em;
     }
 
-    #formularioBusqueda {
+    #formulario-busqueda {
         display: flex;
         justify-content: center;
         align-items: center;
-        /* margin-top: 20px; */
     }
-
 
     table caption {
         font-size: 1.5em;
@@ -64,16 +62,15 @@
     }
 
     table th {
-        /* font-size: 1em; */
         letter-spacing: .1em;
         text-transform: uppercase;
     }
 
-    #imagenBandera {
+    #imagen-bandera {
         box-shadow: 0 0 2px 1px black;
     }
 
-    #contenedorSeparacion {
+    #contenedor-separacion {
         margin-top: 35px;
     }
 
@@ -140,22 +137,23 @@
     }
 
     /* Estilos de paginación */
-    .pagination {
+    .paginacion {
         display: flex;
         justify-content: center;
         gap: 10px;
         margin-top: 20px;
+        margin-bottom: 13px;
         flex-wrap: wrap;
-        /* Permite que los elementos se envuelvan en pantallas pequeñas */
-        font-size: .7em;
+        font-size: .85em;
+        font-weight: bold;
     }
 
-    #celdaEspecial,
-    #celdaEspecialDato {
+    #celda-especial,
+    #celda-especial-dato {
         border-style: none;
     }
 
-    .pagination a {
+    .paginacion a {
         padding: 8px 12px;
         border: 1px solid #1e7dbd;
         text-decoration: none;
@@ -164,12 +162,12 @@
         transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    .pagination a:hover {
+    .paginacion a:hover {
         background-color: #1e7dbd;
         color: white;
     }
 
-    .pagination a.active {
+    .paginacion a.activo {
         background-color: #1e7dbd;
         color: white;
         border-color: #1e7dbd;
@@ -177,7 +175,6 @@
         border-radius: 5px;
     }
 
-    /* Estilos del menú de navegación (banderas de selección de idioma) */
     .nav-menu {
         display: flex;
         justify-content: flex-end;
@@ -212,7 +209,7 @@
         transition: transform 0.3s ease;
     }
 
-    #imagenBotonCierreSesion {
+    #imagen-boton-cierre-sesion {
         max-width: 32px;
         max-height: 32px;
     }
@@ -221,33 +218,32 @@
         transform: scale(1.1);
     }
 
-    /* Estilos adicionales para tablas específicas */
-    .tabla_puestos {
+    .tabla-puestos {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
     }
 
-    .tabla_puestos caption {
+    .tabla-puestos caption {
         font-size: 1.75rem;
         font-weight: bold;
     }
 
-    .tabla_puestos thead {
+    .tabla-puestos thead {
         font-size: .95em;
     }
 
-    .tabla_puestos tbody {
+    .tabla-puestos tbody {
         font-size: .9em;
     }
 
-    .tabla_puestos th,
-    .tabla_puestos td {
+    .tabla-puestos th,
+    .tabla-puestos td {
         padding: 10px;
         text-align: center;
     }
 
-    .different-background-color {
+    .fondo-color-diferente {
         background-color: lightblue;
         color: black;
     }
@@ -255,7 +251,6 @@
     input,
     input::placeholder {
         font-size: 0.em;
-        /* Adjust the size as needed */
     }
 
     @media (max-width: 600px) {
@@ -318,11 +313,11 @@
             right: 10px;
         }
 
-        .pagination {
+        .paginacion {
             gap: 5px;
         }
 
-        .pagination a {
+        .paginacion a {
             padding: 6px 8px;
             font-size: 0.9em;
         }
@@ -346,7 +341,7 @@
             transform: scale(1.05);
         }
 
-        #imagenBotonCierreSesion {
+        #imagen-boton-cierre-sesion {
             max-width: 20px;
             max-height: 20px;
         }

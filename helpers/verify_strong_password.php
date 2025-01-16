@@ -1,6 +1,6 @@
 <?php
 
-function esContrasenhaFuerte($contrasenha)
+function es_contrasenha_fuerte($contrasenha)
 {
     // Al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos, y un máximo de 255 caracteres
     $patron = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,255}$/';
@@ -8,7 +8,7 @@ function esContrasenhaFuerte($contrasenha)
     return preg_match($patron, $contrasenha);
 }
 
-function haSidoFiltradaEnBrechasDeSeguridad($contrasenha)
+function ha_sido_filtrada_en_brechas_de_seguridad($contrasenha)
 {
     $hash = sha1($contrasenha);
     // echo "SHA-1 Hash: " . $hash . PHP_EOL;
@@ -42,7 +42,7 @@ function haSidoFiltradaEnBrechasDeSeguridad($contrasenha)
     return false;
 }
 
-function contrasenhaSimilarAUsuario($contrasenha, $usuario)
+function contrasenha_similar_a_usuario($contrasenha, $usuario)
 {
     // Aseguramos que todos los valores sean minúsculas para comparaciones insensibles a mayúsculas
     $contrasenha = strtolower($contrasenha);
