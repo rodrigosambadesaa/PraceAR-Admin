@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PraceAR - Panel de Administración</title>
     <?php require_once(CSS_ADMIN . 'index_admin.php'); ?>
+    <link rel='icon' href='./img/favicon.png' type='image/png'>
 </head>
 
 <body>
