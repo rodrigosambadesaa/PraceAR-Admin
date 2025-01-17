@@ -94,7 +94,21 @@
                 $update_stmt->execute();
 
                 echo "<div style='color: green;'>Contraseña cambiada correctamente.</div>";
-                header("refresh:2;url=$protocolo/$servidor/$subdominio");
+                echo "<span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
+                <ul>
+                    <li>Utiliza una contraseña única para cada cuenta.</li>
+                    <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
+                    <li>No compartas tu contraseña con nadie.</li>
+                    <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+                    <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+                    <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+                    <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+                    <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+                </ul>";
+
+                /* Esperar un minuto y meido antes de redirigir para que le dé tiempo a leer los consejos
+                sleep(90);
+                header("refresh:2;url=$protocolo/$servidor/$subdominio"); */
                 exit;
             } else {
                 throw new Exception("Usuario no encontrado.");
