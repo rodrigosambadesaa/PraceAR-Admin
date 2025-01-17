@@ -2,6 +2,14 @@ document.getElementById('formulario-cambio-contrasena').addEventListener('submit
     const oldPassword = document.getElementById('old_password').value.trim();
     const newPassword = document.getElementById('new_password').value.trim();
     const confirmPassword = document.getElementById('confirm_password').value.trim();
+    const newPasswordOriginal = document.getElementById('new_password').value;
+
+    // Verificar que la contraseña nueva no contiene espacios al principio o al final
+    if (newPasswordOriginal !== newPasswordOriginal.trim()) {
+        e.preventDefault();
+        alert('La nueva contraseña no puede contener espacios al principio o al final.');
+        return;
+    }
 
     // Validar que los campos no estén vacíos
     if (!oldPassword || !newPassword || !confirmPassword) {
