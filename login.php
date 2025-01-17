@@ -1,5 +1,6 @@
 <?php
 require_once HELPERS . 'clean_input.php';
+require_once HELPERS . 'validar_login.php';
 
 $pepper_config = include 'pepper.php';
 $pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
@@ -7,128 +8,43 @@ $pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
 $err = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $login = limpiar_input($_POST['login']);
-    $password = limpiar_input($_POST['password']);
+    try {
+        $login = validar_login($_POST['login']);
+        $password = trim($_POST['password']); // Eliminar espacios al principio y al final, pero conservar internos
 
-    // El login debe ser un string
-    if (!is_string($login)) {
-        $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
-        exit;
-    }
+        // Verificar que la contraseña no está vacía después de trim
+        if (empty($password)) {
+            throw new Exception("La contraseña no puede estar vacía.");
+        }
 
-    // La contraseña debe ser un string de un mínimo de 16 caracteres y un máximo de 255, con una letra mayúscula, una minúscula, un número y al menos tres caracteres especiales válidos distintos
-    if (!preg_match('/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,255}$/', $password)) {
-        $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
-        exit;
-    }
+        // Consulta para obtener los datos del usuario
+        $sql = "SELECT * FROM usuarios WHERE login = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param('s', $login);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    // Consulta para obtener los datos del usuario
-    $sql = "SELECT * FROM usuarios WHERE login = ?";
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param('s', $login);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $usuario = $result->fetch_assoc();
+        if ($result->num_rows === 1) {
+            $usuario = $result->fetch_assoc();
+            $stored_password = $usuario['password'];
 
-    if ($result->num_rows === 1) {
-        $salt = $usuario['salt'] ?? '';
-
-        $stored_password = $usuario['password'];
-
-        // Caso 1: Contraseñas almacenadas en MD5
-        if (strlen($usuario['password']) === 32 && ctype_xdigit($usuario['password'])) {
-            // Contraseña almacenada en MD5
-            if (md5($password) === $usuario['password']) {
-                // Migrar a bcrypt con salt y pepper
-                $new_salt = bin2hex(random_bytes(16));
-                $new_hashed_password = password_hash($password . $new_salt . $pepper, PASSWORD_BCRYPT, ['cost' => 12]);
-
-                // Actualizar hash y salt en la base de datos
-                $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
-                $update_stmt = $conexion->prepare($update_sql);
-                $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $usuario['id']);
-                $update_stmt->execute();
-
+            // Verificar la contraseña directamente con bcrypt
+            if (password_verify("{$password}{$pepper}", $stored_password)) {
                 echo "Inicio de sesión correcto";
-
                 $_SESSION['id'] = $usuario['id'];
                 $_SESSION['login'] = 'logueado';
                 $_SESSION['nombre_usuario'] = $login;
 
-                $err = '<span style="color: green;">Inicio de sesión correcto</span>';
                 header("Location: $protocolo/$servidor/$subdominio");
                 exit;
             } else {
-                $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
+                throw new Exception("Inicio de sesión incorrecto");
             }
-
-        }// Caso 2: Contraseña en bcrypt sin salt y pepper  
-        elseif (empty($salt) && password_verify($password, $stored_password)) {
-            // Migrar a bcrypt con salt y pepper
-            $new_salt = bin2hex(random_bytes(16));
-            $new_hashed_password = password_hash($password . $new_salt . $pepper, PASSWORD_BCRYPT, ['cost' => 12]);
-
-            // Actualizar hash y salt en la base de datos
-            $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
-            $update_stmt = $conexion->prepare($update_sql);
-            $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $usuario['id']);
-            $update_stmt->execute();
-
-            // Inicio de sesión correcto
-            echo "Inicio de sesión correcto";
-            $_SESSION['id'] = $usuario['id'];
-            $_SESSION['login'] = 'logueado';
-            $_SESSION['nombre_usuario'] = $login;
-
-            $err = '<p style="color: green;">Inicio de sesión correcto</p>';
-            header("Location: $protocolo/$servidor/$subdominio");
-            exit;
-
-        } elseif (empty($salt) && !password_verify($password, $stored_password)) {
-            $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
+        } else {
+            throw new Exception("Usuario no encontrado");
         }
-
-        // Caso 3: Contraseña en bcrypt con salt y pepper 
-        else {
-            // Caso 1: Verificación con pepper válido
-
-            if (!empty($salt) && password_verify($password . $salt . $pepper, $stored_password)) {
-                // Inicio de sesión correcto
-                echo "Inicio de sesión correcto";
-                $_SESSION['id'] = $usuario['id'];
-                $_SESSION['login'] = 'logueado';
-                $_SESSION['nombre_usuario'] = $login;
-
-                $err = '<p style="color: green;">Inicio de sesión correcto</p>';
-                header("Location: $protocolo/$servidor/$subdominio");
-                exit;
-            } // Caso 2: Verificación con pepper vacío (migración)
-            elseif (!empty($salt) && password_verify($password . $salt, $stored_password)) {
-                // Migrar a bcrypt con salt y pepper
-                $new_salt = bin2hex(random_bytes(16));
-                $new_hashed_password = password_hash($password . $new_salt . $pepper, PASSWORD_BCRYPT, ['cost' => 12]);
-
-                // Actualizar hash y salt en la base de datos
-                $update_sql = "UPDATE usuarios SET password = ?, salt = ? WHERE id = ?";
-                $update_stmt = $conexion->prepare($update_sql);
-                $update_stmt->bind_param('ssi', $new_hashed_password, $new_salt, $usuario['id']);
-                $update_stmt->execute();
-
-                // Inicio de sesión correcto después de migración
-                echo "Inicio de sesión correcto";
-                $_SESSION['id'] = $usuario['id'];
-                $_SESSION['login'] = 'logueado';
-                $_SESSION['nombre_usuario'] = $login;
-
-                $err = '<p style="color: green;">Inicio de sesión correcto</p>';
-                header("Location: $protocolo/$servidor/$subdominio");
-                exit;
-            } else {
-                $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
-            }
-        }
-    } else {
-        $err = '<span style="color: red;">Inicio de sesión incorrecto</span>';
+    } catch (Exception $e) {
+        $err = '<span style="color: red; text-align: center;">' . htmlspecialchars($e->getMessage()) . '</span>';
     }
 }
 ?>
@@ -155,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="manifest" href="/manifest.json">
 </head>
 
-<body class="container" style="diplay: grid; place-content: center;min-height: 100vh;max-width: 600px;">
+<body class="container" style="display: grid; place-content: center; min-height: 100vh; max-width: 600px;">
     <h1 style="text-align: center;">Inicio de sesión</h1>
     <form method="POST" id="formulario">
         <div id="form-group">
