@@ -1,6 +1,7 @@
 <?php
 require_once HELPERS . 'clean_input.php';
 require_once HELPERS . 'validar_login.php';
+require_once HELPERS . 'verify_strong_password.php';
 
 $pepper_config = include 'pepper.php';
 $pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
@@ -15,6 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verificar que la contraseña no está vacía después de trim
         if (empty($password)) {
             throw new Exception("La contraseña no puede estar vacía.");
+        }
+
+        if (tiene_espacios_al_principio_o_al_final($_POST['password'])) {
+            throw new Exception("La contraseña no puede tener espacios al principio o al final.");
         }
 
         // Consulta para obtener los datos del usuario

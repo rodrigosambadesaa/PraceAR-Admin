@@ -1,6 +1,14 @@
 document.getElementById('formulario').addEventListener('submit', (e) => {
     const login = document.getElementById('login').value.trim();
     const password = document.getElementById('password').value.trim();
+    const passwordOriginal = document.getElementById('password').value;
+
+    // Verificar que la contraseña original no contiene espacios al principio o al final
+    if (passwordOriginal !== passwordOriginal.trim()) {
+        e.preventDefault();
+        alert('La contraseña no puede contener espacios al principio o al final.');
+        return;
+    }
 
     // Expresión regular para validar el login
     const loginRegex = /^[a-zA-Z0-9._-]{3,50}$/;
