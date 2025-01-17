@@ -1,81 +1,29 @@
-import { limpiarInput } from "../../js/helpers/limpiar_input.js";
-import { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario } from "../../js/helpers/verify_strong_password.js";
+document.getElementById('formulario-cambio-contrasena').addEventListener('submit', (e) => {
+    const oldPassword = document.getElementById('old_password').value.trim();
+    const newPassword = document.getElementById('new_password').value.trim();
+    const confirmPassword = document.getElementById('confirm_password').value.trim();
 
-const formulario = document.getElementById('formulario-cambio-contrasena');
-let errorExist = false;
-let errorMessages = '';
-
-formulario.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    let usuario = document.getElementById('nombre-usuario-input').value;
-    let password = document.getElementById('contrasena-actual-input').value;
-    let newPassword = document.getElementById('nueva-contrasena-input').value;
-    let newPasswordConfirmation = document.getElementById('confirmar-nueva-contrasena-input').value;
-
-    // Limpiar inputs
-    usuario = limpiarInput(usuario);
-    password = limpiarInput(password);
-    newPassword = limpiarInput(newPassword);
-    newPasswordConfirmation = limpiarInput(newPasswordConfirmation);
-
-    // Usuario, password, newPassword y newPasswordConfirmation son obligatorios
-    if (usuario === '' || password === '' || newPassword === '' || newPasswordConfirmation === '') {
-        alert('Usuario, password, newPassword y newPasswordConfirmation son obligatorios');
-        errorMessages += '<ul style="color: red;"><li>Usuario, password, newPassword y newPasswordConfirmation son obligatorios</li>';
-        errorExist = true;
+    // Validar que los campos no estén vacíos
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        e.preventDefault();
+        alert('Todos los campos son obligatorios.');
         return;
     }
 
-    // La nueva contraseña debe ser segura
-    if (!verifyStrongPassword(newPassword)) {
-        alert('La nueva contraseña debe tener al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos válidos: !@#$%^&*()-_=+[]{}|;:,.<> y un máximo de 255 caracteres');
-        errorMessages += '<li>La nueva contraseña debe tener al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos válidos: !@#$%^&*()-_=+[]{}|;:,.<> y un máximo de 255 caracteres</li>';
-        errorExist = true;
+    // Validar que las contraseñas nueva y confirmación coincidan
+    if (newPassword !== confirmPassword) {
+        e.preventDefault();
+        alert('Las contraseñas no coinciden.');
         return;
     }
 
-    if (await haSidoFiltradaEnBrechas(newPassword)) {
-        alert('La nueva contraseña ha sido filtrada en brechas');
-        errorMessages += '<li>La nueva contraseña ha sido filtrada en brechas</li>';
-        errorExist = true;
+    // Validar que la nueva contraseña sea segura
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[^A-Za-z0-9]).{16,}$/;
+    if (!passwordRegex.test(newPassword)) {
+        e.preventDefault();
+        alert('La nueva contraseña debe tener al menos 16 caracteres, incluir una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.');
         return;
     }
 
-    if (contrasenhaSimilarAUsuario(newPassword, usuario)) {
-        alert('La nueva contraseña es similar al nombre de usuario');
-        errorMessages += '<li>La nueva contraseña es similar al nombre de usuario</li>';
-        errorExist = true;
-        return;
-    }
-
-    // Las contraseñas no pueden ser iguales
-    if (password === newPassword) {
-        alert('Las contraseñas no pueden ser iguales');
-        errorMessages += '<li>Las contraseñas no pueden ser iguales</li>';
-        errorExist = true;
-        return;
-    }
-
-    // La nueva contraseña y su confirmación deben ser iguales
-    if (newPassword !== newPasswordConfirmation) {
-        alert('La nueva contraseña y su confirmación deben ser iguales');
-        errorMessages += '<li>La nueva contraseña y su confirmación deben ser iguales</li></ul>';
-        errorExist = true;
-        return;
-    }
-
-    // Si hay errores, no enviar formulario y mostrar mensajes de error creando un div con los mensajes
-    if (errorExist) {
-        const div = document.createElement('div');
-        div.innerHTML = errorMessages;
-        formulario.insertAdjacentElement('afterend', div);
-        return;
-    }
-
-    // Enviar formulario
-    formulario.submit();
-
+    // Si todas las validaciones pasan, permite el envío del formulario
 });
-
-

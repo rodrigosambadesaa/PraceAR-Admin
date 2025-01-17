@@ -73,3 +73,8 @@ function contrasenha_similar_a_usuario($contrasenha, $usuario)
     return false;
 }
 
+function tiene_espacios_al_principio_o_al_final($contrasenha)
+{
+    return trim($contrasenha) !== $contrasenha;
+}
+

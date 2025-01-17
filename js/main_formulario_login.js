@@ -1,34 +1,36 @@
-import { limpiarInput } from './helpers/limpiar_input.js';
+document.getElementById('formulario').addEventListener('submit', (e) => {
+    const login = document.getElementById('login').value.trim();
+    const password = document.getElementById('password').value.trim();
 
-const formulario = document.getElementById('formulario');
-let errorExist = false;
-let errorMessages = '';
+    // Expresión regular para validar el login
+    const loginRegex = /^[a-zA-Z0-9._-]{3,50}$/;
 
-formulario.addEventListener('submit', (e) => {
-    e.preventDefault();
-    let usuario = document.getElementById('login').value;
-    let password = document.getElementById('password').value;
-
-    // Limpiar inputs
-    usuario = limpiarInput(usuario);
-    password = limpiarInput(password);
-
-    // Usuario y password son obligatorios
-    if (usuario === '' || password === '') {
-        alert('Usuario y password son obligatorios');
-        errorMessages += '<ul style="color: red;"><li>Usuario y password son obligatorios</li></ul>';
-        errorExist = true;
+    // Validar login: no vacío, longitud y caracteres válidos
+    if (!login) {
+        e.preventDefault();
+        alert('El campo de usuario no puede estar vacío.');
         return;
     }
 
-    // Si hay errores, no enviar formulario y mostrar mensajes de error creando un div con los mensajes
-    if (errorExist) {
-        const div = document.createElement('div');
-        div.innerHTML = errorMessages;
-        formulario.insertAdjacentElement('afterend', div);
+    if (!loginRegex.test(login)) {
+        e.preventDefault();
+        alert('El nombre de usuario debe tener entre 3 y 50 caracteres y solo puede contener letras, números, puntos, guiones y guiones bajos.');
         return;
     }
 
-    // Enviar formulario
-    formulario.submit();
+    // Validar contraseña: no vacía
+    if (!password) {
+        e.preventDefault();
+        alert('El campo de contraseña no puede estar vacío.');
+        return;
+    }
+
+    // No permitir espacios al principio o al final de la contraseña
+    if (password !== password.trim()) {
+        e.preventDefault();
+        alert('La contraseña no puede contener espacios al principio o al final.');
+        return;
+    }
+
+    // Si todo está validado, permite el envío del formulario
 });
