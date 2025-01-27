@@ -88,13 +88,10 @@ async function haSidoFiltradaEnBrechas(password) {
 }
 
 const randomPassword = "abT.,*/-29C";
-const randomPassword2 = "_saras";
 
 const filtrada1 = await haSidoFiltradaEnBrechas(randomPassword);
-const filtrada2 = await haSidoFiltradaEnBrechas(randomPassword2);
 
 console.log(`La contraseña aleatoria 1 ${filtrada1 ? 'ha sido filtrada en brechas' : 'no ha sido filtrada en brechas'}`);
-console.log(`La contraseña aleatoria 2 ${filtrada2 ? 'ha sido filtrada en brechas' : 'no ha sido filtrada en brechas'}`);
 
 function contrasenhaSimilarAUsuario(contrasenha, usuario) {
     // Aseguramos que todos los valores sean minúsculas para comparaciones insensibles a mayúsculas
