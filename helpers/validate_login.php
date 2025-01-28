@@ -1,5 +1,5 @@
 <?php
-function validar_login($login)
+function validate_login($login)
 {
     // Recortar espacios al inicio y al final
     $login = trim($login);

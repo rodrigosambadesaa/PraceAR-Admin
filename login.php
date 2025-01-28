@@ -1,6 +1,6 @@
 <?php
 require_once HELPERS . 'clean_input.php';
-require_once HELPERS . 'validar_login.php';
+require_once HELPERS . 'validate_login.php';
 require_once HELPERS . 'verify_strong_password.php';
 
 $pepper_config = include 'pepper.php';
@@ -10,7 +10,7 @@ $err = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-        $login = validar_login($_POST['login']);
+        $login = validate_login($_POST['login']);
         $password = trim($_POST['password']); // Eliminar espacios al principio y al final, pero conservar internos
 
         // Verificar que la contraseña no está vacía después de trim
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </form>
     <?= $err ?>
-    <script type="module" src="./js/main_formulario_login.js"></script>
+    <script type="module" src="./js/main_login_form.js"></script>
 </body>
 
 </html>

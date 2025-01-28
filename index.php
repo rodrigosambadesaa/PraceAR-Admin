@@ -36,11 +36,11 @@ if (isset($_SESSION['login'])) {
             break;
 
         case 'edit':
-            require_once(ADMIN . 'editar.php');
+            require_once(ADMIN . 'edit.php');
             break;
 
         case 'language':
-            require_once(ADMIN . 'editar_traducciones.php');
+            require_once(ADMIN . 'edit_translations.php');
             break;
 
         default:
