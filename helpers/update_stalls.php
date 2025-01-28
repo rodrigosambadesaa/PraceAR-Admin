@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $maliciosa = check_virus_total($_FILES['imagen']['tmp_name']);
 
         if ($maliciosa) {
-            $mensaje = '<span id="mensaje_error">La imagen es maliciosa. Desinféctela o pida ayuda para hacerlo o capture otra imagen</span>';
+            $mensaje = '<span id="mensaje_error">La imagen es maliciosa. Desinféctela o pida ayuda para hacerlo o capture otra imagen tras desinfectar su dispositivo.</span>';
             return;
         }
 

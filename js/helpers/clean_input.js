@@ -1,4 +1,4 @@
-function limpiarInput(input) {
+function cleanInput(input) {
     // Eliminar espacios innecesarios al inicio y final del input
     input = input.trim();
 
@@ -46,4 +46,4 @@ function limpiarTextarea(textarea) {
     return textarea;
 }
 
-export { limpiarInput, limpiarTextarea };
+export { cleanInput as limpiarInput, limpiarTextarea };

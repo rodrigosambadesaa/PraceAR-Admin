@@ -20,14 +20,14 @@
     <link rel="manifest" href="/manifest.json">
 
     <?php
-    require_once(CSS_ADMIN . 'editar_admin.php'); ?>
+    require_once(CSS_ADMIN . 'edit_admin.php'); ?>
 
 </head>
 
 <body>
 
     <?php
-    require_once(HELPERS . "updated_puestos.php");
+    require_once(HELPERS . "update_stalls.php");
     require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
     ?>
 
@@ -170,7 +170,7 @@
 
     </script>
 
-    <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>editar_admin.js"></script>
+    <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>edit_admin.js"></script>
 
 </body>
 

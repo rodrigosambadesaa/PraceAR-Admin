@@ -1,4 +1,4 @@
-import { limpiarTextarea } from '../../js/helpers/limpiar_input.js';
+import { limpiarTextarea } from '../../js/helpers/clean_input.js';
 
 const formulario = document.getElementById('formulario');
 

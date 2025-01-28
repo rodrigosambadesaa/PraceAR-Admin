@@ -24,8 +24,8 @@
 <body>
     <?php
     require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
-    require_once 'conexion.php';
-    require_once(HELPERS . 'update_puestos_traducciones.php');
+    require_once 'connection.php';
+    require_once(HELPERS . 'update_stalls_translations.php');
 
     $codigo_idioma = filter_input(INPUT_GET, 'codigo_idioma', FILTER_SANITIZE_STRING);
     $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -68,7 +68,7 @@
         <input type="submit" value="Actualizar">
     </form>
     <?= htmlspecialchars($mensaje ?? "") ?>
-    <script type="module" src="<?= JS_ADMIN . 'editar_traducciones.js' ?>"></script>
+    <script type="module" src="<?= JS_ADMIN . 'edit_translations.js' ?>"></script>
 </body>
 
 </html>
