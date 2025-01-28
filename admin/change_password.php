@@ -49,8 +49,8 @@
                 throw new Exception("Las contraseñas no coinciden.");
             }
 
-            if (tiene_espacios_al_principio_o_al_final($_POST['new_password'])) {
-                throw new Exception("La nueva contraseña no puede tener espacios al principio o al final.");
+            if (tiene_espacios_al_principio_o_al_final($_POST['new_password']) || tiene_espacios_al_principio_o_al_final($_POST['confirm_password']) || tiene_espacios_al_principio_o_al_final($_POST['old_password'])) {
+                throw new Exception("Las contraseñas no pueden tener espacios al principio o al final.");
             }
 
             // Validar que la nueva contraseña sea fuerte
@@ -161,7 +161,7 @@
             </div>
         </form>
         <?= $err ?>
-        <script type="module" src="./js/change_password.js"></script>
+        <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
     </body>
 
     </html>
