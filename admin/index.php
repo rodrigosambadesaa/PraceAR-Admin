@@ -84,6 +84,8 @@
                             <input type="hidden" name="lang" value="<?= htmlspecialchars(get_language()) ?>">
                             <input type="submit" value="Buscar">
                             <input id="input-reseteo" type="reset" value="Reiniciar">
+                            <input id="input-deshacer-busqueda" type="button" value="Deshacer búsqueda"
+                                onclick="window.location.href='?lang=<?= htmlspecialchars(get_language()) ?>'">
                         </form>
                     </search>
                     <!-- Paginación superior -->
