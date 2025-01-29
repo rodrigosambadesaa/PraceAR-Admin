@@ -9,6 +9,11 @@ function validate_login($login)
         throw new Exception("El campo de usuario no puede estar vacío.");
     }
 
+    // El login debe ser un string
+    if (!is_string($login)) {
+        throw new Exception("El nombre de usuario debe ser un texto.");
+    }
+
     // Validar longitud (mínimo 3 caracteres, máximo 50 caracteres)
     if (strlen($login) < 3 || strlen($login) > 50) {
         throw new Exception("El nombre de usuario debe tener entre 3 y 50 caracteres.");

@@ -14,6 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         return;
     }
 
+    // La descripción, si se proporciona, debe ser un string de un máximo de 450 caracteres
+    if (!empty($descripcion) && strlen($descripcion) > 450) {
+        $mensaje = '<span id="mensaje_error">La descripción no puede tener más de 450 caracteres</span>';
+        return;
+    }
+
     $sql_actualizacion = "UPDATE puestos_traducciones 
                           SET tipo = ?, 
                           descripcion = ? 

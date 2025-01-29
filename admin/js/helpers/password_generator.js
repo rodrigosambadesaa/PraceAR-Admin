@@ -39,6 +39,4 @@ function generatePassword() {
     }
 }
 
-console.log(generatePassword(16)); // Ejemplo de uso
-
 export { generatePassword }; // Exportar para poder usar la función en otros archivos

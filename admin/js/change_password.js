@@ -14,12 +14,11 @@ formulario.addEventListener('submit', (e) => {
     const confirmPassword = fieldConfirmPassword.value.trim();
     const confirmPasswordOriginal = fieldConfirmPassword.value;
 
-    console.log("Old password: ", oldPassword);
-    console.log("Old password original: ", oldPasswordOriginal);
-    console.log("New password: ", newPassword);
-    console.log("New password original: ", newPasswordOriginal);
-    console.log("Confirm password: ", confirmPassword);
-    console.log("Confirm password original: ", confirmPasswordOriginal);
+    // Verificar que todos los campos sean strings
+    if (typeof oldPassword !== 'string' || typeof newPassword !== 'string' || typeof confirmPassword !== 'string') {
+        alert('Error en los datos introducidos.');
+        return;
+    }
 
     // Verificar que ninguna de las contraseñas tenga espacios al inicio o al final
     if (newPassword !== newPasswordOriginal || confirmPassword !== confirmPasswordOriginal || oldPassword !== oldPasswordOriginal) {

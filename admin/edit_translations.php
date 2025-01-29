@@ -35,11 +35,15 @@
     $stmt->bind_param('si', $codigo_idioma, $id);
     $stmt->execute();
     $resultado = $stmt->get_result();
+    $puesto_encontrado = false;
 
     $data = $resultado->fetch_assoc();
     if (!$data) {
-        die('No se encontraron datos');
+        die('<h2 style="text-align: center;">No se encontró la traducción. <a href="index.php">Volver</a></h2>');
     }
+
+    $puesto_encontrado = true;
+
     ?>
 
     <h2 style="text-align: center;">Traducción del puesto
@@ -67,8 +71,10 @@
         <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars($data['id'] ?? "") ?>">
         <input type="submit" value="Actualizar">
     </form>
-    <?= htmlspecialchars($mensaje ?? "") ?>
-    <script type="module" src="<?= JS_ADMIN . 'edit_translations.js' ?>"></script>
+    <?= htmlspecialchars($mensaje ?? ""); ?>
+    <?php if ($puesto_encontrado) { ?>
+        <script type="module" src="<?= JS_ADMIN . 'edit_translations.js' ?>"></script>
+    <?php } ?>
 </body>
 
 </html>
