@@ -3,6 +3,13 @@ document.getElementById('formulario').addEventListener('submit', (e) => {
     const password = document.getElementById('password').value.trim();
     const passwordOriginal = document.getElementById('password').value;
 
+    // El login y la contraseña deben ser strings
+    if (typeof login !== 'string' || typeof password !== 'string') {
+        e.preventDefault();
+        alert('Error en los datos introducidos.');
+        return;
+    }
+
     // Verificar que la contraseña original no contiene espacios al principio o al final
     if (passwordOriginal !== passwordOriginal.trim()) {
         e.preventDefault();

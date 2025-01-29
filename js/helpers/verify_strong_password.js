@@ -69,7 +69,6 @@ async function haSidoFiltradaEnBrechas(password) {
 
         // Leer y procesar la respuesta
         const data = await response.text();
-        console.log(`Datos recibidos de la API:\n${data}`);
 
         const hashes = data.split('\n');
 
@@ -86,12 +85,6 @@ async function haSidoFiltradaEnBrechas(password) {
         return false;
     }
 }
-
-const randomPassword = "abT.,*/-29C";
-
-const filtrada1 = await haSidoFiltradaEnBrechas(randomPassword);
-
-console.log(`La contraseña aleatoria 1 ${filtrada1 ? 'ha sido filtrada en brechas' : 'no ha sido filtrada en brechas'}`);
 
 function contrasenhaSimilarAUsuario(contrasenha, usuario) {
     // Aseguramos que todos los valores sean minúsculas para comparaciones insensibles a mayúsculas

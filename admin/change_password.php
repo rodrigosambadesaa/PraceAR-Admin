@@ -44,6 +44,11 @@
                 throw new Exception("Todos los campos son obligatorios.");
             }
 
+            // Validar que todos los campos sean strings
+            if (!is_string($old_password) || !is_string($new_password) || !is_string($confirm_password)) {
+                throw new Exception("Todos los campos deben ser cadenas de texto.");
+            }
+
             // Verificar que las contraseñas nueva y confirmación coincidan
             if ($new_password !== $confirm_password) {
                 throw new Exception("Las contraseñas no coinciden.");
@@ -144,6 +149,11 @@
     <body>
         <h1 style="text-align: center;">Cambiar contraseña</h1>
         <form method="POST" id="formulario-cambio-contrasena">
+            <div id="form-group">
+                <label for="nombre_usuario">Nombre de usuario:</label>
+                <input type="text" name="nombre_usuario" id="nombre_usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
+                    disabled>
+            </div>
             <div id="form-group">
                 <label for="old_password">Contraseña actual:</label>
                 <input type="password" name="old_password" id="old_password" required>

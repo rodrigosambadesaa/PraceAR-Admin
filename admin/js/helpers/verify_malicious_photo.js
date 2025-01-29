@@ -19,7 +19,6 @@ async function verifyMaliciousPhoto(photo) {
 
         // Leer y procesar la respuesta
         const data = await response.json();
-        console.log(`Datos recibidos de la API:\n${JSON.stringify(data)}`);
 
         return data.response_code === 1 && data.positives > 0;
 

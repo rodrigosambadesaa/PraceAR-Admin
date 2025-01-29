@@ -47,12 +47,14 @@
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $resultado = $stmt->get_result();
+        $puesto_encontrado = false;
 
         if ($resultado->num_rows <= 0) {
-            echo "<h2>Error al obtener los datos del puesto</h2>";
+            echo "<h2 style='text-align: center;'>Error al obtener los datos del puesto. <a href='index.php'>Volver</a></h2>";
             exit;
         }
 
+        $puesto_encontrado = true;
         $fila = $resultado->fetch_assoc();
         ?>
         <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <?= htmlspecialchars($fila["id"]) ?></h2>
@@ -170,7 +172,13 @@
 
     </script>
 
-    <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>edit_admin.js"></script>
+    <?php
+    if ($puesto_encontrado) {
+        ?>
+        <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>edit_admin.js"></script>
+        <?php
+    }
+    ?>
 
 </body>
 

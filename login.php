@@ -13,6 +13,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $login = validate_login($_POST['login']);
         $password = trim($_POST['password']); // Eliminar espacios al principio y al final, pero conservar internos
 
+        // La contraseña debe ser un string
+        if (!is_string($password)) {
+            throw new Exception("La contraseña debe ser un texto.");
+        }
+
         // Verificar que la contraseña no está vacía después de trim
         if (empty($password)) {
             throw new Exception("La contraseña no puede estar vacía.");
@@ -77,14 +82,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body class="container" style="display: grid; place-content: center; min-height: 100vh; max-width: 600px;">
-    <h1 style="text-align: center;">Inicio de sesión</h1>
+    <?php require_once "components/sections/header.php"; ?>
+    <h2 style="text-align: center;">Inicio de sesión</h2>
     <form method="POST" id="formulario">
         <div id="form-group">
-            <label for="login">Usuario:</label>
+            <label for="login"><strong>Usuario:</strong></label>
             <input type="text" name="login" id="login" required>
         </div>
         <div id="form-group">
-            <label for="password">Contraseña:</label>
+            <label for="password"><strong>Contraseña:</strong></label>
             <input type="password" name="password" id="password" required>
         </div>
         <div id="form-group">
