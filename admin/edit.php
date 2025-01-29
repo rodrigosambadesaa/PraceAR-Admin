@@ -48,13 +48,13 @@
         $stmt->execute();
         $resultado = $stmt->get_result();
         $puesto_encontrado = false;
+        $fila = $resultado->fetch_assoc();
 
-        if ($resultado->num_rows <= 0) {
+        if (!$fila) {
             die('<h2 style="text-align: center;">Error al obtener los datos del puesto. <a href="index.php">Volver</a></h2>');
         }
 
         $puesto_encontrado = true;
-        $fila = $resultado->fetch_assoc();
         ?>
         <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <?= htmlspecialchars($fila["id"]) ?></h2>
         <div style="display:flex; align-items: center; gap: .5em;">
