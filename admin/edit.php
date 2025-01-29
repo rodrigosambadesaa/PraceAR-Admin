@@ -50,8 +50,7 @@
         $puesto_encontrado = false;
 
         if ($resultado->num_rows <= 0) {
-            echo "<h2 style='text-align: center;'>Error al obtener los datos del puesto. <a href='index.php'>Volver</a></h2>";
-            exit;
+            die('<h2 style="text-align: center;">Error al obtener los datos del puesto. <a href="index.php">Volver</a></h2>');
         }
 
         $puesto_encontrado = true;
