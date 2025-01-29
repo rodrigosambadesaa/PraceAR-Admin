@@ -62,7 +62,15 @@
         echo htmlspecialchars($nombre_puesto['nombre']);
         ?>
     </h2>
+    <?php
+
+    if (isset($_SESSION['csrf'])) {
+        $_SESSION['csrf'] = bin2hex(random_bytes(32));
+    }
+    ?>
+
     <form class="pure-form" action="#" method="POST" id="formulario">
+        <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <label for="tipo">Tipo</label>
         <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>">
         <label for="descripcion">Descripción</label>

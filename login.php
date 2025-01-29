@@ -10,6 +10,11 @@ $err = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
+        // Verificar CSRF token
+        if (!hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
+            throw new Exception("CSRF token no válido");
+        }
+
         $login = validate_login($_POST['login']);
         $password = trim($_POST['password']); // Eliminar espacios al principio y al final, pero conservar internos
 
@@ -44,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['id'] = $usuario['id'];
                 $_SESSION['login'] = 'logueado';
                 $_SESSION['nombre_usuario'] = $login;
+                $_SESSION['csrf'] = bin2hex(random_bytes(32));
 
                 header("Location: $protocolo/$servidor/$subdominio");
                 exit;
@@ -84,7 +90,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body class="container" style="display: grid; place-content: center; min-height: 100vh; max-width: 600px;">
     <?php require_once "components/sections/header.php"; ?>
     <h2 style="text-align: center;">Inicio de sesión</h2>
+    <?php
+
+    if (!isset($_SESSION['csrf'])) {
+        $_SESSION['csrf'] = bin2hex(random_bytes(32));
+    }
+
+    ?>
+
     <form method="POST" id="formulario">
+        <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <div id="form-group">
             <label for="login"><strong>Usuario:</strong></label>
             <input type="text" name="login" id="login" required>

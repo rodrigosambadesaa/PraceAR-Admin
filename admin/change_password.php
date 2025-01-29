@@ -33,6 +33,11 @@
     $err = '';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
+            $err = '<span style="color: red; text-align: center;">CSRF token no válido</span>';
+            return;
+        }
+
         try {
             $user_id = $_SESSION['id'];
             $old_password = trim($_POST['old_password']); // Recortar espacios al principio y al final
@@ -148,7 +153,15 @@
 
     <body>
         <h1 style="text-align: center;">Cambiar contraseña</h1>
+        <?php
+
+        if (!isset($_SESSION['csrf'])) {
+            $_SESSION['csrf'] = bin2hex(random_bytes(32));
+        }
+        ?>
+
         <form method="POST" id="formulario-cambio-contrasena">
+            <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
             <div id="form-group">
                 <label for="nombre_usuario">Nombre de usuario:</label>
                 <input type="text" name="nombre_usuario" id="nombre_usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
