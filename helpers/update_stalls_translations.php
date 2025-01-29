@@ -3,6 +3,11 @@ require_once HELPERS . "clean_input.php";
 
 $mensaje = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
+        $mensaje = '<span id="mensaje_error">CSRF token no válido</span>';
+        return;
+    }
+
     extract($_REQUEST);
     // Limpiar intros, tabulaciones y que haya más de un espacio en blanco,
     $descripcion = htmlspecialchars(preg_replace('/\s\s+/', ' ', trim($descripcion)), ENT_QUOTES, 'UTF-8');

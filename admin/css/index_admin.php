@@ -210,8 +210,8 @@
     }
 
     #imagen-boton-cierre-sesion {
-        max-width: 32px;
-        max-height: 32px;
+        max-width: 100px;
+        max-height: 100px;
     }
 
     .nav-menu img:hover {
@@ -342,8 +342,8 @@
         }
 
         #imagen-boton-cierre-sesion {
-            max-width: 20px;
-            max-height: 20px;
+            max-width: 40px;
+            max-height: 40px;
         }
     }
 </style>

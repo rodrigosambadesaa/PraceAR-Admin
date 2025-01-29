@@ -29,33 +29,30 @@
     <?php
     require_once(HELPERS . "update_stalls.php");
     require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
+
+    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+
+    $conexion = new mysqli($servidor_bd, $usuario, $clave, $bd);
+
+    if ($conexion->connect_error) {
+        die('Error en la conexión: ' . htmlspecialchars($conexion->connect_error));
+    }
+
+    $sql = "SELECT * FROM puestos WHERE id = ?";
+
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    $fila = $resultado->fetch_assoc();
+
+    if (!$fila) {
+        die('<h2 style="text-align: center;">Error al obtener los datos del puesto. <a href="index.php">Volver</a></h2>');
+    }
     ?>
 
     <form id="formulario-editar" action="#" method="post" enctype="multipart/form-data">
-        <?php
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-
-        $conexion = new mysqli($servidor_bd, $usuario, $clave, $bd);
-
-        if ($conexion->connect_error) {
-            die('Error en la conexión: ' . htmlspecialchars($conexion->connect_error));
-        }
-
-        $sql = "SELECT * FROM puestos WHERE id = ?";
-
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $resultado = $stmt->get_result();
-        $puesto_encontrado = false;
-        $fila = $resultado->fetch_assoc();
-
-        if (!$fila) {
-            die('<h2 style="text-align: center;">Error al obtener los datos del puesto. <a href="index.php">Volver</a></h2>');
-        }
-
-        $puesto_encontrado = true;
-        ?>
+        <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <?= htmlspecialchars($fila["id"]) ?></h2>
         <div style="display:flex; align-items: center; gap: .5em;">
             <label for="activo">Activo</label>
@@ -79,26 +76,26 @@
             $ruta_a_imagen = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
             if (file_exists($ruta_a_imagen)) {
                 ?>
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto" class="zoomable"
-                        style="object-fit: cover; height: 100px;">
-                    <a href="#" id="eliminar-imagen-link" style="margin-top: 1em; color: red; text-decoration: none;">
-                        Eliminar imagen
-                    </a>
-                </div>
-                <script>
-                    document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {
-                        event.preventDefault(); // Previene la acción predeterminada del enlace
-                        if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
-                            document.getElementById('eliminar-imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
-                            document.getElementById('formulario-editar').submit(); // Envía el formulario
-                        }
-                    });
-                </script>
-                <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1" style="display: none;">
-            <?php } else { ?>
-                <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
-            <?php } ?>
+                <div style="display: flex; flex-direction: column; align-items: center;"></div>
+                <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto" class="zoomable"
+                    style="object-fit: cover; height: 100px;">
+                <a href="#" id="eliminar-imagen-link" style="margin-top: 1em; color: red; text-decoration: none;">
+                    Eliminar imagen
+                </a>
+            </div>
+            <script>
+                document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {
+                    event.preventDefault(); // Previene la acción predeterminada del enlace
+                    if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
+                        document.getElementById('eliminar-imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
+                        document.getElementById('formulario-editar').submit(); // Envía el formulario
+                    }
+                });
+            </script>
+            <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1" style="display: none;">
+        <?php } else { ?>
+            <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
+        <?php } ?>
         </div>
 
         <div>
@@ -172,7 +169,7 @@
     </script>
 
     <?php
-    if ($puesto_encontrado) {
+    if ($fila) {
         ?>
         <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>edit_admin.js"></script>
         <?php

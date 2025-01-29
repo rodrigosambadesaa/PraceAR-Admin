@@ -8,6 +8,11 @@ require_once HELPERS . "verify_malicious_photo.php";
 $mensaje = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
+        $mensaje = '<span id="mensaje_error">CSRF token no válido</span>';
+        return;
+    }
+
     extract($_POST);
 
     // Comprobar si hay una imagen para subir en el formulario
