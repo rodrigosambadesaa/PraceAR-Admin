@@ -78,10 +78,9 @@
                 ?>
                 <div style="display: flex; flex-direction: column; align-items: center;"></div>
                 <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto" class="zoomable"
-                    style="object-fit: cover; height: 100px;">
-                <a href="#" id="eliminar-imagen-link" style="margin-top: 1em; color: red; text-decoration: none;">
-                    Eliminar imagen
-                </a>
+                    style="object-fit: cover; height: 140px; display: block; margin: 0 auto;">
+                <a href="#" id="eliminar-imagen-link"
+                    style="margin-top: 1em; color: red; text-decoration: none; text-align: center; display: block;">Eliminar</a>
             </div>
             <script>
                 document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {

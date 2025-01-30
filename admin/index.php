@@ -97,7 +97,7 @@
                             <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(get_language()) ?>">
                             <input type="submit" value="Buscar">
                             <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">
-                            <input id="input-deshacer-busqueda" type="button" value="Deshacer búsqueda"
+                            <input id="input-deshacer-busqueda" type="button" value="Deshacer"
                                 onclick="window.location.href='?lang=<?= htmlspecialchars(get_language()) ?>'">
                             <input type="hidden" name="csrf" id="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                         </form>
