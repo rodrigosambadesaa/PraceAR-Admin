@@ -273,16 +273,16 @@
     </script>
     <?php if ($resultados_encontrados): ?>
         <script type="module" src="<?= JS_ADMIN . 'index_admin.js' ?>"></script>
+        <script>
+            const inputReseteo = document.getElementById('input-reseteo');
+            inputReseteo.addEventListener('click', function () {
+                // Si hay una búsqueda hecha, mostrar un mensaje de error
+                if (document.getElementById('input-busqueda').value !== '') {
+                    alert('No es posible reiniciar el formulario de búsqueda ahora mismo');
+                }
+            });
+        </script>
     <?php endif; ?>
-    <script>
-        const inputReseteo = document.getElementById('input-reseteo');
-        inputReseteo.addEventListener('click', function () {
-            // Si hay una búsqueda hecha, mostrar un mensaje de error
-            if (document.getElementById('input-busqueda').value !== '') {
-                alert('No es posible reiniciar el formulario de búsqueda ahora mismo');
-            }
-        });
-    </script>
 
 </body>
 
