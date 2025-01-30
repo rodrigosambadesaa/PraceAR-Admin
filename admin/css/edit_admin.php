@@ -45,4 +45,12 @@
         color: white;
         cursor: pointer;
     }
+
+    #eliminar-imagen-link {
+        margin-top: 1em;
+        color: red;
+        text-decoration: none;
+        /* Hacer que se muestre debajo de la imagen */
+        display: block;
+    }
 </style>
