@@ -8,7 +8,7 @@ Clonar el repositorio en una carpeta llamada appventurers
 
 ## Guía de uso
 
-- Lo primero que debe hacer es importar la base de datos, crear un usuario con su contraseña encriptada en BCrypt e iniciar sesión.
+- Lo primero que debe hacer es importar la base de datos, crear un usuario con su contraseña encriptada en BCrypt, configurar los archivos que hacen referencia a la API Key de VirusTotal e iniciar sesión.
 - Tras iniciar sesión se le redigirirá a la tabla de administración donde podrá buscar puestos, cambiar de idioma, editar un puesto o una traducción del mismo, cambiar su contraseña o ver un mapa de las ameas, naves y murallones
 
 
