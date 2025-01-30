@@ -17,12 +17,22 @@
 
     <?php
 
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        if (!isset($_SESSION['csrf'])) {
+            $_SESSION['csrf'] = bin2hex(random_bytes(32));  // Generar un nuevo token CSRF
+        }
+
+        if (!isset($_POST['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
+            die("Petición no válida");
+        }
+    }
+
     $custom_lang = get_language();
 
     $results_per_page = 50;
-    $current_page = (isset($_GET['page']) && is_numeric($_GET['page'])) ? (int) $_GET['page'] : 1;
+    $current_page = (isset($_POST['page']) && is_numeric($_POST['page'])) ? (int) $_POST['page'] : 1;
     $start_from = ($current_page - 1) * $results_per_page;
-    $caseta = isset($_GET['caseta']) ? limpiar_input($_GET['caseta']) : '';
+    $caseta = isset($_POST['caseta']) ? limpiar_input($_POST['caseta']) : '';
 
     $sql_total = "SELECT COUNT(p.id) as total FROM puestos p 
               RIGHT JOIN puestos_traducciones pt ON p.id = pt.puesto_id
@@ -78,14 +88,15 @@
                     <h2 id="texto-cabecera-tabla">Lista de puestos del Mercado de Abastos</h2>
                     <div id="contenedor-separacion"></div>
                     <search role="search">
-                        <form id="formulario-busqueda" action="#" method="GET">
-                            <input value="<?= htmlspecialchars($_GET['caseta'] ?? "") ?>" type="text" id="input-busqueda"
+                        <form id="formulario-busqueda" action="#" method="POST">
+                            <input value="<?= htmlspecialchars($_POST['caseta'] ?? "") ?>" type="text" id="input-busqueda"
                                 placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta">
-                            <input type="hidden" name="lang" value="<?= htmlspecialchars(get_language()) ?>">
+                            <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(get_language()) ?>">
                             <input type="submit" value="Buscar">
-                            <input id="input-reseteo" type="reset" value="Reiniciar">
+                            <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">
                             <input id="input-deshacer-busqueda" type="button" value="Deshacer búsqueda"
                                 onclick="window.location.href='?lang=<?= htmlspecialchars(get_language()) ?>'">
+                            <input type="hidden" name="csrf" id="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                         </form>
                     </search>
                     <!-- Paginación superior -->
@@ -94,16 +105,16 @@
                             $first_page = 1;
                             ?>
                             <a
-                                href="?page=<?= $first_page ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Primera
+                                href="?page=<?= $first_page ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Primera
                                 &laquo;</a>
                             <a
-                                href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">&laquo;
+                                href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">&laquo;
                                 Anterior</a>
                         <?php } ?>
 
                         <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
                             <a class="<?= $i == $current_page ? 'activo' : '' ?>"
-                                href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">
+                                href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">
                                 <?= $i ?>
                             </a>
                         <?php } ?>
@@ -112,10 +123,10 @@
                             $last_page = $total_pages;
                             ?>
                             <a
-                                href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Siguiente
+                                href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Siguiente
                                 &raquo;</a>
                             <a
-                                href="?page=<?= $last_page ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Última
+                                href="?page=<?= $last_page ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Última
                                 &raquo;</a>
                         <?php } ?>
                     </div>
@@ -202,16 +213,16 @@
                     $first_page = 1;
                     ?>
                     <a
-                        href="?page=<?= $first_page ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Primera
+                        href="?page=<?= $first_page ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Primera
                         &laquo;</a>
                     <a
-                        href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">&laquo;
+                        href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">&laquo;
                         Anterior</a>
                 <?php } ?>
 
                 <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
                     <a class="<?= $i == $current_page ? 'activo' : '' ?>"
-                        href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">
+                        href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">
                         <?= $i ?>
                     </a>
                 <?php } ?>
@@ -220,17 +231,17 @@
                     $last_page = $total_pages;
                     ?>
                     <a
-                        href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Siguiente
+                        href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Siguiente
                         &raquo;</a>
                     <a
-                        href="?page=<?= $last_page ?>&caseta=<?= htmlspecialchars($_GET['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Última
+                        href="?page=<?= $last_page ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Última
                         &raquo;</a>
                 <?php } ?>
             </div>
         </main>
 
     <?php else: ?>
-        <h2>No se encontraron resultados</h2>
+        <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
         </main>
     <?php endif; ?>
 
@@ -260,7 +271,18 @@
             }
         });
     </script>
-    <script type="module" src="<?= JS_ADMIN . 'index_admin.js' ?>"></script>
+    <?php if ($resultados_encontrados): ?>
+        <script type="module" src="<?= JS_ADMIN . 'index_admin.js' ?>"></script>
+    <?php endif; ?>
+    <script>
+        const inputReseteo = document.getElementById('input-reseteo');
+        inputReseteo.addEventListener('click', function () {
+            // Si hay una búsqueda hecha, mostrar un mensaje de error
+            if (document.getElementById('input-busqueda').value !== '') {
+                alert('No es posible reiniciar el formulario de búsqueda ahora mismo');
+            }
+        });
+    </script>
 
 </body>
 
