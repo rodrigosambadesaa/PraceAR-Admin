@@ -183,6 +183,11 @@
                 <input type="submit" value="Cambiar contraseña">
             </div>
         </form>
+        <span style="color: blue;">¿Necesita ayuda? Le recomendamos que use un navegador con gestor y generador de
+            contraseñas
+            integrados, como Google
+            Chrome o Mozilla Firefox, con la sesión iniciada en su cuenta de Google o Firefox, respectivamente. De esta
+            forma, podrá guardar la nueva contraseña en su gestor de contraseñas.</span>
         <?= $err ?>
         <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
     </body>
