@@ -31,7 +31,7 @@
 
     $results_per_page = 50;
     $busqueda_hecha = false;
-    $current_page = (isset($_POST['page']) && is_numeric($_POST['page'])) ? (int) $_POST['page'] : 1;
+    $current_page = (isset($_GET['page']) && is_numeric($_GET['page'])) ? (int) $_GET['page'] : 1;
     $start_from = ($current_page - 1) * $results_per_page;
     $caseta = isset($_POST['caseta']) ? limpiar_input($_POST['caseta']) : '';
 
@@ -277,14 +277,15 @@
     <?php if ($resultados_encontrados): ?>
         <script type="module" src="<?= JS_ADMIN . 'index_admin.js' ?>"></script>
         <script>
-            const inputReseteo = document.getElementById('input-reseteo');
+            // Si se ha hecho una búsqueda, no permitimos que se haga clic en el botón de reiniciar
             <?php if ($busqueda_hecha): ?>
-                inputReseteo.addEventListener('click', function () {
-                    // Si hay una búsqueda hecha, mostrar un mensaje de error
-                    if (document.getElementById('input-busqueda').value !== '') {
-                        alert('No es posible reiniciar el formulario de búsqueda ahora mismo');
-                    }
-                });
+                const inputReseteo = document.getElementById('input-reseteo');
+                // console.log(inputReseteo);
+                inputReseteo.disabled = true;
+            <?php else: ?>
+                // Si no hay una búsqueda hecha, no permitimos que se haga clic en el botón de deshacer
+                const inputDeshacer = document.getElementById('input-deshacer-busqueda');
+                inputDeshacer.disabled = true;
             <?php endif; ?>
         </script>
     <?php endif; ?>
