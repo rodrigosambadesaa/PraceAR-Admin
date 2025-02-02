@@ -39,9 +39,10 @@ require_once(HELPERS . 'get_language.php');
                     alt="<?= get_language() ?>"></strong>
         </h1>
         <?php
-        require_once(COMPONENT_ADMIN . "main_menu.php");
         require_once(COMPONENT_ADMIN . "languages.php");
         ?>
-
     </header>
+    <?php
+    require_once(COMPONENT_ADMIN . "main_menu.php");
+    ?>
 </body>

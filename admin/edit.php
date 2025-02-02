@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Datos Generales de Puesto - Página de administración</title>
+    <title>Admin - PraceAR - Editar Datos Generales de Puesto - Página de administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
 
@@ -64,11 +64,13 @@
         <div>
             <label for="caseta">Caseta</label>
             <input type="text" id="caseta" disabled value="<?= htmlspecialchars($fila["caseta"]) ?>">
-            <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>">
+            <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>"
+                placeholder="Código de caseta">
         </div>
         <div>
             <label for="nombre">Nombre</label>
-            <input id="nombre" type="text" name="nombre" value="<?= htmlspecialchars($fila["nombre"]) ?>">
+            <input id="nombre" type="text" name="nombre" value="<?= htmlspecialchars($fila["nombre"]) ?>"
+                placeholder="Nombre del puesto. Por ejemplo: 'Bibi Handmades'">
         </div>
         <div>
             <label for="imagen">Imagen</label>
@@ -99,11 +101,13 @@
 
         <div>
             <label for="contacto">Contacto</label>
-            <input type="text" id="contacto" name="contacto" value="<?= htmlspecialchars($fila["contacto"]) ?>">
+            <input type="text" id="contacto" name="contacto" value="<?= htmlspecialchars($fila["contacto"]) ?>"
+                placeholder="Información de contacto del puesto.">
         </div>
         <div>
             <label for="telefono">Teléfono</label>
-            <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"]) ?>">
+            <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"]) ?>"
+                placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'">
         </div>
         <div>
             <label for="tipo-unity">Tipo en Unity</label>
@@ -136,7 +140,7 @@
         <div>
             <label for="caseta-padre">Caseta padre</label>
             <input name="caseta_padre" type="text" id="caseta-padre"
-                value="<?= htmlspecialchars($fila["caseta_padre"]) ?>">
+                value="<?= htmlspecialchars($fila["caseta_padre"]) ?>" placeholder="Código de caseta padre">
         </div>
         <div id="div-botones">
             <input id="actualizar" type="submit" value="Actualizar">

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PraceAR - Panel de Administración</title>
+    <title>Admin - PraceAR - Página Principal del Panel de Administración</title>
     <?php require_once(CSS_ADMIN . 'index_admin.php'); ?>
     <link rel='icon' href='./img/favicon.png' type='image/png'>
 </head>
@@ -31,7 +31,7 @@
 
     $results_per_page = 50;
     $busqueda_hecha = false;
-    $current_page = (isset($_POST['page']) && is_numeric($_POST['page'])) ? (int) $_POST['page'] : 1;
+    $current_page = (isset($_GET['page']) && is_numeric($_GET['page'])) ? (int) $_GET['page'] : 1;
     $start_from = ($current_page - 1) * $results_per_page;
     $caseta = isset($_POST['caseta']) ? limpiar_input($_POST['caseta']) : '';
 
@@ -86,7 +86,7 @@
         <?php
         if ($resultados_encontrados):
             ?>
-            <table class="tabla-puestos">
+            <table id="tabla-puestos">
                 <caption id="cabecera-tabla">
                     <h2 id="texto-cabecera-tabla">Lista de puestos del Mercado de Abastos</h2>
                     <div id="contenedor-separacion"></div>
@@ -102,37 +102,7 @@
                             <input type="hidden" name="csrf" id="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                         </form>
                     </search>
-                    <!-- Paginación superior -->
-                    <div class="paginacion">
-                        <?php if ($current_page > 1) {
-                            $first_page = 1;
-                            ?>
-                            <a
-                                href="?page=<?= $first_page ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Primera
-                                &laquo;</a>
-                            <a
-                                href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">&laquo;
-                                Anterior</a>
-                        <?php } ?>
-
-                        <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                            <a class="<?= $i == $current_page ? 'activo' : '' ?>"
-                                href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">
-                                <?= $i ?>
-                            </a>
-                        <?php } ?>
-
-                        <?php if ($current_page < $total_pages) {
-                            $last_page = $total_pages;
-                            ?>
-                            <a
-                                href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Siguiente
-                                &raquo;</a>
-                            <a
-                                href="?page=<?= $last_page ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Última
-                                &raquo;</a>
-                        <?php } ?>
-                    </div>
+                    <?php require_once(SECTIONS . 'pagination.php'); ?>
                 </caption>
 
                 <thead>
@@ -210,38 +180,10 @@
                 <p id="zoomed-name"></p>
             </div>
 
-            <!-- Paginación inferior -->
-            <div class="paginacion">
-                <?php if ($current_page > 1) {
-                    $first_page = 1;
-                    ?>
-                    <a
-                        href="?page=<?= $first_page ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Primera
-                        &laquo;</a>
-                    <a
-                        href="?page=<?= $current_page - 1 ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">&laquo;
-                        Anterior</a>
-                <?php } ?>
-
-                <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
-                    <a class="<?= $i == $current_page ? 'activo' : '' ?>"
-                        href="?page=<?= $i ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">
-                        <?= $i ?>
-                    </a>
-                <?php } ?>
-
-                <?php if ($current_page < $total_pages) {
-                    $last_page = $total_pages;
-                    ?>
-                    <a
-                        href="?page=<?= $current_page + 1 ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Siguiente
-                        &raquo;</a>
-                    <a
-                        href="?page=<?= $last_page ?>&caseta=<?= htmlspecialchars($_POST['caseta'] ?? '') ?>&lang=<?= htmlspecialchars(get_language()) ?>">Última
-                        &raquo;</a>
-                <?php } ?>
-            </div>
         </main>
+        <footer>
+            <?php require(SECTIONS . 'pagination.php'); ?>
+        </footer>
 
     <?php else: ?>
         <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
@@ -277,14 +219,15 @@
     <?php if ($resultados_encontrados): ?>
         <script type="module" src="<?= JS_ADMIN . 'index_admin.js' ?>"></script>
         <script>
-            const inputReseteo = document.getElementById('input-reseteo');
+            // Si se ha hecho una búsqueda, no permitimos que se haga clic en el botón de reiniciar
             <?php if ($busqueda_hecha): ?>
-                inputReseteo.addEventListener('click', function () {
-                    // Si hay una búsqueda hecha, mostrar un mensaje de error
-                    if (document.getElementById('input-busqueda').value !== '') {
-                        alert('No es posible reiniciar el formulario de búsqueda ahora mismo');
-                    }
-                });
+                const inputReseteo = document.getElementById('input-reseteo');
+                // console.log(inputReseteo);
+                inputReseteo.disabled = true;
+            <?php else: ?>
+                // Si no hay una búsqueda hecha, no permitimos que se haga clic en el botón de deshacer
+                const inputDeshacer = document.getElementById('input-deshacer-busqueda');
+                inputDeshacer.disabled = true;
             <?php endif; ?>
         </script>
     <?php endif; ?>

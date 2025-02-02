@@ -11,6 +11,18 @@
         padding: 0;
     }
 
+    main {
+        margin: 0 auto;
+        max-width: 1500px;
+        padding: 20px;
+        margin-bottom: -62.5px;
+    }
+
+    footer {
+        text-align: center;
+        font-size: 1.2em;
+    }
+
     #cabecera-tabla {
         font-size: 1.75em;
     }
@@ -42,11 +54,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-    }
-
-    table caption {
-        font-size: 1.5em;
-        margin: .5em 0 .75em;
     }
 
     table tr {
@@ -218,27 +225,28 @@
         transform: scale(1.1);
     }
 
-    .tabla-puestos {
+    #tabla-puestos {
         width: 100%;
         border-collapse: collapse;
         margin-top: 20px;
     }
 
-    .tabla-puestos caption {
+    #tabla-puestos caption {
         font-size: 1.75rem;
+        margin: .5em 0 .75em;
         font-weight: bold;
     }
 
-    .tabla-puestos thead {
+    #tabla-puestos thead {
         font-size: .95em;
     }
 
-    .tabla-puestos tbody {
+    #tabla-puestos tbody {
         font-size: .9em;
     }
 
-    .tabla-puestos th,
-    .tabla-puestos td {
+    #tabla-puestos th,
+    #tabla-puestos td {
         padding: 10px;
         text-align: center;
     }
@@ -258,7 +266,7 @@
             border: 0;
         }
 
-        table caption {
+        #tabla-puestos {
             font-size: 1.3em;
         }
 

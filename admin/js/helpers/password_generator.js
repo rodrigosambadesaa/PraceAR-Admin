@@ -1,42 +1,32 @@
-function generatePassword() {
+import { limpiarInput } from '../../../../js/helpers/clean_input.js';
 
-    // Random length between 16 and 255
-    const length = Math.floor(Math.random() * 240) + 16;
+const formulario = document.getElementById('formulario-generacion-contrasena');
+const formularioCambioDeContrasenha = document.getElementById('formulario-cambio-contrasena');
 
-    const lowerCase = 'abcdefghijklmnopqrstuvwxyz';
-    const upperCase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numbers = '0123456789';
-    const specialChars = '!@#$%^&*()-_=+[]{}|;:,.<>?';
+formulario.addEventListener('submit', function (e) {
+    e.preventDefault();
 
-    function getRandomChar(charSet) {
-        return charSet[Math.floor(Math.random() * charSet.length)];
+    const longitud = limpiarInput(document.getElementById('length').value);
+
+    // La longitud debe ser un número natural
+    if (isNaN(longitud) || longitud <= 0) {
+        alert('La longitud debe ser un número natural');
+        formularioCambioDeContrasenha.addEventListener('submit', function (e) {
+            e.preventDefault();
+        });
+        return;
     }
 
-    let password = '';
-    password += getRandomChar(lowerCase);
-    password += getRandomChar(upperCase);
-    password += getRandomChar(numbers);
-
-    const usedSpecialChars = new Set();
-    while (usedSpecialChars.size < 3) {
-        const char = getRandomChar(specialChars);
-        if (!usedSpecialChars.has(char)) {
-            password += char;
-            usedSpecialChars.add(char);
-        }
+    // La longitud debe ser un número natural entre 16 y 255
+    if (longitud < 16 || longitud > 255) {
+        alert('La longitud debe ser un número natural entre 16 y 255');
+        formularioCambioDeContrasenha.addEventListener('submit', function (e) {
+            e.preventDefault();
+        });
+        return;
     }
 
-    const allChars = lowerCase + upperCase + numbers + specialChars;
-    while (password.length < length) {
-        password += getRandomChar(allChars);
-    }
+    // Si no hay errores, se permite el envío del formulario
+    formulario.submit();
+});
 
-    // Verificar que la contraseña generada cumple con los requisitos y, si no, volver a generarla
-    if (password.match(/[a-z]/) && password.match(/[A-Z]/) && password.match(/[0-9]/) && password.match(/[!@#$%^&*()-_=+[]{}|;:,.<>?]/)) {
-        return password;
-    } else {
-        return generatePassword();
-    }
-}
-
-export { generatePassword }; // Exportar para poder usar la función en otros archivos

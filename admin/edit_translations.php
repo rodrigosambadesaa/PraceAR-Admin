@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Traducciones de Puesto - Página de administración</title>
+    <title>Admin - PraceAR - Editar Traducciones de Puesto - Página de administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
 
@@ -72,9 +72,11 @@
     <form class="pure-form" action="#" method="POST" id="formulario">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <label for="tipo">Tipo</label>
-        <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>">
+        <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>"
+            placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'">
         <label for="descripcion">Descripción</label>
         <textarea name="descripcion" id="descripcion" cols="30" rows="10"
+            placeholder="Descripción del puesto. Por ejemplo: 'Bisutería hecha a mano'."
             maxlength="450"><?= htmlspecialchars($data['descripcion'] ?? "") ?></textarea>
         <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars($data['id'] ?? "") ?>">
         <input type="submit" value="Actualizar">

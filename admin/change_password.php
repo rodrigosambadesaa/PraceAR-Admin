@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PraceAR - Cambiar Contraseña</title>
+    <title>Admin - PraceAR - Cambiar Contraseña</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
 
@@ -187,7 +187,8 @@
             contraseñas
             integrados, como Google
             Chrome o Mozilla Firefox, con la sesión iniciada en su cuenta de Google o Firefox, respectivamente. De esta
-            forma, podrá guardar la nueva contraseña en su gestor de contraseñas.</span>
+            forma, podrá guardar la nueva contraseña en su gestor de contraseñas. También puede usar el generador de
+            contraseñas que verá abajo</span>
         <?= $err ?>
         <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
     </body>

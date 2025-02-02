@@ -1,10 +1,13 @@
-<nav style="display: flex; justify-content: space-around; align-items: center;">
+<nav
+    style="text-align: center; max-width: 1100px; justify-content: center; margin: 0 auto; padding: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; font-size: 1.15em; color: #1e7dbd; font-weight: bold;">
     <a href="./?lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
         style="text-align: center; margin-right: 10px;">Inicio</a>
     <a href="./?page=ships&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
         style="text-align: center; margin-right: 10px;">Naves</a>
     <a href="./?page=change_password&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
         style="text-align: center; margin-right: 10px;">Cambiar contraseña</a>
+    <a href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
+        style="text-align: center; margin-right: 10px;">Generador de contraseñas</a>
     <a href="./admin/logout_session.php" class="enlace_cierre_sesion" style="display: flex; align-items: center;"
         title="Cerrar sesión">
         <img id="imagen-boton-cierre-sesion" src="./img/logout_icon.png" alt="Cerrar sesión">

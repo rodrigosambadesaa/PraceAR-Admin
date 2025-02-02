@@ -6,7 +6,8 @@ document.getElementById('formulario').addEventListener('submit', (e) => {
     // El login y la contraseña deben ser strings
     if (typeof login !== 'string' || typeof password !== 'string') {
         e.preventDefault();
-        alert('Error en los datos introducidos.');
+        // Mostrar ventana modal con mensaje de error
+        alert('Error en el formulario.');
         return;
     }
 
