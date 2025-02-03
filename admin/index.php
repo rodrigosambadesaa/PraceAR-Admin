@@ -46,6 +46,7 @@
         $sql_total .= " AND p.caseta LIKE ?";
         $params[] = "%$caseta%";
         $busqueda_hecha = true;
+        $current_page = 1;
     }
 
     $stmt_total = $conexion->prepare($sql_total);
@@ -69,6 +70,7 @@
         $sql .= " AND p.caseta LIKE ?";
         $params[] = "%$caseta%";
         $busqueda_hecha = true;
+        $current_page = 1;
     }
 
     $sql .= " ORDER BY p.caseta LIMIT ?, ?";
@@ -91,7 +93,7 @@
                     <h2 id="texto-cabecera-tabla">Lista de puestos del Mercado de Abastos</h2>
                     <div id="contenedor-separacion"></div>
                     <search role="search">
-                        <form id="formulario-busqueda" action="#" method="POST">
+                        <form id="formulario-busqueda" action="?page=1" method="POST">
                             <input value="<?= htmlspecialchars($_POST['caseta'] ?? "") ?>" type="text" id="input-busqueda"
                                 placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta">
                             <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(get_language()) ?>">
