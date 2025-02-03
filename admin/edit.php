@@ -53,7 +53,9 @@
 
     <form id="formulario-editar" action="#" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
-        <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <?= htmlspecialchars($fila["id"]) ?></h2>
+        <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <span
+                style="color: #1e7dbd"><?= htmlspecialchars($fila["nombre"]) ?></span>
+        </h2>
         <div style="display:flex; align-items: center; gap: .5em;">
             <label for="activo">Activo</label>
             <?php

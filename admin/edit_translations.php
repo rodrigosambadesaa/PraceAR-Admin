@@ -46,21 +46,22 @@
 
     ?>
 
-    <h2 style="text-align: center;">Traducción del puesto
-        <?php
+    <h2 style="text-align: center;">Traducción del puesto<span style="color: #1e7dbd;">
+            <?php
 
-        // Obtener el nombre del puesto
-        
-        $sql_nombre_puesto = "SELECT nombre FROM puestos WHERE id = ?";
-        $stmt_nombre_puesto = $conexion->prepare($sql_nombre_puesto);
-        $stmt_nombre_puesto->bind_param('i', $id);
-        $stmt_nombre_puesto->execute();
+            // Obtener el nombre del puesto
+            
+            $sql_nombre_puesto = "SELECT nombre FROM puestos WHERE id = ?";
+            $stmt_nombre_puesto = $conexion->prepare($sql_nombre_puesto);
+            $stmt_nombre_puesto->bind_param('i', $id);
+            $stmt_nombre_puesto->execute();
 
-        $resultado_nombre_puesto = $stmt_nombre_puesto->get_result();
-        $nombre_puesto = $resultado_nombre_puesto->fetch_assoc();
+            $resultado_nombre_puesto = $stmt_nombre_puesto->get_result();
+            $nombre_puesto = $resultado_nombre_puesto->fetch_assoc();
 
-        echo htmlspecialchars($nombre_puesto['nombre']);
-        ?>
+            echo htmlspecialchars($nombre_puesto['nombre']);
+            ?>
+        </span>
     </h2>
     <?php
 
