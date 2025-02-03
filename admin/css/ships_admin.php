@@ -53,6 +53,7 @@
         visibility: hidden;
         opacity: 0;
         transition: visibility 0s, opacity 0.3s ease;
+        line-height: 0.003;
     }
 
     /* Hacemos la imagen más grande */
@@ -82,11 +83,12 @@
     .zoomed-container::before {
         content: '×';
         position: absolute;
-        top: 10px;
-        right: 20px;
+        top: 1px;
+        right: 12px;
         font-size: 2rem;
         color: white;
         cursor: pointer;
+        line-height: 0.16;
     }
 
     @media screen and (max-width: 768px) {
