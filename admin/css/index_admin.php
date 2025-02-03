@@ -100,6 +100,7 @@
         opacity: 0;
         transition: visibility 0s, opacity 0.3s ease;
         z-index: 9999;
+        line-height: 0.425;
     }
 
     .zoomed-container.show {
@@ -136,9 +137,9 @@
 
     .zoomed-container .close-button {
         position: absolute;
-        top: 10px;
-        right: 20px;
-        font-size: 2rem;
+        top: 0.0000000001px;
+        right: 1px;
+        font-size: 2.25rem;
         color: white;
         cursor: pointer;
     }
