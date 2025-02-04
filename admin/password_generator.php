@@ -106,8 +106,14 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         function copyToClipboard() {
             const passwordText = document.getElementById('password-text').innerText;
             navigator.clipboard.writeText(passwordText).then(() => {
+                // Verificar si ya existe un mensaje de éxito y eliminarlo
+                const existingMessage = document.getElementById('success-message');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
                 // Crear un span debajo de la contraseña para mostrar un mensaje de éxito
                 const successMessage = document.createElement('span');
+                successMessage.id = 'success-message';
                 successMessage.textContent = 'Contraseña copiada al portapapeles';
                 successMessage.style.color = 'green';
                 successMessage.style.display = 'block';
