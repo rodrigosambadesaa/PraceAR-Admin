@@ -32,8 +32,23 @@
     $results_per_page = 50;
     $busqueda_hecha = false;
     $current_page = (isset($_GET['page']) && is_numeric($_GET['page'])) ? (int) $_GET['page'] : 1;
+
+    if ($current_page < 1) {
+        $current_page = 1;
+    }
+
     $start_from = ($current_page - 1) * $results_per_page;
-    $caseta = isset($_POST['caseta']) ? limpiar_input($_POST['caseta']) : '';
+    $caseta = '';
+
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['caseta'])) {
+        $caseta = limpiar_input($_POST['caseta']);
+        // Redirigir a la misma página con GET para mantener la búsqueda
+        header("Location: ?page=1&caseta=" . urlencode($caseta) . "&lang=" . urlencode(get_language()));
+        exit;
+    } elseif (isset($_GET['caseta'])) {
+        $caseta = limpiar_input($_GET['caseta']);
+    }
+
 
     $sql_total = "SELECT COUNT(p.id) as total FROM puestos p 
               RIGHT JOIN puestos_traducciones pt ON p.id = pt.puesto_id
@@ -46,7 +61,6 @@
         $sql_total .= " AND p.caseta LIKE ?";
         $params[] = "%$caseta%";
         $busqueda_hecha = true;
-        $current_page = 1;
     }
 
     $stmt_total = $conexion->prepare($sql_total);
@@ -70,7 +84,6 @@
         $sql .= " AND p.caseta LIKE ?";
         $params[] = "%$caseta%";
         $busqueda_hecha = true;
-        $current_page = 1;
     }
 
     $sql .= " ORDER BY p.caseta LIMIT ?, ?";
