@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             } else {
                 try {
                     $password = generate_password($length);
-                    $result = '<span style="color: green; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</span>';
+                    $result = '<span style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</span>';
                     $mostrar_boton = true;
                     // Actualizar el valor del input type range en el formulario para futuras generaciones
                 } catch (Exception $e) {
@@ -106,7 +106,14 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         function copyToClipboard() {
             const passwordText = document.getElementById('password-text').innerText;
             navigator.clipboard.writeText(passwordText).then(() => {
-                alert('Contraseña copiada al portapapeles.');
+                // Crear un span debajo de la contraseña para mostrar un mensaje de éxito
+                const successMessage = document.createElement('span');
+                successMessage.textContent = 'Contraseña copiada al portapapeles';
+                successMessage.style.color = 'green';
+                successMessage.style.display = 'block';
+                successMessage.style.textAlign = 'center';
+                successMessage.style.marginTop = '1rem';
+                document.getElementById('password-text').insertAdjacentElement('afterend', successMessage);
             }).catch(err => {
                 console.error('No se pudo copiar la contraseña al portapapeles: ', err);
             });
@@ -140,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>"
             oninput="this.nextElementSibling.value = this.value" required>
         <output
-            style="display: block; text-align: center;"><?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?></output>
+            style="display: block; text-align: center; margin-top: -1.5rem;"><?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?></output>
 
         <input type="submit" value="Generar contraseña">
     </form>
