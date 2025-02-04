@@ -173,8 +173,11 @@
         contraseñas
         integrados, como Google
         Chrome o Mozilla Firefox, con la sesión iniciada en su cuenta de Google o Firefox, respectivamente. De esta
-        forma, podrá guardar la nueva contraseña en su gestor de contraseñas. También puede usar el generador de
-        contraseñas que verá abajo</span>
+        forma, podrá guardar la nueva contraseña en su gestor de contraseñas. El problema es que las contraseñas
+        generadas por esos gestores suelen
+        ser de 15 caracteres, por lo que puede usar una extensión como 1Password o <a
+            href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>">nuestro generador de contraseñas</a>
+        para generar una contraseña de 16 caracteres o más.</span>
     <?= $err ?>
     <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
 </body>
