@@ -62,6 +62,7 @@ function generate_password(int $length)
 $result = '';
 $password = '';
 $mostrar_boton = false;
+$length = 16;
 
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     if (isset($_POST['csrf']) && hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
@@ -81,6 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     $password = generate_password($length);
                     $result = '<span style="color: green; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</span>';
                     $mostrar_boton = true;
+                    // Actualizar el valor del input type range en el formulario para futuras generaciones
                 } catch (Exception $e) {
                     $result = '<span style="color: red; text-align: center;">' . $e->getMessage() . '</span>';
                 }
@@ -134,7 +136,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
 
         <label for="length">Longitud de la contraseña:</label>
-        <input type="number" id="length" name="length" min="16" max="255" required>
+        <input type="range" id="length" name="length" min="16" max="255" value="<?= $length ?>"
+            oninput="this.nextElementSibling.value = this.value" required>
+        <output><?= $length ?></output>
 
         <input type="submit" value="Generar contraseña">
     </form>
