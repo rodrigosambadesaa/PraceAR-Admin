@@ -75,7 +75,7 @@
 
     .zoomed-container figcaption {
         color: white;
-        margin-top: 20px;
+        margin-top: 37px;
         font-size: 1.5rem;
         text-align: center;
     }

@@ -123,7 +123,7 @@
     .zoomed-container p {
         color: white;
         font-size: 1.5rem;
-        margin-top: 15px;
+        margin-top: 30px;
         text-align: center;
         max-width: 90%;
     }

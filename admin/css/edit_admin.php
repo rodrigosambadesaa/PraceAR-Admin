@@ -39,8 +39,8 @@
     .zoomed-container::before {
         content: '×';
         position: absolute;
-        top: 10px;
-        right: 20px;
+        top: -25px;
+        right: 12px;
         font-size: 2rem;
         color: white;
         cursor: pointer;
