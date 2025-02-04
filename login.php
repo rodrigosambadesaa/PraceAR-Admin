@@ -43,8 +43,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $usuario = $result->fetch_assoc();
             $stored_password = $usuario['password'];
 
-            // Verificar la contraseña directamente con bcrypt
+            // Verificar la contraseña y actualizar el hash si es necesario
             if (password_verify("{$password}{$pepper}", $stored_password)) {
+                // Check if the hash needs to be rehashed to Argon2
+                if (password_needs_rehash($stored_password, PASSWORD_ARGON2ID)) {
+                    $new_hash = password_hash("{$password}{$pepper}", PASSWORD_ARGON2ID);
+                    $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
+                    $update_stmt = $conexion->prepare($update_sql);
+                    $update_stmt->bind_param('si', $new_hash, $usuario['id']);
+                    $update_stmt->execute();
+                }
+
                 echo "Inicio de sesión correcto";
                 $_SESSION['id'] = $usuario['id'];
                 $_SESSION['login'] = 'logueado';

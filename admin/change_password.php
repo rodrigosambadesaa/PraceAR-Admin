@@ -94,8 +94,17 @@
                     throw new Exception("La contraseña actual es incorrecta.");
                 }
 
+                // Rehash the password if necessary
+                if (password_needs_rehash($stored_password, PASSWORD_ARGON2ID)) {
+                    $stored_password = password_hash("{$old_password}{$pepper}", PASSWORD_ARGON2ID);
+                    $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
+                    $update_stmt = $conexion->prepare($update_sql);
+                    $update_stmt->bind_param('si', $stored_password, $user_id);
+                    $update_stmt->execute();
+                }
+
                 // Generar el hash de la nueva contraseña
-                $hashed_password = password_hash("{$new_password}{$pepper}", PASSWORD_BCRYPT);
+                $hashed_password = password_hash("{$new_password}{$pepper}", PASSWORD_ARGON2ID);
 
                 // Actualizar la contraseña en la base de datos
                 $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
@@ -129,68 +138,45 @@
     }
     ?>
 
-    <!DOCTYPE html>
-    <html lang="es">
+    <h1 style="text-align: center;">Cambiar contraseña</h1>
+    <?php
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Cambiar contraseña</title>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-        <link rel='icon' href='./img/favicon.png' type='image/png'>
+    if (!isset($_SESSION['csrf'])) {
+        $_SESSION['csrf'] = bin2hex(random_bytes(32));
+    }
+    ?>
 
-        <!-- Iconos para dispositivos Apple -->
-        <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
-        <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
+    <form method="POST" id="formulario-cambio-contrasena">
+        <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
+        <div id="form-group">
+            <label for="nombre_usuario">Nombre de usuario:</label>
+            <input type="text" name="nombre_usuario" id="nombre_usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
+                disabled>
+        </div>
+        <div id="form-group">
+            <label for="old_password">Contraseña actual:</label>
+            <input type="password" name="old_password" id="old_password" required>
+        </div>
+        <div id="form-group">
+            <label for="new_password">Nueva contraseña:</label>
+            <input type="password" name="new_password" id="new_password" required>
+        </div>
+        <div id="form-group">
+            <label for="confirm_password">Confirmar nueva contraseña:</label>
+            <input type="password" name="confirm_password" id="confirm_password" required>
+        </div>
+        <div id="form-group">
+            <input type="submit" value="Cambiar contraseña">
+        </div>
+    </form>
+    <span style="color: blue;">¿Necesita ayuda? Le recomendamos que use un navegador con gestor y generador de
+        contraseñas
+        integrados, como Google
+        Chrome o Mozilla Firefox, con la sesión iniciada en su cuenta de Google o Firefox, respectivamente. De esta
+        forma, podrá guardar la nueva contraseña en su gestor de contraseñas. También puede usar el generador de
+        contraseñas que verá abajo</span>
+    <?= $err ?>
+    <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
+</body>
 
-        <!-- Icono para Android (PWA) -->
-        <link rel="icon" sizes="192x192" href="icon-192x192.png">
-
-        <!-- Manifesto Web (PWA) -->
-        <link rel="manifest" href="/manifest.json">
-    </head>
-
-    <body>
-        <h1 style="text-align: center;">Cambiar contraseña</h1>
-        <?php
-
-        if (!isset($_SESSION['csrf'])) {
-            $_SESSION['csrf'] = bin2hex(random_bytes(32));
-        }
-        ?>
-
-        <form method="POST" id="formulario-cambio-contrasena">
-            <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
-            <div id="form-group">
-                <label for="nombre_usuario">Nombre de usuario:</label>
-                <input type="text" name="nombre_usuario" id="nombre_usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
-                    disabled>
-            </div>
-            <div id="form-group">
-                <label for="old_password">Contraseña actual:</label>
-                <input type="password" name="old_password" id="old_password" required>
-            </div>
-            <div id="form-group">
-                <label for="new_password">Nueva contraseña:</label>
-                <input type="password" name="new_password" id="new_password" required>
-            </div>
-            <div id="form-group">
-                <label for="confirm_password">Confirmar nueva contraseña:</label>
-                <input type="password" name="confirm_password" id="confirm_password" required>
-            </div>
-            <div id="form-group">
-                <input type="submit" value="Cambiar contraseña">
-            </div>
-        </form>
-        <span style="color: blue;">¿Necesita ayuda? Le recomendamos que use un navegador con gestor y generador de
-            contraseñas
-            integrados, como Google
-            Chrome o Mozilla Firefox, con la sesión iniciada en su cuenta de Google o Firefox, respectivamente. De esta
-            forma, podrá guardar la nueva contraseña en su gestor de contraseñas. También puede usar el generador de
-            contraseñas que verá abajo</span>
-        <?= $err ?>
-        <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
-    </body>
-
-    </html>
+</html>
