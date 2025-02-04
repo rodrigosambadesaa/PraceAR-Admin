@@ -4,10 +4,15 @@
         style="text-align: center; margin-right: 10px;">Inicio</a>
     <a href="./?page=ships&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
         style="text-align: center; margin-right: 10px;">Naves</a>
-    <a href="./?page=change_password&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
-        style="text-align: center; margin-right: 10px;">Cambiar contraseña</a>
-    <a href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
-        style="text-align: center; margin-right: 10px;">Generador de contraseñas</a>
+
+    <div class="dropdown">
+        <a href="./?page=change_password&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link">Cambiar contraseña</a>
+        <div class="dropdown-content">
+            <a href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link">Generador de
+                contraseñas</a>
+        </div>
+    </div>
+
     <a href="./admin/logout_session.php" class="enlace_cierre_sesion" style="display: flex; align-items: center;"
         title="Cerrar sesión">
         <img id="imagen-boton-cierre-sesion" src="./img/logout_icon.png" alt="Cerrar sesión">
@@ -38,6 +43,36 @@
     .nav-link:hover::after {
         visibility: visible;
         transform: scaleX(1);
+    }
+
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 200px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+
+    .dropdown-content a {
+        display: block;
+        padding: 10px;
+        text-align: left;
+        color: #1e7dbd;
+        text-decoration: none;
+    }
+
+    .dropdown-content a:hover {
+        background-color: #f1f1f1;
+    }
+
+    .dropdown:hover .dropdown-content {
+        display: block;
     }
 
     .enlace_cierre_sesion img {
