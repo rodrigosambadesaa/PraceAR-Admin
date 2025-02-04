@@ -136,9 +136,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
 
         <label for="length">Longitud de la contraseña:</label>
-        <input type="range" id="length" name="length" min="16" max="255" value="<?= $length ?>"
+        <input type="range" id="length" name="length" min="16" max="255"
+            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>"
             oninput="this.nextElementSibling.value = this.value" required>
-        <output><?= $length ?></output>
+        <output><?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?></output>
 
         <input type="submit" value="Generar contraseña">
     </form>
