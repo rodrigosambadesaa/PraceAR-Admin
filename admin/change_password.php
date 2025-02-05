@@ -89,13 +89,16 @@
             }
 
             // Verificar que la nueva contraseña no esté en la tabla de contraseñas antiguas
-            $sql = "SELECT * FROM old_passwords WHERE id= ? AND password= ?";
+            $sql = "SELECT password FROM old_passwords WHERE id_usuario = ?";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param('is', $user_id, $new_password);
+            $stmt->bind_param('i', $user_id);
             $stmt->execute();
+            $result = $stmt->get_result();
 
-            if ($stmt->get_result()->num_rows > 0) {
-                throw new Exception("La nueva contraseña no puede ser igual a una de las contraseñas antiguas.");
+            while ($row = $result->fetch_assoc()) {
+                if (password_verify("{$new_password}{$pepper}", $row['password'])) {
+                    throw new Exception("La nueva contraseña no puede ser igual a una de las contraseñas anteriores.");
+                }
             }
 
 
@@ -146,11 +149,12 @@
                     <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
                 </ul>";
 
-                // Insertar un nuevo registro en la tabla de contraseñas antiguas
-                $insert_sql = "INSERT INTO old_passwords (id, id_usuario, password, date) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";
-                $insert_stmt = $conexion->prepare($insert_sql);
-                $insert_stmt->bind_param('is', $user_id, $new_password);
-                $insert_stmt->execute();
+                // Insertar un nuevo registro en la tabla de contraseñas antiguas, con la contraseña correspondiente encriptada
+                $contrasenha_a_insertar_en_old_passwords_encriptada = password_hash("{$new_password}{$pepper}", PASSWORD_ARGON2ID);
+                $sql = "INSERT INTO old_passwords (id, id_usuario, password, date) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";
+                $stmt = $conexion->prepare($sql);
+                $stmt->bind_param('is', $user_id, $contrasenha_a_insertar_en_old_passwords_encriptada);
+                $stmt->execute();
 
                 /* Esperar un minuto y meido antes de redirigir para que le dé tiempo a leer los consejos
                 sleep(90);
@@ -160,7 +164,7 @@
                 throw new Exception("Usuario no encontrado.");
             }
         } catch (Exception $e) {
-            $err = '<span style="color: red; text-align: center;">' . htmlspecialchars($e->getMessage()) . '</span>';
+            $err = '<span style="color: red; text-align: center;">' . htmlspecialchars($e->getMessage() ?? 'Error desconocido') . '</span>';
         }
     }
     ?>
