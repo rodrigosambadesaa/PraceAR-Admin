@@ -48,5 +48,12 @@ document.getElementById('formulario').addEventListener('submit', (e) => {
         return;
     }
 
+    // La longitud de la contraseña debe estar entre 16 y 1024 caracteres
+    if (password.length < 16 || password.length > 1024) {
+        e.preventDefault();
+        alert('La contraseña debe tener entre 16 y 1024 caracteres.');
+        return;
+    }
+
     // Si todo está validado, permite el envío del formulario
 });

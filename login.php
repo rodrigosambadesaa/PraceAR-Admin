@@ -32,6 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("La contraseña no puede tener espacios al principio o al final.");
         }
 
+        if (strlen($password) < 16 || strlen($password) > 1024) {
+            throw new Exception("La contraseña debe tener entre 16 y 1024 caracteres.");
+        }
+
         // Consulta para obtener los datos del usuario
         $sql = "SELECT * FROM usuarios WHERE login = ?";
         $stmt = $conexion->prepare($sql);
@@ -94,9 +98,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Manifesto Web (PWA) -->
     <link rel="manifest" href="/manifest.json">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {}
+    </style>
 </head>
 
-<body class="container" style="display: grid; place-content: center; min-height: 100vh; max-width: 600px;">
+<body class="container"
+    style='display: grid; place-content: center; min-height: 100vh; max-width: 600px; font-family: "Inter", sans-serif !important;'>
     <?php require_once "components/sections/header.php"; ?>
     <h2 style="text-align: center;">Inicio de sesión</h2>
     <?php

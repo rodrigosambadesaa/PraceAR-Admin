@@ -17,9 +17,9 @@ formulario.addEventListener('submit', function (e) {
         return;
     }
 
-    // La longitud debe ser un número natural entre 16 y 255
-    if (longitud < 16 || longitud > 255) {
-        alert('La longitud debe ser un número natural entre 16 y 255');
+    // La longitud debe ser un número natural entre 16 y 1024
+    if (longitud < 16 || longitud > 1024) {
+        alert('La longitud debe ser un número natural entre 16 y 1024');
         formularioCambioDeContrasenha.addEventListener('submit', function (e) {
             e.preventDefault();
         });

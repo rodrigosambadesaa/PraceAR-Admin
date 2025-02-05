@@ -38,7 +38,13 @@ formulario.addEventListener('submit', (e) => {
         return;
     }
 
-    // Validar que la nueva contraseña tenga al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.");
+    // Validar que la longitud de las contraseñas esté entre 16 y 1024 caracteres
+    if (newPassword.length < 16 || newPassword.length > 1024 || confirmPassword.length < 16 || confirmPassword.length > 1024 || oldPassword.length < 16 || oldPassword.length > 1024) {
+        alert('Las contraseñas deben tener entre 16 y 1024 caracteres.');
+        return;
+    }
+
+    // Validar que la nueva contraseña tenga al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.
     const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,}$/;
     if (!regex.test(newPassword)) {
         alert('La nueva contraseña debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.');

@@ -7,6 +7,11 @@
     <title>Admin - PraceAR - Página Principal del Panel de Administración</title>
     <?php require_once(CSS_ADMIN . 'index_admin.php'); ?>
     <link rel='icon' href='./img/favicon.png' type='image/png'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>

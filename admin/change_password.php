@@ -18,6 +18,11 @@
 
     <!-- Manifesto Web (PWA) -->
     <link rel="manifest" href="/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
@@ -61,6 +66,11 @@
 
             if (tiene_espacios_al_principio_o_al_final($_POST['new_password']) || tiene_espacios_al_principio_o_al_final($_POST['confirm_password']) || tiene_espacios_al_principio_o_al_final($_POST['old_password'])) {
                 throw new Exception("Las contraseñas no pueden tener espacios al principio o al final.");
+            }
+
+            // Validar la longitud de la nueva contraseña
+            if (strlen($new_password) < 16 || strlen($new_password) > 1024) {
+                throw new Exception("La nueva contraseña debe tener entre 16 y 1024 caracteres.");
             }
 
             // Validar que la nueva contraseña sea fuerte

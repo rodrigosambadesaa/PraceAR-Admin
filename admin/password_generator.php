@@ -6,7 +6,7 @@ if (!isset($_SESSION['csrf'])) {
 
 /**
  * Genera una contraseña de la longitud indicada que cumple con:
- * - Longitud entre 16 y 255 caracteres.
+ * - Longitud entre 16 y 1024 caracteres.
  * - Al menos 1 letra mayúscula.
  * - Al menos 1 letra minúscula.
  * - Al menos 1 dígito.
@@ -18,8 +18,8 @@ if (!isset($_SESSION['csrf'])) {
  */
 function generate_password(int $length)
 {
-    if ($length < 16 || $length > 255) {
-        throw new Exception("La longitud de la contraseña debe ser un número natural entre 16 y 255.");
+    if ($length < 16 || $length > 1024) {
+        throw new Exception("La longitud de la contraseña debe ser un número natural entre 16 y 1024.");
     }
 
     $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -75,8 +75,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
             $length = (int) limpiar_input($_POST['length']);
 
-            if ($length < 16 || $length > 255) {
-                $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe ser un número natural entre 16 y 255.</span>';
+            if ($length < 16 || $length > 1024) {
+                $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe ser un número natural entre 16 y 1024.</span>';
             } else {
                 try {
                     $password = generate_password($length);
@@ -101,6 +101,11 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     <title>Admin - PraceAR - Generador de contraseñas - Página de administración</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
 
     <script>
         function copyToClipboard() {
@@ -149,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
 
         <label for="length">Longitud de la contraseña:</label>
-        <input type="range" id="length" name="length" min="16" max="255"
+        <input type="range" id="length" name="length" min="16" max="1024"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>"
             oninput="this.nextElementSibling.value = this.value" required>
         <output
