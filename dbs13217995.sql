@@ -63,132 +63,16 @@ VALUES
 -- Estructura de tabla para la tabla `old_passwords`
 --
 CREATE TABLE `old_passwords` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `user_id` int(10) UNSIGNED NOT NULL,
-  `password` varchar(300) NOT NULL,
-  `salt` varchar(64) NOT NULL
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `id_usuario` INT UNSIGNED NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `date` DATETIME NOT NULL
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `old_passwords`
---
-INSERT INTO
-  `old_passwords` (`id`, `user_id`, `password`, `salt`)
-VALUES
-  (
-    1,
-    1,
-    '$2y$12$T2p1frUfGuQ8FHVdBXe5cOfCZaCr.VtfMNn4m3uNG.9dc4KuAcb1i',
-    'c1ec420fbe099c3529f800576fcf3943'
-  ),
-  (
-    2,
-    1,
-    '$2y$12$gZ3LoXu9akR5RLeFvCOch.m/KGt/cjoeCMfbFskUrik.F81xpuSMa',
-    'b4e600467dd1d3dc8c1cff2d3ce06bea'
-  ),
-  (
-    3,
-    1,
-    '$2y$12$w8D9Mog2f1qg2mBmFoacWe0gb5G8/zlYwFA78G69tMs9wMK6OLThS',
-    '1821963fe65f764d1ed58437cb3e5eb3'
-  ),
-  (
-    4,
-    1,
-    '$2y$12$NrLtueBN1n.lCAjQC4BOyegR0sQn6gHObT0BCSu.8MYxdH2JMuALy',
-    'bc8d26f85d5f308cfeb424c78b4af3e5'
-  ),
-  (
-    5,
-    1,
-    '$2y$12$U.4V/j28yV/MzQ1Rhl7ZHueI20Vj/prGu4oAKDBekZEndpQ8RZo8u',
-    'e0130174feafdd10aa3b27f833b7dc3c'
-  ),
-  (
-    6,
-    1,
-    '$2y$12$h1O4yT.ZIzAGyvMyYwUt/ugFzUoeXMS2jJNzHJLtuNW.58Z4gAaYK',
-    '8d5f30e1328f81cb5e074575e1202be4'
-  ),
-  (
-    7,
-    1,
-    '$2y$12$ueJLt.iostpJzKVs8F52GOyHjrZSqO1G5wQO3xQGvijh24WtT7FsW',
-    '8dcb6f7547cf1f92545fd225c892bc20'
-  ),
-  (
-    8,
-    1,
-    '$2y$12$eOUgXbHZC1EVtKPb7uGs3uitzfFSa5IfzAaS8a6P4qA6iKQyankc6',
-    '51f0935c0291dd5bb310e3813dc54ca5'
-  ),
-  (
-    9,
-    1,
-    '$2y$12$PB5ckU/.Ozv87h9apZPxn.ap3SviIvPIvFrWAn/wRP6LFrdKmqW1C',
-    '0c8823ae822bef04053cc5f0d5666100'
-  ),
-  (
-    10,
-    1,
-    '$2y$12$ok8oG8ctjzMVgshnXNP14OwVAoCsozfbTpH3F70gYOpBeAsp6SPQy',
-    '88b089c3404a4f90c9358110048a4484'
-  ),
-  (
-    11,
-    1,
-    '$2y$12$Dja2mlp1cHQC7ov6fbAKVuQ2BsbTd7miutopyKHFxjxpD7OJzEXZe',
-    'e76228211a02e43bcc48f6fa426b5cea'
-  ),
-  (
-    12,
-    1,
-    '$2y$12$KKtpseJNwST4l/qu1SEuvOmcpvyVpX8z0VChTeyvo50fvIhWGQngO',
-    'adee922e0d46d32c00befd3ab6088990'
-  ),
-  (
-    13,
-    1,
-    '$2y$12$3EEliiMstQI.GDfx6H/mweZs.MFfnJq76W7yPHzMii0kh1pviOemK',
-    'd801716f23ded2db0f60bba644922d84'
-  ),
-  (
-    14,
-    1,
-    '$2y$12$pRTnbZGyV3LnO8RzCCAbMusEJx/tLeLhtwEp63r1oe.14W7HTAbQ2',
-    '8ce20c0e4e7fceef5288172d9f982d16'
-  ),
-  (
-    15,
-    1,
-    '$2y$12$1mYCtgI1Kwv9r2iBSRSOuudGKtcyC3RvadxHdLM1T8jcWrs4t/2O6',
-    '4370dc9ca3aec93c92749d180703b264'
-  ),
-  (
-    16,
-    1,
-    '$2y$12$OY69HhuVRIZ6PSJrSIslbOIBxUlHvCjJ3.OFD7XdV9NQ6/QXJX19G',
-    '2c1ada07790a379677f766f1eeac9639'
-  ),
-  (
-    17,
-    1,
-    '$2y$12$Tkbj/R4l/AwzNIkQpdKwTuVxZns61ioxkF0GASD6RRJoelHIJTxkq',
-    '37979b770531e346dcf47464998be4e0'
-  ),
-  (
-    18,
-    1,
-    '$2y$12$X7DU0MERhuSGMUJB7DVyZun7AxUIuCaUpq1E57nu73U9ECFU6tpBG',
-    'b61e027f33b145124a4c6a9686564801'
-  ),
-  (
-    19,
-    1,
-    '$2y$12$iL8wAV5Ov8t17e/LofWfNuVBteSGP0Wmd0IMQXQmcrvKtZ5VncYYe',
-    'fc444110242818789b019ce45de085d6'
-  );
+ALTER TABLE
+  `old_passwords`
+ADD
+  CONSTRAINT `fk_old_passwords_id_usuario` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- --------------------------------------------------------
 --
@@ -9771,16 +9655,6 @@ ADD
   PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `old_passwords`
---
-ALTER TABLE
-  `old_passwords`
-ADD
-  PRIMARY KEY (`id`),
-ADD
-  KEY `user_id` (`user_id`);
-
---
 -- Indices de la tabla `puestos`
 --
 ALTER TABLE
@@ -9825,15 +9699,6 @@ MODIFY
   AUTO_INCREMENT = 13;
 
 --
--- AUTO_INCREMENT de la tabla `old_passwords`
---
-ALTER TABLE
-  `old_passwords`
-MODIFY
-  `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-  AUTO_INCREMENT = 20;
-
---
 -- AUTO_INCREMENT de la tabla `puestos`
 --
 ALTER TABLE
@@ -9864,13 +9729,6 @@ MODIFY
 -- Restricciones para tablas volcadas
 --
 --
--- Filtros para la tabla `old_passwords`
---
-ALTER TABLE
-  `old_passwords`
-ADD
-  CONSTRAINT `old_passwords_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 --
 -- Filtros para la tabla `puestos_traducciones`
 --

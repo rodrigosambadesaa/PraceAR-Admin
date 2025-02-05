@@ -88,6 +88,17 @@
                 throw new Exception("La nueva contraseña no puede ser similar al nombre de usuario.");
             }
 
+            // Verificar que la nueva contraseña no esté en la tabla de contraseñas antiguas
+            $sql = "SELECT * FROM old_passwords WHERE id= ? AND password= ?";
+            $stmt = $conexion->prepare($sql);
+            $stmt->bind_param('is', $user_id, $new_password);
+            $stmt->execute();
+
+            if ($stmt->get_result()->num_rows > 0) {
+                throw new Exception("La nueva contraseña no puede ser igual a una de las contraseñas antiguas.");
+            }
+
+
             // Consulta para obtener la contraseña actual del usuario
             $sql = "SELECT password FROM usuarios WHERE id = ?";
             $stmt = $conexion->prepare($sql);
@@ -134,6 +145,12 @@
                     <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
                     <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
                 </ul>";
+
+                // Insertar un nuevo registro en la tabla de contraseñas antiguas
+                $insert_sql = "INSERT INTO old_passwords (id, id_usuario, password, date) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";
+                $insert_stmt = $conexion->prepare($insert_sql);
+                $insert_stmt->bind_param('is', $user_id, $new_password);
+                $insert_stmt->execute();
 
                 /* Esperar un minuto y meido antes de redirigir para que le dé tiempo a leer los consejos
                 sleep(90);
