@@ -1,12 +1,12 @@
 function verifyStrongPassword(password) {
-    // Al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos, y un máximo de 255 caracteres
+    // Al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos, y un máximo de 1024 caracteres
 
     const minusculas = /[a-z]/;
     const mayusculas = /[A-Z]/;
     const numeros = /[0-9]/;
     // Caracteres especiales permitidos: !@#$%^&*()-_=+[]{}|;:,.<>
 
-    if (password.length < 16 || password.length > 255) {
+    if (password.length < 16 || password.length > 1024) {
         return false;
     }
 

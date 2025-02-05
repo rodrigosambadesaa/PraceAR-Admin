@@ -1,5 +1,7 @@
 <?php
 
+require_once HELPERS . 'verify_strong_password.php';
+
 if (!isset($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
@@ -51,8 +53,8 @@ function generate_password(int $length)
     shuffle($password_chars);
     $password = implode('', $password_chars);
 
-    // Verificar que la contraseña cumple con los requisitos
-    if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/', $password)) {
+    // Verificar que la contraseña cumple con los requisitos y que no sea similar al nombre de usuario y, si lo es, generar otra
+    if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/', $password) || contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario'])) {
         return generate_password($length);
     }
 
