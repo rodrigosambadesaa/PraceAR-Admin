@@ -6,7 +6,7 @@ const formularioCambioDeContrasenha = document.getElementById('formulario-cambio
 formulario.addEventListener('submit', function (e) {
     e.preventDefault();
 
-    const longitud = limpiarInput(document.getElementById('length').value);
+    const longitud = limpiarInput(document.getElementById('length-number').value);
 
     // La longitud debe ser un número natural
     if (isNaN(longitud) || longitud <= 0) {

@@ -131,6 +131,20 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 console.error('No se pudo copiar la contraseña al portapapeles: ', err);
             });
         }
+
+        function syncInputs(inputType) {
+            const numberInput = document.getElementById('length-number');
+            const rangeInput = document.getElementById('length-range');
+            const output = document.getElementById('length-output');
+
+            if (inputType === 'number') {
+                rangeInput.value = numberInput.value;
+            } else if (inputType === 'range') {
+                numberInput.value = rangeInput.value;
+            }
+
+            output.textContent = rangeInput.value;
+        }
     </script>
 </head>
 
@@ -154,13 +168,19 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-
         <label for="length">Longitud de la contraseña:</label>
-        <input type="range" id="length" name="length" min="16" max="1024"
-            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>"
-            oninput="this.nextElementSibling.value = this.value" required>
-        <output
-            style="display: block; text-align: center; margin-top: -1.5rem;"><?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?></output>
+
+        <!-- Campo de número -->
+        <input type="number" id="length-number" name="length" min="16" max="1024"
+            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')">
+
+        <!-- Control deslizante (range) -->
+        <input type="range" id="length-range" name="length_range" min="16" max="1024"
+            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')">
+
+        <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;">
+            <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
+        </output>
 
         <input type="submit" value="Generar contraseña">
     </form>
