@@ -148,6 +148,7 @@ formulario.addEventListener('submit', (e) => {
     }
 
     // Enviar formulario
+    formulario.removeEventListener('submit', arguments.callee);
     formulario.submit();
 
 });

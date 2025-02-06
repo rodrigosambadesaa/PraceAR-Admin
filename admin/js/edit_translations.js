@@ -27,5 +27,6 @@ formulario.addEventListener('submit', (e) => {
     }
 
     // Si no hay errores, enviar el formulario
+    formulario.removeEventListener('submit', arguments.callee);
     formulario.submit();  // Enviar el formulario manualmente
 });

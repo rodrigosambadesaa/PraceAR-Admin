@@ -52,5 +52,6 @@ formulario.addEventListener('submit', (e) => {
     }
 
     // Si todas las validaciones pasan, permite el envío del formulario
+    formulario.removeEventListener('submit', arguments.callee);
     formulario.submit();
 });

@@ -56,4 +56,5 @@ document.getElementById('formulario').addEventListener('submit', (e) => {
     }
 
     // Si todo está validado, permite el envío del formulario
+    formulario.removeEventListener('submit', arguments.callee);
 });
