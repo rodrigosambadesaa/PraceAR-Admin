@@ -6,7 +6,7 @@ const formulario = document.getElementById('formulario-editar');
 let errorExist = false;
 let errorMessages = '';
 
-formulario.addEventListener('submit', (e) => {
+formulario.addEventListener('submit', function (e) {
     e.preventDefault();
 
     // Campos obligatorios
@@ -148,7 +148,7 @@ formulario.addEventListener('submit', (e) => {
     }
 
     // Enviar formulario
-    formulario.removeEventListener('submit', arguments.callee);
+    formulario.removeEventListener('submit', this);
     formulario.submit();
 
 });

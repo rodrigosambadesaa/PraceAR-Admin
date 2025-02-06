@@ -5,7 +5,7 @@ const formulario = document.getElementById('formulario');
 let errorExist = false;
 let errorMessages = '';
 
-formulario.addEventListener('submit', (e) => {
+formulario.addEventListener('submit', function handleSubmit(e) {
     e.preventDefault();  // Evitar el envío del formulario de forma predeterminada
 
     let descripcion = limpiarTextarea(document.getElementById('descripcion').value);
@@ -27,6 +27,6 @@ formulario.addEventListener('submit', (e) => {
     }
 
     // Si no hay errores, enviar el formulario
-    formulario.removeEventListener('submit', arguments.callee);
+    formulario.removeEventListener('submit', handleSubmit);
     formulario.submit();  // Enviar el formulario manualmente
 });

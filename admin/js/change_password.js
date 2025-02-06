@@ -1,6 +1,6 @@
 const formulario = document.getElementById('formulario-cambio-contrasena');
 
-formulario.addEventListener('submit', (e) => {
+formulario.addEventListener('submit', function handleSubmit(e) {
     e.preventDefault();
 
     const fieldOldPassword = document.getElementById('old_password');
@@ -52,6 +52,6 @@ formulario.addEventListener('submit', (e) => {
     }
 
     // Si todas las validaciones pasan, permite el envío del formulario
-    formulario.removeEventListener('submit', arguments.callee);
+    formulario.removeEventListener('submit', handleSubmit);
     formulario.submit();
 });
