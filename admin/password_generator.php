@@ -53,8 +53,8 @@ function generate_password(int $length)
     shuffle($password_chars);
     $password = implode('', $password_chars);
 
-    // Verificar que la contraseña cumple con los requisitos y que no sea similar al nombre de usuario y, si lo es, generar otra
-    if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/', $password) || contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario'])) {
+    // Si la contraseña es similar al usuario o ha sido filtrada, generar otra
+    if (contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || ha_sido_filtrada_en_brechas_de_seguridad($password)) {
         return generate_password($length);
     }
 
