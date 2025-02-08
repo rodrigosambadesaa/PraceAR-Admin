@@ -1,11 +1,10 @@
 <?php
 
-require_once HELPERS . 'verify_strong_password.php';
+$app_id_config = require_once HELPERS . 'verify_strong_password.php';
 
 if (!isset($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
-
 /**
  * Genera una contraseña de la longitud indicada que cumple con:
  * - Longitud entre 16 y 1024 caracteres.
@@ -44,7 +43,7 @@ function generate_password(int $length)
     $password_chars[] = $special_array[2];
 
     // Completar el resto de la contraseña con caracteres aleatorios.
-    $all_chars = $uppercase . $lowercase . $numbers . $special_chars;
+    $all_chars = "{$uppercase}{$lowercase}{$numbers}{$special_chars}";
     for ($i = 0; $i < $length - 6; $i++) {
         $password_chars[] = $all_chars[random_int(0, strlen($all_chars) - 1)];
     }
@@ -53,9 +52,10 @@ function generate_password(int $length)
     shuffle($password_chars);
     $password = implode('', $password_chars);
 
-    // Si la contraseña es similar al usuario o ha sido filtrada, generar otra
-    if (contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || ha_sido_filtrada_en_brechas_de_seguridad($password)) {
-        return generate_password($length);
+    // Validar la contraseña generada
+    while (contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || ha_sido_filtrada_en_brechas_de_seguridad($password)) {
+        shuffle($password_chars);
+        $password = implode('', $password_chars);
     }
 
     return $password;
@@ -82,7 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             } else {
                 try {
                     $password = generate_password($length);
-                    $result = '<span style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</span>';
+                    $result = '<span id="contrasena-generada" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</span><br>';
+                    if ($length <= 177) {
+                        $result .= '<span style="color: green;">Tiempo estimado de crackeo: ' . tiempo_estimado_crackeo($password) . '</span>';
+                    }
                     $mostrar_boton = true;
                     // Actualizar el valor del input type range en el formulario para futuras generaciones
                 } catch (Exception $e) {
@@ -109,43 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
 
-    <script>
-        function copyToClipboard() {
-            const passwordText = document.getElementById('password-text').innerText;
-            navigator.clipboard.writeText(passwordText).then(() => {
-                // Verificar si ya existe un mensaje de éxito y eliminarlo
-                const existingMessage = document.getElementById('success-message');
-                if (existingMessage) {
-                    existingMessage.remove();
-                }
-                // Crear un span debajo de la contraseña para mostrar un mensaje de éxito
-                const successMessage = document.createElement('span');
-                successMessage.id = 'success-message';
-                successMessage.textContent = 'Contraseña copiada al portapapeles';
-                successMessage.style.color = 'green';
-                successMessage.style.display = 'block';
-                successMessage.style.textAlign = 'center';
-                successMessage.style.marginTop = '1rem';
-                document.getElementById('password-text').insertAdjacentElement('afterend', successMessage);
-            }).catch(err => {
-                console.error('No se pudo copiar la contraseña al portapapeles: ', err);
-            });
-        }
-
-        function syncInputs(inputType) {
-            const numberInput = document.getElementById('length-number');
-            const rangeInput = document.getElementById('length-range');
-            const output = document.getElementById('length-output');
-
-            if (inputType === 'number') {
-                rangeInput.value = numberInput.value;
-            } else if (inputType === 'range') {
-                numberInput.value = rangeInput.value;
-            }
-
-            output.textContent = rangeInput.value;
-        }
-    </script>
 </head>
 
 <body>
@@ -186,6 +152,43 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     </form>
 
     <script type="module" src="<?= JS_ADMIN . '/helpers/password_generator.js' ?>"></script>
+    <script>
+        function copyToClipboard() {
+            const passwordText = document.getElementById('contrasena-generada').innerText;
+            navigator.clipboard.writeText(passwordText).then(() => {
+                // Verificar si ya existe un mensaje de éxito y eliminarlo
+                const existingMessage = document.getElementById('success-message');
+                if (existingMessage) {
+                    existingMessage.remove();
+                }
+                // Crear un span debajo de la contraseña para mostrar un mensaje de éxito
+                const successMessage = document.createElement('span');
+                successMessage.id = 'success-message';
+                successMessage.textContent = 'Contraseña copiada al portapapeles';
+                successMessage.style.color = 'green';
+                successMessage.style.display = 'block';
+                successMessage.style.textAlign = 'center';
+                successMessage.style.marginTop = '1rem';
+                document.getElementById('contrasena-generada').insertAdjacentElement('afterend', successMessage);
+            }).catch(err => {
+                console.error('No se pudo copiar la contraseña al portapapeles: ', err);
+            });
+        }
+
+        function syncInputs(inputType) {
+            const numberInput = document.getElementById('length-number');
+            const rangeInput = document.getElementById('length-range');
+            const output = document.getElementById('length-output');
+
+            if (inputType === 'number') {
+                rangeInput.value = numberInput.value;
+            } else if (inputType === 'range') {
+                numberInput.value = rangeInput.value;
+            }
+
+            output.textContent = rangeInput.value;
+        }
+    </script>
 </body>
 
 </html>
