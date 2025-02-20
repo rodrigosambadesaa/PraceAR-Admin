@@ -1,4 +1,4 @@
-document.getElementById('formulario').addEventListener('submit', (e) => {
+document.getElementById('formulario').addEventListener('submit', function handleSubmit(e) {
     const login = document.getElementById('login').value.trim();
     const password = document.getElementById('password').value.trim();
     const passwordOriginal = document.getElementById('password').value;
@@ -56,5 +56,6 @@ document.getElementById('formulario').addEventListener('submit', (e) => {
     }
 
     // Si todo está validado, permite el envío del formulario
-    formulario.removeEventListener('submit', arguments.callee);
+    formulario.removeEventListener('submit', handleSubmit);
+    formulario.submit();
 });
