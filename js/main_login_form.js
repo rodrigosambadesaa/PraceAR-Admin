@@ -6,7 +6,6 @@ document.getElementById('formulario').addEventListener('submit', function handle
     // El login y la contraseña deben ser strings
     if (typeof login !== 'string' || typeof password !== 'string') {
         e.preventDefault();
-        // Mostrar ventana modal con mensaje de error
         alert('Error en el formulario.');
         return;
     }
@@ -55,7 +54,6 @@ document.getElementById('formulario').addEventListener('submit', function handle
         return;
     }
 
-    // Si todo está validado, permite el envío del formulario
-    formulario.removeEventListener('submit', handleSubmit);
-    formulario.submit();
+    // Si todo está validado, el formulario se enviará automáticamente
+    // No es necesario llamar a `formulario.submit()`, ya que el formulario ya se envía si no se ha prevenido el envío
 });
