@@ -3,9 +3,9 @@ const formulario = document.getElementById('formulario-cambio-contrasena');
 formulario.addEventListener('submit', function handleSubmit(e) {
     e.preventDefault();
 
-    const fieldOldPassword = document.getElementById('old_password');
-    const fieldNewPassword = document.getElementById('new_password');
-    const fieldConfirmPassword = document.getElementById('confirm_password');
+    const fieldOldPassword = document.getElementById('old-password');
+    const fieldNewPassword = document.getElementById('new-password');
+    const fieldConfirmPassword = document.getElementById('confirm-password');
 
     const oldPassword = fieldOldPassword.value.trim();
     const oldPasswordOriginal = fieldOldPassword.value;

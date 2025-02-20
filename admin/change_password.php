@@ -180,21 +180,21 @@
     <form method="POST" id="formulario-cambio-contrasena">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <div id="form-group">
-            <label for="nombre_usuario">Nombre de usuario:</label>
-            <input type="text" name="nombre_usuario" id="nombre_usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
+            <label for="nombre-usuario">Nombre de usuario:</label>
+            <input type="text" name="nombre_usuario" id="nombre-usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
                 disabled>
         </div>
         <div id="form-group">
-            <label for="old_password">Contraseña actual:</label>
-            <input type="password" name="old_password" id="old_password" required>
+            <label for="old-password">Contraseña actual:</label>
+            <input type="password" name="old_password" id="old-password" required>
         </div>
         <div id="form-group">
-            <label for="new_password">Nueva contraseña:</label>
-            <input type="password" name="new_password" id="new_password" required>
+            <label for="new-password">Nueva contraseña:</label>
+            <input type="password" name="new_password" id="new-password" required>
         </div>
         <div id="form-group">
-            <label for="confirm_password">Confirmar nueva contraseña:</label>
-            <input type="password" name="confirm_password" id="confirm_password" required>
+            <label for="confirm-password">Confirmar nueva contraseña:</label>
+            <input type="password" name="confirm_password" id="confirm-password" required>
         </div>
         <div id="form-group">
             <input type="submit" value="Cambiar contraseña">

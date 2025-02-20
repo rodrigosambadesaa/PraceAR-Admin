@@ -82,10 +82,11 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             } else {
                 try {
                     $password = generate_password($length);
-                    $result = '<span id="contrasena-generada" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</span><br>';
+                    $result = '<div id="contrasena-generada" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</div>';
                     if ($length <= 177) {
-                        $result .= '<span style="color: green;">Tiempo estimado de crackeo: ' . tiempo_estimado_crackeo($password) . '</span>';
+                        $result .= '<div style="color: green; text-align: center;">Tiempo estimado de crackeo: ' . tiempo_estimado_crackeo($password) . '</div>';
                     }
+                    $result .= '<div style="color: green; text-align: center;">Entropía de la contraseña: ' . entropia($password) . '</div>';
                     $mostrar_boton = true;
                     // Actualizar el valor del input type range en el formulario para futuras generaciones
                 } catch (Exception $e) {
