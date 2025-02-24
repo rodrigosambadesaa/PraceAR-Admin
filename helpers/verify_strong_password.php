@@ -176,3 +176,46 @@ function entropia($contrasenha)
     return $entropia;
 
 }
+
+/**
+ * Función para determinar si una contraseña es débil porqué contiene secuencias numéricas inseguras.
+ * @param mixed $contrasenha Contraseña a verificar.
+ * @return bool Devuelve true si la contraseña contiene secuencias numéricas inseguras, false en caso contrario.
+ */
+function tiene_secuencias_numericas_inseguras($contrasenha)
+{
+    // Detectar secuencias numéricas inseguras como 1234, 4321, 9876, 6789, etc, y en diagonal en el teclado numérico, como 159, 951, 753, 357, etc
+    $secuencias_numericas_inseguras = [
+        "0123",
+        "1234",
+        "2345",
+        "3456",
+        "4567",
+        "5678",
+        "6789",
+        "7890",
+        "9876",
+        "8765",
+        "7654",
+        "6543",
+        "5432",
+        "4321",
+        "3210",
+        "159",
+        "951",
+        "753",
+        "357",
+        "147",
+        "741",
+        "369",
+        "963"
+    ];
+
+    foreach ($secuencias_numericas_inseguras as $secuencia) {
+        if (strpos($contrasenha, $secuencia) !== false) {
+            return true;
+        }
+    }
+
+    return false;
+}
