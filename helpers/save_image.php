@@ -28,8 +28,7 @@ function save_image($files, $new_file_name)
 
         // Verificar que el archivo no exceda el tamaño máximo permitido
         if ($file_size > $max_file_size) {
-            $status['message'] = '<span id="mensaje_error">El archivo es demasiado grande. El tamaño máximo permitido es 2 MB.</span>';
-            return $status; // Si el tamaño es demasiado grande, devolver mensaje de error
+            throw new Exception("El archivo es demasiado grande. El tamaño máximo permitido es de 2 MB.");
         }
 
         // Asegurarse de que el archivo sea una imagen válida
@@ -47,13 +46,13 @@ function save_image($files, $new_file_name)
                 $status['success'] = true;
                 $status['message'] = '<span id="mensaje_exito">El archivo se ha subido correctamente.</span>';
             } else {
-                $status['message'] = '<span id="mensaje_error">Ha ocurrido un error al subir el archivo.</span>';
+                throw new Exception("Ha ocurrido un error al subir el archivo. Por favor, inténtelo de nuevo.");
             }
         } else {
-            $status['message'] = '<span id="mensaje_error">El archivo no es una imagen válida.</span>';
+            throw new Exception("El archivo subido no es una imagen válida.");
         }
     } else {
-        $status['message'] = '<span id="mensaje_error">Solo se permiten archivos con extensión .jpg o .jpeg.</span>';
+        throw new Exception("La extensión del archivo no es válida. Por favor, suba un archivo con extensión .jpg o .jpeg.");
     }
 
     return $status;

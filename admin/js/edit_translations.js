@@ -18,6 +18,14 @@ formulario.addEventListener('submit', function handleSubmit(e) {
         return;
     }
 
+    // El tipo no puede tener más de 50 caracteres
+    if (document.getElementById('tipo').value.length > 50) {
+        alert('El tipo no puede tener más de 50 caracteres');
+        errorMessages += '<li>El tipo no puede tener más de 50 caracteres</li>';
+        errorExist = true;
+        return;
+    }
+
     // Si hay errores, no enviar formulario y mostrar mensajes de error creando un div con los mensajes
     if (errorExist) {
         const div = document.createElement('div');
