@@ -105,7 +105,6 @@
                 }
             }
 
-
             // Consulta para obtener la contraseña actual del usuario
             $sql = "SELECT password FROM usuarios WHERE id = ?";
             $stmt = $conexion->prepare($sql);
