@@ -122,8 +122,8 @@ formulario.addEventListener('submit', function (e) {
     const numeroPadre = caseta_padre.substring(2);
 
     if (caseta_padre !== '' && (!['CE', 'CO', 'MC', 'NA', 'NC'].includes(letrasPadre) || isNaN(numeroPadre) || numeroPadre < 1 || numeroPadre > 370)) {
-        alert('Las dos primeras letras de caseta padre, si se ha introducido, deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números se cuentan 001, 002, 003, ..., 370');
-        errorMessages += '<li>Las dos primeras letras de caseta padre, si se ha introducido, deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números se cuentan 001, 002, 003, ..., 370</li></ul>';
+        alert('Las dos primeras letras de caseta padre deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números deben ser introducidos con el formato 001, 002, 003, ..., 370');
+        errorMessages += '<li>Las dos primeras letras de caseta padre deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números deben ser introdocidos en el formato 001, 002, 003, ..., 370</li></ul>';
         errorExist = true;
         return;
     }
