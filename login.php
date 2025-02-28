@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception("CSRF token no válido");
         }
 
-        $login = validate_login($_POST['login']);
+        $login = validar_login($_POST['login']);
         $password = trim($_POST['password']); // Eliminar espacios al principio y al final, pero conservar internos
 
         // La contraseña debe ser un string
@@ -106,7 +106,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         rel="stylesheet">
 
     <style>
-        body {}
+        .required::after {
+            content: " *";
+            color: red;
+        }
+
+        .note {
+            color: red;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -125,19 +133,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" id="formulario">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <div id="form-group">
-            <label for="login"><strong>Usuario:</strong></label>
+            <label for="login" class="required"><strong>Usuario:</strong></label>
             <input type="text" name="login" id="login" required>
         </div>
         <div id="form-group">
-            <label for="password"><strong>Contraseña:</strong></label>
+            <label for="password" class="required"><strong>Contraseña:</strong></label>
             <input type="password" name="password" id="password" required>
         </div>
         <div id="form-group">
             <input type="submit" value="Iniciar sesión">
         </div>
     </form>
+    <p class="note">Los campos marcados con * son obligatorios.</p>
     <?= $err ?>
-    <script type="module" src="./js/main_login_form.js"></script>
+    <script type="module" src="./js/login.js"></script>
 </body>
 
 </html>

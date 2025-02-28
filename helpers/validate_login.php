@@ -1,5 +1,5 @@
 <?php
-function validate_login($login)
+function validar_login($login)
 {
     // Recortar espacios al inicio y al final
     $login = trim($login);
@@ -22,6 +22,11 @@ function validate_login($login)
     // Validar que solo contiene caracteres alfanuméricos, guiones, puntos y guiones bajos
     if (!preg_match('/^[a-zA-Z0-9._-]+$/', $login)) {
         throw new Exception("El nombre de usuario solo puede contener letras, números, guiones, puntos y guiones bajos.");
+    }
+
+    //El nombre de usuario no puede comenzar por un número, un guion o un punto
+    if (preg_match('/^[\d.-]/', $login)) {
+        throw new Exception("El nombre de usuario no puede comenzar por un número, un guion o un punto.");
     }
 
     // Si todo está correcto, devolver el login validado

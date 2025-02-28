@@ -69,7 +69,7 @@
             <input type="checkbox" id="activo" name="activo" value="<?= $activo ?>" <?= $activo == 1 ? "checked" : "" ?>>
         </div>
         <div>
-            <label for="caseta">Caseta</label>
+            <label for="caseta">Caseta <span style="color: red;">*</span></label>
             <input type="text" id="caseta" disabled value="<?= htmlspecialchars($fila["caseta"]) ?>">
             <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>"
                 placeholder="Código de caseta">
@@ -126,7 +126,7 @@
             </select>
         </div>
         <div>
-            <label for="id-nave">ID Nave</label>
+            <label for="id-nave">ID Nave <span style="color: red;">*</span></label>
             <select id="id-nave" name="id_nave">
                 <?php
                 $sql_naves = "SELECT * FROM naves";
@@ -153,6 +153,9 @@
             <input id="actualizar" type="submit" value="Actualizar">
         </div>
     </form>
+
+    <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
+        obligatorios.</p>
 
     <div id="zoomed-image-container" class="zoomed-container">
         <img id="zoomed-image" src="" alt="">

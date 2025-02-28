@@ -71,8 +71,32 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         if (isset($_POST['length'])) {
             require_once 'helpers/clean_input.php';
             // Descartar cualquier entrada que no sea un número natural
-            if (!is_numeric($_POST['length']) || !ctype_digit($_POST['length'])) {
-                $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe ser un número natural</span>';
+
+            $length = limpiar_input($_POST['length']);
+            $length_range = limpiar_input($_POST['length_range']);
+
+            if (!is_numeric($length) || !is_numeric($length_range) || !ctype_digit($length) || !ctype_digit($length_range)) {
+                $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe ser un número natural entre 16 y 1024.</span>';
+            } else {
+                $length = (int) $length;
+                $length_range = (int) $length_range;
+
+                if ($length < 16 || $length > 1024 || $length_range < 16 || $length_range > 1024) {
+                    $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe ser un número natural entre 16 y 1024.</span>';
+                } else {
+                    try {
+                        $password = generate_password($length);
+                        $result = '<div id="contrasena-generada" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</div>';
+                        if ($length <= 177) {
+                            $result .= '<div style="color: green; text-align: center;">Tiempo estimado de crackeo: ' . tiempo_estimado_crackeo($password) . '</div>';
+                        }
+                        $result .= '<div style="color: green; text-align: center;">Entropía de la contraseña: ' . entropia($password) . '</div>';
+                        $mostrar_boton = true;
+                        // Actualizar el valor del input type range en el formulario para futuras generaciones
+                    } catch (Exception $e) {
+                        $result = '<span style="color: red; text-align: center;">' . $e->getMessage() . '</span>';
+                    }
+                }
             }
 
             $length = (int) limpiar_input($_POST['length']);
@@ -189,6 +213,23 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
             output.textContent = rangeInput.value;
         }
+    </script>
+    <script>
+        const formulario = document.getElementById('formulario-generacion-contrasena');
+
+        formulario.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const longitud = document.getElementById('length-number').value;
+            const longitudRange = document.getElementById('length-range').value;
+
+            if (longitud < 16 || longitud > 1024 || longitudRange < 16 || longitudRange > 1024 || longitud !== longitudRange) {
+                alert('La longitud de la contraseña debe ser un número natural entre 16 y 1024.');
+                return;
+            }
+
+            formulario.removeEventListener('submit', this);
+            formulario.submit();
+        });
     </script>
 </body>
 

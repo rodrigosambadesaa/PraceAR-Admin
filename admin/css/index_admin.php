@@ -73,7 +73,7 @@
         text-transform: uppercase;
     }
 
-    #imagen-bandera {
+    .imagen-bandera {
         box-shadow: 0 0 2px 1px black;
     }
 

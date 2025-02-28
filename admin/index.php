@@ -177,7 +177,7 @@
                             <td data-label="Idioma de la traducción" class="fondo-color-diferente">
                                 <a
                                     href="<?= "?page=language&codigo_idioma=" . htmlspecialchars(get_language()) . "&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>">
-                                    <img id="imagen-bandera" loading="lazy" width="15" height="15"
+                                    <img class="imagen-bandera" loading="lazy" width="15" height="15"
                                         src="<?= htmlspecialchars(FLAG_IMAGES_URL . (get_language()) . ".png") ?>"
                                         alt="<?= htmlspecialchars(get_language()) ?>">
                                 </a>

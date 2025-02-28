@@ -77,9 +77,9 @@
 
     <form class="pure-form" action="#" method="POST" id="formulario">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
-        <label for="tipo">Tipo</label>
+        <label for="tipo">Tipo <span style="color: red;">*</span></label>
         <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>"
-            placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'">
+            placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'" required>
         <label for="descripcion">Descripción</label>
         <textarea name="descripcion" id="descripcion" cols="30" rows="10"
             placeholder="Descripción del puesto. Por ejemplo: 'Bisutería hecha a mano'."
@@ -87,6 +87,8 @@
         <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars($data['id'] ?? "") ?>">
         <input type="submit" value="Actualizar">
     </form>
+    <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
+        obligatorios.</p>
     <?= htmlspecialchars($mensaje ?? ""); ?>
     <?php if ($puesto_encontrado) { ?>
         <script type="module" src="<?= JS_ADMIN . 'edit_translations.js' ?>"></script>

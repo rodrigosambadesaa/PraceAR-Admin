@@ -33,6 +33,13 @@ document.getElementById('formulario').addEventListener('submit', function handle
         return;
     }
 
+    // Validar que el login no comience por número, guion o punto
+    if (login[0] === '-' || login[0] === '.' || login[0].match(/[0-9]/)) {
+        e.preventDefault();
+        alert('El nombre de usuario no puede comenzar por un número, guion o punto.');
+        return;
+    }
+
     // Validar contraseña: no vacía
     if (!password) {
         e.preventDefault();

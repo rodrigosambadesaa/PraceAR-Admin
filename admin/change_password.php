@@ -39,8 +39,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
-            $err = '<span style="color: red; text-align: center;">CSRF token no válido</span>';
-            return;
+            throw new Exception("Token CSRF inválido.");
         }
 
         try {
