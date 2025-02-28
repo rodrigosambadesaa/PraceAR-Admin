@@ -178,44 +178,91 @@ function entropia($contrasenha)
 }
 
 /**
- * Función para determinar si una contraseña es débil porqué contiene secuencias numéricas inseguras.
+ * Función para determinar si una contraseña contiene secuencias numéricas inseguras.
  * @param mixed $contrasenha Contraseña a verificar.
  * @return bool Devuelve true si la contraseña contiene secuencias numéricas inseguras, false en caso contrario.
  */
 function tiene_secuencias_numericas_inseguras($contrasenha)
 {
-    // Detectar secuencias numéricas inseguras como 1234, 4321, 9876, 6789, etc, y en diagonal en el teclado numérico, como 159, 951, 753, 357, etc
-    $secuencias_numericas_inseguras = [
-        "0123",
-        "1234",
-        "2345",
-        "3456",
-        "4567",
-        "5678",
-        "6789",
-        "7890",
-        "9876",
-        "8765",
-        "7654",
-        "6543",
-        "5432",
-        "4321",
-        "3210",
-        "159",
-        "951",
-        "753",
-        "357",
-        "147",
-        "741",
-        "369",
-        "963"
-    ];
-
+    $secuencias_numericas_inseguras = [];
+    $numeros = "0123456789";
+    $numeros_reverso = strrev($numeros);
+    
+    for ($longitud = 2; $longitud <= 10; $longitud++) {
+        for ($i = 0; $i <= strlen($numeros) - $longitud; $i++) {
+            $secuencias_numericas_inseguras[] = substr($numeros, $i, $longitud);
+            $secuencias_numericas_inseguras[] = substr($numeros_reverso, $i, $longitud);
+        }
+    }
+    
+    $diagonales_teclado = ["159", "951", "753", "357", "147", "741", "369", "963"];
+    $secuencias_numericas_inseguras = array_merge($secuencias_numericas_inseguras, $diagonales_teclado);
+    
     foreach ($secuencias_numericas_inseguras as $secuencia) {
         if (strpos($contrasenha, $secuencia) !== false) {
             return true;
         }
     }
-
+    
     return false;
 }
+
+<?php
+/**
+ * Función para determinar si una contraseña contiene secuencias alfabéticas inseguras.
+ * @param mixed $contrasenha Contraseña a verificar.
+ * @return bool Devuelve true si la contraseña contiene secuencias alfabéticas inseguras, false en caso contrario.
+ */
+function tiene_secuencias_alfabeticas_inseguras($contrasenha)
+{
+    // Detectar secuencias alfabéticas inseguras (abc, cba, xyz, zyx, etc.)
+    $secuencias_alfabeticas_inseguras = [];
+    
+    $alfabeto = "abcdefghijklmnopqrstuvwxyz";
+    $alfabeto_reverso = strrev($alfabeto);
+    
+    for ($longitud = 2; $longitud <= 10; $longitud++) {
+        for ($i = 0; $i <= strlen($alfabeto) - $longitud; $i++) {
+            $secuencias_alfabeticas_inseguras[] = substr($alfabeto, $i, $longitud);
+            $secuencias_alfabeticas_inseguras[] = substr($alfabeto_reverso, $i, $longitud);
+        }
+    }
+    
+    foreach ($secuencias_alfabeticas_inseguras as $secuencia) {
+        if (stripos($contrasenha, $secuencia) !== false) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Función para determinar si una contraseña contiene secuencias de caracteres especiales inseguras.
+ * @param mixed $contrasenha Contraseña a verificar.
+ * @return bool Devuelve true si la contraseña contiene secuencias de caracteres especiales inseguras, false en caso contrario.
+ */
+function tiene_secuencias_caracteres_especiales_inseguras($contrasenha)
+{
+    // Detectar secuencias de caracteres especiales basadas en el teclado
+    $caracteres_especiales = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/`~";
+    $caracteres_especiales_reverso = strrev($caracteres_especiales);
+    
+    $secuencias_caracteres_especiales_inseguras = [];
+    
+    for ($longitud = 2; $longitud <= 10; $longitud++) {
+        for ($i = 0; $i <= strlen($caracteres_especiales) - $longitud; $i++) {
+            $secuencias_caracteres_especiales_inseguras[] = substr($caracteres_especiales, $i, $longitud);
+            $secuencias_caracteres_especiales_inseguras[] = substr($caracteres_especiales_reverso, $i, $longitud);
+        }
+    }
+    
+    foreach ($secuencias_caracteres_especiales_inseguras as $secuencia) {
+        if (strpos($contrasenha, $secuencia) !== false) {
+            return true;
+        }
+    }
+    
+    return false;
+}
+

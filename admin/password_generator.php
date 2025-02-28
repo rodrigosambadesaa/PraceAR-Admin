@@ -53,7 +53,7 @@ function generate_password(int $length)
     $password = implode('', $password_chars);
 
     // Validar la contraseña generada
-    while (tiene_secuencias_numericas_inseguras($password) || contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || ha_sido_filtrada_en_brechas_de_seguridad($password)) {
+    while (tiene_secuencias_numericas_inseguras($password) || tiene_secuencias_alfabeticas_inseguras($password) || tiene_secuencias_caracteres_especiales_inseguras($password) || contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || ha_sido_filtrada_en_brechas_de_seguridad($password)) {
         shuffle($password_chars);
         $password = implode('', $password_chars);
     }
