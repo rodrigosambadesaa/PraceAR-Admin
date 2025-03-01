@@ -116,5 +116,71 @@ function contrasenhaSimilarAUsuario(contrasenha, usuario) {
     return false;
 }
 
+function tieneSecuenciasNumericasInseguras(contrasenha) {
+    const secuenciasNumericasInseguras = [];
+    const numeros = "0123456789";
+    const numerosReverso = numeros.split("").reverse().join("");
+
+    for (let longitud = 2; longitud <= 10; longitud++) {
+        for (let i = 0; i <= numeros.length - longitud; i++) {
+            secuenciasNumericasInseguras.push(numeros.substring(i, i + longitud));
+            secuenciasNumericasInseguras.push(numerosReverso.substring(i, i + longitud));
+        }
+    }
+
+    const diagonalesTeclado = ["159", "951", "753", "357", "147", "741", "369", "963"];
+    secuenciasNumericasInseguras.push(...diagonalesTeclado);
+
+    for (let secuencia of secuenciasNumericasInseguras) {
+        if (contrasenha.includes(secuencia)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
+    const secuenciasAlfabeticasInseguras = [];
+    const alfabeto = "abcdefghijklmnopqrstuvwxyz";
+    const alfabetoReverso = alfabeto.split("").reverse().join("");
+
+    for (let longitud = 2; longitud <= 10; longitud++) {
+        for (let i = 0; i <= alfabeto.length - longitud; i++) {
+            secuenciasAlfabeticasInseguras.push(alfabeto.substring(i, i + longitud));
+            secuenciasAlfabeticasInseguras.push(alfabetoReverso.substring(i, i + longitud));
+        }
+    }
+
+    for (let secuencia of secuenciasAlfabeticasInseguras) {
+        if (contrasenha.toLowerCase().includes(secuencia)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function tieneSecuenciasDeCaracteresEspecialesInseguras(contrasenha) {
+    const secuenciasCaracteresEspecialesInseguras = [];
+    const caracteresEspeciales = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/`~";
+    const caracteresEspecialesReverso = caracteresEspeciales.split("").reverse().join("");
+
+    for (let longitud = 2; longitud <= 10; longitud++) {
+        for (let i = 0; i <= caracteresEspeciales.length - longitud; i++) {
+            secuenciasCaracteresEspecialesInseguras.push(caracteresEspeciales.substring(i, i + longitud));
+            secuenciasCaracteresEspecialesInseguras.push(caracteresEspecialesReverso.substring(i, i + longitud));
+        }
+    }
+
+    for (let secuencia of secuenciasCaracteresEspecialesInseguras) {
+        if (contrasenha.includes(secuencia)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // Exportar funciones usando ES Modules
-export { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario };
+export { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario, tieneSecuenciasNumericasInseguras, tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras };

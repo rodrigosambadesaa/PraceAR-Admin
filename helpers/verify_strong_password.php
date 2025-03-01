@@ -187,27 +187,26 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
     $secuencias_numericas_inseguras = [];
     $numeros = "0123456789";
     $numeros_reverso = strrev($numeros);
-    
+
     for ($longitud = 2; $longitud <= 10; $longitud++) {
         for ($i = 0; $i <= strlen($numeros) - $longitud; $i++) {
             $secuencias_numericas_inseguras[] = substr($numeros, $i, $longitud);
             $secuencias_numericas_inseguras[] = substr($numeros_reverso, $i, $longitud);
         }
     }
-    
+
     $diagonales_teclado = ["159", "951", "753", "357", "147", "741", "369", "963"];
     $secuencias_numericas_inseguras = array_merge($secuencias_numericas_inseguras, $diagonales_teclado);
-    
+
     foreach ($secuencias_numericas_inseguras as $secuencia) {
         if (strpos($contrasenha, $secuencia) !== false) {
             return true;
         }
     }
-    
+
     return false;
 }
 
-<?php
 /**
  * Función para determinar si una contraseña contiene secuencias alfabéticas inseguras.
  * @param mixed $contrasenha Contraseña a verificar.
@@ -217,23 +216,23 @@ function tiene_secuencias_alfabeticas_inseguras($contrasenha)
 {
     // Detectar secuencias alfabéticas inseguras (abc, cba, xyz, zyx, etc.)
     $secuencias_alfabeticas_inseguras = [];
-    
+
     $alfabeto = "abcdefghijklmnopqrstuvwxyz";
     $alfabeto_reverso = strrev($alfabeto);
-    
+
     for ($longitud = 2; $longitud <= 10; $longitud++) {
         for ($i = 0; $i <= strlen($alfabeto) - $longitud; $i++) {
             $secuencias_alfabeticas_inseguras[] = substr($alfabeto, $i, $longitud);
             $secuencias_alfabeticas_inseguras[] = substr($alfabeto_reverso, $i, $longitud);
         }
     }
-    
+
     foreach ($secuencias_alfabeticas_inseguras as $secuencia) {
         if (stripos($contrasenha, $secuencia) !== false) {
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -247,22 +246,22 @@ function tiene_secuencias_caracteres_especiales_inseguras($contrasenha)
     // Detectar secuencias de caracteres especiales basadas en el teclado
     $caracteres_especiales = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/`~";
     $caracteres_especiales_reverso = strrev($caracteres_especiales);
-    
+
     $secuencias_caracteres_especiales_inseguras = [];
-    
+
     for ($longitud = 2; $longitud <= 10; $longitud++) {
         for ($i = 0; $i <= strlen($caracteres_especiales) - $longitud; $i++) {
             $secuencias_caracteres_especiales_inseguras[] = substr($caracteres_especiales, $i, $longitud);
             $secuencias_caracteres_especiales_inseguras[] = substr($caracteres_especiales_reverso, $i, $longitud);
         }
     }
-    
+
     foreach ($secuencias_caracteres_especiales_inseguras as $secuencia) {
         if (strpos($contrasenha, $secuencia) !== false) {
             return true;
         }
     }
-    
+
     return false;
 }
 
