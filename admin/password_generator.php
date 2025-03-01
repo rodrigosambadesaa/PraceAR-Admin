@@ -84,9 +84,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 if ($length < 16 || $length > 1024 || $length_range < 16 || $length_range > 1024) {
                     $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe ser un número natural entre 16 y 1024.</span>';
                 } elseif ($length !== $length_range) {
-                    throw new Exception("No se permite alterar el código JavaScript de la página para establecer una longitud de contraseña diferente en uno de los controles"); 
-                }
-                else {
+                    throw new Exception("No se permite alterar el código JavaScript de la página para establecer una longitud de contraseña diferente en uno de los controles");
+                } else {
                     try {
                         $password = generate_password($length);
                         $result = '<div id="contrasena-generada" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</div>';
@@ -121,6 +120,17 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
 
+    <style>
+        .required {
+            color: red;
+        }
+
+        #parrafo-campos-obligatorios {
+            color: red;
+            text-align: center;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -143,13 +153,14 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-        <label for="length">Longitud de la contraseña:</label>
+        <label for="length">Longitud de la contraseña: <span class="required">*</span></label>
 
         <!-- Campo de número -->
         <input required type="number" id="length-number" name="length" min="16" max="1024"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')">
 
         <!-- Control deslizante (range) -->
+        <label for="length-range">Longitud de la contraseña: <span class="required">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="1024"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')">
 
@@ -159,6 +170,11 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
         <input type="submit" value="Generar contraseña">
     </form>
+
+    <div style="text-align: center; color: red; margin-top: 1rem;">
+        <p id="parrafo-campos-obligatorios">Los campos marcados con <span class="required">*</span> son obligatorios.
+        </p>
+    </div>
 
     <script type="module" src="<?= JS_ADMIN . '/helpers/password_generator.js' ?>"></script>
     <script>

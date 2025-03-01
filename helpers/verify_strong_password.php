@@ -146,35 +146,29 @@ function tiempo_estimado_crackeo($contrasenha)
  */
 function entropia($contrasenha)
 {
-    // Recoger el resultado de esta URL de Wolfram|Alpha: https://www.wolframalpha.com/input?i=password+l.0ZB*%5D%3D7fVl%7C%7D2r Está en el tercer elemento del quinto pod
-    // URL de la API de Wolfram|Alpha
-    $url = "https://api.wolframalpha.com/v2/query?input=password+" . urlencode($contrasenha) . "&format=plaintext&output=JSON&appid=YOUR_APP_ID";
+    // Cálculo manual de la entropía de la contraseña, teniendo en cuenta que la almacenamos en Argon2ID con pepper
+    $longitud = strlen($contrasenha);
+    $caracteres = 0;
+    $entropia = 0;
 
-    // Sustituir YOUR_APP_ID por tu ID de aplicación de Wolfram|Alpha
-    $url = str_replace("YOUR_APP_ID", $GLOBALS['app_id'], $url);
-
-    // echo "Fetching URL: " . $url . PHP_EOL;
-
-    $response = file_get_contents($url);
-
-    if ($response === false) {
-        // echo "Error: Unable to fetch API response." . PHP_EOL;
-        return "Desconocido";
+    // Contar el número de minúsculas, mayúsculas, números y caracteres especiales en la contraseña
+    for ($i = 0; $i < $longitud; $i++) {
+        $caracter = $contrasenha[$i];
+        if (ctype_lower($caracter)) {
+            $caracteres += 26; // 26 letras minúsculas
+        } elseif (ctype_upper($caracter)) {
+            $caracteres += 26; // 26 letras mayúsculas
+        } elseif (ctype_digit($caracter)) {
+            $caracteres += 10; // 10 dígitos
+        } else {
+            $caracteres += 33; // 33 caracteres especiales
+        }
     }
 
-    // echo "API Response: " . $response . PHP_EOL;
+    $entropia = $longitud * log($caracteres, 2);
 
-    $json = json_decode($response, true);
-
-    if ($json === null) {
-        // echo "Error: Unable to parse JSON response." . PHP_EOL;
-        return "Desconocido";
-    }
-
-    $entropia = isset($json['queryresult']['pods'][4]['subpods'][2]['plaintext']) ? $json['queryresult']['pods'][4]['subpods'][2]['plaintext'] : "Desconocido";
-
-    return $entropia;
-
+    // Devolvemos la entropía en bits redondeada
+    return round($entropia, 0) . " bits";
 }
 
 /**
@@ -190,7 +184,7 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
     // Secuencias en diagonal en el teclado numérico como 159, 951, 753, 357, 147, 741, 369, 963, 852, 258
     $secuencias_diagonales = ["159", "951", "753", "357", "147", "741", "369", "963", "852", "258"];
 
-    for ($longitud = 2; $longitud <= 10; $longitud++) {
+    for ($longitud = 2; $longitud <= 5; $longitud++) {
         for ($i = 0; $i <= strlen($numeros) - $longitud; $i++) {
             $secuencias_numericas_inseguras[] = substr($numeros, $i, $longitud);
             $secuencias_numericas_inseguras[] = substr($numeros_reverso, $i, $longitud);
