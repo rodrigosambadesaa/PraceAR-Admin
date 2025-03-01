@@ -147,6 +147,12 @@ function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
     const secuenciasAlfabeticasInseguras = [];
     const alfabeto = "abcdefghijklmnopqrstuvwxyz";
     const alfabetoReverso = alfabeto.split("").reverse().join("");
+    const filaSuperiorTeclado = "qwertyuiop";
+    const filaCentralTeclado = "asdfghjkl";
+    const filaInferiorTeclado = "zxcvbnm";
+    const filaSuperiorTecladoReverso = filaSuperiorTeclado.split("").reverse().join("");
+    const filaCentralTecladoReverso = filaCentralTeclado.split("").reverse().join("");
+    const filaInferiorTecladoReverso = filaInferiorTeclado.split("").reverse().join("");
 
     for (let longitud = 2; longitud <= 10; longitud++) {
         for (let i = 0; i <= alfabeto.length - longitud; i++) {
@@ -155,8 +161,16 @@ function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
         }
     }
 
+    for (let fila of [filaSuperiorTeclado, filaCentralTeclado, filaInferiorTeclado, filaSuperiorTecladoReverso, filaCentralTecladoReverso, filaInferiorTecladoReverso]) {
+        for (let longitud = 2; longitud <= 10; longitud++) {
+            for (let i = 0; i <= fila.length - longitud; i++) {
+                secuenciasAlfabeticasInseguras.push(fila.substring(i, i + longitud));
+            }
+        }
+    }
+
     for (let secuencia of secuenciasAlfabeticasInseguras) {
-        if (contrasenha.toLowerCase().includes(secuencia)) {
+        if (contrasenha.includes(secuencia)) {
             return true;
         }
     }

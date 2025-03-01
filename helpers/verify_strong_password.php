@@ -218,22 +218,36 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
  */
 function tiene_secuencias_alfabeticas_inseguras($contrasenha)
 {
-    // Detectar secuencias alfabéticas inseguras (abc, cba, xyz, zyx, etc.)
+    // Detectar secuencias alfabéticas inseguras (abc, cba, xyz, zyx, qwe, ewq, etc.)
     $secuencias_alfabeticas_inseguras = [];
 
     $alfabeto = "abcdefghijklmnopqrstuvwxyz";
     $alfabeto_reverso = strrev($alfabeto);
+    $fila_superior = "qwertyuiop";
+    $fila_media = "asdfghjkl";
+    $fila_inferior = "zxcvbnm";
+    $fila_superior_reversa = strrev($fila_superior);
+    $fila_media_reversa = strrev($fila_media);
+    $fila_inferior_reversa = strrev($fila_inferior);
 
-    for ($longitud = 2; $longitud <= 10; $longitud++) {
-        for ($i = 0; $i <= strlen($alfabeto) - $longitud; $i++) {
-            $secuencias_alfabeticas_inseguras[] = substr($alfabeto, $i, $longitud);
-            $secuencias_alfabeticas_inseguras[] = substr($alfabeto_reverso, $i, $longitud);
-        }
-    }
+    $secuencias_alfabeticas_inseguras[] = $alfabeto;
+    $secuencias_alfabeticas_inseguras[] = $alfabeto_reverso;
+    $secuencias_alfabeticas_inseguras[] = $fila_superior;
+    $secuencias_alfabeticas_inseguras[] = $fila_media;
+    $secuencias_alfabeticas_inseguras[] = $fila_inferior;
+    $secuencias_alfabeticas_inseguras[] = $fila_superior_reversa;
+    $secuencias_alfabeticas_inseguras[] = $fila_media_reversa;
+    $secuencias_alfabeticas_inseguras[] = $fila_inferior_reversa;
 
     foreach ($secuencias_alfabeticas_inseguras as $secuencia) {
-        if (stripos($contrasenha, $secuencia) !== false) {
-            return true;
+        $longitud = strlen($secuencia);
+        for ($i = 0; $i <= $longitud - 2; $i++) {
+            for ($j = 2; $j <= $longitud - $i; $j++) {
+                $subcadena = substr($secuencia, $i, $j);
+                if (strpos($contrasenha, $subcadena) !== false) {
+                    return true;
+                }
+            }
         }
     }
 
