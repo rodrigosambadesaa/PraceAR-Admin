@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (isset($eliminar_imagen) && $eliminar_imagen == 1 && is_string($eliminar_imagen)) {
+    if (isset($eliminar_imagen) && $eliminar_imagen == "1" && is_string($eliminar_imagen)) {
         $is_imagen = delete_image($caseta);
     }
 
@@ -85,7 +85,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         throw new Exception("El teléfono no puede tener más de 15 caracteres");
     }
 
-    $update_caseta_padre = trim($caseta_padre) === '' ? "caseta_padre = NULL" : "caseta_padre = '" . trim($caseta_padre) . "'";
+    $caseta_padre = limpiar_input($caseta_padre);
+    $update_caseta_padre = $caseta_padre === '' ? "caseta_padre = NULL" : "caseta_padre = '" . caseta_padre . "'";
 
     // La caseta padre, si se ha especificado, debe ser un string de exactamente cinco caracteres
     if (!empty($caseta_padre) && (!is_string($caseta_padre) || strlen($caseta_padre) !== 5)) {

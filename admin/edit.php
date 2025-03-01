@@ -70,7 +70,7 @@
         </div>
         <div>
             <label for="caseta">Caseta <span style="color: red;">*</span></label>
-            <input type="text" id="caseta" disabled value="<?= htmlspecialchars($fila["caseta"]) ?>">
+            <input type="text" id="caseta" disabled required value="<?= htmlspecialchars($fila["caseta"]) ?>">
             <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>"
                 placeholder="Código de caseta">
         </div>
@@ -127,7 +127,7 @@
         </div>
         <div>
             <label for="id-nave">ID Nave <span style="color: red;">*</span></label>
-            <select id="id-nave" name="id_nave">
+            <select required id="id-nave" name="id_nave">
                 <?php
                 $sql_naves = "SELECT * FROM naves";
                 $resultado_naves = $conexion->query($sql_naves);

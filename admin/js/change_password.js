@@ -1,3 +1,5 @@
+import { tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneSecuenciasNumericasInseguras } from "../../js/helpers/verify_strong_password.js";
+
 const formulario = document.getElementById('formulario-cambio-contrasena');
 
 formulario.addEventListener('submit', function handleSubmit(e) {
@@ -48,6 +50,11 @@ formulario.addEventListener('submit', function handleSubmit(e) {
     const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,}$/;
     if (!regex.test(newPassword)) {
         alert('La nueva contraseña debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.');
+        return;
+    }
+
+    if (tieneSecuenciasAlfabeticasInseguras(newPassword) || tieneSecuenciasDeCaracteresEspecialesInseguras(newPassword) || tieneSecuenciasNumericasInseguras(newPassword)) {
+        alert('La nueva contraseña no puede contener secuencias alfabéticas, de caracteres especiales o numéricas.');
         return;
     }
 

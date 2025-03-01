@@ -91,6 +91,14 @@
                 throw new Exception("La nueva contraseña no puede tener secuencias numéricas inseguras como '1234', '12345', '123456', '1234567', '12345678', '123456789', '987654321', '87654321', '7654321', '654321', '54321', '4321', '321', '21'.");
             }
 
+            if (tiene_secuencias_alfabeticas_inseguras($new_password)) {
+                throw new Exception("La nueva contraseña no puede contener secuencias alfabéticas inseguras como 'abc'");
+            }
+
+            if (tiene_secuencias_caracteres_especiales_inseguras($new_password)) {
+                throw new Exception("La nueva contraseña no puede contener secuencias de caracteres especiales inseguras como '()'");
+            }
+
             // Verificar que la nueva contraseña no esté en la tabla de contraseñas antiguas
             $sql = "SELECT password FROM old_passwords WHERE id_usuario = ?";
             $stmt = $conexion->prepare($sql);
