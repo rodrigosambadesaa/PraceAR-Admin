@@ -120,6 +120,8 @@ function tieneSecuenciasNumericasInseguras(contrasenha) {
     const secuenciasNumericasInseguras = [];
     const numeros = "0123456789";
     const numerosReverso = numeros.split("").reverse().join("");
+    // Secuencias en diagonal en el teclado numérico como 159, 951, 753, 357, 147, 741, 369, 963, etc.
+    const secuenciasDiagonalesTeclado = ["159", "951", "753", "357", "147", "741", "369", "963", "258", "852"];
 
     for (let longitud = 2; longitud <= 10; longitud++) {
         for (let i = 0; i <= numeros.length - longitud; i++) {
@@ -128,8 +130,9 @@ function tieneSecuenciasNumericasInseguras(contrasenha) {
         }
     }
 
-    const diagonalesTeclado = ["159", "951", "753", "357", "147", "741", "369", "963"];
-    secuenciasNumericasInseguras.push(...diagonalesTeclado);
+    for (let secuencia of secuenciasDiagonalesTeclado) {
+        secuenciasNumericasInseguras.push(secuencia);
+    }
 
     for (let secuencia of secuenciasNumericasInseguras) {
         if (contrasenha.includes(secuencia)) {

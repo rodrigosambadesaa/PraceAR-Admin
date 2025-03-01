@@ -187,6 +187,8 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
     $secuencias_numericas_inseguras = [];
     $numeros = "0123456789";
     $numeros_reverso = strrev($numeros);
+    // Secuencias en diagonal en el teclado numérico como 159, 951, 753, 357, 147, 741, 369, 963, 852, 258
+    $secuencias_diagonales = ["159", "951", "753", "357", "147", "741", "369", "963", "852", "258"];
 
     for ($longitud = 2; $longitud <= 10; $longitud++) {
         for ($i = 0; $i <= strlen($numeros) - $longitud; $i++) {
@@ -195,8 +197,9 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
         }
     }
 
-    $diagonales_teclado = ["159", "951", "753", "357", "147", "741", "369", "963"];
-    $secuencias_numericas_inseguras = array_merge($secuencias_numericas_inseguras, $diagonales_teclado);
+    foreach ($secuencias_diagonales as $secuencia) {
+        $secuencias_numericas_inseguras[] = $secuencia;
+    }
 
     foreach ($secuencias_numericas_inseguras as $secuencia) {
         if (strpos($contrasenha, $secuencia) !== false) {
@@ -205,6 +208,7 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
     }
 
     return false;
+
 }
 
 /**
