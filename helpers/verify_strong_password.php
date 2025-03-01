@@ -185,7 +185,7 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
     $secuencias_diagonales = ["159", "951", "753", "357", "147", "741", "369", "963", "852", "258"];
 
     for ($longitud = 2; $longitud <= 5; $longitud++) {
-        for ($i = 0; $i <= strlen($numeros) - $longitud; $i++) {
+        for ($i = 0; $i <= min(strlen($numeros), 20) - $longitud; $i++) {
             $secuencias_numericas_inseguras[] = substr($numeros, $i, $longitud);
             $secuencias_numericas_inseguras[] = substr($numeros_reverso, $i, $longitud);
         }
@@ -235,12 +235,10 @@ function tiene_secuencias_alfabeticas_inseguras($contrasenha)
 
     foreach ($secuencias_alfabeticas_inseguras as $secuencia) {
         $longitud = strlen($secuencia);
-        for ($i = 0; $i <= $longitud - 2; $i++) {
-            for ($j = 2; $j <= $longitud - $i; $j++) {
-                $subcadena = substr($secuencia, $i, $j);
-                if (strpos($contrasenha, $subcadena) !== false) {
-                    return true;
-                }
+        for ($i = 0; $i <= $longitud - 3; $i++) {
+            $subcadena = substr($secuencia, $i, 3);
+            if (strpos($contrasenha, $subcadena) !== false) {
+                return true;
             }
         }
     }
