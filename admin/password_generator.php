@@ -172,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     </form>
 
     <div style="text-align: center; color: red; margin-top: 1rem;">
-        <p id="parrafo-campos-obligatorios">Los campos marcados con <span class="required">*</span> son obligatorios.
+        <p id="parrafo-campos-obligatorios">Los campos marcados con <span class="required">*</span> son obligatorios
         </p>
     </div>
 

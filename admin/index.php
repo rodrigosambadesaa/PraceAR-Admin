@@ -184,7 +184,7 @@
                             </td>
                             <td data-label="Tipo" class="fondo-color-diferente"><?= htmlspecialchars($row['tipo']) ?></td>
                             <td data-label="Descripción" class="fondo-color-diferente">
-                                <?= htmlspecialchars($row['descripcion'] ? htmlspecialchars(truncate_text($row['descripcion'], 30)) : '') ?>
+                                <?= htmlspecialchars($row['descripcion'] ? truncate_text($row['descripcion'], 30) : '') ?>
                             </td>
                         </tr>
                         <?php
@@ -242,7 +242,6 @@
             // Si se ha hecho una búsqueda, no permitimos que se haga clic en el botón de reiniciar
             <?php if ($busqueda_hecha): ?>
                 const inputReseteo = document.getElementById('input-reseteo');
-                // console.log(inputReseteo);
                 inputReseteo.disabled = true;
             <?php else: ?>
                 // Si no hay una búsqueda hecha, no permitimos que se haga clic en el botón de deshacer

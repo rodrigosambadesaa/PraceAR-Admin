@@ -53,9 +53,7 @@
 
     <h2 style="text-align: center;">Traducción del puesto<span style="color: #1e7dbd;">
             <?php
-
             // Obtener el nombre del puesto
-            
             $sql_nombre_puesto = "SELECT nombre FROM puestos WHERE id = ?";
             $stmt_nombre_puesto = $conexion->prepare($sql_nombre_puesto);
             $stmt_nombre_puesto->bind_param('i', $id);
@@ -70,7 +68,7 @@
     </h2>
     <?php
 
-    if (isset($_SESSION['csrf'])) {
+    if (!isset($_SESSION['csrf'])) {
         $_SESSION['csrf'] = bin2hex(random_bytes(32));
     }
     ?>
@@ -88,7 +86,7 @@
         <input type="submit" value="Actualizar">
     </form>
     <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
-        obligatorios.</p>
+        obligatorios</p>
     <?= htmlspecialchars($mensaje ?? ""); ?>
     <?php if ($puesto_encontrado) { ?>
         <script type="module" src="<?= JS_ADMIN . 'edit_translations.js' ?>"></script>

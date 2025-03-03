@@ -88,11 +88,11 @@
             }
 
             if (tiene_secuencias_numericas_inseguras($new_password)) {
-                throw new Exception("La nueva contraseña no puede tener secuencias numéricas inseguras como '1234', '12345', '123456', '1234567', '12345678', '123456789', '987654321', '87654321', '7654321', '654321', '54321', '4321', '321', '21'.");
+                throw new Exception("La nueva contraseña no puede tener secuencias numéricas inseguras como '1234', '12345', '123456', '1234567', '12345678', '123456789', '987654321', '87654321', '7654321', '654321', '54321', '4321', '321', '21', '147', '258', '369', '159', '357'");
             }
 
             if (tiene_secuencias_alfabeticas_inseguras($new_password)) {
-                throw new Exception("La nueva contraseña no puede contener secuencias alfabéticas inseguras como 'abc'");
+                throw new Exception("La nueva contraseña no puede contener secuencias alfabéticas inseguras como 'abc', 'qwert', 'asdf', 'zxcv', 'poiuy', 'lkjh', 'mnbv'");
             }
 
             if (tiene_secuencias_caracteres_especiales_inseguras($new_password)) {
@@ -190,26 +190,28 @@
     <form method="POST" id="formulario-cambio-contrasena">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <div id="form-group">
-            <label for="nombre-usuario">Nombre de usuario:</label>
+            <label for="nombre-usuario">Nombre de usuario: <span style="color: red;">*</span></label>
             <input type="text" name="nombre_usuario" id="nombre-usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
                 disabled>
         </div>
         <div id="form-group">
-            <label for="old-password">Contraseña actual:</label>
+            <label for="old-password">Contraseña actual: <span style="color: red;">*</span></label>
             <input type="password" name="old_password" id="old-password" required>
         </div>
         <div id="form-group">
-            <label for="new-password">Nueva contraseña:</label>
+            <label for="new-password">Nueva contraseña: <span style="color: red;">*</span></label>
             <input type="password" name="new_password" id="new-password" required>
         </div>
         <div id="form-group">
-            <label for="confirm-password">Confirmar nueva contraseña:</label>
+            <label for="confirm-password">Confirmar nueva contraseña: <span style="color: red;">*</span></label>
             <input type="password" name="confirm_password" id="confirm-password" required>
         </div>
         <div id="form-group">
             <input type="submit" value="Cambiar contraseña">
         </div>
     </form>
+    <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
+        obligatorios</p>
     <span style="color: blue;">¿Necesita ayuda? Le recomendamos que use un navegador con gestor y generador de
         contraseñas
         integrados, como Google

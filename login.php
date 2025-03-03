@@ -11,7 +11,7 @@ $err = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         // Verificar CSRF token
-        if (!hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
+        if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
             throw new Exception("CSRF token no válido");
         }
 
@@ -144,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="submit" value="Iniciar sesión">
         </div>
     </form>
-    <p class="note">Los campos marcados con * son obligatorios.</p>
+    <p class="note">Los campos marcados con * son obligatorios</p>
     <?= $err ?>
     <script type="module" src="./js/login.js"></script>
 </body>

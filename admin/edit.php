@@ -120,9 +120,9 @@
             <label for="tipo-unity">Tipo en Unity</label>
             <select name="tipo_unity" id="tipo-unity">
                 <?php foreach (UNITY_TYPE as $key => $value) { ?>
-                    <?php $selected = $key === $fila["tipo_unity"] ? "selected" : ""; ?>
-                    <option value="<?= htmlspecialchars($key) ?>" <?= $selected ?>><?= htmlspecialchars($value) ?></option>
-                <?php } ?>
+                    <option value="<?= $key ?>" <?= $fila["tipo_unity"] == $key ? "selected" : "" ?>>
+                        <?= $value ?>
+                    <?php } ?>
             </select>
         </div>
         <div>
@@ -155,7 +155,7 @@
     </form>
 
     <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
-        obligatorios.</p>
+        obligatorios</p>
 
     <div id="zoomed-image-container" class="zoomed-container">
         <img id="zoomed-image" src="" alt="">
