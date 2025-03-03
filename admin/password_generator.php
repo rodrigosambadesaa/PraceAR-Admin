@@ -218,18 +218,13 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         const formulario = document.getElementById('formulario-generacion-contrasena');
 
         formulario.addEventListener('submit', function (event) {
-            event.preventDefault();
             const longitud = document.getElementById('length-number').value;
             const longitudRange = document.getElementById('length-range').value;
 
             if (parseInt(longitud) < 16 || parseInt(longitud) > 1024 || parseInt(longitudRange) < 16 || parseInt(longitudRange) > 1024 || parseInt(longitud) !== parseInt(longitudRange)) {
+                event.preventDefault();
                 alert('La longitud de la contraseña debe ser un número natural entre 16 y 1024.');
                 return;
-            }
-
-            if (!formulario.dataset.submitted) {
-                formulario.dataset.submitted = 'true';
-                formulario.submit();
             }
         });
     </script>

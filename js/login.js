@@ -33,10 +33,10 @@ document.getElementById('formulario').addEventListener('submit', function handle
         return;
     }
 
-    // Validar que el login no comience por número, guion o punto
-    if (login[0] === '-' || login[0] === '.' || login[0].match(/[0-9]/)) {
+    // Validar que el login no comience por número, guion o guion bajo o punto
+    if (/^[\d._-]/.test(login)) {
         e.preventDefault();
-        alert('El nombre de usuario no puede comenzar por un número, guion o punto.');
+        alert('El nombre de usuario no puede comenzar por un número, guion, guion bajo o punto.');
         return;
     }
 
@@ -63,4 +63,5 @@ document.getElementById('formulario').addEventListener('submit', function handle
 
     // Si todo está validado, el formulario se enviará automáticamente
     // No es necesario llamar a `formulario.submit()`, ya que el formulario ya se envía si no se ha prevenido el envío
+
 });

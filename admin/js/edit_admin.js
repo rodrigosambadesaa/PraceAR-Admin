@@ -7,8 +7,6 @@ let errorExist = false;
 let errorMessages = '';
 
 formulario.addEventListener('submit', function (e) {
-    e.preventDefault();
-
     // Campos obligatorios
     let caseta = document.getElementById('caseta').value;
     let tipoUnity = document.getElementById('tipo-unity').value;
@@ -19,6 +17,7 @@ formulario.addEventListener('submit', function (e) {
 
     // Caseta, tipoUnity e idNave son obligatorios
     if (caseta === '' || tipoUnity === '' || idNave === '') {
+        e.preventDefault();
         alert('Caseta, tipoUnity e idNave son obligatorios');
         errorMessages += '<ul style="color: red;"><li>Caseta, tipoUnity e idNave son obligatorios</li>';
         errorExist = true;
@@ -27,6 +26,7 @@ formulario.addEventListener('submit', function (e) {
 
     // Caseta debe ser una cadena de exactamente 5 caracteres
     if (caseta.length !== 5) {
+        e.preventDefault();
         alert('Caseta debe ser una cadena de exactamente 5 caracteres');
         errorMessages += '<li>Caseta debe ser una cadena de exactamente 5 caracteres</li>';
         errorExist = true;
@@ -38,6 +38,7 @@ formulario.addEventListener('submit', function (e) {
     const numero = caseta.substring(2);
 
     if (!['CE', 'CO', 'MC', 'NA', 'NC'].includes(letras) || isNaN(numero) || numero < 1 || numero > 370) {
+        e.preventDefault();
         alert('Las dos primeras letras de caseta deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números se cuentan 001, 002, 003, ..., 370');
         errorMessages += '<li>Las dos primeras letras de caseta deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números se cuentan 001, 002, 003, ..., 370</li>';
         errorExist = true;
@@ -46,6 +47,7 @@ formulario.addEventListener('submit', function (e) {
 
     // Tipo de unidad debe ser uno de los valores de UNITY_TYPE
     if (!Object.values(UNITY_TYPE).includes(tipoUnity)) {
+        e.preventDefault();
         alert('Tipo de unidad debe ser uno de los valores de UNITY_TYPE');
         errorMessages += '<li>Tipo de unidad debe ser uno de los valores de UNITY_TYPE</li>';
         errorExist = true;
@@ -54,6 +56,7 @@ formulario.addEventListener('submit', function (e) {
 
     // El value de ID de nave debe estar entre 1 y 12
     if (isNaN(idNave) || idNave < 1 || idNave > 12) {
+        e.preventDefault();
         alert('El value de ID de nave debe estar entre 1 y 12');
         errorMessages += '<li>El value de ID de nave debe estar entre 1 y 12</li>';
         errorExist = true;
@@ -79,6 +82,7 @@ formulario.addEventListener('submit', function (e) {
 
     // El nombre, si se ha introducido, debe ser una cadena de máximo 50 caracteres
     if (nombre !== '' && nombre.length > 50) {
+        e.preventDefault();
         alert('El nombre, si se ha introducido, debe ser una cadena de máximo 50 caracteres');
         errorMessages += '<li>El nombre, si se ha introducido, debe ser una cadena de máximo 50 caracteres</li>';
         errorExist = true;
@@ -87,6 +91,7 @@ formulario.addEventListener('submit', function (e) {
 
     // Eliminar imagen debe ser un entero con valor 0 o 1
     if (eliminar_imagen !== '' && (isNaN(eliminar_imagen) || (eliminar_imagen !== '0' && eliminar_imagen !== '1'))) {
+        e.preventDefault();
         alert('Eliminar imagen debe ser un entero con valor 0 o 1');
         errorMessages += '<li>Eliminar imagen debe ser un entero con valor 0 o 1</li>';
         errorExist = true;
@@ -95,6 +100,7 @@ formulario.addEventListener('submit', function (e) {
 
     // Contacto, si se ha introducido, debe ser una cadena de máximo 250 caracteres
     if (contacto !== '' && contacto.length > 250) {
+        e.preventDefault();
         alert('Contacto, si se ha introducido, debe ser una cadena de máximo 250 caracteres');
         errorMessages += '<li>Contacto, si se ha introducido, debe ser una cadena de máximo 250 caracteres</li>';
         errorExist = true;
@@ -103,6 +109,7 @@ formulario.addEventListener('submit', function (e) {
 
     // Teléfono, si se ha introducido, debe ser una cadena de máximo 15 caracteres
     if (telefono !== '' && telefono.length > 15) {
+        e.preventDefault();
         alert('Teléfono, si se ha introducido, debe ser una cadena de máximo 15 caracteres');
         errorMessages += '<li>Teléfono, si se ha introducido, debe ser una cadena de máximo 15 caracteres</li>';
         errorExist = true;
@@ -111,6 +118,7 @@ formulario.addEventListener('submit', function (e) {
 
     // Caseta padre, si se ha introducido, debe ser una cadena de exactamente 5 caracteres
     if (caseta_padre !== '' && caseta_padre.length !== 5) {
+        e.preventDefault();
         alert('Caseta padre, si se ha introducido, debe ser una cadena de exactamente 5 caracteres');
         errorMessages += '<li>Caseta padre, si se ha introducido, debe ser una cadena de exactamente 5 caracteres</li>';
         errorExist = true;
@@ -122,6 +130,7 @@ formulario.addEventListener('submit', function (e) {
     const numeroPadre = caseta_padre.substring(2);
 
     if (caseta_padre !== '' && (!['CE', 'CO', 'MC', 'NA', 'NC'].includes(letrasPadre) || isNaN(numeroPadre) || numeroPadre < 1 || numeroPadre > 370)) {
+        e.preventDefault();
         alert('Las dos primeras letras de caseta padre deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números deben ser introducidos con el formato 001, 002, 003, ..., 370');
         errorMessages += '<li>Las dos primeras letras de caseta padre deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números deben ser introdocidos en el formato 001, 002, 003, ..., 370</li></ul>';
         errorExist = true;
@@ -133,6 +142,7 @@ formulario.addEventListener('submit', function (e) {
     if (foto !== '') {
         verifyMaliciousPhoto(foto).then(esMaliciosa => {
             if (esMaliciosa) {
+                e.preventDefault();
                 alert('La foto es maliciosa. Por favor, desinfecte el archivo o pida ayuda para desinfectarlo o saque una foto nueva tras desinfectar el dispositivo.');
                 return;
             }
@@ -141,6 +151,7 @@ formulario.addEventListener('submit', function (e) {
 
     // Si hay errores, no enviar formulario y mostrar mensajes de error creando un div con los mensajes
     if (errorExist) {
+        e.preventDefault();
         const div = document.createElement('div');
         div.innerHTML = errorMessages;
         formulario.insertAdjacentElement('afterend', div);
@@ -148,7 +159,4 @@ formulario.addEventListener('submit', function (e) {
     }
 
     // Enviar formulario
-    formulario.removeEventListener('submit', this);
-    formulario.submit();
-
 });
