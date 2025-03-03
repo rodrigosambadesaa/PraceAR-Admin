@@ -103,11 +103,11 @@ function tiene_espacios_al_principio_o_al_final($contrasenha)
 }
 
 /**
- * Función para determinar el tiempo estimado de crackeo de una contraseña, asumiendo que a un atacante solo le es viable realizar ataques a hashes de contraseñas porque el equipo de Bastionado de la organización es muy competente y ha implementado todo de forma segura
+ * Función para determinar el tiempo estimado de resistencia de una contraseña a un ataque de fuerza bruta.
  * @param mixed $contrasenha Contraseña a verificar.
- * @return string Devuelve el tiempo estimado de crackeo de la contraseña.
+ * @return string Devuelve el tiempo estimado de resistencia de la contraseña a un ataque de fuerza bruta.
  */
-function tiempo_estimado_crackeo($contrasenha)
+function tiempo_estimado_resistencia_ataque_fuerza_bruta($contrasenha)
 {
     // Recoger el resultado de esta entrada de Wolfram|Alpha: "password cracking time #WD[{]Ga9K0folfnK!Hm*{t-WLrp#R*_Up3;*{h}RD49s10u}ME]Bi*SE>+F0O" donde la contraseña es un ejemplo de contraseña fuerte, y la URL correspondiente a la entrada es https://www.wolframalpha.com/input?i=password+cracking+time+%23WD%5B%7B%5DGa9K0folfnK%21Hm*%7Bt-WLrp%23R*_Up3%3B*%7Bh%7DRD49s10u%7DME%5DBi*SE%3E%2BF0O&lang=es
 // URL de la API de Wolfram|Alpha
