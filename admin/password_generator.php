@@ -153,7 +153,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-        <label for="length">Longitud de la contraseña: <span class="required">*</span></label>
+        <label for="length-number">Longitud de la contraseña: <span class="required">*</span></label>
 
         <!-- Campo de número -->
         <input required type="number" id="length-number" name="length" min="16" max="1024"
@@ -222,13 +222,15 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             const longitud = document.getElementById('length-number').value;
             const longitudRange = document.getElementById('length-range').value;
 
-            if (longitud < 16 || longitud > 1024 || longitudRange < 16 || longitudRange > 1024 || longitud !== longitudRange) {
+            if (parseInt(longitud) < 16 || parseInt(longitud) > 1024 || parseInt(longitudRange) < 16 || parseInt(longitudRange) > 1024 || parseInt(longitud) !== parseInt(longitudRange)) {
                 alert('La longitud de la contraseña debe ser un número natural entre 16 y 1024.');
                 return;
             }
 
-            formulario.removeEventListener('submit', this);
-            formulario.submit();
+            if (!formulario.dataset.submitted) {
+                formulario.dataset.submitted = 'true';
+                formulario.submit();
+            }
         });
     </script>
 </body>
