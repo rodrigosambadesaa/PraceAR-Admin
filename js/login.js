@@ -47,13 +47,6 @@ document.getElementById('formulario').addEventListener('submit', function (e) {
         return;
     }
 
-    // No permitir espacios al principio o al final de la contraseña
-    if (password !== password.trim()) {
-        e.preventDefault();
-        alert('La contraseña no puede contener espacios al principio o al final.');
-        return;
-    }
-
     // La longitud de la contraseña debe estar entre 16 y 1024 caracteres
     if (password.length < 16 || password.length > 1024) {
         e.preventDefault();
