@@ -60,8 +60,4 @@ document.getElementById('formulario').addEventListener('submit', function handle
         alert('La contraseña debe tener entre 16 y 1024 caracteres.');
         return;
     }
-
-    // Si todo está validado, el formulario se enviará automáticamente
-    // No es necesario llamar a `formulario.submit()`, ya que el formulario ya se envía si no se ha prevenido el envío
-
 });
