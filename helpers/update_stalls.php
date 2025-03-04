@@ -39,8 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    if (isset($eliminar_imagen) && $eliminar_imagen == "1" && is_string($eliminar_imagen)) {
-        $is_imagen = delete_image($caseta);
+    if (isset($eliminar_imagen) && is_string($eliminar_imagen)) {
+        try {
+            $eliminar_imagen = intval($eliminar_imagen);
+            if ($eliminar_imagen === 1) {
+                $is_imagen = delete_image($caseta);
+            }
+        } catch (Exception $e) {
+            throw new Exception("Error al convertir eliminar_imagen a entero: " . $e->getMessage());
+        }
     }
 
     $activo = isset($activo) ? 1 : 0;
@@ -86,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $caseta_padre = limpiar_input($caseta_padre);
-    $update_caseta_padre = $caseta_padre === '' ? "caseta_padre = NULL" : "caseta_padre = '" . caseta_padre . "'";
+    $update_caseta_padre = $caseta_padre === '' ? "caseta_padre = NULL" : "caseta_padre = '" . $caseta_padre . "'";
 
     // La caseta padre, si se ha especificado, debe ser un string de exactamente cinco caracteres
     if (!empty($caseta_padre) && (!is_string($caseta_padre) || strlen($caseta_padre) !== 5)) {

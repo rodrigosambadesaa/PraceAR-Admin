@@ -221,7 +221,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             const longitud = document.getElementById('length-number').value;
             const longitudRange = document.getElementById('length-range').value;
 
-            if (parseInt(longitud) < 16 || parseInt(longitud) > 1024 || parseInt(longitudRange) < 16 || parseInt(longitudRange) > 1024 || parseInt(longitud) !== parseInt(longitudRange)) {
+            const longitudParsed = parseInt(longitud);
+            const longitudRangeParsed = parseInt(longitudRange);
+
+            if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 1024 || longitudRangeParsed < 16 || longitudRangeParsed > 1024 || longitudParsed !== longitudRangeParsed) {
                 event.preventDefault();
                 alert('La longitud de la contraseña debe ser un número natural entre 16 y 1024.');
                 return;
