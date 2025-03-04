@@ -100,9 +100,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         throw new Exception("La caseta padre debe ser un texto de exactamente cinco caracteres");
     }
 
-    // La caseta padre, si se ha especificado, debe cumplir los siguientes requisitos: Las dos primeras letras de caseta padre, si se ha introducido, deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números se cuentan 001, 002, 003, ..., 370
+    // La caseta padre, si se ha especificado, debe cumplir los siguientes requisitos: Sus dos primeras letras deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números se cuentan 001, 002, 003, ..., 370
     if (!empty($caseta_padre) && !preg_match('/^(CE|CO|MC|NA|NC)([0-9]{3})$/', $caseta_padre)) {
         throw new Exception("La caseta padre debe tener el formato correcto. El formato correcto es dos letras seguidas de tres números. Las dos letras deben ser 'CE', 'CO', 'MC', 'NA', o 'NC', y los tres números deben estar entre 001 y 370.");
+    } else {
+        try {
+            if (!empty($caseta_padre)) {
+                // Verificar que los números de caseta padre, si está en el formato correcto, estén entre 001 y 370
+                $numero_caseta_padre = intval(substr($caseta_padre, 2));
+                if ($numero_caseta_padre < 1 || $numero_caseta_padre > 370) {
+                    throw new Exception("El número de caseta padre debe estar entre 001 y 370.");
+                }
+            }
+        } catch (Exception $e) {
+            throw new Exception("Error al convertir el número de caseta padre a entero: " . $e->getMessage());
+        }
     }
 
     $sql_actualizacion = "UPDATE puestos SET
