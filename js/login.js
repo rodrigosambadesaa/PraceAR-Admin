@@ -1,4 +1,4 @@
-document.getElementById('formulario').addEventListener('submit', function handleSubmit(e) {
+document.getElementById('formulario').addEventListener('submit', function (e) {
     const login = document.getElementById('login').value.trim();
     const password = document.getElementById('password').value.trim();
     const passwordOriginal = document.getElementById('password').value;
