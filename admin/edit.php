@@ -69,7 +69,7 @@
             <input type="checkbox" id="activo" name="activo" value="<?= $activo ?>" <?= $activo == 1 ? "checked" : "" ?>>
         </div>
         <div>
-            <label for="caseta">Caseta <span style="color: red;">*</span></label>
+            <label for="caseta">Caseta</label>
             <input type="text" id="caseta" disabled required value="<?= htmlspecialchars($fila["caseta"]) ?>">
             <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>"
                 placeholder="Código de caseta">

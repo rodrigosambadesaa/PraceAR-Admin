@@ -190,7 +190,7 @@
     <form method="POST" id="formulario-cambio-contrasena">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <div id="form-group">
-            <label for="nombre-usuario">Nombre de usuario: <span style="color: red;">*</span></label>
+            <label for="nombre-usuario">Nombre de usuario: </label>
             <input type="text" name="nombre_usuario" id="nombre-usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
                 disabled>
         </div>
