@@ -80,30 +80,34 @@
                 placeholder="Nombre del puesto. Por ejemplo: 'Bibi Handmades'">
         </div>
         <div>
-            <label for="imagen">Imagen</label>
             <?php
             $ruta_a_imagen = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
+            $imagen_encontrada = false;
             if (file_exists($ruta_a_imagen)) {
-                ?>
-                <div style="display: flex; flex-direction: column; align-items: center;"></div>
-                <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto" class="zoomable"
-                    style="object-fit: cover; height: 140px; display: block; margin: 0 auto;">
-                <a href="#" id="eliminar-imagen-link"
-                    style="margin-top: 1em; color: red; text-decoration: none; text-align: center; display: block;">Eliminar</a>
+                $imagen_encontrada = true;
+            }
+            ?>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <?php if ($imagen_encontrada) { ?>
+                    <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto" class="zoomable"
+                        style="object-fit: cover; height: 140px; display: block; margin: 0 auto;">
+                    <a href="#" id="eliminar-imagen-link"
+                        style="margin-top: 1em; color: red; text-decoration: none; text-align: center; display: block;">Eliminar</a>
+                    <script>
+                        document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {
+                            event.preventDefault(); // Previene la acción predeterminada del enlace
+                            if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
+                                document.getElementById('eliminar-imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
+                                document.getElementById('formulario-editar').submit(); // Envía el formulario
+                            }
+                        });
+                    </script>
+                    <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1" style="display: none;">
+                <?php } else { ?>
+                    <label for="imagen">Imagen</label>
+                    <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
+                <?php } ?>
             </div>
-            <script>
-                document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {
-                    event.preventDefault(); // Previene la acción predeterminada del enlace
-                    if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
-                        document.getElementById('eliminar-imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
-                        document.getElementById('formulario-editar').submit(); // Envía el formulario
-                    }
-                });
-            </script>
-            <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1" style="display: none;">
-        <?php } else { ?>
-            <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
-        <?php } ?>
         </div>
 
         <div>
