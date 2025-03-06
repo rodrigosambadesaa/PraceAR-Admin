@@ -87,6 +87,7 @@
                 $imagen_encontrada = true;
             }
             ?>
+            <span>Imagen</span>
             <div style="display: flex; flex-direction: column; align-items: center;">
                 <?php if ($imagen_encontrada) { ?>
                     <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto" class="zoomable"
