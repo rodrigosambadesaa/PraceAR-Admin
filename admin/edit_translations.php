@@ -24,6 +24,15 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
+
+    <style>
+        #descripcion {
+            min-height: 1em;
+            max-height: 7.75em;
+            height: auto;
+            letter-spacing: 2.97px;
+        }
+    </style>
 </head>
 
 <body>
@@ -79,7 +88,7 @@
         <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>"
             placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'" required>
         <label for="descripcion">Descripción</label>
-        <textarea name="descripcion" id="descripcion" cols="30" rows="10"
+        <textarea name="descripcion" id="descripcion" cols="10" rows="10"
             placeholder="Descripción del puesto. Por ejemplo: 'Bisutería hecha a mano'."
             maxlength="450"><?= htmlspecialchars($data['descripcion'] ?? "") ?></textarea>
         <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars($data['id'] ?? "") ?>">
