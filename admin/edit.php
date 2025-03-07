@@ -87,9 +87,9 @@
                 $imagen_encontrada = true;
             }
             ?>
-            <span>Imagen</span>
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <?php if ($imagen_encontrada) { ?>
+            <?php if ($imagen_encontrada) { ?>
+                <span>Imagen</span>
+                <div style="display: flex; flex-direction: column; align-items: center;">
                     <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto" class="zoomable"
                         style="object-fit: cover; height: 140px; display: block; margin: 0 auto;">
                     <a href="#" id="eliminar-imagen-link"
@@ -104,11 +104,11 @@
                         });
                     </script>
                     <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1" style="display: none;">
-                <?php } else { ?>
-                    <label for="imagen">Imagen</label>
-                    <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
-                <?php } ?>
-            </div>
+                </div>
+            <?php } else { ?>
+                <label for="imagen">Imagen</label>
+                <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
+            <?php } ?>
         </div>
 
         <div>
