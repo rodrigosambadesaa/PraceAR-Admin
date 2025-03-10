@@ -113,7 +113,8 @@
                     <search role="search">
                         <form id="formulario-busqueda" action="?page=1" method="POST">
                             <input value="<?= htmlspecialchars($caseta) ?>" type="text" id="input-busqueda"
-                                placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta">
+                                placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta"
+                                autofocus>
                             <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(get_language()) ?>">
                             <input type="submit" value="Buscar">
                             <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">

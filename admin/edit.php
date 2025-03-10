@@ -136,17 +136,11 @@
                 <?php
                 $sql_naves = "SELECT * FROM naves";
                 $resultado_naves = $conexion->query($sql_naves);
-                while ($fila_naves = $resultado_naves->fetch_assoc()) {
-                    if ($fila["id_nave"] == $fila_naves["id"]) {
-                        ?>
-                        <option value="<?= htmlspecialchars($fila_naves["id"]) ?>" selected>
-                            <?= htmlspecialchars($fila_naves["tipo"]) ?>
-                        </option>
-                    <?php } else { ?>
-                        <option value="<?= htmlspecialchars($fila_naves["id"]) ?>"><?= htmlspecialchars($fila_naves["tipo"]) ?>
-                        </option>
-                    <?php }
-                } ?>
+                while ($fila_naves = $resultado_naves->fetch_assoc()) { ?>
+                    <option value="<?= htmlspecialchars($fila_naves["id"]) ?>" <?= $fila["id_nave"] == $fila_naves["id"] ? "selected" : "" ?>>
+                        <?= htmlspecialchars($fila_naves["tipo"]) ?>
+                    </option>
+                <?php } ?>
             </select>
         </div>
         <div>
