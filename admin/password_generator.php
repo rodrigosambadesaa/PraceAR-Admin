@@ -89,6 +89,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     try {
                         $password = generate_password($length);
                         $result = '<div id="contrasena-generada" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Número de minúsculas: ' . contar_minusculas($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Número de dígitos: ' . contar_digitos($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
                         if ($length <= 177) {
                             $result .= '<div style="color: green; text-align: center;">Tiempo estimado de resistencia a un ataque de fuerza bruta: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
                         }

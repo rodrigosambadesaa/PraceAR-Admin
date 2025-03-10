@@ -275,3 +275,42 @@ function tiene_secuencias_caracteres_especiales_inseguras($contrasenha)
     return false;
 }
 
+/**
+ * Función para determinar si una contraseña contiene secuencias de teclado inseguras.
+ * @param mixed $contrasenha Contraseña de la que se quiere contar el número de mayúsculas.
+ * @return bool|int Devuelve el número de mayúsculas en la contraseña.
+ */
+function contar_mayusculas($contrasenha)
+{
+    return preg_match_all('/[A-Z]/', $contrasenha);
+}
+
+/**
+ * Función para contar el nº de minúsculas en una contraseña.
+ * @param mixed $contrasenha Contraseña de la que se quiere contar el número de minúsculas.
+ * @return bool|int Devuelve el número de minúsculas en la contraseña.
+ */
+function contar_minusculas($contrasenha)
+{
+    return preg_match_all('/[a-z]/', $contrasenha);
+}
+/**
+ * Función para contar el nº de dígitos en una contraseña.
+ * @param mixed $contrasenha Contraseña de la que se quiere contar el número de dígitos.
+ * @return bool|int Devuelve el número de dígitos en la contraseña.
+ */
+function contar_digitos($contrasenha)
+{
+    return preg_match_all('/[0-9]/', $contrasenha);
+}
+
+/**
+ * Función para contar el nº de caracteres especiales en una contraseña.
+ * @param mixed $contrasenha Contraseña de la que se quiere contar el número de caracteres especiales.
+ * @return bool|int Devuelve el número de caracteres especiales en la contraseña.
+ */
+function contar_caracteres_especiales($contrasenha)
+{
+    return preg_match_all('/[^A-Za-z0-9]/', $contrasenha);
+}
+
