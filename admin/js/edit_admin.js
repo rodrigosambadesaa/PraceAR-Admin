@@ -79,6 +79,7 @@ formulario.addEventListener('submit', function (e) {
     contacto = limpiarInput(contacto);
     telefono = limpiarInput(telefono);
     caseta_padre = limpiarInput(caseta_padre);
+    console.log('Caseta padre:', caseta_padre);
 
     // El nombre, si se ha introducido, debe ser una cadena de máximo 50 caracteres
     if (nombre !== '' && nombre.length > 50) {
@@ -129,7 +130,7 @@ formulario.addEventListener('submit', function (e) {
     const letrasPadre = caseta_padre.substring(0, 2);
     const numeroPadre = caseta_padre.substring(2);
 
-    if (caseta_padre !== '' && (!['CE', 'CO', 'MC', 'NA', 'NC'].includes(letrasPadre) || isNaN(numeroPadre) || numeroPadre < 1 || numeroPadre > 370)) {
+    if (caseta_padre !== '' && (!['CE', 'CO', 'MC', 'NA', 'NC'].includes(letrasPadre) || isNaN(numeroPadre) || numeroPadre.length !== 3 || numeroPadre < 1 || numeroPadre > 370)) {
         e.preventDefault();
         alert('Las dos primeras letras de caseta padre deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números deben ser introducidos con el formato 001, 002, 003, ..., 370');
         errorMessages += '<li>Las dos primeras letras de caseta padre deben ser "CE", "CO", "MC", "NA", o "NC", y las tres últimas un número entre 1 y 370. Los números deben ser introdocidos en el formato 001, 002, 003, ..., 370</li></ul>';

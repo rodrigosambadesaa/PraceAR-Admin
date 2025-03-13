@@ -244,10 +244,14 @@
             <?php if ($busqueda_hecha): ?>
                 const inputReseteo = document.getElementById('input-reseteo');
                 inputReseteo.disabled = true;
+                // Ocultamos también el botón
+                inputReseteo.style.display = 'none';
             <?php else: ?>
                 // Si no hay una búsqueda hecha, no permitimos que se haga clic en el botón de deshacer
                 const inputDeshacer = document.getElementById('input-deshacer-busqueda');
                 inputDeshacer.disabled = true;
+                // Ocultamos también el botón
+                inputDeshacer.style.display = 'none';
             <?php endif; ?>
         </script>
     <?php endif; ?>
