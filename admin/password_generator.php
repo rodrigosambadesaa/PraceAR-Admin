@@ -27,7 +27,7 @@ if (!isset($_SESSION['csrf'])) {
 function generate_password(int $length)
 {
     if ($length < 16 || $length > 1024) {
-        throw new Exception("Password length must be a natural number between 16 and 1024.");
+        throw new Exception("La longitud de la contraseña debe estar entre 16 y 1024 caracteres.");
     }
 
     $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -86,15 +86,15 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             $length_range = limpiar_input($_POST['length_range']);
 
             if (!is_numeric($length) || !is_numeric($length_range) || !ctype_digit($length) || !ctype_digit($length_range)) {
-                $result = '<span style="color: red; text-align: center;">Password length must be a natural number between 16 and 1024.</span>';
+                $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe ser un número natural entre 16 y 1024.</span>';
             } else {
                 $length = (int) $length;
                 $length_range = (int) $length_range;
 
                 if ($length < 16 || $length > 1024 || $length_range < 16 || $length_range > 1024) {
-                    $result = '<span style="color: red; text-align: center;">Password length must be a natural number between 16 and 1024.</span>';
+                    $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe estar entre 16 y 1024 caracteres.</span>';
                 } elseif ($length !== $length_range) {
-                    throw new Exception("Do not alter the JavaScript code to set different password lengths.");
+                    throw new Exception("No alteres el código JavaScript para cambiar la longitud de la contraseña.");
                 } else {
                     try {
                         $password = generate_password($length);
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         }
 
                         if (!password_verify($contrasenha_actual . $pepper, $resultado_select['password'])) {
-                            throw new Exception("The current password entered is incorrect.");
+                            throw new Exception("La contraseña actual es incorrecta.");
                         }
 
                         while (
@@ -125,14 +125,16 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
                         // Display the generated password
                         $result = '<div id="contrasena-generada" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</div>';
-                        $result .= '<div style="color: green; text-align: center;">Uppercase letters: ' . contar_mayusculas($password) . '</div>';
-                        $result .= '<div style="color: green; text-align: center;">Lowercase letters: ' . contar_minusculas($password) . '</div>';
-                        $result .= '<div style="color: green; text-align: center;">Digits: ' . contar_digitos($password) . '</div>';
-                        $result .= '<div style="color: green; text-align: center;">Special characters: ' . contar_caracteres_especiales($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Letras mayúsculas: ' . contar_mayusculas($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Letras minúsculas: ' . contar_minusculas($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Dígitos: ' . contar_digitos($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
+
                         if ($length <= 177) {
-                            $result .= '<div style="color: green; text-align: center;">Estimated brute-force resistance: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
+                            $result .= '<div style="color: green; text-align: center;">Tiempo estimado de resistencia a un ataque de fuerza bruta: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($length) . '</div>';
                         }
-                        $result .= '<div style="color: green; text-align: center;">Password entropy: ' . entropia($password) . '</div>';
+
+                        $result .= '<div style="color: green; text-align: center;">Entropía: ' . entropia($password) . '</div>';
                         $mostrar_boton = true;
                     } catch (Exception $e) {
                         $result = '<span style="color: red; text-align: center;">' . $e->getMessage() . '</span>';
@@ -150,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Password Generator</title>
+    <title>Admin - PraceAR - Generador de Contraseñas</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="icon" href="./img/favicon.png" type="image/png">
     <style>
@@ -170,7 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <?php require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php'; ?>
     </header>
 
-    <h1 style="text-align: center;">Password Generator</h1>
+    <h1 style="text-align: center;">Generador de Contraseñas</h1>
 
     <div style="text-align: center; margin-bottom: 1rem;">
         <span id="password-text"><?= $result ?></span>
@@ -178,17 +180,17 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     <?php if ($mostrar_boton): ?>
         <div style="text-align: center;">
-            <button onclick="copyToClipboard()">Copy Password</button>
+            <button onclick="copyToClipboard()">Copiar Contraseña</button>
         </div>
     <?php endif; ?>
 
     <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-        <label for="length-number">Password Length: <span class="required">*</span></label>
+        <label for="length-number">Longitud de la Contraseña: <span class="required">*</span></label>
         <input required type="number" id="length-number" name="length" min="16" max="1024"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')">
 
-        <label for="length-range">Password Length: <span class="required">*</span></label>
+        <label for="length-range">Longitud de la Contraseña: <span class="required">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="1024"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')">
 
@@ -196,14 +198,15 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
         </output>
 
-        <label for="contrasenha-actual">Current Password: <span class="required">*</span></label>
+        <label for="contrasenha-actual">Contraseña Actual: <span class="required">*</span></label>
         <input required type="password" id="contrasenha-actual" name="contrasenha_actual">
 
-        <input type="submit" value="Generate Password">
+        <input type="submit" value="Generar Contraseña">
     </form>
 
     <div style="text-align: center; color: red; margin-top: 1rem;">
-        <p id="parrafo-campos-obligatorios">Fields marked with <span class="required">*</span> are required.</p>
+        <p id="parrafo-campos-obligatorios">Los campos marcados con <span class="required">*</span> son obligatorios.
+        </p>
     </div>
 
     <script>
@@ -216,14 +219,14 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 }
                 const successMessage = document.createElement('span');
                 successMessage.id = 'success-message';
-                successMessage.textContent = 'Password copied to clipboard';
+                successMessage.textContent = 'Contraseña copiada al portapapeles.';
                 successMessage.style.color = 'green';
                 successMessage.style.display = 'block';
                 successMessage.style.textAlign = 'center';
                 successMessage.style.marginTop = '1rem';
                 document.getElementById('contrasena-generada').insertAdjacentElement('afterend', successMessage);
             }).catch(err => {
-                console.error('Failed to copy password to clipboard: ', err);
+                console.error('Fallo al copiar la contraseña al portapapeles:', err);
             });
         }
 
@@ -251,7 +254,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
             if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 1024 || longitudRangeParsed < 16 || longitudRangeParsed > 1024 || longitudParsed !== longitudRangeParsed) {
                 event.preventDefault();
-                alert('Password length must be a natural number between 16 and 1024.');
+                alert('La longitud de la contraseña debe estar entre 16 y 1024 caracteres.');
                 return;
             }
         });
