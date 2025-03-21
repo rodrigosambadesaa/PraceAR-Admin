@@ -1,6 +1,13 @@
 <?php
 
+// require_once '../../constants.php';
+require_once HELPERS . 'clean_input.php';
+require_once CONNECTION;
+
 $app_id_config = require_once HELPERS . 'verify_strong_password.php';
+
+$pepper_config = include 'pepper.php';
+$pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
 
 if (!isset($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
@@ -58,6 +65,10 @@ function generate_password(int $length)
         $password = implode('', $password_chars);
     }
 
+    // Verifcar que la contraseña generada no sea total o parcialmente igual a la contraseña actual del usuario ni a contraseñas anteriores
+
+
+
     return $password;
 }
 
@@ -103,6 +114,35 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         $result = '<span style="color: red; text-align: center;">' . $e->getMessage() . '</span>';
                     }
                 }
+            }
+        }
+    }
+
+    // Verifcar que la contraseña generada no sea total o parcialmente igual a la contraseña actual del usuario ni a contraseñas anteriores
+    if (isset($_POST['contrasenha_actual'])) {
+        $contrasenha_actual = $_POST['contrasenha_actual'];
+
+        // Verificar que la contraseña actual introducida por el usuario sea la correcta
+
+        $smtp_select = "SELECT password FROM usuarios WHERE login = ?";
+        $stmt_select = $conexion->prepare($smtp_select);
+        $stmt_select->bind_param('s', $_SESSION['nombre_usuario']);
+        $stmt_select->execute();
+        $resultado_select = $stmt_select->get_result()->fetch_assoc();
+
+        if (!$resultado_select) {
+            throw new Exception("No se encontró el usuario en la base de datos.");
+        }
+
+        if (!password_verify($contrasenha_actual . $pepper, $resultado_select['password'])) {
+            throw new Exception("La contraseña actual introducida no es correcta.");
+        }
+
+        if (contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || contrasenha_similar_a_contrasenha_anterior($password, $_SESSION['nombre_usuario'], $contrasenha_actual)) {
+            // Mezclar los caracteres hasta que la contraseña generada no sea total o parcialmente igual a la contraseña actual del usuario ni a contraseñas anteriores
+            while (contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || contrasenha_similar_a_contrasenha_anterior($password, $_SESSION['nombre_usuario'], $contrasenha_actual)) {
+                shuffle($password_chars);
+                $password = implode('', $password_chars);
             }
         }
     }
@@ -171,6 +211,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;">
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
         </output>
+        <!-- Campo de contraseña actual del usuario para verificar que la contraseña generada no sea igual o similar -->
+        <label for="contrasenha-actual">Contraseña actual del usuario: <span class="required">*</span></label>
+        <input required type="password" id="contrasenha-actual" name="contrasenha_actual">
+
 
         <input type="submit" value="Generar contraseña">
     </form>

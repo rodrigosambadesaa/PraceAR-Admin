@@ -110,6 +110,11 @@
                 if (password_verify("{$new_password}{$pepper}", $row['password'])) {
                     throw new Exception("La nueva contraseña no puede ser igual a una de las contraseñas anteriores.");
                 }
+
+                // Verificar que la nueva contraseña no sea similar a una de las contraseñas anteriores
+                if (contrasenha_similar_a_contrasenha_anterior($new_password, $row['password'])) {
+                    throw new Exception("La nueva contraseña no puede ser similar a una de las contraseñas anteriores.");
+                }
             }
 
             // Consulta para obtener la contraseña actual del usuario
@@ -205,6 +210,20 @@
         <div id="form-group">
             <label for="confirm-password">Confirmar nueva contraseña: <span style="color: red;">*</span></label>
             <input type="password" name="confirm_password" id="confirm-password" required>
+        </div>
+        <!-- Lista para los requisitos de la contraseña -->
+        <div id="password-requirements">
+            <span>Requisitos de la nueva contraseña</span>
+            <ul>
+                <li>Longitud entre 16 y 1024 caracteres</li>
+                <li>Una letra mayúscula</li>
+                <li>Una letra minúscula</li>
+                <li>Un número</li>
+                <li>
+                    Tres caracteres especiales distintos, que son los siguientes:
+                    <strong>! " # $ % & ' ( ) * + , - . / : ; <=> ? @ [ \ ] ^ _ ` { | } ~</strong>
+                </li>
+            </ul>
         </div>
         <div id="form-group">
             <input type="submit" value="Cambiar contraseña">

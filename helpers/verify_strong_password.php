@@ -314,3 +314,41 @@ function contar_caracteres_especiales($contrasenha)
     return preg_match_all('/[^A-Za-z0-9]/', $contrasenha);
 }
 
+/**
+ * Función para verificar si una contraseña es similar a otra.
+ * @param mixed $contrasenha Contraseña a verificar.
+ * @param mixed $contrasenha_anterior Contraseña anterior a comparar.
+ * @return bool Devuelve true si la contraseña es similar a la anterior, false en caso contrario.
+ */
+function contrasenha_similar_a_contrasenha_anterior($contrasenha, $contrasenha_anterior)
+{
+    // Verificar coincidencias parciales y completas
+    $longitud = strlen($contrasenha);
+    $longitud_anterior = strlen($contrasenha_anterior);
+
+    // Verificar si la contraseña anterior es una subcadena de la nueva contraseña
+    if (strpos($contrasenha, $contrasenha_anterior) !== false) {
+        return true;
+    }
+
+    // Verificar si la nueva contraseña es una subcadena de la contraseña anterior
+    if (strpos($contrasenha_anterior, $contrasenha) !== false) {
+        return true;
+    }
+
+    // Verificar si la nueva contraseña y la anterior tienen una coincidencia parcial
+    for ($i = 0; $i <= $longitud - 3; $i++) {
+        $subcadena = substr($contrasenha, $i, 3);
+        if (strpos($contrasenha_anterior, $subcadena) !== false) {
+            return true;
+        }
+    }
+
+    // Verificar si la nueva contraseña y la anterior tienen una coincidencia total
+    if ($contrasenha === $contrasenha_anterior) {
+        return true;
+    }
+
+    return false;
+}
+
