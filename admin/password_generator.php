@@ -1,6 +1,5 @@
 <?php
 
-// require_once '../../constants.php';
 require_once HELPERS . 'clean_input.php';
 require_once CONNECTION;
 
@@ -12,22 +11,23 @@ $pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
 if (!isset($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
+
 /**
- * Genera una contraseña de la longitud indicada que cumple con:
- * - Longitud entre 16 y 1024 caracteres.
- * - Al menos 1 letra mayúscula.
- * - Al menos 1 letra minúscula.
- * - Al menos 1 dígito.
- * - Al menos 3 caracteres especiales (distintos) válidos.
+ * Generates a password of the specified length that meets the following criteria:
+ * - Length between 16 and 1024 characters.
+ * - At least 1 uppercase letter.
+ * - At least 1 lowercase letter.
+ * - At least 1 digit.
+ * - At least 3 distinct special characters.
  *
- * @param int $length Longitud deseada de la contraseña.
- * @return string La contraseña generada.
- * @throws Exception Si la longitud está fuera del rango permitido.
+ * @param int $length Desired password length.
+ * @return string The generated password.
+ * @throws Exception If the length is out of the allowed range.
  */
 function generate_password(int $length)
 {
     if ($length < 16 || $length > 1024) {
-        throw new Exception("La longitud de la contraseña debe ser un número natural entre 16 y 1024.");
+        throw new Exception("Password length must be a natural number between 16 and 1024.");
     }
 
     $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -37,37 +37,39 @@ function generate_password(int $length)
 
     $password_chars = [];
 
-    // Asegurar al menos una mayúscula, una minúscula y un número:
+    // Ensure at least one uppercase, one lowercase, and one number
     $password_chars[] = $uppercase[random_int(0, strlen($uppercase) - 1)];
     $password_chars[] = $lowercase[random_int(0, strlen($lowercase) - 1)];
     $password_chars[] = $numbers[random_int(0, strlen($numbers) - 1)];
 
-    // Para garantizar tres caracteres especiales distintos:
+    // Ensure three distinct special characters
     $special_array = str_split($special_chars);
     shuffle($special_array);
     $password_chars[] = $special_array[0];
     $password_chars[] = $special_array[1];
     $password_chars[] = $special_array[2];
 
-    // Completar el resto de la contraseña con caracteres aleatorios.
+    // Fill the rest of the password with random characters
     $all_chars = "{$uppercase}{$lowercase}{$numbers}{$special_chars}";
     for ($i = 0; $i < $length - 6; $i++) {
         $password_chars[] = $all_chars[random_int(0, strlen($all_chars) - 1)];
     }
 
-    // Mezclar los caracteres
+    // Shuffle the characters
     shuffle($password_chars);
     $password = implode('', $password_chars);
 
-    // Validar la contraseña generada
-    while (tiene_secuencias_numericas_inseguras($password) || tiene_secuencias_alfabeticas_inseguras($password) || tiene_secuencias_caracteres_especiales_inseguras($password) || contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || ha_sido_filtrada_en_brechas_de_seguridad($password)) {
+    // Validate the generated password
+    while (
+        tiene_secuencias_numericas_inseguras($password) ||
+        tiene_secuencias_alfabeticas_inseguras($password) ||
+        tiene_secuencias_caracteres_especiales_inseguras($password) ||
+        contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) ||
+        ha_sido_filtrada_en_brechas_de_seguridad($password)
+    ) {
         shuffle($password_chars);
         $password = implode('', $password_chars);
     }
-
-    // Verifcar que la contraseña generada no sea total o parcialmente igual a la contraseña actual del usuario ni a contraseñas anteriores
-
-
 
     return $password;
 }
@@ -80,69 +82,62 @@ $length = 16;
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     if (isset($_POST['csrf']) && hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
         if (isset($_POST['length'])) {
-            require_once 'helpers/clean_input.php';
-            // Descartar cualquier entrada que no sea un número natural
-
             $length = limpiar_input($_POST['length']);
             $length_range = limpiar_input($_POST['length_range']);
 
             if (!is_numeric($length) || !is_numeric($length_range) || !ctype_digit($length) || !ctype_digit($length_range)) {
-                $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe ser un número natural entre 16 y 1024.</span>';
+                $result = '<span style="color: red; text-align: center;">Password length must be a natural number between 16 and 1024.</span>';
             } else {
                 $length = (int) $length;
                 $length_range = (int) $length_range;
 
                 if ($length < 16 || $length > 1024 || $length_range < 16 || $length_range > 1024) {
-                    $result = '<span style="color: red; text-align: center;">La longitud de la contraseña debe ser un número natural entre 16 y 1024.</span>';
+                    $result = '<span style="color: red; text-align: center;">Password length must be a natural number between 16 and 1024.</span>';
                 } elseif ($length !== $length_range) {
-                    throw new Exception("No se permite alterar el código JavaScript de la página para establecer una longitud de contraseña diferente en uno de los controles");
+                    throw new Exception("Do not alter the JavaScript code to set different password lengths.");
                 } else {
                     try {
                         $password = generate_password($length);
-                        $result = '<div id="contrasena-generada" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</div>';
-                        $result .= '<div style="color: green; text-align: center;">Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
-                        $result .= '<div style="color: green; text-align: center;">Número de minúsculas: ' . contar_minusculas($password) . '</div>';
-                        $result .= '<div style="color: green; text-align: center;">Número de dígitos: ' . contar_digitos($password) . '</div>';
-                        $result .= '<div style="color: green; text-align: center;">Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
-                        if ($length <= 177) {
-                            $result .= '<div style="color: green; text-align: center;">Tiempo estimado de resistencia a un ataque de fuerza bruta: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
+
+                        // Verify the current password entered by the user
+                        $contrasenha_actual = $_POST['contrasenha_actual'];
+
+                        $smtp_select = "SELECT password FROM usuarios WHERE login = ?";
+                        $stmt_select = $conexion->prepare($smtp_select);
+                        $stmt_select->bind_param('s', $_SESSION['nombre_usuario']);
+                        $stmt_select->execute();
+                        $resultado_select = $stmt_select->get_result()->fetch_assoc();
+
+                        if (!$resultado_select) {
+                            throw new Exception("User not found in the database.");
                         }
-                        $result .= '<div style="color: green; text-align: center;">Entropía de la contraseña: ' . entropia($password) . '</div>';
+
+                        if (!password_verify($contrasenha_actual . $pepper, $resultado_select['password'])) {
+                            throw new Exception("The current password entered is incorrect.");
+                        }
+
+                        while (
+                            contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) ||
+                            contrasenha_similar_a_contrasenha_anterior($password, $_SESSION['nombre_usuario'])
+                        ) {
+                            $password = generate_password($length);
+                        }
+
+                        // Display the generated password
+                        $result = '<div id="contrasena-generada" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">' . htmlspecialchars($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Uppercase letters: ' . contar_mayusculas($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Lowercase letters: ' . contar_minusculas($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Digits: ' . contar_digitos($password) . '</div>';
+                        $result .= '<div style="color: green; text-align: center;">Special characters: ' . contar_caracteres_especiales($password) . '</div>';
+                        if ($length <= 177) {
+                            $result .= '<div style="color: green; text-align: center;">Estimated brute-force resistance: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
+                        }
+                        $result .= '<div style="color: green; text-align: center;">Password entropy: ' . entropia($password) . '</div>';
                         $mostrar_boton = true;
-                        // Actualizar el valor del input type range en el formulario para futuras generaciones
                     } catch (Exception $e) {
                         $result = '<span style="color: red; text-align: center;">' . $e->getMessage() . '</span>';
                     }
                 }
-            }
-        }
-    }
-
-    // Verifcar que la contraseña generada no sea total o parcialmente igual a la contraseña actual del usuario ni a contraseñas anteriores
-    if (isset($_POST['contrasenha_actual'])) {
-        $contrasenha_actual = $_POST['contrasenha_actual'];
-
-        // Verificar que la contraseña actual introducida por el usuario sea la correcta
-
-        $smtp_select = "SELECT password FROM usuarios WHERE login = ?";
-        $stmt_select = $conexion->prepare($smtp_select);
-        $stmt_select->bind_param('s', $_SESSION['nombre_usuario']);
-        $stmt_select->execute();
-        $resultado_select = $stmt_select->get_result()->fetch_assoc();
-
-        if (!$resultado_select) {
-            throw new Exception("No se encontró el usuario en la base de datos.");
-        }
-
-        if (!password_verify($contrasenha_actual . $pepper, $resultado_select['password'])) {
-            throw new Exception("La contraseña actual introducida no es correcta.");
-        }
-
-        if (contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || contrasenha_similar_a_contrasenha_anterior($password, $_SESSION['nombre_usuario'], $contrasenha_actual)) {
-            // Mezclar los caracteres hasta que la contraseña generada no sea total o parcialmente igual a la contraseña actual del usuario ni a contraseñas anteriores
-            while (contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) || contrasenha_similar_a_contrasenha_anterior($password, $_SESSION['nombre_usuario'], $contrasenha_actual)) {
-                shuffle($password_chars);
-                $password = implode('', $password_chars);
             }
         }
     }
@@ -155,15 +150,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - PraceAR - Generador de contraseñas - Página de administración</title>
+    <title>Admin - Password Generator</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <link rel='icon' href='./img/favicon.png' type='image/png'>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-        rel="stylesheet">
-
+    <link rel="icon" href="./img/favicon.png" type="image/png">
     <style>
         .required {
             color: red;
@@ -174,16 +163,14 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             text-align: center;
         }
     </style>
-
 </head>
 
 <body>
-
     <header>
         <?php require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php'; ?>
     </header>
 
-    <h1 style="text-align: center;">Generador de contraseñas</h1>
+    <h1 style="text-align: center;">Password Generator</h1>
 
     <div style="text-align: center; margin-bottom: 1rem;">
         <span id="password-text"><?= $result ?></span>
@@ -191,60 +178,52 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     <?php if ($mostrar_boton): ?>
         <div style="text-align: center;">
-            <button onclick="copyToClipboard()">Copiar contraseña</button>
+            <button onclick="copyToClipboard()">Copy Password</button>
         </div>
     <?php endif; ?>
 
     <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-        <label for="length-number">Longitud de la contraseña: <span class="required">*</span></label>
-
-        <!-- Campo de número -->
+        <label for="length-number">Password Length: <span class="required">*</span></label>
         <input required type="number" id="length-number" name="length" min="16" max="1024"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')">
 
-        <!-- Control deslizante (range) -->
-        <label for="length-range">Longitud de la contraseña: <span class="required">*</span></label>
+        <label for="length-range">Password Length: <span class="required">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="1024"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')">
 
         <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;">
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
         </output>
-        <!-- Campo de contraseña actual del usuario para verificar que la contraseña generada no sea igual o similar -->
-        <label for="contrasenha-actual">Contraseña actual del usuario: <span class="required">*</span></label>
+
+        <label for="contrasenha-actual">Current Password: <span class="required">*</span></label>
         <input required type="password" id="contrasenha-actual" name="contrasenha_actual">
 
-
-        <input type="submit" value="Generar contraseña">
+        <input type="submit" value="Generate Password">
     </form>
 
     <div style="text-align: center; color: red; margin-top: 1rem;">
-        <p id="parrafo-campos-obligatorios">Los campos marcados con <span class="required">*</span> son obligatorios
-        </p>
+        <p id="parrafo-campos-obligatorios">Fields marked with <span class="required">*</span> are required.</p>
     </div>
 
-    <script type="module" src="<?= JS_ADMIN . '/helpers/password_generator.js' ?>"></script>
     <script>
         function copyToClipboard() {
             const passwordText = document.getElementById('contrasena-generada').innerText;
             navigator.clipboard.writeText(passwordText).then(() => {
-                // Verificar si ya existe un mensaje de éxito y eliminarlo
                 const existingMessage = document.getElementById('success-message');
                 if (existingMessage) {
                     existingMessage.remove();
                 }
-                // Crear un span debajo de la contraseña para mostrar un mensaje de éxito
                 const successMessage = document.createElement('span');
                 successMessage.id = 'success-message';
-                successMessage.textContent = 'Contraseña copiada al portapapeles';
+                successMessage.textContent = 'Password copied to clipboard';
                 successMessage.style.color = 'green';
                 successMessage.style.display = 'block';
                 successMessage.style.textAlign = 'center';
                 successMessage.style.marginTop = '1rem';
                 document.getElementById('contrasena-generada').insertAdjacentElement('afterend', successMessage);
             }).catch(err => {
-                console.error('No se pudo copiar la contraseña al portapapeles: ', err);
+                console.error('Failed to copy password to clipboard: ', err);
             });
         }
 
@@ -261,10 +240,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
             output.textContent = rangeInput.value;
         }
-    </script>
-    <script>
-        const formulario = document.getElementById('formulario-generacion-contrasena');
 
+        const formulario = document.getElementById('formulario-generacion-contrasena');
         formulario.addEventListener('submit', function (event) {
             const longitud = document.getElementById('length-number').value;
             const longitudRange = document.getElementById('length-range').value;
@@ -274,7 +251,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
             if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 1024 || longitudRangeParsed < 16 || longitudRangeParsed > 1024 || longitudParsed !== longitudRangeParsed) {
                 event.preventDefault();
-                alert('La longitud de la contraseña debe ser un número natural entre 16 y 1024.');
+                alert('Password length must be a natural number between 16 and 1024.');
                 return;
             }
         });
