@@ -8,6 +8,31 @@ $app_id_config = require_once HELPERS . 'verify_strong_password.php';
 $pepper_config = include 'pepper.php';
 $pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
 
+// El pepper debe tener entre 16 y 1024 caracteres
+if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
+    throw new Exception("El pepper debe tener entre 16 y 1024 caracteres.");
+}
+
+// El pepper no puede tener espacios al principio o al final
+if (tiene_espacios_al_principio_o_al_final($pepper)) {
+    throw new Exception("El pepper no puede tener espacios al principio o al final.");
+}
+
+// El pepper no puede tener secuencias alfabéticas inseguras
+if (tiene_secuencias_alfabeticas_inseguras($pepper)) {
+    throw new Exception("El pepper no puede tener secuencias alfabéticas inseguras.");
+}
+
+// El pepper no puede tener secuencias numéricas inseguras
+if (tiene_secuencias_numericas_inseguras($pepper)) {
+    throw new Exception("El pepper no puede tener secuencias numéricas inseguras.");
+}
+
+// // El pepper no puede tener secuencias de caracteres especiales inseguras
+// if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
+//     throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
+// }
+
 if (!isset($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
@@ -113,6 +138,18 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         }
 
                         if (!password_verify($contrasenha_actual . $pepper, $resultado_select['password'])) {
+                            // Cambiar el value del input de la contraseña actual a un string vacío
+                            ?>
+
+                            <script>
+                                // Primero, esperamos a que la página vuelva a cargar tras el envío y procesamiento del formulario
+                                window.onload = function () {
+                                    // Luego, seleccionamos el input de la contraseña actual y cambiamos su value a un string vacío
+                                    document.getElementById('contrasenha-actual').value = '';
+                                };
+                            </script>
+
+                            <?php
                             throw new Exception("La contraseña actual es incorrecta.");
                         }
 
@@ -199,9 +236,13 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         </output>
 
         <label for="contrasenha-actual">Contraseña Actual: <span class="required">*</span></label>
-        <input required type="password" id="contrasenha-actual" name="contrasenha_actual">
+        <input required type="password" id="contrasenha-actual" name="contrasenha_actual"
+            value="<?= isset($_POST['contrasenha_actual']) ? htmlspecialchars($_POST['contrasenha_actual'], ENT_QUOTES, 'UTF-8') : '' ?>">
 
         <input type="submit" value="Generar Contraseña">
+        <span style="color: blue;">Se pide su contraseña actual para verificar que la contraseña generada no sea similar
+            a su contraseña actual</span>
+
     </form>
 
     <div style="text-align: center; color: red; margin-top: 1rem;">
@@ -248,6 +289,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         formulario.addEventListener('submit', function (event) {
             const longitud = document.getElementById('length-number').value;
             const longitudRange = document.getElementById('length-range').value;
+            const contrasenhaActual = document.getElementById('contrasenha-actual').value;
 
             const longitudParsed = parseInt(longitud);
             const longitudRangeParsed = parseInt(longitudRange);
@@ -255,6 +297,20 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 1024 || longitudRangeParsed < 16 || longitudRangeParsed > 1024 || longitudParsed !== longitudRangeParsed) {
                 event.preventDefault();
                 alert('La longitud de la contraseña debe estar entre 16 y 1024 caracteres.');
+                return;
+            }
+
+            // La contraseña actual debe tener entre 16 y 1024 caracteres
+            if (contrasenhaActual.length < 16 || contrasenhaActual.length > 1024) {
+                event.preventDefault();
+                alert('La longitud de la contraseña actual debe estar entre 16 y 1024 caracteres.');
+                return;
+            }
+
+            // La contraseña actual no debe contener espacios al principio o al final
+            if (contrasenhaActual.trim() !== contrasenhaActual) {
+                event.preventDefault();
+                alert('La contraseña actual no puede tener espacios al principio o al final.');
                 return;
             }
         });

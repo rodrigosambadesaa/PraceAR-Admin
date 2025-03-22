@@ -6,6 +6,36 @@ require_once HELPERS . 'verify_strong_password.php';
 $pepper_config = include 'pepper.php';
 $pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
 
+// El pepper debe ser un string
+if (!is_string($pepper)) {
+    throw new Exception("El pepper debe ser un texto.");
+}
+
+// El pepper debe tener entre 16 y 1024 caracteres
+if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
+    throw new Exception("El pepper debe tener entre 16 y 1024 caracteres.");
+}
+
+// El pepper no puede tener espacios al principio o al final
+if (tiene_espacios_al_principio_o_al_final($pepper)) {
+    throw new Exception("El pepper no puede tener espacios al principio o al final.");
+}
+
+// El pepper no puede tener secuencias alfabéticas inseguras
+if (tiene_secuencias_alfabeticas_inseguras($pepper)) {
+    throw new Exception("El pepper no puede tener secuencias alfabéticas inseguras.");
+}
+
+// El pepper no puede tener secuencias numéricas inseguras
+if (tiene_secuencias_numericas_inseguras($pepper)) {
+    throw new Exception("El pepper no puede tener secuencias numéricas inseguras.");
+}
+
+// // El pepper no puede tener secuencias de caracteres especiales inseguras
+// if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
+//     throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
+// }
+
 $err = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
