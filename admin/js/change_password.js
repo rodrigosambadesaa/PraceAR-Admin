@@ -50,14 +50,35 @@ formulario.addEventListener('submit', function handleSubmit(e) {
         return;
     }
 
-    // Validar que la nueva contraseña tenga al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.
-    const regex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,}$/;
-    if (!regex.test(newPassword)) {
+    // Validar que la nueva contraseña tenga una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.
+    let numeroCaracteresEspeciales = 0, numeroMayusculas = 0, numeroMinusculas = 0, numeroNumeros = 0;
+    const regexCaracteresEspeciales = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/, regexMayusculas = /[A-Z]/, regexMinusculas = /[a-z]/, regexNumeros = /[0-9]/;
+
+    for (let i = 0; i < newPassword.length; i++) {
+        if (regexCaracteresEspeciales.test(newPassword[i])) {
+            numeroCaracteresEspeciales++;
+        } else if (regexMayusculas.test(newPassword[i])) {
+            numeroMayusculas++;
+        } else if (regexMinusculas.test(newPassword[i])) {
+            numeroMinusculas++;
+        } else if (regexNumeros.test(newPassword[i])) {
+            numeroNumeros++;
+        }
+    }
+
+    if (numeroMayusculas < 1 || numeroMinusculas < 1 || numeroNumeros < 1 || numeroCaracteresEspeciales < 3) {
         e.preventDefault();
-        alert('La nueva contraseña debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.');
+        alert('La nueva contraseña debe tener al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.');
         return;
     }
 
+    if (numeroCaracteresEspeciales < 3) {
+        e.preventDefault();
+        alert('La nueva contraseña debe tener al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.');
+        return;
+    }
+
+    // Validar que la nueva contraseña no contenga secuencias alfabéticas, de caracteres especiales o numéricas inseguras
     if (tieneSecuenciasAlfabeticasInseguras(newPassword) || tieneSecuenciasDeCaracteresEspecialesInseguras(newPassword) || tieneSecuenciasNumericasInseguras(newPassword)) {
         e.preventDefault();
         alert('La nueva contraseña no puede contener secuencias alfabéticas, de caracteres especiales o numéricas inseguras como "abc", "123" o "!!!".');
