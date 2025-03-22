@@ -179,8 +179,9 @@ function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
 }
 
 function tieneSecuenciasDeCaracteresEspecialesInseguras(contrasenha) {
+    // Determinar si la contraseña contiene secuencias de caracteres especiales inseguras según la tabla ASCII
     const secuenciasCaracteresEspecialesInseguras = [];
-    const caracteresEspeciales = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/`~";
+    const caracteresEspeciales = "!@#$%^&*()-_=+[]{}|;:,.<>";
     const caracteresEspecialesReverso = caracteresEspeciales.split("").reverse().join("");
 
     for (let longitud = 2; longitud <= 10; longitud++) {

@@ -253,22 +253,22 @@ function tiene_secuencias_alfabeticas_inseguras($contrasenha)
  */
 function tiene_secuencias_caracteres_especiales_inseguras($contrasenha)
 {
-    // Detectar secuencias de caracteres especiales basadas en el teclado
-    $caracteres_especiales = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/`~";
-    $caracteres_especiales_reverso = strrev($caracteres_especiales);
-
+    // Detectar secuencias de caracteres especiales basadas en la tabla ASCII
     $secuencias_caracteres_especiales_inseguras = [];
 
-    for ($longitud = 2; $longitud <= 10; $longitud++) {
-        for ($i = 0; $i <= strlen($caracteres_especiales) - $longitud; $i++) {
-            $secuencias_caracteres_especiales_inseguras[] = substr($caracteres_especiales, $i, $longitud);
-            $secuencias_caracteres_especiales_inseguras[] = substr($caracteres_especiales_reverso, $i, $longitud);
-        }
-    }
+    $caracteres_especiales = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+    $caracteres_especiales_reversos = strrev($caracteres_especiales);
+
+    $secuencias_caracteres_especiales_inseguras[] = $caracteres_especiales;
+    $secuencias_caracteres_especiales_inseguras[] = $caracteres_especiales_reversos;
 
     foreach ($secuencias_caracteres_especiales_inseguras as $secuencia) {
-        if (strpos($contrasenha, $secuencia) !== false) {
-            return true;
+        $longitud = strlen($secuencia);
+        for ($i = 0; $i <= $longitud - 3; $i++) {
+            $subcadena = substr($secuencia, $i, 3);
+            if (strpos($contrasenha, $subcadena) !== false) {
+                return true;
+            }
         }
     }
 
