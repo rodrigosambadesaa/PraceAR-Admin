@@ -4,7 +4,17 @@ require_once HELPERS . 'validate_login.php';
 require_once HELPERS . 'verify_strong_password.php';
 
 $pepper_config = include 'pepper.php';
-$pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
+
+$today = date('Y-m-d');
+
+for ($i = 0; $i < count($pepper_config); $i++) {
+    if ($pepper_config[$i]['last_used'] < $today) {
+        continue;
+    }
+
+    $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
+    break;
+}
 
 // El pepper debe ser un string
 if (!is_string($pepper)) {
@@ -76,6 +86,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($result->num_rows === 1) {
             $usuario = $result->fetch_assoc();
             $stored_password = $usuario['password'];
+
+            // Verificar si la contraseña se ha hasheado con un pepper anterior y, si es así, actualizar el hash
+            for ($i = 0; $i < count($pepper_config); $i++) {
+                if (password_verify("{$password}{$pepper_config[$i]['PASSWORD_PEPPER']}", $stored_password)) {
+                    $new_hash = password_hash("{$password}{$pepper}", PASSWORD_ARGON2ID);
+                    $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
+                    $update_stmt = $conexion->prepare($update_sql);
+                    $update_stmt->bind_param('si', $new_hash, $usuario['id']);
+                    $update_stmt->execute();
+                    break;
+                }
+            }
 
             // Verificar la contraseña y actualizar el hash si es necesario
             if (password_verify("{$password}{$pepper}", $stored_password)) {

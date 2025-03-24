@@ -6,7 +6,17 @@ require_once CONNECTION;
 $app_id_config = require_once HELPERS . 'verify_strong_password.php';
 
 $pepper_config = include 'pepper.php';
-$pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
+
+$today = date('Y-m-d');
+for ($i = 0; $i < count($pepper_config); $i++) {
+    // If the peper has expired, check the next one
+    if ($pepper_config[$i]['last_used'] < $today) {
+        continue;
+    }
+
+    $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
+    break;
+}
 
 // El pepper debe tener entre 16 y 1024 caracteres
 if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
@@ -125,39 +135,41 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         $password = generate_password($length);
 
                         // Verify the current password entered by the user
-                        $contrasenha_actual = $_POST['contrasenha_actual'];
+                        $sentencia_select_contrasenha_actual = $conexion->prepare("SELECT password FROM usuarios WHERE login = ?");
+                        $sentencia_select_contrasenhas_anteriores = $conexion->prepare("SELECT password FROM old_passwords WHERE id_usuario = ?");
+                        $sentencia_select_contrasenha_actual->bind_param('s', $_SESSION['nombre_usuario']);
+                        $sentencia_select_contrasenhas_anteriores->bind_param('i', $_SESSION['id_usuario']);
 
-                        $smtp_select = "SELECT password FROM usuarios WHERE login = ?";
-                        $stmt_select = $conexion->prepare($smtp_select);
-                        $stmt_select->bind_param('s', $_SESSION['nombre_usuario']);
-                        $stmt_select->execute();
-                        $resultado_select = $stmt_select->get_result()->fetch_assoc();
+                        $sentencia_select_contrasenha_actual->execute();
+                        $resultado_contrasenha_actual = $sentencia_select_contrasenha_actual->get_result();
+                        $contrasenha_actual = $resultado_contrasenha_actual->fetch_assoc()['password'];
 
-                        if (!$resultado_select) {
-                            throw new Exception("User not found in the database.");
-                        }
+                        $sentencia_select_contrasenhas_anteriores->execute();
+                        $resultado_contrasenhas_anteriores = $sentencia_select_contrasenhas_anteriores->get_result();
+                        $contrasenhas_anteriores = $resultado_contrasenhas_anteriores->fetch_all(MYSQLI_ASSOC);
 
-                        if (!password_verify($contrasenha_actual . $pepper, $resultado_select['password'])) {
-                            // Cambiar el value del input de la contraseña actual a un string vacío
-                            ?>
+                        for ($i = 0; $i < count($pepper_config); $i++) {
+                            $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
+                            $password_hash = password_hash($password . $pepper, PASSWORD_DEFAULT);
 
-                            <script>
-                                // Primero, esperamos a que la página vuelva a cargar tras el envío y procesamiento del formulario
-                                window.onload = function () {
-                                    // Luego, seleccionamos el input de la contraseña actual y cambiamos su value a un string vacío
-                                    document.getElementById('contrasenha-actual').value = '';
-                                };
-                            </script>
+                            if (password_verify($password . $pepper, $contrasenha_actual)) {
+                                // Regenerar la contraseña si es igual a la actual hasta que sea diferente y hasta que sea diferente a cualquier contraseña anterior
+                                throw new Exception("La contraseña generada es igual a la contraseña actual. Por favor, vuelva a enviar el formulario.");
+                            }
 
-                            <?php
-                            throw new Exception("La contraseña actual es incorrecta.");
+                            foreach ($contrasenhas_anteriores as $contrasenha_anterior) {
+                                if (password_verify($password . $pepper, $contrasenha_anterior['password'])) {
+                                    throw new Exception("La contraseña generada es igual a una contraseña anterior. Por favor, vuelva a enviar el formulario.");
+                                }
+                            }
                         }
 
                         while (
                             contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) ||
                             contrasenha_similar_a_contrasenha_anterior($password, $_SESSION['nombre_usuario'])
                         ) {
-                            $password = generate_password($length);
+                            shuffle($password_chars);
+                            $password = implode('', $password_chars);
                         }
 
                         // Display the generated password
@@ -235,14 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
         </output>
 
-        <label for="contrasenha-actual">Contraseña Actual: <span class="required">*</span></label>
-        <input required type="password" id="contrasenha-actual" name="contrasenha_actual"
-            value="<?= isset($_POST['contrasenha_actual']) ? htmlspecialchars($_POST['contrasenha_actual'], ENT_QUOTES, 'UTF-8') : '' ?>">
-
         <input type="submit" value="Generar Contraseña">
-        <span style="color: blue;">Se pide su contraseña actual para verificar que la contraseña generada no sea similar
-            a su contraseña actual</span>
-
     </form>
 
     <div style="text-align: center; color: red; margin-top: 1rem;">
@@ -289,7 +294,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         formulario.addEventListener('submit', function (event) {
             const longitud = document.getElementById('length-number').value;
             const longitudRange = document.getElementById('length-range').value;
-            const contrasenhaActual = document.getElementById('contrasenha-actual').value;
 
             const longitudParsed = parseInt(longitud);
             const longitudRangeParsed = parseInt(longitudRange);
@@ -297,20 +301,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 1024 || longitudRangeParsed < 16 || longitudRangeParsed > 1024 || longitudParsed !== longitudRangeParsed) {
                 event.preventDefault();
                 alert('La longitud de la contraseña debe estar entre 16 y 1024 caracteres.');
-                return;
-            }
-
-            // La contraseña actual debe tener entre 16 y 1024 caracteres
-            if (contrasenhaActual.length < 16 || contrasenhaActual.length > 1024) {
-                event.preventDefault();
-                alert('La longitud de la contraseña actual debe estar entre 16 y 1024 caracteres.');
-                return;
-            }
-
-            // La contraseña actual no debe contener espacios al principio o al final
-            if (contrasenhaActual.trim() !== contrasenhaActual) {
-                event.preventDefault();
-                alert('La contraseña actual no puede tener espacios al principio o al final.');
                 return;
             }
         });

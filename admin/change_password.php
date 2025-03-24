@@ -33,7 +33,19 @@
     require_once HELPERS . 'verify_strong_password.php';
 
     $pepper_config = include 'pepper.php';
-    $pepper = $pepper_config['PASSWORD_PEPPER'] ?? '';
+
+    $today = date('Y-m-d');
+    $pepper = null;
+    for ($i = 0; $i < count($pepper_config); $i++) {
+        if ($pepper_config[$i]['last_used'] >= $today) {
+            $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
+            break;
+        }
+    }
+
+    if (is_null($pepper)) {
+        throw new Exception("No se pudo determinar un pepper válido.");
+    }
 
     // El pepper debe ser un string
     if (!is_string($pepper)) {
@@ -136,14 +148,22 @@
             $stmt->execute();
             $result = $stmt->get_result();
 
-            while ($row = $result->fetch_assoc()) {
-                if (password_verify("{$new_password}{$pepper}", $row['password'])) {
-                    throw new Exception("La nueva contraseña no puede ser igual a una de las contraseñas anteriores.");
-                }
+            // Para todos los pepper, verificar si la contraseña coincide con alguna de las contraseñas antiguas o si es similar a alguna de ellas
+            for ($i = 0; $i < count($pepper_config); $i++) {
+                $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
 
-                // Verificar que la nueva contraseña no sea similar a una de las contraseñas anteriores
-                if (contrasenha_similar_a_contrasenha_anterior($new_password, $row['password'])) {
-                    throw new Exception("La nueva contraseña no puede ser similar a una de las contraseñas anteriores.");
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $old_password = $row['password'];
+
+                        if (password_verify("{$new_password}{$pepper}", $old_password)) {
+                            throw new Exception("La nueva contraseña no puede ser igual a una de las contraseñas antiguas.");
+                        }
+
+                        if (contrasenha_similar_a_contrasenha_anterior($new_password, $old_password)) {
+                            throw new Exception("La nueva contraseña no puede ser similar a una de las contraseñas antiguas.");
+                        }
+                    }
                 }
             }
 
@@ -158,9 +178,13 @@
                 $usuario = $result->fetch_assoc();
                 $stored_password = $usuario['password'];
 
-                // Verificar la contraseña actual
-                if (!password_verify("{$old_password}{$pepper}", $stored_password)) {
-                    throw new Exception("La contraseña actual es incorrecta.");
+                // Verificar la contraseña actual para todos los pepper
+                for ($i = 0; $i < count($pepper_config); $i++) {
+                    $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
+
+                    if (password_verify("{$old_password}{$pepper}", $stored_password)) {
+                        break;
+                    }
                 }
 
                 // Rehash the password if necessary
@@ -218,7 +242,7 @@
     <?php
 
     if (!isset($_SESSION['csrf'])) {
-        $_SESSION['csrf'] = bin2hex(random_bytes(32));
+        echo '<input type="hidden" name="csrf" value="' . ($_SESSION['csrf'] ?? '') . '">';
     }
     ?>
 
