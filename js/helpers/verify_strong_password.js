@@ -200,5 +200,15 @@ function tieneSecuenciasDeCaracteresEspecialesInseguras(contrasenha) {
     return false;
 }
 
+/**
+ * Función para verificar si una contraseña tiene espacios al principio o al final.
+ * @param {string} contrasenha Contraseña a verificar.
+ * @returns {boolean} Verdadero si la contraseña tiene espacios al principio o al final, falso en caso contrario.
+ */
+function tieneEspaciosAlPrincipioOAlFinal(contrasenha) {
+    // Verificar si la contraseña tiene espacios al principio o al final
+    return contrasenha.startsWith(" ") || contrasenha.endsWith(" ");
+}
+
 // Exportar funciones usando ES Modules
-export { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario, tieneSecuenciasNumericasInseguras, tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras };
+export { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario, tieneSecuenciasNumericasInseguras, tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneEspaciosAlPrincipioOAlFinal };

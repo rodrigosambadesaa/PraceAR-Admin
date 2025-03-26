@@ -178,11 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         $result .= '<div style="color: green; text-align: center;">Letras minúsculas: ' . contar_minusculas($password) . '</div>';
                         $result .= '<div style="color: green; text-align: center;">Dígitos: ' . contar_digitos($password) . '</div>';
                         $result .= '<div style="color: green; text-align: center;">Caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
-
-                        if ($length <= 177) {
-                            $result .= '<div style="color: green; text-align: center;">Tiempo estimado de resistencia a un ataque de fuerza bruta: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($length) . '</div>';
-                        }
-
+                        $result .= '<div style="color: green; text-align: center;">Tiempo estimado de resistencia a un ataque de fuerza bruta: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
                         $result .= '<div style="color: green; text-align: center;">Entropía: ' . entropia($password) . '</div>';
                         $mostrar_boton = true;
                     } catch (Exception $e) {

@@ -43,7 +43,7 @@
         }
     }
 
-    if (is_null($pepper)) {
+    if ($pepper === null) {
         throw new Exception("No se pudo determinar un pepper válido.");
     }
 
@@ -247,7 +247,7 @@
     ?>
 
     <form method="POST" id="formulario-cambio-contrasena">
-        <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
+        <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
         <div id="form-group">
             <label for="nombre-usuario">Nombre de usuario: </label>
             <input type="text" name="nombre_usuario" id="nombre-usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
@@ -259,7 +259,7 @@
         </div>
         <div id="form-group">
             <label for="new-password">Nueva contraseña: <span style="color: red;">*</span></label>
-            <input type="password" name="new_password" id="new-password" required>
+            <input type="password" name="new_password" id="new-password" required onblur="checkPasswordRequirements()">
         </div>
         <div id="form-group">
             <label for="confirm-password">Confirmar nueva contraseña: <span style="color: red;">*</span></label>
@@ -277,6 +277,12 @@
                     Tres caracteres especiales distintos, que son los siguientes:
                     <strong>! " # $ % & ' ( ) * + , - . / : ; <=> ? @ [ \ ] ^ _ ` { | } ~</strong>
                 </li>
+                <li>Sin espacios al principio o al final</li>
+                <li>Sin secuencias numéricas inseguras como 123, 987, ni en vertical como 147, ni en diagonal como 159 y
+                    753
+                </li>
+                <li>Sin secuencias alfabéticas inseguras como abc, cba, ni en horizontal como qwe</li>
+                <li>Sin secuencias de caracteres especiales inseguras como ()</li>
             </ul>
         </div>
         <div id="form-group">
@@ -295,6 +301,117 @@
             href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>">nuestro generador de contraseñas</a>
         para generar una contraseña de 16 caracteres o más.</span>
     <?= $err ?>
+    <script type="module">
+        import { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario, tieneSecuenciasNumericasInseguras, tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneEspaciosAlPrincipioOAlFinal } from '/<?= $subdominio ?>/js/helpers/verify_strong_password.js';
+        document.addEventListener('DOMContentLoaded', function () {
+            window.checkPasswordRequirements = function () {
+                const newPassword = document.getElementById('new-password').value;
+                const formulario = document.getElementById('formulario-cambio-contrasena');
+
+                // Eliminamos los mensajes de error anteriores
+                const mensajesError = document.querySelectorAll('span[style="color: red;"]');
+                mensajesError.forEach(mensaje => mensaje.remove());
+
+                if (!verifyStrongPassword(newPassword)) {
+                    // Mensaje de error debajo del input
+                    const inputNuevaContraseha = document.getElementById('new-password');
+                    const spanError = document.createElement('span');
+                    spanError.style.color = 'red';
+                    spanError.textContent = 'La nueva contraseña no cumple con los requisitos de seguridad. Debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.';
+                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
+                    // Prrevenir el envío del formulario
+                    formulario.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                    });
+                }
+
+                if (tieneEspaciosAlPrincipioOAlFinal(newPassword)) {
+                    // Mensaje de error debajo del input
+                    const inputNuevaContraseha = document.getElementById('new-password');
+                    const spanError = document.createElement('span');
+                    spanError.style.color = 'red';
+                    spanError.textContent = 'La nueva contraseña no puede tener espacios al principio o al final.';
+                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
+                    // Prevenir el envío del formulario
+                    formulario.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                    });
+                }
+
+                // Sin secuencias alfabéticas inseguras
+                if (tieneSecuenciasAlfabeticasInseguras(newPassword)) {
+                    // Mensaje de error debajo del input
+                    const inputNuevaContraseha = document.getElementById('new-password');
+                    const spanError = document.createElement('span');
+                    spanError.style.color = 'red';
+                    spanError.textContent = 'La nueva contraseña no puede contener secuencias alfabéticas inseguras como abc, cba, ni en vertical como qwe';
+                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
+                    // Prevenir el envío del formulario
+                    formulario.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                    });
+                }
+
+                // Sin secuencias numéricas inseguras
+                if (tieneSecuenciasNumericasInseguras(newPassword)) {
+                    // Mensaje de error debajo del input
+                    const inputNuevaContraseha = document.getElementById('new-password');
+                    const spanError = document.createElement('span');
+                    spanError.style.color = 'red';
+                    spanError.textContent = 'La nueva contraseña no puede tener secuencias numéricas inseguras como 123, 987, ni en vertical como 147, ni en diagonal como 159 y 753';
+                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
+                    // Prevenir el envío del formulario
+                    formulario.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                    });
+                }
+
+                // Sin secuencias de caracteres especiales inseguras
+                if (tieneSecuenciasDeCaracteresEspecialesInseguras(newPassword)) {
+                    // Mensaje de error debajo del input
+                    const inputNuevaContraseha = document.getElementById('new-password');
+                    const spanError = document.createElement('span');
+                    spanError.style.color = 'red';
+                    spanError.textContent = 'La nueva contraseña no puede contener secuencias de caracteres especiales inseguras como ()';
+                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
+                    // Prevenir el envío del formulario
+                    formulario.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                    });
+                }
+
+                // La contraseña no puede ser similar al nombre de usuario
+                if (contrasenhaSimilarAUsuario(newPassword, document.getElementById('nombre-usuario').value)) {
+                    // Mensaje de error debajo del input
+                    const inputNuevaContraseha = document.getElementById('new-password');
+                    const spanError = document.createElement('span');
+                    spanError.style.color = 'red';
+                    spanError.textContent = 'La nueva contraseña no puede ser similar al nombre de usuario.';
+                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
+                    // Prevenir el envío del formulario
+                    formulario.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                    });
+                }
+
+                // // La contraseña no puede haber sido filtrada en brechas
+                // if (haSidoFiltradaEnBrechas(newPassword)) {
+                //     // Mensaje de error debajo del input
+                //     const inputNuevaContraseha = document.getElementById('new-password');
+                //     const spanError = document.createElement('span');
+                //     spanError.style.color = 'red';
+                //     spanError.textContent = 'La nueva contraseña ha sido filtrada en brechas de seguridad. Por favor, elige una contraseña más segura.';
+                //     inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
+                //     // Prevenir el envío del formulario
+                //     formulario.addEventListener('submit', function (e) {
+                //         e.preventDefault();
+                //     });
+                // }
+            }
+        });
+
+        // export { checkPasswordRequirements };
+    </script>
     <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
 </body>
 

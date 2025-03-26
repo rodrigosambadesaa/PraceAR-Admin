@@ -109,34 +109,56 @@ function tiene_espacios_al_principio_o_al_final($contrasenha)
  */
 function tiempo_estimado_resistencia_ataque_fuerza_bruta($contrasenha)
 {
-    // Recoger el resultado de esta entrada de Wolfram|Alpha: "password cracking time #WD[{]Ga9K0folfnK!Hm*{t-WLrp#R*_Up3;*{h}RD49s10u}ME]Bi*SE>+F0O" donde la contraseña es un ejemplo de contraseña fuerte, y la URL correspondiente a la entrada es https://www.wolframalpha.com/input?i=password+cracking+time+%23WD%5B%7B%5DGa9K0folfnK%21Hm*%7Bt-WLrp%23R*_Up3%3B*%7Bh%7DRD49s10u%7DME%5DBi*SE%3E%2BF0O&lang=es
-// URL de la API de Wolfram|Alpha
-    $url = "https://api.wolframalpha.com/v2/query?input=password+cracking+time+" . urlencode($contrasenha) . "&format=plaintext&output=JSON&appid=YOUR_APP_ID&lang=es";
+    /*
+     * Esta función utiliza una biblioteca de matemáticas de terceros para manejar valores grandes
+     * y evitar problemas de desbordamiento o valores infinitos.
+     */
 
-    // Sustituir YOUR_APP_ID por tu ID de aplicación de Wolfram|Alpha
-    $url = str_replace("YOUR_APP_ID", $GLOBALS['app_id'], $url);
-
-    // echo "Fetching URL: " . $url . PHP_EOL;
-
-    $response = file_get_contents($url);
-
-    if ($response === false) {
-        // echo "Error: Unable to fetch API response." . PHP_EOL;
-        return "Desconocido";
+    // Usar BCMath para cálculos de alta precisión
+    if (!extension_loaded('bcmath')) {
+        throw new Exception("La extensión BCMath no está habilitada en este servidor.");
     }
 
-    // echo "API Response: " . $response . PHP_EOL;
+    $entropia = entropia($contrasenha);
+    $entropia = str_replace(" bits", "", $entropia);
 
-    $json = json_decode($response, true);
+    // Estimación de tiempo en segundos
+    $ritmo = "1000"; // Ritmo estimado en contraseñas por segundo para Argon2ID con pepper
 
-    if ($json === null) {
-        // echo "Error: Unable to parse JSON response." . PHP_EOL;
-        return "Desconocido";
+    // Calcular 2^entropia usando BCMath
+    $tiempo = bcpow("2", $entropia);
+    $tiempo = bcdiv($tiempo, $ritmo);
+
+    // Convertir el tiempo en segundos a un formato más legible
+    return convertir_segundos_a_tiempo($tiempo);
+}
+
+/**
+ * Función para convertir segundos a un formato de tiempo más legible.
+ * @param mixed $segundos Segundos a convertir.
+ * @return string Devuelve el tiempo en un formato más legible.
+ */
+function convertir_segundos_a_tiempo($segundos)
+{
+    $conversiones = [
+        "miles de millones de años" => bcpow("10", "9"),
+        "millones de años" => bcpow("10", "6"),
+        "miles de años" => bcpow("10", "3"),
+        "años" => "31536000", // Segundos en un año
+        "días" => "86400", // Segundos en un día
+        "horas" => "3600", // Segundos en una hora
+        "minutos" => "60", // Segundos en un minuto
+        "segundos" => "1"
+    ];
+
+    foreach ($conversiones as $unidad => $conversion) {
+        if (bccomp($segundos, $conversion) >= 0) {
+            $tiempo = bcdiv($segundos, $conversion, 0);
+            return "$tiempo $unidad";
+        }
     }
 
-    $tiempo = $json['queryresult']['pods'][1]['subpods'][0]['plaintext'];
-
-    return $tiempo;
+    return "menos de un segundo";
 }
 
 /**
@@ -148,27 +170,36 @@ function entropia($contrasenha)
 {
     // Cálculo manual de la entropía de la contraseña, teniendo en cuenta que la almacenamos en Argon2ID con pepper
     $longitud = strlen($contrasenha);
-    $caracteres = 0;
-    $entropia = 0;
+    $minusculas = 0;
+    $mayusculas = 0;
+    $digitos = 0;
+    $especiales = 0;
 
-    // Contar el número de minúsculas, mayúsculas, números y caracteres especiales en la contraseña
+
     for ($i = 0; $i < $longitud; $i++) {
         $caracter = $contrasenha[$i];
         if (ctype_lower($caracter)) {
-            $caracteres += 26; // 26 letras minúsculas
+            $minusculas++;
         } elseif (ctype_upper($caracter)) {
-            $caracteres += 26; // 26 letras mayúsculas
+            $mayusculas++;
         } elseif (ctype_digit($caracter)) {
-            $caracteres += 10; // 10 dígitos
+            $digitos++;
         } else {
-            $caracteres += 33; // 33 caracteres especiales
+            $especiales++;
         }
     }
 
-    $entropia = $longitud * log($caracteres, 2);
+    $entropia = 0;
+    // Cada minúscula aporta 5 bits de entropía
+    $entropia += $minusculas * 5;
+    // Cada mayúscula aporta 6 bits de entropía
+    $entropia += $mayusculas * 6;
+    // Cada dígito aporta 7 bits de entropía
+    $entropia += $digitos * 7;
+    // Cada carácter especial aporta 8 bits de entropía
+    $entropia += $especiales * 8;
 
-    // Devolvemos la entropía en bits redondeada
-    return round($entropia, 0) . " bits";
+    return "$entropia bits";
 }
 
 /**
