@@ -3,7 +3,7 @@ require_once HELPERS . 'clean_input.php';
 require_once HELPERS . 'validate_login.php';
 require_once HELPERS . 'verify_strong_password.php';
 
-$pepper_config = include 'pepper.php';
+$pepper_config = include 'pepper2.php';
 
 $today = date('Y-m-d');
 
@@ -95,7 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $update_stmt = $conexion->prepare($update_sql);
                     $update_stmt->bind_param('si', $new_hash, $usuario['id']);
                     $update_stmt->execute();
-                    break;
+
+                    $_SESSION['id'] = $usuario['id'];
+                    $_SESSION['login'] = 'logueado';
+                    $_SESSION['nombre_usuario'] = $login;
+                    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+                    header("Location: $protocolo/$servidor/$subdominio");
+                    exit;
                 }
             }
 

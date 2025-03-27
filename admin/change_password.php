@@ -32,7 +32,7 @@
     require_once HELPERS . 'clean_input.php';
     require_once HELPERS . 'verify_strong_password.php';
 
-    $pepper_config = include 'pepper.php';
+    $pepper_config = include 'pepper2.php';
 
     $today = date('Y-m-d');
     $pepper = null;

@@ -5,7 +5,7 @@ require_once CONNECTION;
 
 $app_id_config = require_once HELPERS . 'verify_strong_password.php';
 
-$pepper_config = include 'pepper.php';
+$pepper_config = include 'pepper2.php';
 
 $today = date('Y-m-d');
 for ($i = 0; $i < count($pepper_config); $i++) {
