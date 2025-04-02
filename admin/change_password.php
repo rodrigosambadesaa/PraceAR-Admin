@@ -339,18 +339,18 @@
                 }
 
                 // Sin secuencias alfabéticas inseguras
-                // if (tieneSecuenciasAlfabeticasInseguras(newPassword)) {
-                //     // Mensaje de error debajo del input
-                //     const inputNuevaContraseha = document.getElementById('new-password');
-                //     const spanError = document.createElement('span');
-                //     spanError.style.color = 'red';
-                //     spanError.textContent = 'La nueva contraseña no puede contener secuencias alfabéticas inseguras como abc, cba, ni en vertical como qwe';
-                //     inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
-                //     // Prevenir el envío del formulario
-                //     formulario.addEventListener('submit', function (e) {
-                //         e.preventDefault();
-                //     });
-                // }
+                if (tieneSecuenciasAlfabeticasInseguras(newPassword)) {
+                    // Mensaje de error debajo del input
+                    const inputNuevaContraseha = document.getElementById('new-password');
+                    const spanError = document.createElement('span');
+                    spanError.style.color = 'red';
+                    spanError.textContent = 'La nueva contraseña no puede contener secuencias alfabéticas inseguras como abc, cba, ni en vertical como qwe';
+                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
+                    // Prevenir el envío del formulario
+                    formulario.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                    });
+                }
 
                 // Sin secuencias numéricas inseguras
                 if (tieneSecuenciasNumericasInseguras(newPassword)) {
