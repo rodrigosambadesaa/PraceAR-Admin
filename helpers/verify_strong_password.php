@@ -256,38 +256,63 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
  */
 function tiene_secuencias_alfabeticas_inseguras($contrasenha)
 {
-    // Detectar secuencias alfabéticas inseguras (abc, cba, xyz, zyx, qwe, ewq, etc.)
-    $secuencias_alfabeticas_inseguras = [];
-
     $alfabeto = "abcdefghijklmnopqrstuvwxyz";
     $alfabeto_reverso = strrev($alfabeto);
-    $fila_superior = "qwertyuiop";
-    $fila_media = "asdfghjkl";
-    $fila_inferior = "zxcvbnm";
-    $fila_superior_reversa = strrev($fila_superior);
-    $fila_media_reversa = strrev($fila_media);
-    $fila_inferior_reversa = strrev($fila_inferior);
+    $fila_superior_teclado_espanol = "qwertyuiop";
+    $fila_media_teclado_espanol = "asdfghjklñ";
+    $fila_inferior_teclado_espanol = "zxcvbnm";
 
-    $secuencias_alfabeticas_inseguras[] = $alfabeto;
-    $secuencias_alfabeticas_inseguras[] = $alfabeto_reverso;
-    $secuencias_alfabeticas_inseguras[] = $fila_superior;
-    $secuencias_alfabeticas_inseguras[] = $fila_media;
-    $secuencias_alfabeticas_inseguras[] = $fila_inferior;
-    $secuencias_alfabeticas_inseguras[] = $fila_superior_reversa;
-    $secuencias_alfabeticas_inseguras[] = $fila_media_reversa;
-    $secuencias_alfabeticas_inseguras[] = $fila_inferior_reversa;
+    $filas_teclado_espanol = [$fila_superior_teclado_espanol, $fila_media_teclado_espanol, $fila_inferior_teclado_espanol];
 
-    foreach ($secuencias_alfabeticas_inseguras as $secuencia) {
-        $longitud = strlen($secuencia);
-        for ($i = 0; $i <= $longitud - 3; $i++) {
-            $subcadena = substr($secuencia, $i, 3);
-            if (strpos($contrasenha, $subcadena) !== false) {
-                return true;
+    $secuencias_alfabeticas_inseguras = [];
+
+    // Generar secuencias alfabéticas de longitud 2 a 10
+    for ($longitud = 2; $longitud <= 10; $longitud++) {
+        for ($i = 0; $i <= strlen($alfabeto) - $longitud; $i++) {
+            $secuencias_alfabeticas_inseguras[] = substr($alfabeto, $i, $longitud);
+            $secuencias_alfabeticas_inseguras[] = substr($alfabeto_reverso, $i, $longitud);
+        }
+    }
+
+    // Agregar secuencias de teclado español
+    foreach ($filas_teclado_espanol as $fila) {
+        for ($longitud = 2; $longitud <= strlen($fila); $longitud++) {
+            for ($i = 0; $i <= strlen($fila) - $longitud; $i++) {
+                $secuencias_alfabeticas_inseguras[] = substr($fila, $i, $longitud);
+                $secuencias_alfabeticas_inseguras[] = substr(strrev($fila), $i, $longitud);
             }
         }
     }
 
+    // Agregar secuencias de teclado español en diagonal
+    $secuencias_diagonales_teclado_espanol = [
+        "qaz",
+        "wsx",
+        "edc",
+        "rfv",
+        "tgb",
+        "yhn",
+        "ujm",
+        "qazwsx",
+        "wsxedc",
+        "edcrfv",
+        "rfvtgb",
+        "tgbnhy",
+        "yhnujm"
+    ];
+
+    $secuencias_diagonales_teclado_espanol_reverso = array_map('strrev', $secuencias_diagonales_teclado_espanol);
+    $secuencias_alfabeticas_inseguras = array_merge($secuencias_alfabeticas_inseguras, $secuencias_diagonales_teclado_espanol, $secuencias_diagonales_teclado_espanol_reverso);
+
+    // Verificar si la contraseña contiene alguna de las secuencias inseguras
+    foreach ($secuencias_alfabeticas_inseguras as $secuencia) {
+        if (strpos($contrasenha, $secuencia) !== false) {
+            return true;
+        }
+    }
+
     return false;
+
 }
 
 /**

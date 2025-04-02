@@ -144,16 +144,17 @@ function tieneSecuenciasNumericasInseguras(contrasenha) {
 }
 
 function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
-    const secuenciasAlfabeticasInseguras = [];
     const alfabeto = "abcdefghijklmnopqrstuvwxyz";
     const alfabetoReverso = alfabeto.split("").reverse().join("");
-    const filaSuperiorTeclado = "qwertyuiop";
-    const filaCentralTeclado = "asdfghjkl";
-    const filaInferiorTeclado = "zxcvbnm";
-    const filaSuperiorTecladoReverso = filaSuperiorTeclado.split("").reverse().join("");
-    const filaCentralTecladoReverso = filaCentralTeclado.split("").reverse().join("");
-    const filaInferiorTecladoReverso = filaInferiorTeclado.split("").reverse().join("");
+    const filaSuperiorTecladoEspanol = "qwertyuiop";
+    const filaMediaTecladoEspanol = "asdfghjklñ";
+    const filaInferiorTecladoEspanol = "zxcvbnm";
 
+    const filasTecladoEspanol = [filaSuperiorTecladoEspanol, filaMediaTecladoEspanol, filaInferiorTecladoEspanol];
+
+    const secuenciasAlfabeticasInseguras = []; // Declare the variable here
+
+    // Generar secuencias alfabéticas de longitud 2 a 10
     for (let longitud = 2; longitud <= 10; longitud++) {
         for (let i = 0; i <= alfabeto.length - longitud; i++) {
             secuenciasAlfabeticasInseguras.push(alfabeto.substring(i, i + longitud));
@@ -161,13 +162,24 @@ function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
         }
     }
 
-    for (let fila of [filaSuperiorTeclado, filaCentralTeclado, filaInferiorTeclado, filaSuperiorTecladoReverso, filaCentralTecladoReverso, filaInferiorTecladoReverso]) {
-        for (let longitud = 2; longitud <= 10; longitud++) {
+    // Agregar secuencias de teclado español
+    for (let fila of filasTecladoEspanol) {
+        for (let longitud = 2; longitud <= fila.length; longitud++) {
             for (let i = 0; i <= fila.length - longitud; i++) {
                 secuenciasAlfabeticasInseguras.push(fila.substring(i, i + longitud));
+                secuenciasAlfabeticasInseguras.push(fila.split("").reverse().join("").substring(i, i + longitud));
             }
         }
     }
+
+    // Agregar secuencias de teclado español en diagonal
+    const secuenciasDiagonalesTecladoEspanol = [
+        "qaz", "wsx", "edc", "rfv", "tgb", "yhn", "ujm",
+        "qazwsx", "wsxedc", "edcrfv", "rfvtgb", "tgbnhy", "yhnujm"
+    ];
+
+    const secuenciasDiagonalesTecladoEspanolReverso = secuenciasDiagonalesTecladoEspanol.map(secuencia => secuencia.split("").reverse().join(""));
+    secuenciasAlfabeticasInseguras.push(...secuenciasDiagonalesTecladoEspanol, ...secuenciasDiagonalesTecladoEspanolReverso);
 
     for (let secuencia of secuenciasAlfabeticasInseguras) {
         if (contrasenha.includes(secuencia)) {
@@ -178,20 +190,33 @@ function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
     return false;
 }
 
+/**
+ * Función para verificar si una contraseña contiene secuencias de caracteres especiales inseguras.
+ * @param {string} contrasenha Contraseña a verificar.
+ * @returns {boolean} Verdadero si la contraseña contiene secuencias de caracteres especiales inseguras, falso en caso contrario.
+ */
 function tieneSecuenciasDeCaracteresEspecialesInseguras(contrasenha) {
-    // Determinar si la contraseña contiene secuencias de caracteres especiales inseguras según la distribución del teclado español
-    const secuenciasInseguras = [
-        "!@#$%^&*()_+",
-        "¡!\"·$%&/()=?¿",
-        "qwertyuiop[]{}|;:'\"",
-        "asdfghjklñ,./",
-        "zxcvbnm,.-"
+    const caracteresEspeciales = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/";
+    const secuenciasInseguras = [];
+
+    // Generar secuencias de caracteres especiales de longitud 2 a 10, teniendo en cuenta el orden de los caracteres especiales y su reverso
+    for (let longitud = 2; longitud <= 10; longitud++) {
+        for (let i = 0; i <= caracteresEspeciales.length - longitud; i++) {
+            secuenciasInseguras.push(caracteresEspeciales.substring(i, i + longitud));
+            secuenciasInseguras.push(caracteresEspeciales.split("").reverse().join("").substring(i, i + longitud));
+        }
+    }
+
+    // Agregar secuencias de teclado español
+    const secuenciasDiagonalesTecladoEspanol = [
+        "!@#$%^&*()_+", "[]{}|;:'\",.<>?/"
     ];
+    for (let secuencia of secuenciasDiagonalesTecladoEspanol) {
+        secuenciasInseguras.push(secuencia);
+        secuenciasInseguras.push(secuencia.split("").reverse().join(""));
+    }
 
-    const secuenciasReversas = secuenciasInseguras.map(secuencia => secuencia.split("").reverse().join(""));
-
-    secuenciasInseguras.push(...secuenciasReversas);
-
+    // Verificar si la contraseña contiene alguna de las secuencias inseguras
     for (let secuencia of secuenciasInseguras) {
         if (contrasenha.includes(secuencia)) {
             return true;
