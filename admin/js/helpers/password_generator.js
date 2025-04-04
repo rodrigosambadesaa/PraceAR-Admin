@@ -8,9 +8,9 @@ formulario.addEventListener('submit', function (e) {
     const longitud = limpiarInput(document.getElementById('length-number').value);
     const cantidad = limpiarInput(document.getElementById('quantity-number').value);
 
-    // Validar que la longitud sea un número natural entre 16 y 1024
-    if (isNaN(longitud) || longitud < 16 || longitud > 1024) {
-        alert('La longitud debe ser un número natural entre 16 y 1024');
+    // Validar que la longitud sea un número natural entre 16 y 835
+    if (isNaN(longitud) || longitud < 16 || longitud > 835) {
+        alert('La longitud debe ser un número natural entre 16 y 835');
         return;
     }
 
