@@ -1,44 +1,39 @@
 <?php
 
+// ini_set('memory_limit', '2048M'); // o más, si es necesario
+
 require_once HELPERS . 'clean_input.php';
 require_once CONNECTION;
 
 $app_id_config = require_once HELPERS . 'verify_strong_password.php';
-
 $pepper_config = include 'pepper2.php';
 
 $today = date('Y-m-d');
+$pepper = null;
 for ($i = 0; $i < count($pepper_config); $i++) {
-    // If the peper has expired, check the next one
     if ($pepper_config[$i]['last_used'] < $today) {
         continue;
     }
-
     $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
     break;
 }
 
-// El pepper debe tener entre 16 y 512 caracteres
+if ($pepper === null) {
+    throw new Exception("No se pudo determinar un pepper válido.");
+}
+
 if (strlen($pepper) < 16 || strlen($pepper) > 512) {
     throw new Exception("El pepper debe tener entre 16 y 512 caracteres.");
 }
-
-// El pepper no puede tener espacios al principio o al final
 if (tiene_espacios_al_principio_o_al_final($pepper)) {
     throw new Exception("El pepper no puede tener espacios al principio o al final.");
 }
-
-// El pepper no puede tener secuencias alfabéticas inseguras
 if (tiene_secuencias_alfabeticas_inseguras($pepper)) {
-    throw new Exception("El pepper no puede tener secuencias alfabéticas inseguras.");
+    throw new Exception("El pepper no puede tener secuencias alfabeticas inseguras.");
 }
-
-// El pepper no puede tener secuencias numéricas inseguras
 if (tiene_secuencias_numericas_inseguras($pepper)) {
-    throw new Exception("El pepper no puede tener secuencias numéricas inseguras.");
+    throw new Exception("El pepper no puede tener secuencias numericas inseguras.");
 }
-
-// El pepper no puede tener secuencias de caracteres especiales inseguras
 if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
     throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
 }
@@ -48,8 +43,8 @@ if (!isset($_SESSION['csrf'])) {
 }
 
 /**
- * Generates a password of the specified length that meets the following criteria:
- * - Length between 16 and 128 characters.
+ * Generates a password of the specified length that meets the criteria:
+ * - Length between 16 and 835 characters.
  * - At least 1 uppercase letter.
  * - At least 1 lowercase letter.
  * - At least 1 digit.
@@ -61,55 +56,53 @@ if (!isset($_SESSION['csrf'])) {
  */
 function generate_password(int $length)
 {
-    if ($length < 16 || $length > 1024) {
-        throw new Exception("La longitud de la contraseña debe estar entre 16 y 1024 caracteres.");
+    if ($length < 16 || $length > 835) {
+        throw new Exception("La longitud de la contraseña debe estar entre 16 y 835 caracteres.");
     }
 
-    $uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $lowercase = 'abcdefghijklmnopqrstuvwxyz';
-    $numbers = '0123456789';
+    $uppercase_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $lowercase_chars = 'abcdefghijklmnopqrstuvwxyz';
+    $number_chars = '0123456789';
     $special_chars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
 
     $password_chars = [];
+    $password = '';
 
     // Ensure at least one uppercase, one lowercase, and one number
-    $password_chars[] = $uppercase[random_int(0, strlen($uppercase) - 1)];
-    $password_chars[] = $lowercase[random_int(0, strlen($lowercase) - 1)];
-    $password_chars[] = $numbers[random_int(0, strlen($numbers) - 1)];
+    $password_chars[] = $uppercase_chars[random_int(0, strlen($uppercase_chars) - 1)];
+    $password_chars[] = $lowercase_chars[random_int(0, strlen($lowercase_chars) - 1)];
+    $password_chars[] = $number_chars[random_int(0, strlen($number_chars) - 1)];
 
     // Ensure three distinct special characters
     $special_array = str_split($special_chars);
     shuffle($special_array);
     $password_chars[] = $special_array[0];
-    $password_chars[] = $special_array[1];
-    $password_chars[] = $special_array[2];
+    unset($special_array[array_search($password_chars[3], $special_array)]);
+    $special_array = array_values($special_array);
+    $password_chars[] = $special_array[0];
+    unset($special_array[array_search($password_chars[4], $special_array)]);
+    $special_array = array_values($special_array);
+    $password_chars[] = $special_array[0];
 
-    // Fill the rest of the password with random characters
-    $all_chars = "{$uppercase}{$lowercase}{$numbers}{$special_chars}";
-    for ($i = 0; $i < $length - 6; $i++) {
-        $password_chars[] = $all_chars[random_int(0, strlen($all_chars) - 1)];
+    $remaining_length = $length - 6;
+    $all_chars = "{$uppercase_chars}{$lowercase_chars}{$number_chars}{$special_chars}";
+
+    for ($i = 0; $i < $remaining_length; $i++) {
+        $password .= $all_chars[random_int(0, strlen($all_chars) - 1)];
     }
+    $password = str_shuffle(implode('', $password_chars) . $password);
 
-    // Shuffle the characters
-    shuffle($password_chars);
-    $password = implode('', $password_chars);
-
-    // Validate the generated password
-    $veces_necesarias_generar_nueva_contrasenha = 0;
-    while (
+    // Validate password
+    if (
         tiene_secuencias_numericas_inseguras($password) ||
         tiene_secuencias_alfabeticas_inseguras($password) ||
         tiene_secuencias_caracteres_especiales_inseguras($password) ||
         contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) ||
-        ha_sido_filtrada_en_brechas_de_seguridad($password)
+        ha_sido_filtrada_en_brechas_de_seguridad($password) ||
+        !es_contrasenha_fuerte($password)
     ) {
-        // echo "Contraseña generada no válida. Generando una nueva...<br>";
-        shuffle($password_chars);
-        $password = implode('', $password_chars);
-        $veces_necesarias_generar_nueva_contrasenha++;
+        return generate_password($length);
     }
-
-    echo "Se han necesitado $veces_necesarias_generar_nueva_contrasenha intentos adicionales para generar una contraseña válida.<br>";
 
     return $password;
 }
@@ -132,8 +125,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 $length = (int) $length;
                 $quantity = (int) $quantity;
 
-                if ($length < 16 || $length > 1024 || $quantity < 1 || $quantity > 10) {
-                    $result = '<span style="color: red; text-align: center;">La longitud debe estar entre 16 y 1024 caracteres y la cantidad entre 1 y 10.</span>';
+                if ($length < 16 || $length > 835 || $quantity < 1 || $quantity > 10) {
+                    $result = '<span style="color: red; text-align: center;">La longitud debe estar entre 16 y 835 caracteres y la cantidad entre 1 y 10.</span>';
                 } else {
                     try {
                         for ($i = 0; $i < $quantity; $i++) {
@@ -190,20 +183,14 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <span id="password-text"><?= $result ?></span>
     </div>
 
-    <!-- <?php if ($mostrar_boton): ?>
-        <div style="text-align: center;">
-            <button onclick="copyToClipboard()">Copiar Contraseña</button>
-        </div>
-    <?php endif; ?> -->
-
     <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
         <label for="length-number">Longitud de la Contraseña: <span class="required">*</span></label>
-        <input required type="number" id="length-number" name="length" min="16" max="1024"
+        <input required type="number" id="length-number" name="length" min="16" max="835"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')">
 
         <label for="length-range">Longitud de la Contraseña: <span class="required">*</span></label>
-        <input required type="range" id="length-range" name="length_range" min="16" max="1024"
+        <input required type="range" id="length-range" name="length_range" min="16" max="835"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')">
 
         <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;">
@@ -265,9 +252,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             const longitudParsed = parseInt(longitud);
             const longitudRangeParsed = parseInt(longitudRange);
 
-            if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 1024 || longitudRangeParsed < 16 || longitudRangeParsed > 1024 || longitudParsed !== longitudRangeParsed) {
+            if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 835 || longitudRangeParsed < 16 || longitudRangeParsed > 835 || longitudParsed !== longitudRangeParsed) {
                 event.preventDefault();
-                alert('La longitud de la contraseña debe estar entre 16 y 1024 caracteres.');
+                alert('La longitud de la contraseña debe estar entre 16 y 835 caracteres.');
                 return;
             }
         });
