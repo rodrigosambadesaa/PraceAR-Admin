@@ -4,7 +4,8 @@ function verifyStrongPassword(password) {
     const minusculas = /[a-z]/;
     const mayusculas = /[A-Z]/;
     const numeros = /[0-9]/;
-    // Caracteres especiales permitidos: !@#$%^&*()-_=+[]{}|;:,.<>
+    // Caracteres especiales permitidos: !@#$%^&*()-_=+[]{}|;:,.<>/
+    const especiales = /[!@#$%^&*()\-_=+\[\]{}|;:,.<>\/]/; // Added /
 
     if (password.length < 16 || password.length > 1024) {
         return false;
@@ -23,7 +24,6 @@ function verifyStrongPassword(password) {
     }
 
     let caracteres_especiales = 0;
-    const especiales = /[!@#$%^&*()\-_=+\[\]{}|;:,.<>]/;
     for (let caracter of password) {
         if (especiales.test(caracter)) {
             caracteres_especiales++;
@@ -54,7 +54,7 @@ async function haSidoFiltradaEnBrechas(password) {
     // Generar el hash SHA-1 de la contraseña
     const hash = (await sha1Hash(password)).toUpperCase();
     const hash_prefix = hash.substring(0, 5); // Primeros 5 caracteres del hash
-    const hash_suffix = hash.substring(5);    // Resto del hash
+    const hash_suffix = hash.substring(5);       // Resto del hash
 
     const url = `https://api.pwnedpasswords.com/range/${hash_prefix}`;
 
@@ -121,16 +121,16 @@ function tieneSecuenciasNumericasInseguras(contrasenha) {
     const numeros = "0123456789";
     const numerosReverso = numeros.split("").reverse().join("");
     // Secuencias en diagonal en el teclado numérico como 159, 951, 753, 357, 147, 741, 369, 963, etc.
-    const secuenciasDiagonalesTeclado = ["159", "951", "753", "357", "147", "741", "369", "963", "258", "852"];
+    const secuenciasDiagonalesTeclado = ["159", "951", "753", "357", "147", "741", "369", "963", "258", "852"]; //Same as PHP
 
-    for (let longitud = 2; longitud <= 10; longitud++) {
+    for (let longitud = 2; longitud <= 5; longitud++) { // Changed to 5 to match PHP
         for (let i = 0; i <= numeros.length - longitud; i++) {
             secuenciasNumericasInseguras.push(numeros.substring(i, i + longitud));
             secuenciasNumericasInseguras.push(numerosReverso.substring(i, i + longitud));
         }
     }
 
-    for (let secuencia of secuenciasDiagonalesTeclado) {
+    for (let secuencia of secuenciasDiagonalesTeclado) { // Added diagonal sequences
         secuenciasNumericasInseguras.push(secuencia);
     }
 
@@ -154,8 +154,8 @@ function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
 
     const secuenciasAlfabeticasInseguras = []; // Declare the variable here
 
-    // Generar secuencias alfabéticas de longitud 2 a 10
-    for (let longitud = 2; longitud <= 10; longitud++) {
+    // Generar secuencias alfabéticas de longitud 2 a 5
+    for (let longitud = 2; longitud <= 5; longitud++) {
         for (let i = 0; i <= alfabeto.length - longitud; i++) {
             secuenciasAlfabeticasInseguras.push(alfabeto.substring(i, i + longitud));
             secuenciasAlfabeticasInseguras.push(alfabetoReverso.substring(i, i + longitud));
@@ -172,7 +172,7 @@ function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
         }
     }
 
-    // Agregar secuencias de teclado español en diagonal
+    // Agregar secuencias de teclado español en diagonal.  Same as PHP
     const secuenciasDiagonalesTecladoEspanol = [
         "qaz", "wsx", "edc", "rfv", "tgb", "yhn", "ujm",
         "qazwsx", "wsxedc", "edcrfv", "rfvtgb", "tgbnhy", "yhnujm"
@@ -196,30 +196,27 @@ function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
  * @returns {boolean} Verdadero si la contraseña contiene secuencias de caracteres especiales inseguras, falso en caso contrario.
  */
 function tieneSecuenciasDeCaracteresEspecialesInseguras(contrasenha) {
-    const caracteresEspeciales = "!@#$%^&*()_+-=[]{}|;:'\",.<>?/";
-    const secuenciasInseguras = [];
-
-    // Generar secuencias de caracteres especiales de longitud 2 a 10, teniendo en cuenta el orden de los caracteres especiales y su reverso
-    for (let longitud = 2; longitud <= 10; longitud++) {
-        for (let i = 0; i <= caracteresEspeciales.length - longitud; i++) {
-            secuenciasInseguras.push(caracteresEspeciales.substring(i, i + longitud));
-            secuenciasInseguras.push(caracteresEspeciales.split("").reverse().join("").substring(i, i + longitud));
-        }
-    }
-
-    // Agregar secuencias de teclado español
-    const secuenciasDiagonalesTecladoEspanol = [
-        "!@#$%^&*()_+", "[]{}|;:'\",.<>?/"
+    // Detectar secuencias de caracteres especiales basadas en la distribución de caracteres en el teclado español
+    const secuenciasCaracteresEspecialesInseguras = [
+        "!@#$%^&*()_+",
+        "-=",
+        // "~!@#$%^&*()_+",  // Removed ~
+        "[]",
+        ";'",
+        ",./",
+        "{}",
+        ":\"",
+        "<>?"
     ];
-    for (let secuencia of secuenciasDiagonalesTecladoEspanol) {
-        secuenciasInseguras.push(secuencia);
-        secuenciasInseguras.push(secuencia.split("").reverse().join(""));
-    }
 
-    // Verificar si la contraseña contiene alguna de las secuencias inseguras
-    for (let secuencia of secuenciasInseguras) {
-        if (contrasenha.includes(secuencia)) {
-            return true;
+    const longitud = contrasenha.length;
+    for (let secuencia of secuenciasCaracteresEspecialesInseguras) {
+        const longitudSecuencia = secuencia.length;
+        for (let i = 0; i <= longitud - longitudSecuencia; i++) {
+            const subcadena = contrasenha.substring(i, i + longitudSecuencia);
+            if (secuencia.includes(subcadena)) {
+                return true;
+            }
         }
     }
 

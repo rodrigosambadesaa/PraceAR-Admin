@@ -266,8 +266,8 @@ function tiene_secuencias_alfabeticas_inseguras($contrasenha)
 
     $secuencias_alfabeticas_inseguras = [];
 
-    // Generar secuencias alfabéticas de longitud 2 a 10
-    for ($longitud = 2; $longitud <= 10; $longitud++) {
+    // Generar secuencias alfabéticas de longitud 2 a 5
+    for ($longitud = 2; $longitud <= 5; $longitud++) {
         for ($i = 0; $i <= strlen($alfabeto) - $longitud; $i++) {
             $secuencias_alfabeticas_inseguras[] = substr($alfabeto, $i, $longitud);
             $secuencias_alfabeticas_inseguras[] = substr($alfabeto_reverso, $i, $longitud);
@@ -325,14 +325,14 @@ function tiene_secuencias_caracteres_especiales_inseguras($contrasenha)
     // Detectar secuencias de caracteres especiales basadas en la distribución de caracteres en el teclado español
     $secuencias_caracteres_especiales_inseguras = [
         "!@#$%^&*()_+",
-        "`1234567890-=",
-        "~!@#$%^&*()_+",
-        "qwertyuiop[]",
-        "asdfghjkl;'",
-        "zxcvbnm,./",
-        "QWERTYUIOP{}",
-        "ASDFGHJKL:\"",
-        "ZXCVBNM<>?"
+        "-=",
+        // "~!@#$%^&*()_+",
+        "[]",
+        ";'",
+        ",./",
+        "{}",
+        ":\"",
+        "<>?"
     ];
 
     $longitud = strlen($contrasenha);
