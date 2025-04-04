@@ -41,10 +41,10 @@ if (tiene_secuencias_numericas_inseguras($pepper)) {
     throw new Exception("El pepper no puede tener secuencias numéricas inseguras.");
 }
 
-// // El pepper no puede tener secuencias de caracteres especiales inseguras
-// if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
-//     throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
-// }
+// El pepper no puede tener secuencias de caracteres especiales inseguras
+if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
+    throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
+}
 
 $err = '';
 
