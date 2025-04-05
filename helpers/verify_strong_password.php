@@ -1,7 +1,7 @@
 <?php
 
-$app_id_config = include __DIR__ . '/../wolfram_alpha_app_id.php';
-$app_id = $app_id_config['app_id'];
+// $app_id_config = include __DIR__ . '/../wolfram_alpha_app_id.php';
+// $app_id = $app_id_config['app_id'];
 
 /**
  * Función para determinar si una contraseña es fuerte.

@@ -22,8 +22,8 @@ if ($pepper === null) {
     throw new Exception("No se pudo determinar un pepper válido.");
 }
 
-if (strlen($pepper) < 16 || strlen($pepper) > 512) {
-    throw new Exception("El pepper debe tener entre 16 y 512 caracteres.");
+if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
+    throw new Exception("El pepper debe tener entre 16 y 1024 caracteres.");
 }
 if (tiene_espacios_al_principio_o_al_final($pepper)) {
     throw new Exception("El pepper no puede tener espacios al principio o al final.");
