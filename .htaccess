@@ -1,0 +1,4 @@
+<Files "pepper2.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
