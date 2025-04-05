@@ -117,17 +117,23 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     if (isset($_POST['csrf']) && hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
         if (isset($_POST['length']) && isset($_POST['quantity'])) {
             $length = limpiar_input($_POST['length']);
+            $length_range = limpiar_input($_POST['length_range']);
             $quantity = limpiar_input($_POST['quantity']);
 
             if (!is_numeric($length) || !is_numeric($quantity) || !ctype_digit($length) || !ctype_digit($quantity)) {
                 $result = '<span style="color: red; text-align: center;">La longitud y la cantidad deben ser números naturales válidos.</span>';
             } else {
                 $length = (int) $length;
+                $length_range = (int) $length_range;
                 $quantity = (int) $quantity;
 
-                if ($length < 16 || $length > 835 || $quantity < 1 || $quantity > 10) {
+                if ($length < 16 || $length > 835 || $quantity < 1 || $quantity > 10 || $length_range < 16 || $length_range > 835) {
                     $result = '<span style="color: red; text-align: center;">La longitud debe estar entre 16 y 835 caracteres y la cantidad entre 1 y 10.</span>';
-                } else {
+                } elseif ($length !== $length_range) {
+                    $result = '<span style="color: red; text-align: center;">No se permite modificar el código Javascript que sincroniza los inputs.</span>';
+                }
+                
+                else {
                     try {
                         for ($i = 0; $i < $quantity; $i++) {
                             $passwords[] = generate_password($length);
@@ -137,6 +143,13 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         foreach ($passwords as $index => $password) {
                             $passwordId = "password-$index";
                             $result .= '<div id="' . $passwordId . '">' . htmlspecialchars($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Número de números: ' . contar_digitos($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Entropía: ' . entropia($password) . '</div>';  
+                            $result .= '<div style="margin-top: 0.5rem;">';
                             $result .= '<button onclick="copyToClipboard(\'' . $passwordId . '\')">Copiar</button>';
                         }
                         $result .= '</div>';
