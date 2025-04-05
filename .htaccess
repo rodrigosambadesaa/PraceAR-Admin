@@ -2,3 +2,13 @@
     Order Allow,Deny
     Deny from all
 </Files>
+
+<Files "virustotal_api_key.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files "api_key.js">
+    Order Allow,Deny
+    Deny from all
+</Files>
