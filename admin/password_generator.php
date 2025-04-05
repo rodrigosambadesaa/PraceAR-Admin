@@ -271,6 +271,21 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 return;
             }
         });
+
+        // Si la longitud seleccionada es mayor o igual a 824, limitar el input type="number" que corresponde al número de contraseñas a 2
+        const lengthNumberInput = document.getElementById('length-number');
+        const quantityNumberInput = document.getElementById('quantity-number');
+
+        lengthNumberInput.addEventListener('input', function () {
+            if (parseInt(lengthNumberInput.value) >= 824) {
+                quantityNumberInput.max = 2;
+                if (parseInt(quantityNumberInput.value) > 2) {
+                    quantityNumberInput.value = 2;
+                }
+            } else {
+                quantityNumberInput.max = 10;
+            }
+        });
     </script>
 </body>
 
