@@ -150,17 +150,23 @@
 
             // Para todos los pepper, verificar si la contraseña coincide con alguna de las contraseñas antiguas o si es similar a alguna de ellas
             for ($i = 0; $i < count($pepper_config); $i++) {
+                echo "Entrando en el bucle de pepper_config<br>";
+
                 $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
 
                 if ($result->num_rows > 0) {
+                    echo "Entrando en el bucle de result->num_rows<br>";
                     while ($row = $result->fetch_assoc()) {
+                        echo "Entrando en el bucle de result->fetch_assoc()<br>";
                         $old_password = $row['password'];
 
                         if (password_verify("{$new_password}{$pepper}", $old_password)) {
+                            echo "Entrando en el bucle de password_verify<br>";
                             throw new Exception("La nueva contraseña no puede ser igual a una de las contraseñas antiguas.");
                         }
 
                         if (contrasenha_similar_a_contrasenha_anterior($new_password, $old_password)) {
+                            echo "Entrando en el bucle de contrasenha_similar_a_contrasenha_anterior<br>";
                             throw new Exception("La nueva contraseña no puede ser similar a una de las contraseñas antiguas.");
                         }
                     }
@@ -218,11 +224,11 @@
                     <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
                 </ul>";
 
-                // Insertar un nuevo registro en la tabla de contraseñas antiguas, con la contraseña correspondiente encriptada
-                $contrasenha_a_insertar_en_old_passwords_encriptada = password_hash("{$new_password}{$pepper}", PASSWORD_ARGON2ID);
+                // Insertar la vieja contraseña validada en la tabla de contraseñas antiguas
+                $contrasenha_vieja_a_insertar_en_old_passwords_encriptada = password_hash("{$old_password}{$pepper}", PASSWORD_ARGON2ID);
                 $sql = "INSERT INTO old_passwords (id, id_usuario, password, date) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";
                 $stmt = $conexion->prepare($sql);
-                $stmt->bind_param('is', $user_id, $contrasenha_a_insertar_en_old_passwords_encriptada);
+                $stmt->bind_param('is', $user_id, $contrasenha_vieja_a_insertar_en_old_passwords_encriptada);
                 $stmt->execute();
 
                 /* Esperar un minuto y meido antes de redirigir para que le dé tiempo a leer los consejos

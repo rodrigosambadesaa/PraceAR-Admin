@@ -127,8 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 $length_range = (int) $length_range;
                 $quantity = (int) $quantity;
 
-                if ($length < 16 || $length > 835 || $quantity < 1 || $quantity > 10 || $length_range < 16 || $length_range > 835) {
-                    $result = '<span style="color: red; text-align: center;">La longitud debe estar entre 16 y 835 caracteres y la cantidad entre 1 y 10.</span>';
+                if ($length < 16 || $length > 500 || $quantity < 1 || $quantity > 10 || $length_range < 16 || $length_range > 500) {
+                    $result = '<span style="color: red; text-align: center;">La longitud debe estar entre 16 y 500 caracteres y la cantidad entre 1 y 10.</span>';
                 } elseif ($length !== $length_range) {
                     $result = '<span style="color: red; text-align: center;">No se permite modificar el código Javascript que sincroniza los inputs.</span>';
                 }
@@ -142,17 +142,27 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         $result = '<div id="contrasenas-generadas" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">';
                         foreach ($passwords as $index => $password) {
                             $passwordId = "password-$index";
+                            $result .= '<div style="font-size: 1.8rem; color: black;">Contraseña ' . ($index + 1) . ':</div>';
                             $result .= '<div id="' . $passwordId . '">' . htmlspecialchars($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Número de números: ' . contar_digitos($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32;"> Entropía: ' . entropia($password) . '</div>';  
-                            $result .= '<div style="margin-top: 0.5rem;">';
                             $result .= '<button onclick="copyToClipboard(\'' . $passwordId . '\')">Copiar</button>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Número de números: ' . contar_digitos($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Entropía: ' . entropia($password) . '</div>';  
+                            $result .= '<div style="margin-top: 0.5rem;">';
                         }
                         $result .= '</div>';
+                        // Ocultar el formulario tras la generación de contraseñas, forzando al usuario a volver a cargar la página para generar nuevas contraseñas
+                        ?>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                document.getElementById('formulario-generacion-contrasena').style.display = 'none';
+                                document.getElementById('parrafo-campos-obligatorios').style.display = 'none';
+                            });
+                        </script>
+                        <?php
                         $mostrar_boton = true;
                     } catch (Exception $e) {
                         $result = '<span style="color: red; text-align: center;">' . $e->getMessage() . '</span>';
@@ -199,11 +209,11 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
         <label for="length-number">Longitud de la Contraseña: <span class="required">*</span></label>
-        <input required type="number" id="length-number" name="length" min="16" max="835"
+        <input required type="number" id="length-number" name="length" min="16" max="500"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')">
 
         <label for="length-range">Longitud de la Contraseña: <span class="required">*</span></label>
-        <input required type="range" id="length-range" name="length_range" min="16" max="835"
+        <input required type="range" id="length-range" name="length_range" min="16" max="500"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')">
 
         <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;">
@@ -265,9 +275,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             const longitudParsed = parseInt(longitud);
             const longitudRangeParsed = parseInt(longitudRange);
 
-            if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 835 || longitudRangeParsed < 16 || longitudRangeParsed > 835 || longitudParsed !== longitudRangeParsed) {
+            if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 500 || longitudRangeParsed < 16 || longitudRangeParsed > 500 || longitudParsed !== longitudRangeParsed) {
                 event.preventDefault();
-                alert('La longitud de la contraseña debe estar entre 16 y 835 caracteres.');
+                alert('La longitud de la contraseña debe estar entre 16 y 500 caracteres.');
                 return;
             }
         });

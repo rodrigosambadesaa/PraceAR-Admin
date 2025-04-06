@@ -8,9 +8,9 @@ formulario.addEventListener('submit', function (e) {
     const longitud = limpiarInput(document.getElementById('length-number').value);
     const cantidad = limpiarInput(document.getElementById('quantity-number').value);
 
-    // Validar que la longitud sea un número natural entre 16 y 835
-    if (isNaN(longitud) || longitud < 16 || longitud > 835) {
-        alert('La longitud debe ser un número natural entre 16 y 835');
+    // Validar que la longitud sea un número natural entre 16 y 500
+    if (isNaN(longitud) || longitud < 16 || longitud > 500) {
+        alert('La longitud debe ser un número natural entre 16 y 500');
         return;
     }
 
@@ -22,6 +22,20 @@ formulario.addEventListener('submit', function (e) {
 
     // Si no hay errores, se permite el envío del formulario
     formulario.submit();
+});
+
+const lengthNumberInput = document.getElementById('length-number');
+const quantityNumberInput = document.getElementById('quantity-number');
+
+lengthNumberInput.addEventListener('input', function () {
+    if (parseInt(lengthNumberInput.value) >= 500) {
+        quantityNumberInput.max = 2;
+        if (parseInt(quantityNumberInput.value) > 2) {
+            quantityNumberInput.value = 2;
+        }
+    } else {
+        quantityNumberInput.max = 10;
+    }
 });
 
 function syncInputs(inputType) {
