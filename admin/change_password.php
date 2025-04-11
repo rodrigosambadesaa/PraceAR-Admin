@@ -148,25 +148,32 @@
             $stmt->execute();
             $result = $stmt->get_result();
 
+            // Mostrar la consulta en texto plano en el navegador para depurar
+            echo "<div style='color: red;'>Consulta SQL: $sql</div>";
+            echo "<div style='color: red;'>Parámetros: $user_id</div>";
+            echo "<div style='color: red;'>Consulta SQL: $sql</div>";
+
             // Para todos los pepper, verificar si la contraseña coincide con alguna de las contraseñas antiguas o si es similar a alguna de ellas
             for ($i = 0; $i < count($pepper_config); $i++) {
-                echo "Entrando en el bucle de pepper_config<br>";
+                // echo "Entrando en el bucle de pepper_config<br>";
 
                 $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
 
+                echo "El pepper es: $pepper<br>";
+
                 if ($result->num_rows > 0) {
-                    echo "Entrando en el bucle de result->num_rows<br>";
+                    // echo "Entrando en el bucle de result->num_rows<br>";
                     while ($row = $result->fetch_assoc()) {
-                        echo "Entrando en el bucle de result->fetch_assoc()<br>";
+                        // echo "Entrando en el bucle de result->fetch_assoc()<br>";
                         $old_password = $row['password'];
 
-                        if (password_verify("{$new_password}{$pepper}", $old_password)) {
-                            echo "Entrando en el bucle de password_verify<br>";
+                        if (password_verify($new_password . $pepper, $old_password)) {
+                            // echo "Entrando en el bucle de password_verify<br>";
                             throw new Exception("La nueva contraseña no puede ser igual a una de las contraseñas antiguas.");
                         }
 
                         if (contrasenha_similar_a_contrasenha_anterior($new_password, $old_password)) {
-                            echo "Entrando en el bucle de contrasenha_similar_a_contrasenha_anterior<br>";
+                            // echo "Entrando en el bucle de contrasenha_similar_a_contrasenha_anterior<br>";
                             throw new Exception("La nueva contraseña no puede ser similar a una de las contraseñas antiguas.");
                         }
                     }
@@ -229,6 +236,14 @@
                 $sql = "INSERT INTO old_passwords (id, id_usuario, password, date) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";
                 $stmt = $conexion->prepare($sql);
                 $stmt->bind_param('is', $user_id, $contrasenha_vieja_a_insertar_en_old_passwords_encriptada);
+
+                // Mostramos la consulta en texto plano en el navegador para depurar
+                echo "<div style='color: red;'>Consulta SQL: $sql</div>";
+                echo "<div style='color: red;'>Parámetros: $user_id, $contrasenha_vieja_a_insertar_en_old_passwords_encriptada</div>";
+                echo "<div style='color: red;'>Consulta SQL: $sql</div>";
+                echo "<div style='color: red;'>Parámetros: $user_id, $contrasenha_vieja_a_insertar_en_old_passwords_encriptada</div>";
+                echo "<div style='color: red;'>Consulta SQL: $sql</div>";
+                echo "Consulta completa: $sql<br>";
                 $stmt->execute();
 
                 /* Esperar un minuto y meido antes de redirigir para que le dé tiempo a leer los consejos
@@ -307,116 +322,7 @@
             href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>">nuestro generador de contraseñas</a>
         para generar una contraseña de 16 caracteres o más.</span>
     <?= $err ?>
-    <script type="module">
-        import { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario, tieneSecuenciasNumericasInseguras, tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneEspaciosAlPrincipioOAlFinal } from '/<?= $subdominio ?>/js/helpers/verify_strong_password.js';
-        document.addEventListener('DOMContentLoaded', function () {
-            window.checkPasswordRequirements = async function () {
-                const newPassword = document.getElementById('new-password').value;
-                const formulario = document.getElementById('formulario-cambio-contrasena');
-
-                // Eliminamos los mensajes de error anteriores
-                const mensajesError = document.querySelectorAll('span[style="color: red;"]');
-                mensajesError.forEach(mensaje => mensaje.remove());
-
-                if (!verifyStrongPassword(newPassword)) {
-                    // Mensaje de error debajo del input
-                    const inputNuevaContraseha = document.getElementById('new-password');
-                    const spanError = document.createElement('span');
-                    spanError.style.color = 'red';
-                    spanError.textContent = 'La nueva contraseña no cumple con los requisitos de seguridad. Debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.';
-                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
-                    // Prrevenir el envío del formulario
-                    formulario.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                    });
-                }
-
-                if (tieneEspaciosAlPrincipioOAlFinal(newPassword)) {
-                    // Mensaje de error debajo del input
-                    const inputNuevaContraseha = document.getElementById('new-password');
-                    const spanError = document.createElement('span');
-                    spanError.style.color = 'red';
-                    spanError.textContent = 'La nueva contraseña no puede tener espacios al principio o al final.';
-                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
-                    // Prevenir el envío del formulario
-                    formulario.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                    });
-                }
-
-                // Sin secuencias alfabéticas inseguras
-                if (tieneSecuenciasAlfabeticasInseguras(newPassword)) {
-                    // Mensaje de error debajo del input
-                    const inputNuevaContraseha = document.getElementById('new-password');
-                    const spanError = document.createElement('span');
-                    spanError.style.color = 'red';
-                    spanError.textContent = 'La nueva contraseña no puede contener secuencias alfabéticas inseguras como abc, cba, ni en vertical como qwe';
-                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
-                    // Prevenir el envío del formulario
-                    formulario.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                    });
-                }
-
-                // Sin secuencias numéricas inseguras
-                if (tieneSecuenciasNumericasInseguras(newPassword)) {
-                    // Mensaje de error debajo del input
-                    const inputNuevaContraseha = document.getElementById('new-password');
-                    const spanError = document.createElement('span');
-                    spanError.style.color = 'red';
-                    spanError.textContent = 'La nueva contraseña no puede tener secuencias numéricas inseguras como 123, 987, ni en vertical como 147, ni en diagonal como 159 y 753';
-                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
-                    // Prevenir el envío del formulario
-                    formulario.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                    });
-                }
-
-                if (tieneSecuenciasDeCaracteresEspecialesInseguras(newPassword)) {
-                    // Mensaje de error debajo del input
-                    const inputNuevaContraseha = document.getElementById('new-password');
-                    const spanError = document.createElement('span');
-                    spanError.style.color = 'red';
-                    spanError.textContent = 'La nueva contraseña no puede contener secuencias de caracteres especiales inseguras como ()';
-                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
-                    // Prevenir el envío del formulario
-                    formulario.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                    });
-                }
-
-                // La contraseña no puede ser similar al nombre de usuario
-                if (contrasenhaSimilarAUsuario(newPassword, document.getElementById('nombre-usuario').value)) {
-                    // Mensaje de error debajo del input
-                    const inputNuevaContraseha = document.getElementById('new-password');
-                    const spanError = document.createElement('span');
-                    spanError.style.color = 'red';
-                    spanError.textContent = 'La nueva contraseña no puede ser similar al nombre de usuario.';
-                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
-                    // Prevenir el envío del formulario
-                    formulario.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                    });
-                }
-
-                // La contraseña no puede haber sido filtrada en brechas
-                if (await haSidoFiltradaEnBrechas(newPassword)) {
-                    // Mensaje de error debajo del input
-                    const inputNuevaContraseha = document.getElementById('new-password');
-                    const spanError = document.createElement('span');
-                    spanError.style.color = 'red';
-                    spanError.textContent = 'La nueva contraseña ha sido filtrada en brechas de seguridad. Por favor, elige una contraseña más segura.';
-                    inputNuevaContraseha.insertAdjacentElement('afterend', spanError);
-                    // Prevenir el envío del formulario
-                    formulario.addEventListener('submit', function (e) {
-                        e.preventDefault();
-                    });
-                }
-            }
-        });
-
-        // export { checkPasswordRequirements };
-    </script>
+    <script type="module" src="<?= JS_ADMIN ?>check_password_requirements.js"></script>
     <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
 </body>
 
