@@ -61,18 +61,23 @@
     if (!is_string($pepper)) {
         throw new Exception("El pepper debe ser un string.");
     }
+
     if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
         throw new Exception("El pepper debe tener entre 16 y 1024 caracteres.");
     }
+
     if (tiene_espacios_al_principio_o_al_final($pepper)) {
         throw new Exception("El pepper no puede tener espacios al principio o al final.");
     }
+
     if (tiene_secuencias_alfabeticas_inseguras($pepper)) {
         throw new Exception("El pepper no puede tener secuencias alfabéticas inseguras.");
     }
+
     if (tiene_secuencias_numericas_inseguras($pepper)) {
         throw new Exception("El pepper no puede tener secuencias numéricas inseguras.");
     }
+
     if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
         throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
     }
@@ -95,33 +100,43 @@
             if (empty($old_password) || empty($new_password) || empty($confirm_password)) {
                 throw new Exception("Todos los campos son obligatorios.");
             }
+
             if (!is_string($old_password) || !is_string($new_password) || !is_string($confirm_password)) {
                 throw new Exception("Todos los campos deben ser cadenas de texto.");
             }
+
             if ($new_password !== $confirm_password) {
                 throw new Exception("Las contraseñas no coinciden.");
             }
+
             if (tiene_espacios_al_principio_o_al_final($_POST['new_password']) || tiene_espacios_al_principio_o_al_final($_POST['confirm_password']) || tiene_espacios_al_principio_o_al_final($_POST['old_password'])) {
                 throw new Exception("Las contraseñas no pueden tener espacios al principio o al final.");
             }
+
             if (strlen($new_password) < 16 || strlen($new_password) > 1024) {
                 throw new Exception("La nueva contraseña debe tener entre 16 y 1024 caracteres.");
             }
+
             if (!es_contrasenha_fuerte($new_password)) {
                 throw new Exception("La nueva contraseña no cumple con los requisitos de seguridad. Debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.");
             }
+
             if (ha_sido_filtrada_en_brechas_de_seguridad($new_password)) {
                 throw new Exception("La nueva contraseña ha sido filtrada en brechas de seguridad. Por favor, elige una contraseña más segura.");
             }
+
             if (contrasenha_similar_a_usuario($new_password, $_SESSION['nombre_usuario'])) {
                 throw new Exception("La nueva contraseña no puede ser similar al nombre de usuario.");
             }
+
             if (tiene_secuencias_numericas_inseguras($new_password)) {
                 throw new Exception("La nueva contraseña no puede tener secuencias numéricas inseguras como '1234', '12345', '123456', '1234567', '12345678', '123456789', '987654321', '87654321', '7654321', '654321', '54321', '4321', '321', '21', '147', '258', '369', '159', '357'");
             }
+
             if (tiene_secuencias_alfabeticas_inseguras($new_password)) {
                 throw new Exception("La nueva contraseña no puede contener secuencias alfabéticas inseguras como 'abc', 'qwert', 'asdf', 'zxcv', 'poiuy', 'lkjh', 'mnbv'");
             }
+
             if (tiene_secuencias_caracteres_especiales_inseguras($new_password)) {
                 throw new Exception("La nueva contraseña no puede contener secuencias de caracteres especiales inseguras como '()'");
             }
