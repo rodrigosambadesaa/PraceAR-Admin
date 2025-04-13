@@ -182,10 +182,16 @@
                     for ($i = 0; $i < count($pepper_config); $i++) {
                         $pepper_usado = $pepper_config[$i]['PASSWORD_PEPPER'];
                         if (password_verify($new_password . $pepper_usado, $old_password_from_db)) {
-                            throw new Exception("La nueva contraseña no puede ser igual a una de las contraseñas antiguas.");
+                            // Mostrar el mensaje de error si la nueva contraseña coincide con alguna de las antiguas en el class .error-message
+                            echo "<div class='error-message'>La nueva contraseña no puede ser igual a una de las contraseñas antiguas.</div>";
+                            // Finalizar la ejecución del script para evitar que se inserte la contraseña antigua en la base de datos
+                            exit;
                         }
                         if (contrasenha_similar_a_contrasenha_anterior($new_password, $old_password_from_db)) {
-                            throw new Exception("La nueva contraseña no puede ser similar a una de las contraseñas antiguas.");
+                            // Mostrar el mensaje de error si la nueva contraseña es similar a alguna de las antiguas en el class .error-message
+                            echo "<div class='error-message'>La nueva contraseña no puede ser similar a una de las contraseñas antiguas.</div>";
+                            // Finalizar la ejecución del script para evitar que se inserte la contraseña antigua en la base de datos
+                            exit;
                         }
                     }
                 }
