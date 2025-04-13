@@ -99,7 +99,7 @@ function generate_password(int $length)
         tiene_secuencias_caracteres_especiales_inseguras($password) ||
         contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario']) ||
         ha_sido_filtrada_en_brechas_de_seguridad($password) ||
-        !es_contrasenha_fuerte($password)
+        !es_contrasenha_fuerte($password) || es_contrasenha_antigua($password, $_SESSION['id'])
     ) {
         return generate_password($length);
     }

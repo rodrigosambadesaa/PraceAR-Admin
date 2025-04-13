@@ -17,6 +17,88 @@ function es_contrasenha_fuerte($contrasenha)
 }
 
 /**
+ * Función para determinar si una contraseña es antigua.
+ * @param contrasenha_antigua_a_verificar Contraseña a verificar.
+ * @param id_usuario Id del usuario a verificar.
+ * @return bool Devuelve true si la contraseña es antigua, false en caso contrario.
+ */
+function es_contrasenha_antigua($contrasenha_antigua_a_verificar, $nombre_usuario) {
+    require_once('./constants.php');
+    require_once(CONNECTION);
+    
+    $pepper_config = include 'pepper2.php';  // Incluimos la configuración del pepper.
+    
+    $today = date('Y-m-d');
+    $pepper = null;
+    for ($i = 0; $i < count($pepper_config); $i++) {
+        if ($pepper_config[$i]['last_used'] >= $today) {
+            $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
+            break;
+        }
+    }
+
+    if ($pepper === null) {
+        throw new Exception("No se pudo determinar un pepper válido.");
+    }
+
+    // Validaciones del pepper (las dejamos, aunque en el código original ya estaban)
+    if (!is_string($pepper)) {
+        throw new Exception("El pepper debe ser un string.");
+    }
+
+    if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
+        throw new Exception("El pepper debe tener entre 16 y 1024 caracteres.");
+    }
+
+    if (tiene_espacios_al_principio_o_al_final($pepper)) {
+        throw new Exception("El pepper no puede tener espacios al principio o al final.");
+    }
+
+    if (tiene_secuencias_alfabeticas_inseguras($pepper)) {
+        throw new Exception("El pepper no puede tener secuencias alfabéticas inseguras.");
+    }
+
+    if (tiene_secuencias_numericas_inseguras($pepper)) {
+        throw new Exception("El pepper no puede tener secuencias numéricas inseguras.");
+    }
+
+    if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
+        throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
+    }
+    $sentencia_sql = "SELECT password FROM old_passwords WHERE id_usuario = ?";
+    // Inicializar la variable de conexión detectando si estamos en un servidor local o real
+    $servidor_base_de_datos = $_SERVER['SERVER_NAME'] == 'localhost' ? 'localhost' : 'db5016239277.hosting-data.io';
+    $usuario_base_de_datos = $_SERVER['SERVER_NAME'] == 'localhost' ? 'root' : 'dbu2777657';
+    $clave_acceso = $_SERVER['SERVER_NAME'] == 'localhost' ? '' : 'apdtmMdp27042304()';
+    $bd_a_usar = 'dbs13217995';
+    $conexion = new mysqli($servidor_base_de_datos, $usuario_base_de_datos, $clave_acceso, $bd_a_usar);
+    // Verificar si la conexión fue exitosa
+    if ($conexion->connect_error) {
+        die("Error de conexión: " . $conexion->connect_error);
+    }
+
+    $stmt = $conexion->prepare($sentencia_sql);
+    $stmt->bind_param("s", $nombre_usuario);
+
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+
+    $filas = $resultado->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    $conexion->close();
+
+    if ($filas) {
+        foreach ($filas as $fila) {
+            if (password_verify($contrasenha_antigua_a_verificar . $pepper, $fila['password'])) {
+                return true; // La contraseña es antigua
+            }
+        }
+    }
+    return false; // La contraseña no coincide con ninguna contraseña antigua
+}
+
+/**
  * Función para determinar si una contraseña es débil porqué ha sido filtrada en brechas de seguridad.
  * @param mixed $contrasenha Contraseña a verificar.
  * @return bool Devuelve true si la contraseña ha sido filtrada en brechas de seguridad, false en caso contrario.
