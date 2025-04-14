@@ -39,8 +39,8 @@
     .zoomed-container::before {
         content: '×';
         position: absolute;
-        top: -25px;
-        right: 12px;
+        top: 10px;
+        right: 30px;
         font-size: 2rem;
         color: white;
         cursor: pointer;
@@ -52,5 +52,30 @@
         text-decoration: none;
         /* Hacer que se muestre debajo de la imagen */
         display: block;
+    }
+
+    .required::after {
+        content: " *";
+        color: red;
+    }
+
+    .note {
+        color: red;
+        text-align: center;
+    }
+
+    /* Mejorar contraste
+    body {
+        background-color: #f9f9f9;
+        color: #333;
+    } */
+
+    input[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #0056b3;
     }
 </style>
