@@ -24,6 +24,18 @@
                 box-shadow: 0 0 2px 1px black;
             }
         }
+
+        @media screen and (max-width: 600px) {
+            .flags {
+                flex-direction: column;
+                align-items: flex-end;
+            }
+
+            .flags li {
+                margin-bottom: 5px;
+            }
+            
+        }
     </style>
 </head>
 
@@ -40,7 +52,7 @@
                     $codigo_idioma = isset($_REQUEST['codigo_idioma']) ? "&codigo_idioma=" . $_REQUEST['codigo_idioma'] : '';
                     $id = isset($_REQUEST['id']) ? "&id=" . $_REQUEST['id'] : '';
                     ?>
-                    <a href="<?= "?lang=$key_language$caseta$page$id$codigo_idioma" ?>">
+                    <a href="<?= "?lang=$key_language$caseta$page$id$codigo_idioma" ?>" aria-label="<?= $text_language ?>" tabindex="0">
                         <img width="15" height="15" src="<?= FLAG_IMAGES_URL . "$key_language.png" ?>"
                             alt="<?= $text_language ?>">
                     </a>

@@ -32,6 +32,24 @@
             height: auto;
             letter-spacing: 2.97px;
         }
+
+        @media screen and (max-width: 600px) {
+            #descripcion {
+                min-height: 1em;
+                max-height: 7.75em;
+                height: auto;
+                letter-spacing: 2.97px;
+            }
+
+            .pure-form input[type="text"],
+            .pure-form input[type="file"] {
+                width: 100%;
+            }
+            .pure-form input[type="submit"] {
+                width: 100%;
+            }
+            
+        }
     </style>
 </head>
 
