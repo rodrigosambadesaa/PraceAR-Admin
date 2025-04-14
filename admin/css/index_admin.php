@@ -137,11 +137,13 @@
 
     .zoomed-container .close-button {
         position: absolute;
-        top: 0.0000000001px;
-        right: 1px;
+        top: 0;
+        right: 0;
         font-size: 2.25rem;
         color: white;
         cursor: pointer;
+        background: none;
+        border: none;
     }
 
     /* Estilos de paginación */

@@ -176,66 +176,75 @@
                 </tbody>
             </table>
 
+            <?php else: ?>
+                <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
+                <?php endif; ?>
+            </main>
+            
+            <footer role="contentinfo">
+                <?php require(SECTIONS . 'pagination.php'); ?>
+            </footer>
+
             <div id="zoomed-image-container" class="zoomed-container" role="dialog" aria-labelledby="zoomed-name" aria-hidden="true">
                 <button class="close-button" aria-label="Cerrar vista ampliada">&times;</button>
                 <img id="zoomed-image" src="" alt="Imagen ampliada del puesto">
                 <p id="zoomed-name"></p>
             </div>
-        <?php else: ?>
-            <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
-        <?php endif; ?>
-    </main>
+            
+            <script>
+                const zoomableImages = document.querySelectorAll('.zoomable');
+                const zoomedContainer = document.getElementById('zoomed-image-container');
+                const zoomedImage = document.getElementById('zoomed-image');
+                const zoomedName = document.getElementById('zoomed-name');
+                const closeButton = document.querySelector('.zoomed-container .close-button');
+                
+                zoomableImages.forEach(image => {
+                    image.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        zoomedImage.src = this.src;
+                        zoomedName.textContent = this.closest('tr').querySelector('td:nth-child(5)').textContent;
+                        zoomedContainer.classList.add('show');
+                        zoomedContainer.setAttribute('aria-hidden', 'false');
+                    });
+                });
+                
+                closeButton.addEventListener('click', function () {
+                    zoomedContainer.classList.remove('show');
+                    zoomedContainer.setAttribute('aria-hidden', 'true');
+                });
+                
+                zoomedContainer.addEventListener('click', function (e) {
+                    if (e.target === this) {
+                        zoomedContainer.classList.remove('show');
+                        zoomedContainer.setAttribute('aria-hidden', 'true');
+                    }
+                });
+                </script>
 
-    <footer role="contentinfo">
-        <?php require(SECTIONS . 'pagination.php'); ?>
-    </footer>
 
+<?php if ($resultados_encontrados): ?>
+    <script type="module" src="<?= JS_ADMIN . 'index_admin.js' ?>"></script>
     <script>
-        const zoomableImages = document.querySelectorAll('.zoomable');
-        const zoomedContainer = document.getElementById('zoomed-image-container');
-        const zoomedImage = document.getElementById('zoomed-image');
-        const zoomedName = document.getElementById('zoomed-name');
-        const closeButton = document.querySelector('.zoomed-container .close-button');
-
-        zoomableImages.forEach(image => {
-            image.addEventListener('click', function (e) {
-                e.stopPropagation();
-                zoomedImage.src = this.src;
-                zoomedName.textContent = this.closest('tr').querySelector('td:nth-child(5)').textContent;
-                zoomedContainer.classList.add('show');
-                zoomedContainer.setAttribute('aria-hidden', 'false');
+        <?php if ($busqueda_hecha): ?>
+            const inputReseteo = document.getElementById('input-reseteo');
+            inputReseteo.disabled = true;
+            inputReseteo.style.display = 'none';
+        <?php else: ?>
+            const inputDeshacer = document.getElementById('input-deshacer-busqueda');
+            inputDeshacer.disabled = true;
+            inputDeshacer.style.display = 'none';
+            // Si no hay una búsqueda hecha, cada click en el botón de reiniciar formulario debe volver a poner el focus en el input de búsqueda para que el usuario pueda escribir otro término de búsqueda
+            const inputReseteo = document.getElementById('input-reseteo');
+            inputReseteo.addEventListener('click', function () {
+                document.getElementById('input-busqueda').focus();
             });
-        });
-
-        closeButton.addEventListener('click', function () {
-            zoomedContainer.classList.remove('show');
-            zoomedContainer.setAttribute('aria-hidden', 'true');
-        });
-
-        zoomedContainer.addEventListener('click', function (e) {
-            if (e.target === this) {
-                zoomedContainer.classList.remove('show');
-                zoomedContainer.setAttribute('aria-hidden', 'true');
-            }
-        });
+        <?php endif; ?>
     </script>
-
-    <?php if ($resultados_encontrados): ?>
-        <script type="module" src="<?= JS_ADMIN . 'index_admin.js' ?>"></script>
-        <script>
-            <?php if ($busqueda_hecha): ?>
-                const inputReseteo = document.getElementById('input-reseteo');
-                inputReseteo.disabled = true;
-                inputReseteo.style.display = 'none';
-            <?php else: ?>
-                const inputDeshacer = document.getElementById('input-deshacer-busqueda');
-                inputDeshacer.disabled = true;
-                inputDeshacer.style.display = 'none';
-            <?php endif; ?>
-        </script>
     <?php else: ?>
         <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
     <?php endif; ?>
-</body>
-
-</html>
+    
+    </body>
+    
+    </html>
+    

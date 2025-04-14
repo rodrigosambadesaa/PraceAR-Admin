@@ -23,6 +23,14 @@
         figcaption {
             color: #333; /* A dark gray color for better readability */
         }
+
+        figure[role="button"] {
+            background-color: white;
+            /* Sin bordes */
+            border: none;
+        }
+
+
     </style>
 </head>
 
