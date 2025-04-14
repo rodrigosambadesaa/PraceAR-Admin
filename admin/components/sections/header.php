@@ -28,15 +28,24 @@ require_once(HELPERS . 'get_language.php');
             margin: 0;
             padding: 10px;
         }
+
+        @media screen and (max-width: 600px) {
+            #cabecera_pagina_edicion {
+                font-size: 1.5rem;
+            }
+            
+        }
     </style>
 </head>
 
 <body class="container">
     <header style="display:flex; justify-content: space-around">
-        <h1 id="cabecera_pagina_edicion">Admin: PraceAR
-            <strong style="font-size: 0.95rem">Idioma actual: <img style="box-shadow: 0 0 2px 1px black;" width="15"
-                    height="15" src="<?= FLAG_IMAGES_URL . (get_language()) . ".png" ?>"
-                    alt="<?= get_language() ?>"></strong>
+        <h1 id="cabecera_pagina_edicion" tabindex="0">Admin: PraceAR
+            <strong style="font-size: 0.95rem">Idioma actual: 
+                <img style="box-shadow: 0 0 2px 1px black;" width="15" height="15" 
+                     src="<?= FLAG_IMAGES_URL . (get_language()) . ".png" ?>" 
+                     alt="<?= get_language() ?>" tabindex="0">
+            </strong>
         </h1>
         <?php
         require_once(COMPONENT_ADMIN . "languages.php");
@@ -48,3 +57,4 @@ require_once(HELPERS . 'get_language.php');
         ?>
     </header>
 </body>
+</html>

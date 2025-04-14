@@ -68,30 +68,47 @@
         .texto-azul {
             color: blue;
         }
+
+        @media screen and (max-width: 600px) {
+            .nav-link {
+                font-size: 0.9em;
+            }
+
+            .dropdown-content {
+                min-width: 150px;
+            }
+
+            .enlace_cierre_sesion img {
+                width: 20px;
+                height: 20px;
+            }
+            
+        }
     </style>
 </head>
 
 <body>
     <nav
-        style="text-align: center; max-width: 1100px; justify-content: center; margin: 0 auto; padding: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; font-size: 1.15em; color: #1e7dbd; font-weight: bold;">
+        style="text-align: center; max-width: 1100px; justify-content: center; margin: 0 auto; padding: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; font-size: 1.15em; color: #1e7dbd; font-weight: bold;"
+        role="navigation" aria-label="Menú principal">
         <a href="./?lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
-            style="text-align: center; margin-right: 10px;">Inicio</a>
+            style="text-align: center; margin-right: 10px;" aria-label="Ir a Inicio">Inicio</a>
         <a href="./?page=ships&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
-            style="text-align: center; margin-right: 10px;">Naves</a>
+            style="text-align: center; margin-right: 10px;" aria-label="Ir a Naves">Naves</a>
 
-        <div class="dropdown">
-            <a href="./?page=change_password&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link">Cambiar
-                contraseña</a>
-            <div class="dropdown-content">
-                <a href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link">Generador de
-                    contraseñas</a>
+        <div class="dropdown" role="menu" aria-label="Opciones de contraseña">
+            <a href="./?page=change_password&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
+                aria-haspopup="true" aria-expanded="false">Cambiar contraseña</a>
+            <div class="dropdown-content" role="menu">
+                <a href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
+                    role="menuitem" aria-label="Ir a Generador de contraseñas">Generador de contraseñas</a>
             </div>
         </div>
 
         <a href="./admin/logout_session.php" class="enlace_cierre_sesion" style="display: flex; align-items: center;"
-            title="Cerrar sesión">
-            <img id="imagen-boton-cierre-sesion" src="./img/logout_icon.png" alt="Cerrar sesión">
-            <span class="texto-azul" style="margin-left: 5px;"></span>
+            title="Cerrar sesión" aria-label="Cerrar sesión">
+            <img id="imagen-boton-cierre-sesion" src="./img/logout_icon.png" alt="Icono de cierre de sesión">
+            <span class="texto-azul" style="margin-left: 5px;" aria-hidden="true"></span>
         </a>
     </nav>
 </body>
