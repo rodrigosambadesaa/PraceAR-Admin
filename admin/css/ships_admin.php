@@ -83,12 +83,12 @@
     .zoomed-container::before {
         content: '×';
         position: absolute;
-        top: 1px;
-        right: 12px;
+        top: 10px;
+        right: 30px; /* Separado hacia la izquierda del borde derecho */
         font-size: 2rem;
         color: white;
         cursor: pointer;
-        line-height: 0.16;
+        line-height: 1;
     }
 
     @media screen and (max-width: 768px) {

@@ -157,7 +157,7 @@
         </div>
     </form>
 
-    <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
+    <p class="note" style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
         obligatorios</p>
 
     <div id="zoomed-image-container" class="zoomed-container" role="dialog" aria-hidden="true">
