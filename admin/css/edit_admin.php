@@ -78,4 +78,56 @@
     input[type="submit"]:hover {
         background-color: #0056b3;
     }
+
+    @media screen and (max-width: 600px) {
+        .nav-link {
+            font-size: 0.9em;
+        }
+
+        .dropdown-content {
+            min-width: 150px;
+        }
+
+        .enlace_cierre_sesion img {
+            width: 20px;
+            height: 20px;
+        }
+        .zoomed-container img {
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        /* Limitar el tamaño de los elementos del forulario */
+        .form-group {
+            max-width: 90%;
+            margin: 0 auto;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .form-group input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        .form-group input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .form-group label {
+            font-size: 0.9em;
+        }
+        .form-group .note {
+            font-size: 0.8em;
+        }
+        .form-group .required::after {
+            font-size: 0.8em;
+        }
+    }
 </style>
