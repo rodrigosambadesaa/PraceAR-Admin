@@ -143,14 +143,14 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         foreach ($passwords as $index => $password) {
                             $passwordId = "password-$index";
                             $result .= '<div style="font-size: 1.8rem; color: black;">Contraseña ' . ($index + 1) . ':</div>';
-                            $result .= '<div id="' . $passwordId . '">' . htmlspecialchars($password) . '</div>';
+                            $result .= '<div id="' . $passwordId . '" style="font-size: 1.3rem;">' . htmlspecialchars($password) . '</div>';
                             $result .= '<button onclick="copyToClipboard(\'' . $passwordId . '\')">Copiar</button>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Número de números: ' . contar_digitos($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #32CD32; font-size: 0.6rem;"> Entropía: ' . entropia($password) . '</div>';  
+                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de números: ' . contar_digitos($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Entropía: ' . entropia($password) . '</div>';  
                             $result .= '<div style="margin-top: 0.5rem;">';
                         }
                         $result .= '</div>';
@@ -196,40 +196,41 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 </head>
 
 <body>
-    <header>
+    <header role="banner" aria-label="Encabezado principal">
         <?php require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php'; ?>
     </header>
 
-    <h1 style="text-align: center;">Generador de Contraseñas</h1>
+    <h1 style="text-align: center;" tabindex="0">Generador de Contraseñas</h1>
 
     <div style="text-align: center; margin-bottom: 1rem;">
         <span id="password-text"><?= $result ?></span>
     </div>
 
-    <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena">
+    <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena" aria-labelledby="formulario-titulo">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-        <label for="length-number">Longitud de la Contraseña: <span class="required">*</span></label>
+        <label for="length-number">Longitud de la Contraseña: <span class="required" aria-hidden="true">*</span></label>
         <input required type="number" id="length-number" name="length" min="16" max="500"
-            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')">
+            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')" aria-describedby="length-help">
+        <p id="length-help" class="sr-only">Introduce un número entre 16 y 500.</p>
 
-        <label for="length-range">Longitud de la Contraseña: <span class="required">*</span></label>
+        <label for="length-range">Longitud de la Contraseña: <span class="required" aria-hidden="true">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="500"
-            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')">
+            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')" aria-describedby="length-help">
 
-        <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;">
+        <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;" aria-live="polite">
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
         </output>
 
-        <label for="quantity-number">Cantidad de Contraseñas: <span class="required">*</span></label>
+        <label for="quantity-number">Cantidad de Contraseñas: <span class="required" aria-hidden="true">*</span></label>
         <input required type="number" id="quantity-number" name="quantity" min="1" max="10"
-            value="<?= htmlspecialchars($quantity, ENT_QUOTES, 'UTF-8') ?>">
+            value="<?= htmlspecialchars($quantity, ENT_QUOTES, 'UTF-8') ?>" aria-describedby="quantity-help">
+        <p id="quantity-help" class="sr-only">Introduce un número entre 1 y 10.</p>
 
-        <input type="submit" value="Generar Contraseñas">
+        <input type="submit" value="Generar Contraseñas" aria-label="Generar contraseñas">
     </form>
     
     <div style="text-align: center; color: red; margin-top: .125rem;">
-        <span id="parrafo-campos-obligatorios">Los campos marcados con <span class="required">*</span> son obligatorios.
-        </span>
+        <span id="parrafo-campos-obligatorios" aria-live="polite">Los campos marcados con <span class="required">*</span> son obligatorios.</span>
     </div>
 
     <script>

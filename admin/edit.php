@@ -57,7 +57,7 @@
     }
     ?>
 
-    <form id="formulario-editar" action="#" method="post" enctype="multipart/form-data">
+    <form id="formulario-editar" action="#" method="post" enctype="multipart/form-data" aria-labelledby="cabecera-tabla">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <span
                 style="color: #1e7dbd"><?= htmlspecialchars($fila["nombre"]) ?></span>
@@ -67,18 +67,19 @@
             <?php
             $activo = $fila["activo"];
             ?>
-            <input type="checkbox" id="activo" name="activo" value="<?= $activo ?>" <?= $activo == 1 ? "checked" : "" ?>>
+            <input type="checkbox" id="activo" name="activo" value="<?= $activo ?>" <?= $activo == 1 ? "checked" : "" ?> aria-label="Activo">
         </div>
         <div>
             <label for="caseta">Caseta</label>
-            <input type="text" id="caseta" disabled required value="<?= htmlspecialchars($fila["caseta"]) ?>">
+            <input type="text" id="caseta" disabled required value="<?= htmlspecialchars($fila["caseta"]) ?>" aria-describedby="caseta-desc">
             <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>"
                 placeholder="Código de caseta">
+            <span id="caseta-desc" class="visually-hidden">Código único de la caseta</span>
         </div>
         <div>
             <label for="nombre">Nombre</label>
             <input id="nombre" type="text" name="nombre" value="<?= htmlspecialchars($fila["nombre"]) ?>"
-                placeholder="Nombre del puesto. Por ejemplo: 'Bibi Handmades'">
+                placeholder="Nombre del puesto. Por ejemplo: 'Bibi Handmades'" aria-required="true">
         </div>
         <div>
             <?php
@@ -91,10 +92,10 @@
             <?php if ($imagen_encontrada) { ?>
                 <span>Imagen</span>
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto" class="zoomable"
+                    <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto <?= htmlspecialchars($fila["nombre"]) ?>" class="zoomable"
                         style="object-fit: cover; height: 140px; display: block; margin: 0 auto;">
                     <a href="#" id="eliminar-imagen-link"
-                        style="margin-top: 1em; color: red; text-decoration: none; text-align: center; display: block;">Eliminar</a>
+                        style="margin-top: 1em; color: red; text-decoration: none; text-align: center; display: block;" aria-label="Eliminar imagen">Eliminar</a>
                     <script>
                         document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {
                             event.preventDefault(); // Previene la acción predeterminada del enlace
@@ -110,23 +111,23 @@
                 </div>
             <?php } else { ?>
                 <label for="imagen">Imagen</label>
-                <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg">
+                <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg" aria-label="Subir imagen">
             <?php } ?>
         </div>
 
         <div>
             <label for="contacto">Contacto</label>
             <input type="text" id="contacto" name="contacto" value="<?= htmlspecialchars($fila["contacto"]) ?>"
-                placeholder="Información de contacto del puesto.">
+                placeholder="Información de contacto del puesto." aria-label="Contacto del puesto">
         </div>
         <div>
             <label for="telefono">Teléfono</label>
             <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"]) ?>"
-                placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'">
+                placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'" aria-label="Teléfono de contacto">
         </div>
         <div>
             <label for="tipo-unity">Tipo en Unity <span style="color: red;">*</span></label>
-            <select name="tipo_unity" id="tipo-unity">
+            <select name="tipo_unity" id="tipo-unity" aria-required="true">
                 <?php foreach (UNITY_TYPE as $key => $value) { ?>
                     <option value="<?= $key ?>" <?= $fila["tipo_unity"] == $key ? "selected" : "" ?>>
                         <?= $value ?>
@@ -135,7 +136,7 @@
         </div>
         <div>
             <label for="id-nave">ID Nave <span style="color: red;">*</span></label>
-            <select required id="id-nave" name="id_nave">
+            <select required id="id-nave" name="id_nave" aria-required="true">
                 <?php
                 $sql_naves = "SELECT * FROM naves";
                 $resultado_naves = $conexion->query($sql_naves);
@@ -149,21 +150,21 @@
         <div>
             <label for="caseta-padre">Caseta padre</label>
             <input name="caseta_padre" type="text" id="caseta-padre"
-                value="<?= htmlspecialchars($fila["caseta_padre"]) ?>" placeholder="Código de caseta padre">
+                value="<?= htmlspecialchars($fila["caseta_padre"]) ?>" placeholder="Código de caseta padre" aria-label="Caseta padre">
         </div>
         <div id="div-botones">
-            <input id="actualizar" type="submit" value="Actualizar">
+            <input id="actualizar" type="submit" value="Actualizar" aria-label="Actualizar datos del puesto">
         </div>
     </form>
 
     <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
         obligatorios</p>
 
-    <div id="zoomed-image-container" class="zoomed-container">
+    <div id="zoomed-image-container" class="zoomed-container" role="dialog" aria-hidden="true">
         <img id="zoomed-image" src="" alt="">
     </div>
 
-    <div id="mensaje"><?= htmlspecialchars($mensaje) ?></div>
+    <div id="mensaje" role="alert"><?= htmlspecialchars($mensaje) ?></div>
 
     <script>
         const zoomableImage = document.querySelector('.zoomable');
@@ -174,11 +175,13 @@
             zoomableImage.addEventListener('click', function () {
                 zoomedImage.src = this.src;
                 zoomedContainer.classList.add('show');
+                zoomedContainer.setAttribute('aria-hidden', 'false');
             });
         }
 
         zoomedContainer.addEventListener('click', function () {
             zoomedContainer.classList.remove('show');
+            zoomedContainer.setAttribute('aria-hidden', 'true');
         });
 
     </script>
