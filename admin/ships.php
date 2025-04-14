@@ -18,6 +18,12 @@
 
     <!-- Manifesto Web (PWA) -->
     <link rel="manifest" href="/manifest.json">
+
+    <style>
+        figcaption {
+            color: #333; /* A dark gray color for better readability */
+        }
+    </style>
 </head>
 
 <body>
@@ -37,9 +43,9 @@
             $amea_title = $amea['title'];
             $amea_indice = $amea['indice'];
             ?>
-            <figure class="zoom">
-                <img loading="lazy" src='./img/amea<?= $amea_indice ?>.jpg' alt='Amea <?= $amea_indice ?>'>
-                <figcaption>Amea <?= $amea_indice ?> / <?= implode("-", $amea_range) ?></figcaption>
+            <figure class="zoom" tabindex="0" role="button" aria-label="Ampliar imagen de Amea <?= $amea_indice ?>">
+                <img loading="lazy" src='./img/amea<?= $amea_indice ?>.jpg' alt='Imagen de Amea <?= $amea_indice ?>'>
+                <figcaption style="color: #333;">Amea <?= $amea_indice ?> / <?= implode("-", $amea_range) ?></figcaption>
             </figure>
         <?php endforeach; ?>
 
@@ -50,9 +56,9 @@
             $nave_title = $nave['title'];
             $nave_indice = $nave['indice'];
             ?>
-            <figure class="zoom">
-                <img loading="lazy" src='./img/nave<?= $nave_indice ?>.jpg' alt='Nave <?= $nave_indice ?>'>
-                <figcaption>Nave <?= $nave_indice ?> / <?= implode("-", $nave_range) ?></figcaption>
+            <figure class="zoom" tabindex="0" role="button" aria-label="Ampliar imagen de Nave <?= $nave_indice ?>">
+                <img loading="lazy" src='./img/nave<?= $nave_indice ?>.jpg' alt='Imagen de Nave <?= $nave_indice ?>'>
+                <figcaption style="color: #333;">Nave <?= $nave_indice ?> / <?= implode("-", $nave_range) ?></figcaption>
             </figure>
         <?php endforeach; ?>
 
@@ -63,15 +69,15 @@
             $murallon_title = $murallon['title'];
             $murallon_indice = $murallon['indice'];
             ?>
-            <figure class="zoom">
-                <img loading="lazy" src='./img/murallon<?= $murallon_indice ?>.jpg' alt='Murallón <?= $murallon_indice ?>'>
-                <figcaption>Murallón <?= $murallon_indice ?> / <?= implode("-", $murallon_range) ?></figcaption>
+            <figure class="zoom" tabindex="0" role="button" aria-label="Ampliar imagen de Murallón <?= $murallon_indice ?>">
+                <img loading="lazy" src='./img/murallon<?= $murallon_indice ?>.jpg' alt='Imagen de Murallón <?= $murallon_indice ?>'>
+                <figcaption style="color: #333;">Murallón <?= $murallon_indice ?> / <?= implode("-", $murallon_range) ?></figcaption>
             </figure>
         <?php endforeach; ?>
     </main>
 
     <!-- Contenedor para mostrar la imagen ampliada y el texto -->
-    <div id="zoomed-container" class="zoomed-container">
+    <div id="zoomed-container" class="zoomed-container" role="dialog" aria-hidden="true" aria-labelledby="zoomed-caption">
         <img id="zoomed-image" src="" alt="">
         <figcaption id="zoomed-caption"></figcaption>
     </div>
@@ -89,11 +95,15 @@
                 zoomedImage.src = img.src;
                 zoomedCaption.textContent = caption.textContent;
                 zoomedContainer.classList.add('show');
+                zoomedContainer.setAttribute('aria-hidden', 'false');
             });
         });
 
-        zoomedContainer.addEventListener('click', function () {
-            zoomedContainer.classList.remove('show');
+        zoomedContainer.addEventListener('click', function (event) {
+            if (event.target === zoomedContainer || event.target === zoomedImage) {
+                zoomedContainer.classList.remove('show');
+                zoomedContainer.setAttribute('aria-hidden', 'true');
+            }
         });
     </script>
 

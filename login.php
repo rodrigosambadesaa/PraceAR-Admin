@@ -173,13 +173,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             color: red;
             text-align: center;
         }
+
+        /* Mejorar contraste */
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 
 <body class="container"
     style='display: grid; place-content: center; min-height: 100vh; max-width: 600px; font-family: "Inter", sans-serif !important;'>
     <?php require_once "components/sections/header.php"; ?>
-    <h2 style="text-align: center;">Inicio de sesión</h2>
+    <h2 style="text-align: center;" id="form-title">Inicio de sesión</h2>
     <?php
 
     if (!isset($_SESSION['csrf'])) {
@@ -188,21 +203,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     ?>
 
-    <form method="POST" id="formulario">
+    <form method="POST" id="formulario" aria-labelledby="form-title" novalidate>
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <div id="form-group">
             <label for="login" class="required"><strong>Usuario:</strong></label>
-            <input type="text" name="login" id="login" required>
+            <input type="text" name="login" id="login" required aria-required="true" aria-describedby="login-help">
+            <small id="login-help">Ingrese su nombre de usuario registrado.</small>
         </div>
         <div id="form-group">
             <label for="password" class="required"><strong>Contraseña:</strong></label>
-            <input type="password" name="password" id="password" required>
+            <input type="password" name="password" id="password" required aria-required="true" aria-describedby="password-help">
+            <small id="password-help">Ingrese su contraseña. Debe tener entre 16 y 1024 caracteres.</small>
         </div>
         <div id="form-group">
-            <input type="submit" value="Iniciar sesión">
+            <input type="submit" value="Iniciar sesión" aria-label="Iniciar sesión">
         </div>
     </form>
-    <p class="note">Los campos marcados con * son obligatorios</p>
+    <p class="note" role="alert" aria-live="polite">Los campos marcados con * son obligatorios</p>
     <?= $err ?>
     <script type="module" src="./js/login.js"></script>
 </body>

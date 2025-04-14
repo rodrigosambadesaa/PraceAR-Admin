@@ -266,52 +266,52 @@
     ?>
 
     <h1 style="text-align: center;">Cambiar contraseña</h1>
-    <?php
+<?php
     if (!isset($_SESSION['csrf'])) {
         echo '<input type="hidden" name="csrf" value="' . ($_SESSION['csrf'] ?? '') . '">';
     }
     ?>
 
-    <form method="POST" id="formulario-cambio-contrasena">
+    <form method="POST" id="formulario-cambio-contrasena" aria-labelledby="formulario-titulo">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
         <div id="form-group">
             <label for="nombre-usuario">Nombre de usuario: </label>
             <input type="text" name="nombre_usuario" id="nombre-usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
-                disabled>
+                disabled aria-disabled="true">
         </div>
         <div id="form-group">
-            <label for="old-password">Contraseña actual: <span style="color: red;">*</span></label>
-            <input type="password" name="old_password" id="old-password" required>
+            <label for="old-password">Contraseña actual: <span style="color: red;" aria-hidden="true">*</span></label>
+            <input type="password" name="old_password" id="old-password" required aria-describedby="password-help">
+            <p id="password-help" class="sr-only">Introduce tu contraseña actual.</p>
         </div>
         <div id="form-group">
-            <label for="new-password">Nueva contraseña: <span style="color: red;">*</span></label>
-            <input type="password" name="new_password" id="new-password" required oninput="checkPasswordRequirements()">
+            <label for="new-password">Nueva contraseña: <span style="color: red;" aria-hidden="true">*</span></label>
+            <input type="password" name="new_password" id="new-password" required oninput="checkPasswordRequirements()" aria-describedby="new-password-help">
+            <p id="new-password-help" class="sr-only">Introduce una nueva contraseña que cumpla con los requisitos.</p>
         </div>
         <div id="form-group">
-            <label for="confirm-password">Confirmar nueva contraseña: <span style="color: red;">*</span></label>
-            <input type="password" name="confirm_password" id="confirm-password" required>
+            <label for="confirm-password">Confirmar nueva contraseña: <span style="color: red;" aria-hidden="true">*</span></label>
+            <input type="password" name="confirm_password" id="confirm-password" required aria-describedby="confirm-password-help">
+            <p id="confirm-password-help" class="sr-only">Introduce nuevamente la nueva contraseña para confirmarla.</p>
         </div>
-        <div id="password-requirements">
+        <div id="password-requirements" aria-live="polite">
             <span>Requisitos de la nueva contraseña</span>
             <ul>
                 <li>Longitud entre 16 y 1024 caracteres</li>
                 <li>Una letra mayúscula</li>
                 <li>Una letra minúscula</li>
                 <li>Un número</li>
-                <li>
-                    Tres caracteres especiales distintos, que son los siguientes:
+                <li>Tres caracteres especiales distintos, como:
                     <strong>! " # $ % & ' ( ) * + , - . / : ; <=> ? @ [ \ ] ^ _ ` { | } ~</strong>
                 </li>
                 <li>Sin espacios al principio o al final</li>
-                <li>Sin secuencias numéricas inseguras como 123, 987, ni en vertical como 147, ni en diagonal como 159 y
-                    753
-                </li>
+                <li>Sin secuencias numéricas inseguras como 123, 987, ni en vertical como 147, ni en diagonal como 159 y 753</li>
                 <li>Sin secuencias alfabéticas inseguras como abc, cba, ni en horizontal como qwe</li>
                 <li>Sin secuencias de caracteres especiales inseguras como ()</li>
             </ul>
         </div>
         <div id="form-group">
-            <input type="submit" value="Cambiar contraseña">
+            <input type="submit" value="Cambiar contraseña" aria-label="Cambiar contraseña">
         </div>
     </form>
     <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
