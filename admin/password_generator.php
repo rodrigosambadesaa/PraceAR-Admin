@@ -131,9 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                     $result = '<span style="color: red; text-align: center;">La longitud debe estar entre 16 y 500 caracteres y la cantidad entre 1 y 10.</span>';
                 } elseif ($length !== $length_range) {
                     $result = '<span style="color: red; text-align: center;">No se permite modificar el código Javascript que sincroniza los inputs.</span>';
-                }
-                
-                else {
+                } else {
                     try {
                         for ($i = 0; $i < $quantity; $i++) {
                             $passwords[] = generate_password($length);
@@ -150,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                             $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de números: ' . contar_digitos($password) . '</div>';
                             $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
                             $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Entropía: ' . entropia($password) . '</div>';  
+                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Entropía: ' . entropia($password) . '</div>';
                             $result .= '<div style="margin-top: 0.5rem;">';
                         }
                         $result .= '</div>';
@@ -160,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                             document.addEventListener('DOMContentLoaded', function () {
                                 document.getElementById('formulario-generacion-contrasena').style.display = 'none';
                                 document.getElementById('parrafo-campos-obligatorios').style.display = 'none';
-                            });
+                            }); 
                         </script>
                         <?php
                         $mostrar_boton = true;
@@ -206,16 +204,19 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <span id="password-text"><?= $result ?></span>
     </div>
 
-    <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena" aria-labelledby="formulario-titulo">
+    <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena"
+        aria-labelledby="formulario-titulo">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
         <label for="length-number">Longitud de la Contraseña: <span class="required" aria-hidden="true">*</span></label>
         <input required type="number" id="length-number" name="length" min="16" max="500"
-            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')" aria-describedby="length-help">
+            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')"
+            aria-describedby="length-help">
         <p id="length-help" class="sr-only">Introduce un número entre 16 y 500.</p>
 
         <label for="length-range">Longitud de la Contraseña: <span class="required" aria-hidden="true">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="500"
-            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')" aria-describedby="length-help">
+            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')"
+            aria-describedby="length-help">
 
         <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;" aria-live="polite">
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
@@ -228,9 +229,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
         <input type="submit" value="Generar Contraseñas" aria-label="Generar contraseñas">
     </form>
-    
+
     <div style="text-align: center; color: red; margin-top: .125rem;">
-        <span id="parrafo-campos-obligatorios" aria-live="polite">Los campos marcados con <span class="required">*</span> son obligatorios.</span>
+        <span id="parrafo-campos-obligatorios" aria-live="polite">Los campos marcados con <span
+                class="required">*</span> son obligatorios.</span>
     </div>
 
     <script>

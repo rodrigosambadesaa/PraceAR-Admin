@@ -266,7 +266,7 @@
     ?>
 
     <h1 style="text-align: center;">Cambiar contraseña</h1>
-<?php
+    <?php
     if (!isset($_SESSION['csrf'])) {
         echo '<input type="hidden" name="csrf" value="' . ($_SESSION['csrf'] ?? '') . '">';
     }
@@ -286,12 +286,15 @@
         </div>
         <div id="form-group">
             <label for="new-password">Nueva contraseña: <span style="color: red;" aria-hidden="true">*</span></label>
-            <input type="password" name="new_password" id="new-password" required oninput="checkPasswordRequirements()" aria-describedby="new-password-help">
+            <input type="password" name="new_password" id="new-password" required oninput="checkPasswordRequirements()"
+                aria-describedby="new-password-help">
             <p id="new-password-help" class="sr-only">Introduce una nueva contraseña que cumpla con los requisitos.</p>
         </div>
         <div id="form-group">
-            <label for="confirm-password">Confirmar nueva contraseña: <span style="color: red;" aria-hidden="true">*</span></label>
-            <input type="password" name="confirm_password" id="confirm-password" required aria-describedby="confirm-password-help">
+            <label for="confirm-password">Confirmar nueva contraseña: <span style="color: red;"
+                    aria-hidden="true">*</span></label>
+            <input type="password" name="confirm_password" id="confirm-password" required
+                aria-describedby="confirm-password-help">
             <p id="confirm-password-help" class="sr-only">Introduce nuevamente la nueva contraseña para confirmarla.</p>
         </div>
         <div id="password-requirements" aria-live="polite">
@@ -305,7 +308,8 @@
                     <strong>! " # $ % & ' ( ) * + , - . / : ; <=> ? @ [ \ ] ^ _ ` { | } ~</strong>
                 </li>
                 <li>Sin espacios al principio o al final</li>
-                <li>Sin secuencias numéricas inseguras como 123, 987, ni en vertical como 147, ni en diagonal como 159 y 753</li>
+                <li>Sin secuencias numéricas inseguras como 123, 987, ni en vertical como 147, ni en diagonal como 159 y
+                    753</li>
                 <li>Sin secuencias alfabéticas inseguras como abc, cba, ni en horizontal como qwe</li>
                 <li>Sin secuencias de caracteres especiales inseguras como ()</li>
             </ul>

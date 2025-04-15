@@ -45,10 +45,11 @@
             .pure-form input[type="file"] {
                 width: 100%;
             }
+
             .pure-form input[type="submit"] {
                 width: 100%;
             }
-            
+
         }
     </style>
 </head>
@@ -104,19 +105,22 @@
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <label for="tipo">Tipo <span style="color: red;" aria-hidden="true">*</span></label>
         <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>"
-            placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'" required aria-required="true" aria-describedby="tipo-descripcion">
+            placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'" required aria-required="true"
+            aria-describedby="tipo-descripcion">
         <span id="tipo-descripcion" class="visually-hidden">Campo obligatorio. Introduzca el tipo de puesto.</span>
 
         <label for="descripcion">Descripción</label>
         <textarea name="descripcion" id="descripcion" cols="10" rows="10"
-            placeholder="Descripción del puesto. Por ejemplo: 'Bisutería hecha a mano'."
-            maxlength="450" aria-describedby="descripcion-descripcion"><?= htmlspecialchars($data['descripcion'] ?? "") ?></textarea>
-        <span id="descripcion-descripcion" class="visually-hidden">Introduzca una descripción del puesto, máximo 450 caracteres.</span>
+            placeholder="Descripción del puesto. Por ejemplo: 'Bisutería hecha a mano'." maxlength="450"
+            aria-describedby="descripcion-descripcion"><?= htmlspecialchars($data['descripcion'] ?? "") ?></textarea>
+        <span id="descripcion-descripcion" class="visually-hidden">Introduzca una descripción del puesto, máximo 450
+            caracteres.</span>
 
         <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars($data['id'] ?? "") ?>">
         <input type="submit" value="Actualizar">
     </form>
-    <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;" aria-hidden="true">*</span> son
+    <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;"
+            aria-hidden="true">*</span> son
         obligatorios</p>
     <?= htmlspecialchars($mensaje ?? ""); ?>
     <?php if ($puesto_encontrado) { ?>

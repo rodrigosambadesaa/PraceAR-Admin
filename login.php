@@ -212,7 +212,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div id="form-group">
             <label for="password" class="required"><strong>Contraseña:</strong></label>
-            <input type="password" name="password" id="password" required aria-required="true" aria-describedby="password-help">
+            <input type="password" name="password" id="password" required aria-required="true"
+                aria-describedby="password-help">
             <small id="password-help">Ingrese su contraseña. Debe tener entre 16 y 1024 caracteres.</small>
         </div>
         <div id="form-group">
