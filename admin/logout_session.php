@@ -21,6 +21,8 @@ if (ini_get("session.use_cookies")) {
 // Destruir la sesión
 session_destroy();
 
+// Limpiar el buffer de salida y enviar encabezados
+ob_end_flush();
 // Redirigir al usuario a la página de inicio
 header("Location: ../index.php");
 exit();
