@@ -82,14 +82,12 @@
                 width: 20px;
                 height: 20px;
             }
-            
         }
     </style>
 </head>
 
 <body>
-    <nav
-        style="text-align: center; max-width: 1100px; justify-content: center; margin: 0 auto; padding: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; font-size: 1.15em; color: #1e7dbd; font-weight: bold;"
+    <nav style="text-align: center; max-width: 1100px; justify-content: center; margin: 0 auto; padding: 10px 0; display: flex; gap: 10px; flex-wrap: wrap; font-size: 1.15em; color: #1e7dbd; font-weight: bold;"
         role="navigation" aria-label="Menú principal">
         <a href="./?lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link"
             style="text-align: center; margin-right: 10px;" aria-label="Ir a Inicio">Inicio</a>

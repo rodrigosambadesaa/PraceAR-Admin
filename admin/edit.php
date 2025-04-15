@@ -57,7 +57,8 @@
     }
     ?>
 
-    <form id="formulario-editar" action="#" method="post" enctype="multipart/form-data" aria-labelledby="cabecera-tabla">
+    <form id="formulario-editar" action="#" method="post" enctype="multipart/form-data"
+        aria-labelledby="cabecera-tabla">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <span
                 style="color: #1e7dbd"><?= htmlspecialchars($fila["nombre"]) ?></span>
@@ -67,11 +68,13 @@
             <?php
             $activo = $fila["activo"];
             ?>
-            <input type="checkbox" id="activo" name="activo" value="<?= $activo ?>" <?= $activo == 1 ? "checked" : "" ?> aria-label="Activo">
+            <input type="checkbox" id="activo" name="activo" value="<?= $activo ?>" <?= $activo == 1 ? "checked" : "" ?>
+                aria-label="Activo">
         </div>
         <div>
             <label for="caseta">Caseta</label>
-            <input type="text" id="caseta" disabled required value="<?= htmlspecialchars($fila["caseta"]) ?>" aria-describedby="caseta-desc">
+            <input type="text" id="caseta" disabled required value="<?= htmlspecialchars($fila["caseta"]) ?>"
+                aria-describedby="caseta-desc">
             <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>"
                 placeholder="Código de caseta">
             <span id="caseta-desc" class="visually-hidden">Código único de la caseta</span>
@@ -92,10 +95,12 @@
             <?php if ($imagen_encontrada) { ?>
                 <span>Imagen</span>
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <img src="<?= htmlspecialchars($ruta_a_imagen) ?>" alt="Imagen del puesto <?= htmlspecialchars($fila["nombre"]) ?>" class="zoomable"
+                    <img src="<?= htmlspecialchars($ruta_a_imagen) ?>"
+                        alt="Imagen del puesto <?= htmlspecialchars($fila["nombre"]) ?>" class="zoomable"
                         style="object-fit: cover; height: 140px; display: block; margin: 0 auto;">
                     <a href="#" id="eliminar-imagen-link"
-                        style="margin-top: 1em; color: red; text-decoration: none; text-align: center; display: block;" aria-label="Eliminar imagen">Eliminar</a>
+                        style="margin-top: 1em; color: red; text-decoration: none; text-align: center; display: block;"
+                        aria-label="Eliminar imagen">Eliminar</a>
                     <script>
                         document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {
                             event.preventDefault(); // Previene la acción predeterminada del enlace
@@ -150,14 +155,16 @@
         <div>
             <label for="caseta-padre">Caseta padre</label>
             <input name="caseta_padre" type="text" id="caseta-padre"
-                value="<?= htmlspecialchars($fila["caseta_padre"]) ?>" placeholder="Código de caseta padre" aria-label="Caseta padre">
+                value="<?= htmlspecialchars($fila["caseta_padre"]) ?>" placeholder="Código de caseta padre"
+                aria-label="Caseta padre">
         </div>
         <div id="div-botones">
             <input id="actualizar" type="submit" value="Actualizar" aria-label="Actualizar datos del puesto">
         </div>
     </form>
 
-    <p class="note" style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
+    <p class="note" style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span>
+        son
         obligatorios</p>
 
     <div id="zoomed-image-container" class="zoomed-container" role="dialog" aria-hidden="true">
