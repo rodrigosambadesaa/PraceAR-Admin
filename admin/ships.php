@@ -21,7 +21,8 @@
 
     <style>
         figcaption {
-            color: #333; /* A dark gray color for better readability */
+            color: #333;
+            /* A dark gray color for better readability */
         }
 
         figure[role="button"] {
@@ -29,8 +30,6 @@
             /* Sin bordes */
             border: none;
         }
-
-
     </style>
 </head>
 
@@ -78,14 +77,17 @@
             $murallon_indice = $murallon['indice'];
             ?>
             <figure class="zoom" tabindex="0" role="button" aria-label="Ampliar imagen de Murallón <?= $murallon_indice ?>">
-                <img loading="lazy" src='./img/murallon<?= $murallon_indice ?>.jpg' alt='Imagen de Murallón <?= $murallon_indice ?>'>
-                <figcaption style="color: #333;">Murallón <?= $murallon_indice ?> / <?= implode("-", $murallon_range) ?></figcaption>
+                <img loading="lazy" src='./img/murallon<?= $murallon_indice ?>.jpg'
+                    alt='Imagen de Murallón <?= $murallon_indice ?>'>
+                <figcaption style="color: #333;">Murallón <?= $murallon_indice ?> / <?= implode("-", $murallon_range) ?>
+                </figcaption>
             </figure>
         <?php endforeach; ?>
     </main>
 
     <!-- Contenedor para mostrar la imagen ampliada y el texto -->
-    <div id="zoomed-container" class="zoomed-container" role="dialog" aria-hidden="true" aria-labelledby="zoomed-caption">
+    <div id="zoomed-container" class="zoomed-container" role="dialog" aria-hidden="true"
+        aria-labelledby="zoomed-caption">
         <img id="zoomed-image" src="" alt="">
         <figcaption id="zoomed-caption"></figcaption>
     </div>
