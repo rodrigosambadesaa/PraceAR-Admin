@@ -111,29 +111,27 @@ $result = '';
 $passwords = [];
 $mostrar_boton = false;
 $length = 16;
-$quantity = 1;
+$quantity = 1; // Fijar la cantidad de contraseñas a 1
 
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     if (isset($_POST['csrf']) && hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
-        if (isset($_POST['length']) && isset($_POST['quantity'])) {
+        if (isset($_POST['length'])) { // Eliminar referencia a 'quantity'
             $length = limpiar_input($_POST['length']);
             $length_range = limpiar_input($_POST['length_range']);
-            $quantity = limpiar_input($_POST['quantity']);
 
-            if (!is_numeric($length) || !is_numeric($quantity) || !ctype_digit($length) || !ctype_digit($quantity)) {
-                $result = '<span style="color: red; text-align: center;">La longitud y la cantidad deben ser números naturales válidos.</span>';
+            if (!is_numeric($length) || !ctype_digit($length)) {
+                $result = '<span style="color: red; text-align: center;">La longitud debe ser un número natural válido.</span>';
             } else {
                 $length = (int) $length;
                 $length_range = (int) $length_range;
-                $quantity = (int) $quantity;
 
-                if ($length < 16 || $length > 500 || $quantity < 1 || $quantity > 10 || $length_range < 16 || $length_range > 500) {
-                    $result = '<span style="color: red; text-align: center;">La longitud debe estar entre 16 y 500 caracteres y la cantidad entre 1 y 10.</span>';
+                if ($length < 16 || $length > 500 || $length_range < 16 || $length_range > 500) {
+                    $result = '<span style="color: red; text-align: center;">La longitud debe estar entre 16 y 500 caracteres.</span>';
                 } elseif ($length !== $length_range) {
                     $result = '<span style="color: red; text-align: center;">No se permite modificar el código Javascript que sincroniza los inputs.</span>';
                 } else {
                     try {
-                        for ($i = 0; $i < $quantity; $i++) {
+                        for ($i = 0; $i < $quantity; $i++) { // $quantity siempre será 1
                             $passwords[] = generate_password($length);
                         }
 
@@ -222,11 +220,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
         </output>
 
-        <label for="quantity-number">Cantidad de Contraseñas: <span class="required" aria-hidden="true">*</span></label>
-        <input required type="number" id="quantity-number" name="quantity" min="1" max="10"
-            value="<?= htmlspecialchars($quantity, ENT_QUOTES, 'UTF-8') ?>" aria-describedby="quantity-help">
-        <p id="quantity-help" class="sr-only">Introduce un número entre 1 y 10.</p>
-
         <input type="submit" value="Generar Contraseñas" aria-label="Generar contraseñas">
     </form>
 
@@ -282,21 +275,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 event.preventDefault();
                 alert('La longitud de la contraseña debe estar entre 16 y 500 caracteres.');
                 return;
-            }
-        });
-
-        // Si la longitud seleccionada es mayor o igual a 824, limitar el input type="number" que corresponde al número de contraseñas a 2
-        const lengthNumberInput = document.getElementById('length-number');
-        const quantityNumberInput = document.getElementById('quantity-number');
-
-        lengthNumberInput.addEventListener('input', function () {
-            if (parseInt(lengthNumberInput.value) >= 824) {
-                quantityNumberInput.max = 2;
-                if (parseInt(quantityNumberInput.value) > 2) {
-                    quantityNumberInput.value = 2;
-                }
-            } else {
-                quantityNumberInput.max = 10;
             }
         });
     </script>

@@ -3,39 +3,21 @@ import { limpiarInput } from '../../../../js/helpers/clean_input.js';
 const formulario = document.getElementById('formulario-generacion-contrasena');
 
 formulario.addEventListener('submit', function (e) {
-    e.preventDefault();
 
     const longitud = limpiarInput(document.getElementById('length-number').value);
-    const cantidad = limpiarInput(document.getElementById('quantity-number').value);
 
     // Validar que la longitud sea un número natural entre 16 y 500
     if (isNaN(longitud) || longitud < 16 || longitud > 500) {
         alert('La longitud debe ser un número natural entre 16 y 500');
+        e.preventDefault(); // Previene el envío del formulario
         return;
     }
-
-    // Validar que la cantidad sea un número natural entre 1 y 10
-    if (isNaN(cantidad) || cantidad < 1 || cantidad > 10) {
-        alert('La cantidad debe ser un número natural entre 1 y 10');
-        return;
-    }
-
-    // Si no hay errores, se permite el envío del formulario
-    formulario.submit();
 });
 
 const lengthNumberInput = document.getElementById('length-number');
-const quantityNumberInput = document.getElementById('quantity-number');
 
 lengthNumberInput.addEventListener('input', function () {
-    if (parseInt(lengthNumberInput.value) >= 500) {
-        quantityNumberInput.max = 2;
-        if (parseInt(quantityNumberInput.value) > 2) {
-            quantityNumberInput.value = 2;
-        }
-    } else {
-        quantityNumberInput.max = 10;
-    }
+    // No se necesita lógica para la cantidad de contraseñas
 });
 
 function syncInputs(inputType) {
