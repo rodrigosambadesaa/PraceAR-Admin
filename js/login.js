@@ -90,7 +90,7 @@ document.getElementById('formulario').addEventListener('submit', function (e) {
     // Validar que la contraseña no contenga secuencias alfabéticas, de caracteres especiales o numéricas inseguras
     if (tieneSecuenciasAlfabeticasInseguras(password) || tieneSecuenciasDeCaracteresEspecialesInseguras(password) || tieneSecuenciasNumericasInseguras(password)) {
         e.preventDefault();
-        alert('La contraseña no puede contener secuencias alfabéticas, de caracteres especiales o numéricas inseguras como "abc", "123" o "!!!".');
+        alert('La contraseña no puede contener secuencias alfabéticas, de caracteres especiales o numéricas inseguras como "abc", "qwerty", "qaz", "123", "147", "159"');
         return;
     }
 });
