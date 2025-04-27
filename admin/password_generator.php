@@ -238,12 +238,27 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 }
                 const successMessage = document.createElement('span');
                 successMessage.id = 'success-message';
-                successMessage.textContent = 'Contraseña copiada al portapapeles.';
+                successMessage.textContent = 'Contraseña copiada al portapapeles. Se borrará automáticamente en 5 minutos.';
                 successMessage.style.color = 'green';
                 successMessage.style.display = 'block';
                 successMessage.style.textAlign = 'center';
                 successMessage.style.marginTop = '1rem';
                 document.getElementById(passwordId).insertAdjacentElement('afterend', successMessage);
+
+                // Set a timer to clear the password after 5 minutes
+                setTimeout(() => {
+                    const passwordElement = document.getElementById(passwordId);
+                    if (passwordElement) {
+                        passwordElement.innerText = 'Contraseña borrada por seguridad.';
+                        const clearMessage = document.createElement('span');
+                        clearMessage.textContent = 'La contraseña ha sido borrada automáticamente.';
+                        clearMessage.style.color = 'red';
+                        clearMessage.style.display = 'block';
+                        clearMessage.style.textAlign = 'center';
+                        clearMessage.style.marginTop = '1rem';
+                        passwordElement.insertAdjacentElement('afterend', clearMessage);
+                    }
+                }, 5 * 60 * 1000); // 5 minutes in milliseconds
             }).catch(err => {
                 console.error('Fallo al copiar la contraseña al portapapeles:', err);
             });

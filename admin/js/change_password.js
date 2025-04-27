@@ -81,7 +81,7 @@ formulario.addEventListener('submit', function handleSubmit(e) {
     // Validar que la nueva contraseña no contenga secuencias alfabéticas, de caracteres especiales o numéricas inseguras
     if (tieneSecuenciasAlfabeticasInseguras(newPassword) || tieneSecuenciasDeCaracteresEspecialesInseguras(newPassword) || tieneSecuenciasNumericasInseguras(newPassword)) {
         e.preventDefault();
-        alert('La nueva contraseña no puede contener secuencias alfabéticas, de caracteres especiales o numéricas inseguras como "abc", "123" o "!!!".');
+        alert('La nueva contraseña no puede contener secuencias alfabéticas, de caracteres especiales o numéricas inseguras como "abc", "qwerty", "qaz", "123", "147", "159"');
         return;
     }
 });
