@@ -220,7 +220,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
         </output>
 
-        <input type="submit" value="Generar Contraseñas" aria-label="Generar contraseñas">
+        <input type="submit" value="Generar Contraseña" aria-label="Generar contraseña">
     </form>
 
     <div style="text-align: center; color: red; margin-top: .125rem;">
@@ -291,6 +291,84 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 alert('La longitud de la contraseña debe estar entre 16 y 500 caracteres.');
                 return;
             }
+        });
+
+        function calcularResistencia(longitud) {
+            let resistencia = '';
+            if (longitud >= 16 && longitud <= 20) {
+                resistencia = 'Resistente a atacantes individuales.';
+            } else if (longitud > 20 && longitud <= 30) {
+                resistencia = 'Resistente a grupos pequeños de atacantes.';
+            } else if (longitud > 30 && longitud <= 50) {
+                resistencia = 'Resistente a empresas con recursos moderados.';
+            } else if (longitud > 50 && longitud <= 70) {
+                resistencia = 'Resistente a grandes empresas.';
+            } else if (longitud > 70) {
+                resistencia = 'Resistente a gobiernos y organizaciones con recursos avanzados.';
+            } else {
+                resistencia = 'Longitud insuficiente para garantizar resistencia.';
+            }
+            return resistencia;
+        }
+
+        function actualizarResistencia() {
+            const longitud = parseInt(document.getElementById('length-number').value);
+            // Creamos el elemento de salida para la resistencia y lo añadimos debajo del output de longitud con texto de color adecuado
+            let resistenciaOutput = document.getElementById('resistencia-output') || document.createElement('div');
+            resistenciaOutput.id = 'resistencia-output';
+            resistenciaOutput.style.color = 'blue';
+            resistenciaOutput.style.textAlign = 'center';
+            resistenciaOutput.style.marginTop = '0.75rem';
+            resistenciaOutput.style.fontSize = '1.2rem';
+            resistenciaOutput.style.fontWeight = 'bold';
+            resistenciaOutput.style.display = 'block';
+            resistenciaOutput.style.marginBottom = '1rem';
+            resistenciaOutput.style.transition = 'all 0.3s ease-in-out';
+
+            if (!resistenciaOutput.parentNode) {
+                document.getElementById('length-output').insertAdjacentElement('afterend', resistenciaOutput);
+            }
+
+            if (!isNaN(longitud)) {
+                resistenciaOutput.textContent = calcularResistencia(longitud);
+            } else {
+                resistenciaOutput.textContent = 'Introduce una longitud válida.';
+            }
+        }
+
+        document.getElementById('length-number').addEventListener('input', actualizarResistencia);
+        document.getElementById('length-range').addEventListener('input', actualizarResistencia);
+
+        // Mostrar la resistencia al cargar la página con el valor por defecto
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarResistencia();
+
+            // Asegurarse de que la resistencia se muestre tras el envío del formulario
+            const formulario = document.getElementById('formulario-generacion-contrasena');
+            formulario.addEventListener('submit', function (event) {
+                setTimeout(() => {
+                    actualizarResistencia();
+
+                    // Mostrar la resistencia debajo del texto de la contraseña generada
+                    const contrasenasGeneradas = document.getElementById('contrasenas-generadas');
+                    if (contrasenasGeneradas) {
+                        const longitud = parseInt(document.getElementById('length-number').value);
+                        let resistenciaOutput = document.getElementById('resistencia-output') || document.createElement('div');
+                        resistenciaOutput.id = 'resistencia-output';
+                        resistenciaOutput.style.color = 'blue';
+                        resistenciaOutput.style.textAlign = 'center';
+                        resistenciaOutput.style.marginTop = '0.75rem';
+                        resistenciaOutput.style.fontSize = '1.2rem';
+                        resistenciaOutput.style.fontWeight = 'bold';
+                        resistenciaOutput.style.display = 'block';
+                        resistenciaOutput.style.marginBottom = '1rem';
+                        resistenciaOutput.style.transition = 'all 0.3s ease-in-out';
+
+                        resistenciaOutput.textContent = calcularResistencia(longitud);
+                        contrasenasGeneradas.insertAdjacentElement('afterend', resistenciaOutput);
+                    }
+                }, 0);
+            });
         });
     </script>
 </body>
