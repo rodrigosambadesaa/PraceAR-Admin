@@ -29,6 +29,13 @@ require_once(HELPERS . 'get_language.php');
             padding: 10px;
         }
 
+        #cabecera-menu-navegacion {
+            height: 175px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
         @media screen and (max-width: 600px) {
             #cabecera_pagina_edicion {
                 font-size: 1.5rem;
@@ -50,7 +57,7 @@ require_once(HELPERS . 'get_language.php');
         require_once(COMPONENT_ADMIN . "languages.php");
         ?>
     </header>
-    <header style="height: 175px; display: flex; justify-content: space-around; align-items: center;">
+    <header id="cabecera-menu-navegacion">
         <?php
         require_once(COMPONENT_ADMIN . "main_menu.php");
         ?>
