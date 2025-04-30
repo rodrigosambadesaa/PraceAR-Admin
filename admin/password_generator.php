@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                             $result .= '<button onclick="copyToClipboard(\'' . $passwordId . '\')">Copiar</button>';
                             $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
                             $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de números: ' . contar_digitos($password) . '</div>';
+                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de dígitos: ' . contar_digitos($password) . '</div>';
                             $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
                             $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
                             $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Entropía: ' . entropia($password) . '</div>';
