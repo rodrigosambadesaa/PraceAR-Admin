@@ -100,6 +100,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['login'] = 'logueado';
                     $_SESSION['nombre_usuario'] = $login;
                     $_SESSION['csrf'] = bin2hex(random_bytes(32));
+
+                    // Insertamos el inicio de sesión en la tabla accesos
+                    $insert_sql = "INSERT INTO accesos (id, id_usuario, ip, user_agent, fecha, tipo) VALUES (NULL, ?, ?, ?, ?, ?)";
+                    $insert_stmt = $conexion->prepare($insert_sql);
+                    $ip_address = $_SERVER['REMOTE_ADDR'];
+                    $user_agent = $_SERVER['HTTP_USER_AGENT'];
+                    $date = date('Y-m-d H:i:s');
+                    $tipo = 'acceso';
+                    $insert_stmt->bind_param('sssss', $usuario['id'], $ip_address, $user_agent, $date, $tipo);
+                    $insert_stmt->execute();
                     header("Location: $protocolo/$servidor/$subdominio");
                     exit;
                 }
@@ -122,6 +132,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['nombre_usuario'] = $login;
                 $_SESSION['csrf'] = bin2hex(random_bytes(32));
 
+                // Insertamos el inicio de sesión en la tabla accesos
+                $insert_sql = "INSERT INTO accesos (id, id_usuario, ip, user_agent, fecha, tipo) VALUES (NULL, ?, ?, ?, ?, ?)";
+                $insert_stmt = $conexion->prepare($insert_sql);
+                // Obtener la dirección IP del usuario
+                $ip_address = $_SERVER['REMOTE_ADDR'];
+                $user_agent = $_SERVER['HTTP_USER_AGENT'];
+                $date = date('Y-m-d H:i:s');
+                $tipo = 'acceso';
+                $insert_stmt->bind_param('sssss', $usuario['id'], $ip_address, $user_agent, $date, $tipo);
+                $insert_stmt->execute();
                 header("Location: $protocolo/$servidor/$subdominio");
                 exit;
             } else {
