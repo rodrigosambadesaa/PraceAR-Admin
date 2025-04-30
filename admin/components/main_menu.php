@@ -103,10 +103,9 @@
             </div>
         </div>
 
-        <a href="./admin/logout_session.php" class="enlace_cierre_sesion" style="display: flex; align-items: center;"
-            title="Cerrar sesión" aria-label="Cerrar sesión">
-            <img id="imagen-boton-cierre-sesion" src="./img/logout_icon.png" alt="Icono de cierre de sesión">
-            <span class="texto-azul" style="margin-left: 5px;" aria-hidden="true"></span>
+        <a href="./?page=logout&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link enlace_cierre_sesion"
+            style="text-align: center; margin-right: 10px;" aria-label="Cerrar sesión">
+            <img src="./img/logout_icon.png" alt="Cerrar sesión" title="Cerrar sesión">
         </a>
     </nav>
 </body>

@@ -49,6 +49,11 @@ if (isset($_SESSION['login'])) {
             require_once(ADMIN . 'edit_translations.php');
             break;
 
+        case 'logout':
+            // Incluir el archivo de cierre de sesión y redirigir al usuario a la página de inicio
+            require_once(ADMIN . 'logout_session.php');
+            break;
+
         default:
             // Si no se encuentra la página, redirigir a la página de inicio
             require_once(ADMIN . 'index.php');
