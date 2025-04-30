@@ -46,21 +46,24 @@ require_once(HELPERS . 'get_language.php');
 </head>
 
 <body class="container">
-    <header style="display:flex; justify-content: space-around">
-        <h1 id="cabecera_pagina_edicion" tabindex="0">Admin: PraceAR
-            <strong style="font-size: 0.95rem">Idioma actual:
-                <img style="box-shadow: 0 0 2px 1px black;" width="15" height="15"
-                    src="<?= FLAG_IMAGES_URL . (get_language()) . ".png" ?>" alt="<?= get_language() ?>" tabindex="0">
-            </strong>
-        </h1>
-        <?php
-        require_once(COMPONENT_ADMIN . "languages.php");
-        ?>
-    </header>
-    <header id="cabecera-menu-navegacion">
-        <?php
-        require_once(COMPONENT_ADMIN . "main_menu.php");
-        ?>
+    <header style="display:flex; flex-direction: column; align-items: center; gap: 20px;">
+        <div style="display:flex; justify-content: space-around; width: 100%;">
+            <h1 id="cabecera_pagina_edicion" tabindex="0">Admin: PraceAR
+                <strong style="font-size: 0.95rem">Idioma actual:
+                    <img style="box-shadow: 0 0 2px 1px black;" width="15" height="15"
+                        src="<?= FLAG_IMAGES_URL . (get_language()) . ".png" ?>" alt="<?= get_language() ?>"
+                        tabindex="0">
+                </strong>
+            </h1>
+            <?php
+            require_once(COMPONENT_ADMIN . "languages.php");
+            ?>
+        </div>
+        <nav id="cabecera-menu-navegacion" style="width: 100%;">
+            <?php
+            require_once(COMPONENT_ADMIN . "main_menu.php");
+            ?>
+        </nav>
     </header>
 </body>
 
