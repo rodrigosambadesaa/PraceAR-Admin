@@ -50,7 +50,7 @@ require_once(HELPERS . 'get_language.php');
         require_once(COMPONENT_ADMIN . "languages.php");
         ?>
     </header>
-    <header>
+    <header style="height: 175px; display: flex; justify-content: space-around; align-items: center;">
         <?php
         require_once(COMPONENT_ADMIN . "main_menu.php");
         ?>
