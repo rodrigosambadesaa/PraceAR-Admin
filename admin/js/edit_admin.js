@@ -66,6 +66,12 @@ formulario.addEventListener('submit', function (e) {
     // Campos opcionales
     let nombre = document.getElementById('nombre').value;
     // Si existe el campo eliminar_imagen, se recoge su valor
+    /**
+     * Stores the value of the element with the ID 'eliminar-imagen' if it exists, 
+     * otherwise assigns an empty string.
+     * 
+     * @type {string}
+     */
     let eliminar_imagen = document.getElementById('eliminar-imagen') ? document.getElementById('eliminar-imagen').value : '';
     let contacto = document.getElementById('contacto').value;
     let telefono = document.getElementById('telefono').value;

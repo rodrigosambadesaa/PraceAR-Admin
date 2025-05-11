@@ -1,4 +1,10 @@
 document.getElementById("formulario-busqueda").addEventListener("submit", function (event) {
+    /**
+     * Retrieves the trimmed value of the input field with the ID "input-busqueda".
+     * This value is typically used for search or filtering purposes.
+     *
+     * @constant {string} busqueda - The trimmed text input value from the "input-busqueda" field.
+     */
     const busqueda = document.getElementById("input-busqueda").value.trim();
 
     // Si el campo no está vacío, verifica que no contiene caracteres peligrosos

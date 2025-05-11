@@ -20,6 +20,17 @@ lengthNumberInput.addEventListener('input', function () {
     // No se necesita lógica para la cantidad de contraseñas
 });
 
+/**
+ * Synchronizes the values of a number input, a range input, and updates the displayed output.
+ *
+ * @param {string} inputType - The type of input that triggered the synchronization. 
+ *                             Accepts either 'number' or 'range'.
+ *
+ * Elements involved:
+ * - An input element with the ID 'length-number' (number input).
+ * - An input element with the ID 'length-range' (range input).
+ * - An element with the ID 'length-output' (output display).
+ */
 function syncInputs(inputType) {
     const numberInput = document.getElementById('length-number');
     const rangeInput = document.getElementById('length-range');
