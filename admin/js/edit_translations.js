@@ -7,6 +7,12 @@ let errorMessages = '';
 
 formulario.addEventListener('submit', function handleSubmit(e) {
 
+    /**
+     * Cleans the value of the 'descripcion' textarea element by applying the 
+     * `limpiarTextarea` function to its content.
+     *
+     * @type {string} descripcion - The cleaned value of the 'descripcion' textarea.
+     */
     let descripcion = limpiarTextarea(document.getElementById('descripcion').value);
 
     // La descripción, si se ha introducido, debe tener un máximo de 450 caracteres

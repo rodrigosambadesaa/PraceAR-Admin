@@ -1,5 +1,15 @@
 import API_KEY from './api_key.js';
 
+/**
+ * Verifies if a photo is malicious by sending it to the VirusTotal API for scanning.
+ *
+ * @async
+ * @function verifyMaliciousPhoto
+ * @param {File} photo - The photo file to be checked for malicious content.
+ * @returns {Promise<boolean>} A promise that resolves to `true` if the photo is detected as malicious, 
+ *                             or `false` otherwise.
+ * @throws {Error} If there is an issue with the API request or response processing.
+ */
 async function verifyMaliciousPhoto(photo) {
     // Verificar mediante llamada a la API de VirusTotal si la foto es maliciosa
 

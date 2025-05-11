@@ -5,6 +5,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const formulario = document.getElementById('formulario-cambio-contrasena');
 
         // Eliminamos los mensajes de error anteriores
+        /**
+         * A NodeList containing all <span> elements with a style attribute 
+         * set to "color: red;" in the document.
+         * 
+         * @type {NodeListOf<HTMLSpanElement>}
+         */
         const mensajesError = document.querySelectorAll('span[style="color: red;"]');
         mensajesError.forEach(mensaje => mensaje.remove());
 
