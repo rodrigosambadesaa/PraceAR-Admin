@@ -52,6 +52,11 @@ formulario.addEventListener('submit', function handleSubmit(e) {
 
     // Validar que la nueva contraseña tenga una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.
     let numeroCaracteresEspeciales = 0, numeroMayusculas = 0, numeroMinusculas = 0, numeroNumeros = 0;
+    /**
+     * Regular expression to match special characters.
+     * Matches any of the following characters: !@#$%^&*()_+-=[]{};':"\\|,.<>/?
+     * Useful for validating the presence of special characters in a string.
+     */
     const regexCaracteresEspeciales = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/, regexMayusculas = /[A-Z]/, regexMinusculas = /[a-z]/, regexNumeros = /[0-9]/;
 
     for (let i = 0; i < newPassword.length; i++) {
