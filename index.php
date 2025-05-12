@@ -51,7 +51,7 @@ if (isset($_SESSION['login'])) {
 
         case 'logout':
             // Incluir el archivo de cierre de sesión y redirigir al usuario a la página de inicio
-            require_once(ADMIN . 'logout_session.php');
+            require_once(ADMIN . 'logout.php');
             break;
 
         default:
