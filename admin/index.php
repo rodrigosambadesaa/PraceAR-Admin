@@ -45,12 +45,19 @@
     $start_from = ($current_page - 1) * $results_per_page;
     $caseta = '';
 
+    // Manejo de búsqueda por caseta
     if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['caseta'])) {
         $caseta = limpiar_input($_POST['caseta']);
-        // Redirigir a la misma página con GET para mantener la búsqueda
-        header("Location: ?page=1&caseta=" . urlencode($caseta) . "&lang=" . urlencode(get_language()));
+        // Redirigir usando GET para mantener la búsqueda en la URL
+        $params = [
+            'page' => 1,
+            'caseta' => $caseta,
+            'lang' => get_language()
+        ];
+        header("Location: ?" . http_build_query($params));
         exit;
     } elseif (isset($_GET['caseta'])) {
+        // Si hay parámetro GET 'caseta', lo limpiamos
         $caseta = limpiar_input($_GET['caseta']);
     }
 
@@ -111,7 +118,7 @@
                         <form id="formulario-busqueda" action="?page=1" method="POST">
                             <input value="<?= htmlspecialchars($caseta) ?>" type="text" id="input-busqueda"
                                 placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta"
-                                autofocus>
+                                <?php if (!$busqueda_hecha) echo 'autofocus'; ?>>
                             <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(get_language()) ?>">
                             <input type="submit" value="Buscar">
                             <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">
