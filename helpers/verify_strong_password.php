@@ -24,8 +24,7 @@ function es_contrasenha_fuerte($contrasenha)
  */
 function es_contrasenha_antigua($contrasenha_antigua_a_verificar, $nombre_usuario) {
     require_once('./constants.php');
-    require_once(CONNECTION);
-    
+
     $pepper_config = include 'pepper2.php';  // Incluimos la configuración del pepper.
     
     $today = date('Y-m-d');
@@ -66,27 +65,54 @@ function es_contrasenha_antigua($contrasenha_antigua_a_verificar, $nombre_usuari
         throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
     }
     $sentencia_sql = "SELECT password FROM old_passwords WHERE id_usuario = ?";
-    // Inicializar la variable de conexión detectando si estamos en un servidor local o real
-    $servidor_base_de_datos = $_SERVER['SERVER_NAME'] == 'localhost' ? 'localhost' : 'db5016239277.hosting-data.io';
-    $usuario_base_de_datos = $_SERVER['SERVER_NAME'] == 'localhost' ? 'root' : 'dbu2777657';
-    $clave_acceso = $_SERVER['SERVER_NAME'] == 'localhost' ? '' : 'apdtmMdp27042304()';
-    $bd_a_usar = 'dbs13217995';
-    $conexion = new mysqli($servidor_base_de_datos, $usuario_base_de_datos, $clave_acceso, $bd_a_usar);
-    // Verificar si la conexión fue exitosa
-    if ($conexion->connect_error) {
-        die("Error de conexión: " . $conexion->connect_error);
+
+    global $servidor_bd, $usuario, $clave, $bd;
+
+    $missingConfiguration = [];
+
+    if (!is_string($servidor_bd) || $servidor_bd === '') {
+        $missingConfiguration[] = 'PRACEAR_DB_HOST';
     }
 
-    $stmt = $conexion->prepare($sentencia_sql);
-    $stmt->bind_param("s", $nombre_usuario);
+    if (!is_string($usuario) || $usuario === '') {
+        $missingConfiguration[] = 'PRACEAR_DB_USER';
+    }
 
-    $stmt->execute();
-    $resultado = $stmt->get_result();
+    if (!is_string($bd) || $bd === '') {
+        $missingConfiguration[] = 'PRACEAR_DB_NAME';
+    }
 
-    $filas = $resultado->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
+    if (!empty($missingConfiguration)) {
+        error_log('Faltan variables de configuración para verificar contraseñas antiguas: ' . implode(', ', $missingConfiguration));
+        throw new RuntimeException('No se pudo verificar el historial de contraseñas. Contacte con la persona administradora.');
+    }
 
-    $conexion->close();
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+    $conexion = null;
+    $filas = [];
+
+    try {
+        $password = $clave === null ? '' : (string) $clave;
+
+        $conexion = new mysqli($servidor_bd, $usuario, $password, $bd);
+        $conexion->set_charset('utf8mb4');
+
+        $stmt = $conexion->prepare($sentencia_sql);
+        $stmt->bind_param("s", $nombre_usuario);
+
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $filas = $resultado->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+    } catch (mysqli_sql_exception $exception) {
+        error_log('Error al consultar contraseñas antiguas: ' . $exception->getMessage());
+        throw new RuntimeException('No se pudo verificar el historial de contraseñas. Contacte con la persona administradora.');
+    } finally {
+        if ($conexion instanceof mysqli) {
+            $conexion->close();
+        }
+    }
 
     if ($filas) {
         foreach ($filas as $fila) {

@@ -11,6 +11,17 @@ Clonar el repositorio en una carpeta llamada appventurers
 - Lo primero que debe hacer es importar la base de datos, crear un usuario con su contraseña encriptada en Argon2ID, configurar los archivos que hacen referencia a la API Key de VirusTotal e iniciar sesión.
 - Tras iniciar sesión se le redigirirá a la tabla de administración donde podrá buscar puestos, cambiar de idioma, editar un puesto o una traducción del mismo, cambiar su contraseña o ver un mapa de las ameas, naves y murallones
 
+### Verificación de imágenes con VirusTotal
+
+Para evitar que se suban archivos maliciosos se integra una comprobación automática con la API de VirusTotal:
+
+1. **Configurar la clave**: cree un archivo `virustotal_api_key.php` en la raíz del proyecto con la constante `VIRUSTOTAL_API_KEY` que contenga su clave de API.
+2. **Flujo de validación**: cuando el formulario de edición sube una imagen, el frontend llama a `helpers/verify_malicious_photo.php`, que reenvía el archivo temporal a VirusTotal usando `curl_file_create`, manteniendo activos `CURLOPT_SSL_VERIFYPEER` y `CURLOPT_SSL_VERIFYHOST` y aplicando timeouts razonables.
+3. **Respuesta homogénea**: el endpoint devuelve un JSON con los campos `success`, `is_malicious` y `message`. La lógica de `admin/js/helpers/verify_malicious_photo.js` espera exactamente esta estructura y muestra mensajes claros ante fallos de conectividad o detecciones.
+4. **Validación en el servidor**: además del filtro en el navegador, `helpers/update_stalls.php` invoca la misma comprobación antes de aceptar definitivamente la imagen.
+
+Si no se define la clave de la API o el servicio devuelve un error, el usuario recibirá un mensaje explicativo y la imagen no se subirá.
+
 
 ### Página de inicio de sesión
 ![Captura de pantalla (7)](https://github.com/user-attachments/assets/f28819db-32a8-478c-845b-8734242db901)
