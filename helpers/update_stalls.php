@@ -8,11 +8,39 @@ require_once HELPERS . "verify_malicious_photo.php";
 $mensaje = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    global $conexion;
     if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
         throw new Exception("Token CSRF inválido.");
     }
 
-    extract($_POST);
+    $stall_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+    if ($stall_id === null || $stall_id === false) {
+        throw new Exception("Identificador de puesto no válido.");
+    }
+
+    $caseta = $_POST['caseta'] ?? '';
+    $nombre = $_POST['nombre'] ?? '';
+    $contacto = $_POST['contacto'] ?? '';
+    $telefono = $_POST['telefono'] ?? '';
+    $tipo_unity = $_POST['tipo_unity'] ?? '';
+    $caseta_padre = $_POST['caseta_padre'] ?? '';
+    $eliminar_imagen = $_POST['eliminar_imagen'] ?? null;
+
+    $id_nave = filter_input(INPUT_POST, 'id_nave', FILTER_VALIDATE_INT);
+    if ($id_nave === null || $id_nave === false) {
+        throw new Exception("Debe seleccionar una nave válida.");
+    }
+
+    $activo_filtrado = filter_input(INPUT_POST, 'activo', FILTER_SANITIZE_NUMBER_INT);
+    if ($activo_filtrado !== null && $activo_filtrado !== false) {
+        $activo_filtrado = intval($activo_filtrado);
+        if ($activo_filtrado !== 0 && $activo_filtrado !== 1) {
+            throw new Exception("El valor de activo debe ser 0 o 1.");
+        }
+        $activo = 1;
+    } else {
+        $activo = 0;
+    }
 
     // Comprobar si hay una imagen para subir en el formulario
     if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
@@ -25,10 +53,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Verificar si la imagen es maliciosa
-        $maliciosa = check_virus_total($_FILES['imagen']['tmp_name']);
+        $scanResult = check_virus_total($_FILES['imagen']['tmp_name']);
 
-        if ($maliciosa) {
-            throw new Exception("La imagen subida es maliciosa. Por favor, desinféctela y suba una imagen válida. Puede ser necesario desinfectar el dispositivo desde el que se capturó o el dispositivo desde el que se subió la imagen.");
+        if (!$scanResult['success']) {
+            throw new Exception($scanResult['message']);
+        }
+
+        if ($scanResult['is_malicious']) {
+            throw new Exception($scanResult['message'] ?: "La imagen subida es maliciosa. Por favor, desinféctela y suba una imagen válida. Puede ser necesario desinfectar el dispositivo desde el que se capturó o el dispositivo desde el que se subió la imagen.");
         }
 
         $is_imagen = save_image($_FILES['imagen'], $caseta);
@@ -50,10 +82,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $activo = isset($activo) ? 1 : 0;
-
     // El valor de activo solo puede ser un número natural que sea 0 o 1
-    if (!is_int($activo) || ($activo != 0 && $activo != 1)) {
+    if (!in_array($activo, [0, 1], true)) {
         throw new Exception("El valor de activo debe ser 0 o 1.");
     }
 
@@ -82,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $telefono = limpiar_input($telefono);
+    $tipo_unity = limpiar_input($tipo_unity);
 
     // El teléfono debe ser un string
     if (!is_string($telefono)) {
@@ -93,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $caseta_padre = limpiar_input($caseta_padre);
-    $update_caseta_padre = $caseta_padre === '' ? "caseta_padre = NULL" : "caseta_padre = '" . $caseta_padre . "'";
+    $caseta_padre_param = $caseta_padre === '' ? null : $caseta_padre;
 
     // La caseta padre, si se ha especificado, debe ser un string de exactamente cinco caracteres
     if (!empty($caseta_padre) && (!is_string($caseta_padre) || strlen($caseta_padre) !== 5)) {
@@ -112,23 +143,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $sql_actualizacion = "UPDATE puestos SET
-                    activo = $activo,
-                    nombre = '$nombre',
-                    contacto = '$contacto',
-                    telefono = '$telefono',
-                    id_nave = $id_nave,
-                    tipo_unity = '$tipo_unity',
-                    $update_caseta_padre
-                    WHERE id =" . $_GET['id'];
+                    activo = ?,
+                    nombre = ?,
+                    contacto = ?,
+                    telefono = ?,
+                    id_nave = ?,
+                    tipo_unity = ?,
+                    caseta_padre = ?
+                    WHERE id = ?";
 
-    // echo $sql_actualizacion;
+    $stmt = $conexion->prepare($sql_actualizacion);
 
-    if ($conexion->query($sql_actualizacion) === TRUE) {
+    if (!$stmt) {
+        throw new Exception("No se pudo preparar la actualización del puesto.");
+    }
+
+    if (!$stmt->bind_param(
+        "isssissi",
+        $activo,
+        $nombre,
+        $contacto,
+        $telefono,
+        $id_nave,
+        $tipo_unity,
+        $caseta_padre_param,
+        $stall_id
+    )) {
+        throw new Exception("No se pudieron vincular los datos del puesto.");
+    }
+
+    if ($stmt->execute()) {
         $mensaje = "<span id='mensaje_correcto'>Puesto actualizado correctamente</span>";
+        $stmt->close();
         $conexion->close();
 
-        header("Location: $protocolo/$servidor/$subdominio/?lang=" . get_language() . "#row_" . $_GET['id']);
+        header("Location: $protocolo/$servidor/$subdominio/?lang=" . get_language() . "#row_" . $stall_id);
     } else {
+        $stmt->close();
         throw new Exception("Error al actualizar el puesto.");
     }
 

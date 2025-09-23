@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/config/env_loader.php';
+
 define('DIRNAME', dirname(__FILE__));
 define('ADMIN', DIRNAME . DIRECTORY_SEPARATOR . 'admin' . DIRECTORY_SEPARATOR);
 define('ASSETS', DIRNAME . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
@@ -79,9 +81,17 @@ $subdominio = "appventurers";
 
 
 // Datos de conexión a la BBDD
+$envVariables = load_project_env(DIRNAME);
 
-$servidor_bd = $_SERVER['SERVER_NAME'] == 'localhost' ? 'localhost' : 'db5016239277.hosting-data.io';
-$usuario = $_SERVER['SERVER_NAME'] == 'localhost' ? 'root' : 'dbu2777657';
-$clave = $_SERVER['SERVER_NAME'] == 'localhost' ? '' : 'apdtmMdp27042304()';
-$bd = 'dbs13217995';
+$servidor_bd = get_env_value('PRACEAR_DB_HOST', $envVariables);
+$usuario = get_env_value('PRACEAR_DB_USER', $envVariables);
+$clave = get_env_value('PRACEAR_DB_PASSWORD', $envVariables);
+$bd = get_env_value('PRACEAR_DB_NAME', $envVariables);
+
+define('DB_CONFIG', [
+    'host' => $servidor_bd,
+    'user' => $usuario,
+    'password' => $clave,
+    'database' => $bd,
+]);
 
