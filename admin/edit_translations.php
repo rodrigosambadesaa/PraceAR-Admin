@@ -80,6 +80,8 @@
 
     $puesto_encontrado = true;
 
+    $captcha_question = captcha_get_question('edit_translations_form');
+
     ?>
 
     <h2 style="text-align: center;">Traducción del puesto<span style="color: #1e7dbd;">
@@ -120,6 +122,13 @@
             caracteres.</span>
 
         <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars($data['id'] ?? "") ?>">
+        <label for="captcha" class="required">Verificación humana <span style="color: red;">*</span></label>
+        <span id="captcha-question" style="display: block; margin-bottom: .5rem; font-weight: 600;">
+            <?= htmlspecialchars($captcha_question) ?>
+        </span>
+        <input type="text" id="captcha" name="captcha_answer" required aria-required="true"
+            aria-describedby="captcha-help" inputmode="numeric" pattern="[0-9]+">
+        <span id="captcha-help" class="visually-hidden">Responda con el resultado numérico de la pregunta.</span>
         <input type="submit" value="Actualizar">
     </form>
     <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;"
