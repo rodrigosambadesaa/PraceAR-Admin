@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../config/env_loader.php';
+
 // Detectar la ruta raíz del proyecto dinámicamente
 define('DIRNAME', dirname(__FILE__)); // Directorio donde está este archivo
 $projectRoot = str_replace('\\', '/', str_replace($_SERVER['DOCUMENT_ROOT'], '', DIRNAME)); // Ruta relativa
@@ -75,7 +77,18 @@ define('UNITY_TYPE', [
 ]);
 
 // Datos de conexión a la BBDD
-$servidor_bd = $_SERVER['SERVER_NAME'] == 'localhost' ? 'localhost' : 'db5016239277.hosting-data.io';
-$usuario = $_SERVER['SERVER_NAME'] == 'localhost' ? 'root' : 'dbu2777657';
-$clave = $_SERVER['SERVER_NAME'] == 'localhost' ? '' : 'apdtmMdp27042304()';
-$bd = 'dbs13217995';
+$envVariables = load_project_env(dirname(__DIR__));
+
+$servidor_bd = get_env_value('PRACEAR_DB_HOST', $envVariables);
+$usuario = get_env_value('PRACEAR_DB_USER', $envVariables);
+$clave = get_env_value('PRACEAR_DB_PASSWORD', $envVariables);
+$bd = get_env_value('PRACEAR_DB_NAME', $envVariables);
+
+if (!defined('DB_CONFIG')) {
+    define('DB_CONFIG', [
+        'host' => $servidor_bd,
+        'user' => $usuario,
+        'password' => $clave,
+        'database' => $bd,
+    ]);
+}
