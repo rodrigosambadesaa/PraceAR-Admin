@@ -1,3 +1,5 @@
+"use strict";
+
 import { limpiarInput } from "../../js/helpers/clean_input.js";
 import { UNITY_TYPE } from "../../js/constants.js";
 import { verifyMaliciousPhoto } from "./helpers/verify_malicious_photo.js";

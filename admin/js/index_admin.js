@@ -1,3 +1,5 @@
+"use strict";
+
 document.getElementById("formulario-busqueda").addEventListener("submit", function (event) {
     /**
      * Retrieves the trimmed value of the input field with the ID "input-busqueda".

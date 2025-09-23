@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Página Principal del Panel de Administración</title>
-    <link rel="stylesheet" href="./css/header.css">
+    <style>
+        <?php require_once(CSS_ADMIN . 'header.css'); ?>
+    </style>
     <?php require_once(CSS_ADMIN . 'index_admin.php'); ?>
     <link rel='icon' href='./img/favicon.png' type='image/png'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -109,6 +111,7 @@
     $resultados_encontrados = $result->num_rows > 0;
     ?>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <main role="main">
         <?php if ($resultados_encontrados): ?>
             <table id="tabla-puestos" role="table" aria-label="Lista de puestos del Mercado de Abastos">
@@ -177,7 +180,7 @@
                             <td data-label="Teléfono"><?= htmlspecialchars($row['telefono']) ?></td>
                             <td data-label="Nave"><?= htmlspecialchars($row['nave']) ?></td>
                             <td data-label="Caseta padre"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
-                            <td data-label="" id="celda-especial-dato"></td>
+                            <td data-label="" class="celda-especial-dato"></td>
                             <td data-label="Idioma de la traducción" class="fondo-color-diferente">
                                 <a href="<?= "?page=language&codigo_idioma=" . htmlspecialchars(get_language()) . "&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
                                     aria-label="Editar traducción del puesto <?= htmlspecialchars($row['caseta']) ?>">
