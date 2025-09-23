@@ -11,6 +11,8 @@ if (defined('VIRUSTOTAL_API_KEY_FILE') && is_readable(VIRUSTOTAL_API_KEY_FILE)) 
     require_once VIRUSTOTAL_API_KEY_FILE;
 }
 
+require_once(VIRUSTOTAL_API_KEY_FILE);
+
 /**
  * Verifica si un archivo subido es potencialmente malicioso utilizando la API de VirusTotal.
  *
@@ -53,6 +55,15 @@ function check_virus_total(string $filePath): array
             'is_malicious' => false,
             'message' => 'No se ha configurado la clave de la API de VirusTotal.',
             'http_status' => 500,
+            'message' => 'No se pudo acceder al archivo temporal que se quiere analizar.'
+        ];
+    }
+
+    if (!defined('VIRUSTOTAL_API_KEY') || empty(VIRUSTOTAL_API_KEY)) {
+        return [
+            'success' => false,
+            'is_malicious' => false,
+            'message' => 'No se ha configurado la clave de la API de VirusTotal.'
         ];
     }
 
@@ -154,6 +165,59 @@ if (
     $result = check_virus_total($_FILES['file']['tmp_name']);
 
     http_response_code($result['http_status'] ?? ($result['success'] ? 200 : 502));
+        ];
+    }
+
+    $decoded = json_decode($result, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return [
+            'success' => false,
+            'is_malicious' => false,
+            'message' => 'La respuesta del servicio no es un JSON válido.',
+        ];
+    }
+
+    $positives = isset($decoded['positives']) ? (int) $decoded['positives'] : 0;
+    $isMalicious = $positives > 0;
+
+    $message = $decoded['verbose_msg'] ?? (
+        $isMalicious
+            ? 'La imagen presenta detecciones positivas conocidas.'
+            : 'La imagen se envió correctamente a VirusTotal para su análisis.'
+    );
+
+    return [
+        'success' => true,
+        'is_malicious' => $isMalicious,
+        'message' => $message,
+        'data' => $decoded,
+    ];
+}
+
+if (
+    php_sapi_name() !== 'cli'
+    && isset($_SERVER['REQUEST_METHOD'])
+    && $_SERVER['REQUEST_METHOD'] === 'POST'
+    && realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'] ?? '')
+) {
+    header('Content-Type: application/json; charset=utf-8');
+
+    if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'is_malicious' => false,
+            'message' => 'No se ha recibido ningún archivo válido para analizar.'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $result = check_virus_total($_FILES['file']['tmp_name']);
+
+    if (!$result['success']) {
+        http_response_code(502);
+    }
 
     echo json_encode($result, JSON_UNESCAPED_UNICODE);
     exit;

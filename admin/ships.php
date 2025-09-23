@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Mapas de las Ameas, Naves y Murallones</title>
+    <link rel="stylesheet" href="./css/header.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
 
@@ -31,15 +32,11 @@
             border: none;
         }
     </style>
+    <?php require_once(CSS_ADMIN . 'ships_admin.php'); ?>
 </head>
 
 <body>
-    <header>
-        <?php
-        require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
-        require_once(CSS_ADMIN . 'ships_admin.php');
-        ?>
-    </header>
+    <?php require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php'); ?>
 
     <main class="maps">
         <h2>Mapas de las Ameas, Naves y Murallones</h2>
