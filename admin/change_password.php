@@ -44,6 +44,9 @@
     require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php';
     require_once HELPERS . 'clean_input.php';
     require_once HELPERS . 'verify_strong_password.php';
+    require_once HELPERS . 'captcha.php';
+
+    $captcha_key = 'change_password_form';
 
     $pepper_config = include 'pepper2.php';  // Incluimos la configuración del pepper.
     
@@ -94,6 +97,10 @@
         }
 
         try {
+            if (!captcha_validate($captcha_key, $_POST['captcha_answer'] ?? null)) {
+                throw new Exception("La verificación captcha no es correcta.");
+            }
+
             $user_id = $_SESSION['id'];
             $old_password = trim($_POST['old_password']);
             $new_password = trim($_POST['new_password']);
@@ -266,6 +273,8 @@
             $err = '<span style="color: red; text-align: center;">' . htmlspecialchars($e->getMessage() ?? 'Error desconocido') . '</span>';
         }
     }
+
+    $captcha_question = captcha_get_question($captcha_key);
     ?>
 
     <h1 style="text-align: center;">Cambiar contraseña</h1>
@@ -316,6 +325,16 @@
                 <li>Sin secuencias alfabéticas inseguras como abc, cba, ni en horizontal como qwe</li>
                 <li>Sin secuencias de caracteres especiales inseguras como ()</li>
             </ul>
+        </div>
+        <div id="form-group">
+            <label for="captcha" class="required" aria-hidden="false">Verificación humana: <span style="color: red;"
+                    aria-hidden="true">*</span></label>
+            <p id="captcha-question" style="margin-bottom: .5rem;">
+                <?= htmlspecialchars($captcha_question) ?>
+            </p>
+            <input type="text" name="captcha_answer" id="captcha" required aria-required="true"
+                aria-describedby="captcha-help" inputmode="numeric" pattern="[0-9]+">
+            <p id="captcha-help" class="sr-only">Responda con el resultado numérico de la pregunta para continuar.</p>
         </div>
         <div id="form-group">
             <input type="submit" value="Cambiar contraseña" aria-label="Cambiar contraseña">
