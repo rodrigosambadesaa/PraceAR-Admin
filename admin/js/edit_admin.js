@@ -6,7 +6,12 @@ const formulario = document.getElementById('formulario-editar');
 let errorExist = false;
 let errorMessages = '';
 
-formulario.addEventListener('submit', function (e) {
+formulario.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    errorExist = false;
+    errorMessages = '';
+
     // Campos obligatorios
     let caseta = document.getElementById('caseta').value;
     let tipoUnity = document.getElementById('tipo-unity').value;
@@ -147,18 +152,21 @@ formulario.addEventListener('submit', function (e) {
     // Verificar si se ha subido una foto y, en caso de que se haya subido, si es maliciosa
     const foto = document.getElementById('imagen') ? document.getElementById('imagen').files[0] : '';
     if (foto !== '') {
-        verifyMaliciousPhoto(foto).then(esMaliciosa => {
-            if (esMaliciosa) {
-                e.preventDefault();
-                alert('La foto es maliciosa. Por favor, desinfecte el archivo o pida ayuda para desinfectarlo o saque una foto nueva tras desinfectar el dispositivo.');
-                return;
-            }
-        });
+        const verification = await verifyMaliciousPhoto(foto);
+
+        if (!verification.success) {
+            alert(verification.message || 'No se pudo verificar la imagen.');
+            return;
+        }
+
+        if (verification.isMalicious) {
+            alert(verification.message || 'La foto es maliciosa. Por favor, desinfecte el archivo o pida ayuda para desinfectarlo o saque una foto nueva tras desinfectar el dispositivo.');
+            return;
+        }
     }
 
     // Si hay errores, no enviar formulario y mostrar mensajes de error creando un div con los mensajes
     if (errorExist) {
-        e.preventDefault();
         const div = document.createElement('div');
         div.innerHTML = errorMessages;
         formulario.insertAdjacentElement('afterend', div);
@@ -166,4 +174,5 @@ formulario.addEventListener('submit', function (e) {
     }
 
     // Enviar formulario
+    formulario.submit();
 });
