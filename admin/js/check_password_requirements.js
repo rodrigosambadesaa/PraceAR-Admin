@@ -1,3 +1,5 @@
+"use strict";
+
 import { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario, tieneSecuenciasNumericasInseguras, tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneEspaciosAlPrincipioOAlFinal } from "../../js/helpers/verify_strong_password.js";
 document.addEventListener('DOMContentLoaded', function () {
     window.checkPasswordRequirements = async function () {

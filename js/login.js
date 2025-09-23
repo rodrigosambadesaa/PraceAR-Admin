@@ -1,3 +1,5 @@
+"use strict";
+
 import { tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneSecuenciasNumericasInseguras } from './helpers/verify_strong_password.js';
 
 document.getElementById('formulario').addEventListener('submit', function (e) {

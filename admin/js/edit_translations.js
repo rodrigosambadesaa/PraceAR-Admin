@@ -1,3 +1,5 @@
+"use strict";
+
 import { limpiarTextarea } from '../../js/helpers/clean_input.js';
 
 const formulario = document.getElementById('formulario');

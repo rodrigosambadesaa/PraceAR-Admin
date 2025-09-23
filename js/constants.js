@@ -1,3 +1,5 @@
+"use strict";
+
 const UNITY_TYPE =
 {
     default: "default",

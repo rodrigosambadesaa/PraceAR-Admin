@@ -1,3 +1,5 @@
+"use strict";
+
 import { tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneSecuenciasNumericasInseguras } from "../../js/helpers/verify_strong_password.js";
 
 const formulario = document.getElementById('formulario-cambio-contrasena');

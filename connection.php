@@ -11,17 +11,21 @@ try {
 
     if (!is_string($servidor_bd) || $servidor_bd === '') {
         $missingConfiguration[] = 'PRACEAR_DB_HOST';
+        echo 'Falta servidor';
     }
 
     if (!is_string($usuario) || $usuario === '') {
         $missingConfiguration[] = 'PRACEAR_DB_USER';
+        echo 'Falta usuario';
     }
 
     if (!is_string($bd) || $bd === '') {
         $missingConfiguration[] = 'PRACEAR_DB_NAME';
+        echo 'Falta base de datos';
     }
 
     if (!empty($missingConfiguration)) {
+        echo 'Faltan variables de entorno';
         throw new RuntimeException('Faltan variables de entorno requeridas: ' . implode(', ', $missingConfiguration));
     }
 

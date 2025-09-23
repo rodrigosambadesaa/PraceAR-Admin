@@ -1,3 +1,5 @@
+"use strict";
+
 function cleanInput(input) {
     // Eliminar espacios innecesarios al inicio y final del input
     input = input.trim();

@@ -1,3 +1,5 @@
+"use strict";
+
 const VERIFY_MALICIOUS_PHOTO_ENDPOINT = new URL(
     '../helpers/verify_malicious_photo.php',
     window.location.href
