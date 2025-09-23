@@ -37,6 +37,7 @@ async function verifyMaliciousPhoto(photo) {
                 isMalicious: false,
                 message: data.message || `No se pudo validar la foto (HTTP ${httpStatus}).`,
                 httpStatus,
+                message: data.message || `No se pudo validar la foto (HTTP ${response.status}).`
             };
         }
 
@@ -45,6 +46,7 @@ async function verifyMaliciousPhoto(photo) {
             isMalicious: Boolean(data.is_malicious),
             message: data.message || '',
             httpStatus,
+            message: data.message || ''
         };
     } catch (error) {
         console.error('Error al comprobar la foto:', error);
@@ -53,6 +55,7 @@ async function verifyMaliciousPhoto(photo) {
             isMalicious: false,
             message: 'Error al contactar con el servicio de verificación. Inténtelo de nuevo más tarde.',
             httpStatus: null,
+            message: 'Error al contactar con el servicio de verificación. Inténtelo de nuevo más tarde.'
         };
     }
 }
