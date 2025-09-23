@@ -17,7 +17,6 @@ Para evitar que se suban archivos maliciosos se integra una comprobación autom�
 
 1. **Configurar la clave**: cree un archivo `virustotal_api_key.php` en la raíz del proyecto con la constante `VIRUSTOTAL_API_KEY` que contenga su clave de API.
 2. **Flujo de validación**: cuando el formulario de edición sube una imagen, el frontend llama a `helpers/verify_malicious_photo.php`, que reenvía el archivo temporal a VirusTotal usando `curl_file_create`, manteniendo activos `CURLOPT_SSL_VERIFYPEER` y `CURLOPT_SSL_VERIFYHOST` y aplicando timeouts razonables.
-3. **Respuesta homogénea**: el endpoint devuelve un JSON con los campos `success`, `is_malicious`, `message` y `http_status` (para que el cliente pueda interpretar el código HTTP real en caso de error). La lógica de `admin/js/helpers/verify_malicious_photo.js` espera esta estructura y muestra mensajes claros ante fallos de conectividad o detecciones.
 4. **Validación en el servidor**: además del filtro en el navegador, `helpers/update_stalls.php` invoca la misma comprobación antes de aceptar definitivamente la imagen.
 
 Si no se define la clave de la API o el servicio devuelve un error, el usuario recibirá un mensaje explicativo y la imagen no se subirá.
