@@ -1,10 +1,16 @@
 <?php
 require_once HELPERS . "clean_input.php";
+require_once HELPERS . "captcha.php";
 
 $mensaje = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
         throw new Exception("Token CSRF inválido.");
+    }
+
+    if (!captcha_validate('edit_translations_form', $_POST['captcha_answer'] ?? null)) {
+        $mensaje = "<span style='color: red;'>La verificación captcha no es correcta.</span>";
+        return;
     }
 
     extract($_REQUEST);
