@@ -1,3 +1,5 @@
+"use strict";
+
 function verifyStrongPassword(password) {
     // Al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos, y un máximo de 1024 caracteres
 

@@ -261,7 +261,7 @@
 
     input,
     input::placeholder {
-        font-size: 0.em;
+        /* font-size: 0.em; */
     }
 
     @media (max-width: 600px) {

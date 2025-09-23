@@ -1,3 +1,5 @@
+"use strict";
+
 import { limpiarInput } from '../../../../js/helpers/clean_input.js';
 
 const formulario = document.getElementById('formulario-generacion-contrasena');
