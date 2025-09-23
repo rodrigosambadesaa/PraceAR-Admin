@@ -22,9 +22,14 @@
     require_once(SECTIONS . 'header.php');
     require_once(HELPERS . 'truncate_text.php');
     require_once(HELPERS . 'clean_input.php');
+    require_once(HELPERS . 'captcha.php');
     ?>
 
     <?php
+    $captcha_key = 'admin_search_form';
+    $captcha_error = '';
+    $captcha_valid = true;
+
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (!isset($_SESSION['csrf'])) {
             $_SESSION['csrf'] = bin2hex(random_bytes(32)); // Generar un nuevo token CSRF
@@ -32,6 +37,11 @@
 
         if (!isset($_POST['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
             die("Petición no válida");
+        }
+
+        if (!captcha_validate($captcha_key, $_POST['captcha_answer'] ?? null)) {
+            $captcha_valid = false;
+            $captcha_error = '<span style="color: red;">La verificación captcha no es correcta.</span>';
         }
     }
 
@@ -49,7 +59,7 @@
     $caseta = '';
 
     // Manejo de búsqueda por caseta
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['caseta'])) {
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && $captcha_valid && isset($_POST['caseta'])) {
         $caseta = limpiar_input($_POST['caseta']);
         // Redirigir usando GET para mantener la búsqueda en la URL
         $params = [
@@ -59,10 +69,15 @@
         ];
         header("Location: ?" . http_build_query($params));
         exit;
+    } elseif ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['caseta'])) {
+        $caseta = limpiar_input($_POST['caseta']);
+        $busqueda_hecha = true;
     } elseif (isset($_GET['caseta'])) {
         // Si hay parámetro GET 'caseta', lo limpiamos
         $caseta = limpiar_input($_GET['caseta']);
     }
+
+    $captcha_question = captcha_get_question($captcha_key);
 
     $sql_total = "SELECT COUNT(p.id) as total FROM puestos p 
                       RIGHT JOIN puestos_traducciones pt ON p.id = pt.puesto_id
@@ -124,12 +139,27 @@
                                 placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta"
                                 <?php if (!$busqueda_hecha) echo 'autofocus'; ?>>
                             <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(get_language()) ?>">
+                            <div class="captcha-wrapper" style="margin: .5rem 0; display: grid; gap: .5rem;">
+                                <label for="captcha" class="required" style="margin-bottom: 0;">Verificación humana:
+                                    <span aria-hidden="true">*</span></label>
+                                <span id="captcha-question" style="font-weight: 600;">
+                                    <?= htmlspecialchars($captcha_question) ?>
+                                </span>
+                                <input type="text" id="captcha" name="captcha_answer" required aria-required="true"
+                                    aria-describedby="captcha-help" inputmode="numeric" pattern="[0-9]+">
+                                <small id="captcha-help">Responda con el resultado numérico de la pregunta.</small>
+                            </div>
                             <input type="submit" value="Buscar">
                             <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">
                             <input id="input-deshacer-busqueda" type="button" value="Deshacer"
                                 onclick="window.location.href='?lang=<?= htmlspecialchars(get_language()) ?>'">
                             <input type="hidden" name="csrf" id="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                         </form>
+                        <?php if ($captcha_error !== ''): ?>
+                            <div role="alert" aria-live="polite" style="margin-top: .5rem; text-align: left;">
+                                <?= $captcha_error ?>
+                            </div>
+                        <?php endif; ?>
                     </search>
                     <?php require_once(SECTIONS . 'pagination.php'); ?>
                 </caption>

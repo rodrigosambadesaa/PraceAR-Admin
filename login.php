@@ -2,6 +2,9 @@
 require_once HELPERS . 'clean_input.php';
 require_once HELPERS . 'validate_login.php';
 require_once HELPERS . 'verify_strong_password.php';
+require_once HELPERS . 'captcha.php';
+
+$captcha_key = 'login_form';
 
 $pepper_config = include 'pepper2.php';
 
@@ -53,6 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Verificar CSRF token
         if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
             throw new Exception("CSRF token no válido");
+        }
+
+        if (!captcha_validate($captcha_key, $_POST['captcha_answer'] ?? null)) {
+            throw new Exception("La verificación captcha no es correcta.");
         }
 
         $login = validar_login($_POST['login']);
@@ -154,6 +161,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $err = '<span style="color: red; text-align: center;">' . htmlspecialchars($e->getMessage()) . '</span>';
     }
 }
+
+$captcha_question = captcha_get_question($captcha_key);
 ?>
 
 <!DOCTYPE html>
@@ -236,6 +245,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="password" name="password" id="password" required aria-required="true"
                 aria-describedby="password-help">
             <small id="password-help">Ingrese su contraseña. Debe tener entre 16 y 1024 caracteres.</small>
+        </div>
+        <div id="form-group">
+            <label for="captcha" class="required"><strong>Verificación humana:</strong></label>
+            <p id="captcha-question" style="margin-bottom: .5rem;">
+                <?= htmlspecialchars($captcha_question) ?>
+            </p>
+            <input type="text" name="captcha_answer" id="captcha" required aria-required="true"
+                aria-describedby="captcha-help" inputmode="numeric" pattern="[0-9]+">
+            <small id="captcha-help">Responda con el resultado numérico de la pregunta.</small>
         </div>
         <div id="form-group">
             <input type="submit" value="Iniciar sesión" aria-label="Iniciar sesión">
