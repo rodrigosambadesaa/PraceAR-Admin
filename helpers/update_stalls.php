@@ -25,10 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Verificar si la imagen es maliciosa
-        $maliciosa = check_virus_total($_FILES['imagen']['tmp_name']);
+        $scanResult = check_virus_total($_FILES['imagen']['tmp_name']);
 
-        if ($maliciosa) {
-            throw new Exception("La imagen subida es maliciosa. Por favor, desinféctela y suba una imagen válida. Puede ser necesario desinfectar el dispositivo desde el que se capturó o el dispositivo desde el que se subió la imagen.");
+        if (!$scanResult['success']) {
+            throw new Exception($scanResult['message']);
+        }
+
+        if ($scanResult['is_malicious']) {
+            throw new Exception($scanResult['message'] ?: "La imagen subida es maliciosa. Por favor, desinféctela y suba una imagen válida. Puede ser necesario desinfectar el dispositivo desde el que se capturó o el dispositivo desde el que se subió la imagen.");
         }
 
         $is_imagen = save_image($_FILES['imagen'], $caseta);

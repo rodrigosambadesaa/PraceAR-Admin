@@ -1,40 +1,55 @@
-import API_KEY from './api_key.js';
+const VERIFY_MALICIOUS_PHOTO_ENDPOINT = new URL(
+    '../helpers/verify_malicious_photo.php',
+    window.location.href
+).toString();
 
 /**
- * Verifies if a photo is malicious by sending it to the VirusTotal API for scanning.
+ * Solicita al backend que verifique si un archivo contiene código malicioso.
  *
  * @async
- * @function verifyMaliciousPhoto
- * @param {File} photo - The photo file to be checked for malicious content.
- * @returns {Promise<boolean>} A promise that resolves to `true` if the photo is detected as malicious, 
- *                             or `false` otherwise.
- * @throws {Error} If there is an issue with the API request or response processing.
+ * @param {File} photo Archivo a analizar.
+ * @returns {Promise<{success: boolean, isMalicious: boolean, message: string}>}
  */
 async function verifyMaliciousPhoto(photo) {
-    // Verificar mediante llamada a la API de VirusTotal si la foto es maliciosa
+    if (!(photo instanceof File)) {
+        return {
+            success: false,
+            isMalicious: false,
+            message: 'No se ha proporcionado un archivo válido para su verificación.'
+        };
+    }
 
-    // Crear un objeto FormData con la foto
     const formData = new FormData();
     formData.append('file', photo);
 
-    // Enviar la foto a VirusTotal
     try {
-        const response = await fetch('https://www.virustotal.com/vtapi/v2/file/scan', {
+        const response = await fetch(VERIFY_MALICIOUS_PHOTO_ENDPOINT, {
             method: 'POST',
             body: formData,
-            headers: {
-                'x-apikey': API_KEY // Usar la API key de VirusTotal
-            }
         });
 
-        // Leer y procesar la respuesta
         const data = await response.json();
 
-        return data.response_code === 1 && data.positives > 0;
+        if (!response.ok || !data.success) {
+            return {
+                success: false,
+                isMalicious: false,
+                message: data.message || `No se pudo validar la foto (HTTP ${response.status}).`
+            };
+        }
 
+        return {
+            success: true,
+            isMalicious: Boolean(data.is_malicious),
+            message: data.message || ''
+        };
     } catch (error) {
         console.error('Error al comprobar la foto:', error);
-        return false;
+        return {
+            success: false,
+            isMalicious: false,
+            message: 'Error al contactar con el servicio de verificación. Inténtelo de nuevo más tarde.'
+        };
     }
 }
 
