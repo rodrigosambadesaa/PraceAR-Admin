@@ -4,6 +4,7 @@ include 'constants.php';
 require_once 'constants.php';
 
 $conn = null;
+$missingConfiguration = [];
 
 try {
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -11,7 +12,6 @@ try {
 
     if (!$conn) {
         throw new Exception('No se pudo establecer la conexión con la base de datos.');
-        $missingConfiguration = [];
     }
 
     if (!is_string($servidor_bd) || $servidor_bd === '') {
