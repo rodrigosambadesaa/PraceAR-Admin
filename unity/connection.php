@@ -1,4 +1,5 @@
 <?php
+include 'constants.php';
 
 require_once 'constants.php';
 
@@ -6,8 +7,12 @@ $conn = null;
 
 try {
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    $conn = mysqli_connect(DB_SERVER, DB_USER, DB_PASS, DB_DATABASE);
 
-    $missingConfiguration = [];
+    if (!$conn) {
+        throw new Exception('No se pudo establecer la conexión con la base de datos.');
+        $missingConfiguration = [];
+    }
 
     if (!is_string($servidor_bd) || $servidor_bd === '') {
         $missingConfiguration[] = 'PRACEAR_DB_HOST';
@@ -24,7 +29,13 @@ try {
     if (!empty($missingConfiguration)) {
         throw new RuntimeException('Faltan variables de entorno requeridas: ' . implode(', ', $missingConfiguration));
     }
+} catch (Throwable $e) {
+    error_log('[UNITY][DB_CONNECTION] ' . $e->getMessage());
 
+    echo json_encode([
+        'codigo' => 400,
+        'mensaje' => 'connection.php: Error intentando conectar',
+        'respuesta' => ''
     $password = $clave === null ? '' : (string) $clave;
 
     $conn = new mysqli($servidor_bd, $usuario, $password, $bd);
