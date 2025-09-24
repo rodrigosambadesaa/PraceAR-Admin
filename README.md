@@ -1,4 +1,13 @@
-# PraceAR
+*# PraceAR
+
+## Aviso importante — Versión personal no oficial
+Este repositorio contiene una **versión personal mejorada** de la web desarrollada inicialmente en el marco del *Obradoiro de Emprego APPVENTURERS, Departamento de Emprego do Concello de Santiago de Compostela, octubre 2023 - octubre 2024*.  
+- Autor de esta versión: **Rodrigo Sambade Saá**
+- Autor de la versión original finalizada durante el obradoiro y publicada en [PraceAR](https://pracear.com): **Rodrigo Sambade Saá**, con supervisión del profesor de programación **Jorge (Xurxo) González Tenreiro**, cuyo nombre de usuario en GitHub es **_webferrol_**
+- Estado: **Versión personal / no oficial**.  
+- Propiedad original: El proyecto inicial pertenece a la entidad promotora del obradoiro, que puede ostentar derechos sobre la versión oficial.  
+- Finalidad: Documentar correcciones técnicas y mejoras de seguridad realizadas a título personal.  
+- Si representa a la entidad titular y desea discutir la integración o retirada de este contenido, contacte en: **[rsamsaa.appventurers@gmail.com]**.  
 
 Clonar el repositorio en una carpeta llamada appventurers
 
@@ -57,3 +66,4 @@ Si no se define la clave de la API o el servicio devuelve un error, el usuario r
 ![Captura de pantalla (15)](https://github.com/user-attachments/assets/f4e8ad4e-3371-43c4-9388-6c2e26883e01)
 
 
+*
