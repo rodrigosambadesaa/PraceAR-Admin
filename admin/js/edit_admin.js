@@ -152,20 +152,53 @@ formulario.addEventListener('submit', async function (e) {
     }
 
     // Verificar si se ha subido una foto y, en caso de que se haya subido, si es maliciosa
-    const foto = document.getElementById('imagen') ? document.getElementById('imagen').files[0] : '';
-    if (foto !== '') {
-        const verification = await verifyMaliciousPhoto(foto);
+    const foto = document.getElementById('imagen') ? document.getElementById('imagen').files[0] : null;
 
-        if (!verification.success) {
-            alert(verification.message || 'No se pudo verificar la imagen.');
+    // Solo verificar la imagen si realmente se ha seleccionado un archivo
+    if (foto && foto.size > 0) {
+        // Verificar que sea un archivo de imagen válido (.jpg o .jpeg)
+        const allowedTypes = ['image/jpeg', 'image/jpg'];
+        if (!allowedTypes.includes(foto.type)) {
+            e.preventDefault();
+            alert('La imagen debe ser un archivo .jpg o .jpeg válido.');
+            errorMessages += '<li>La imagen debe ser un archivo .jpg o .jpeg válido</li>';
+            errorExist = true;
             return;
         }
 
-        if (verification.isMalicious) {
-            alert(verification.message || 'La foto es maliciosa. Por favor, desinfecte el archivo o pida ayuda para desinfectarlo o saque una foto nueva tras desinfectar el dispositivo.');
+        // Verificar tamaño máximo (2MB)
+        const maxSize = 2048 * 1024; // 2MB en bytes
+        if (foto.size > maxSize) {
+            e.preventDefault();
+            alert('La imagen no puede ser mayor a 2MB.');
+            errorMessages += '<li>La imagen no puede ser mayor a 2MB</li>';
+            errorExist = true;
+            return;
+        }
+
+        // Verificar si la imagen es maliciosa
+        try {
+            const verification = await verifyMaliciousPhoto(foto);
+
+            if (!verification.success) {
+                e.preventDefault();
+                alert(verification.message || 'No se pudo verificar la imagen.');
+                return;
+            }
+
+            if (verification.isMalicious) {
+                e.preventDefault();
+                alert(verification.message || 'La foto es maliciosa. Por favor, desinfecte el archivo o pida ayuda para desinfectarlo o saque una foto nueva tras desinfectar el dispositivo.');
+                return;
+            }
+        } catch (error) {
+            e.preventDefault();
+            alert('Error al verificar la imagen. Por favor, inténtelo de nuevo.');
+            console.error('Error en verificación de imagen:', error);
             return;
         }
     }
+    // Si no hay imagen seleccionada, continuar normalmente (la imagen es opcional)
 
     // Si hay errores, no enviar formulario y mostrar mensajes de error creando un div con los mensajes
     if (errorExist) {

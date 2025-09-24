@@ -36,6 +36,8 @@ try {
         'codigo' => 400,
         'mensaje' => 'connection.php: Error intentando conectar',
         'respuesta' => ''
+    ]); 
+    
     $password = $clave === null ? '' : (string) $clave;
 
     $conn = new mysqli($servidor_bd, $usuario, $password, $bd);

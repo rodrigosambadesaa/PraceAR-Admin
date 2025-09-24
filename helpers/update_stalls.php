@@ -69,7 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mensaje = $is_imagen["message"];
             return;
         }
+    } elseif (isset($_FILES['imagen']) && $_FILES['imagen']['error'] !== UPLOAD_ERR_NO_FILE) {
+        // Si hay un error diferente a "no file uploaded", manejarlo
+        throw new Exception("Error al subir la imagen. Código de error: " . $_FILES['imagen']['error']);
     }
+    // Si no hay imagen subida ($_FILES['imagen']['error'] === UPLOAD_ERR_NO_FILE), no hacer nada
 
     if (isset($eliminar_imagen) && is_string($eliminar_imagen)) {
         try {
