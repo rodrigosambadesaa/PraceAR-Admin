@@ -1,124 +1,136 @@
 <!DOCTYPE html>
 <html lang="es">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin - PraceAR - Cambiar Contraseña</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+        <style>
+            <?php require_once(CSS_ADMIN . 'header.css'); ?>
+            /* body {
+                max-width: 80%;
+                margin: 0 auto;
+                padding: 1.5rem;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                background: var(--pico-background-color, #fff);
+            } */
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - PraceAR - Cambiar Contraseña</title>
-     <style>
-        <?php require_once(CSS_ADMIN . 'header.css'); ?>
-        body {
-            max-width: 100vw;
-            margin: 0 auto;
-            padding: 1.5rem;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: var(--pico-background-color, #fff);
-        }
-
-        main, form, #password-requirements, h1, .success-message, .error-message, p, span, ul {
-            width: 100%;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-        }
-
-        #formulario-cambio-contrasena {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            width: 100%;
-            max-width: 700px;
-            background: var(--pico-card-background-color, #fff);
-            border-radius: var(--pico-border-radius, 0.5rem);
-            box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-            padding: 2rem 2.5rem;
-            gap: 1.2rem;
-        }
-
-        #formulario-cambio-contrasena > div {
-            width: 100%;
-        }
-
-        label {
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--pico-muted-color, #444);
-        }
-
-        input[type="password"], input[type="text"] {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: var(--pico-border-radius, 0.5rem);
-            border: 1px solid var(--pico-muted-border-color, #ccc);
-            font-size: 1.1rem;
-            background: var(--pico-form-element-background-color, #f8f9fa);
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 0.9rem 0;
-            font-size: 1.1rem;
-            border-radius: var(--pico-border-radius, 0.5rem);
-            background: var(--pico-primary-background, #0d6efd);
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-        input[type="submit"]:hover {
-            background: var(--pico-primary-hover-background, #0b5ed7);
-        }
-
-        #password-requirements {
-            background: var(--pico-muted-background-color, #f1f3f5);
-            border-radius: var(--pico-border-radius, 0.5rem);
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-        }
-
-        .error-message {
-            color: var(--pico-danger, #d32f2f);
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .success-message {
-            color: var(--pico-success, #388e3c);
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        @media (max-width: 900px) {
-            #formulario-cambio-contrasena,
-            #password-requirements,
-            main {
-            max-width: 98vw;
-            padding: 1rem;
-            font-size: 1rem;
+            main, form, #password-requirements, h1, .success-message, .error-message, p, span, ul {
+                width: 100%;
+                max-width: 700px;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
             }
-        }
 
-        @media (max-width: 600px) {
-            #formulario-cambio-contrasena,
-            #password-requirements,
-            main {
-            max-width: 100vw;
-            padding: 0.5rem;
-            font-size: 0.97rem;
+            #formulario-cambio-contrasena {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                width: 100%;
+                max-width: 700px;
+                background: var(--pico-card-background-color, #fff);
+                border-radius: var(--pico-border-radius, 0.5rem);
+                box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+                padding: 2rem 2.5rem;
+                gap: 1.2rem;
             }
-        }
-    </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+
+            #formulario-cambio-contrasena > div {
+                width: 100%;
+            }
+
+            label {
+                font-weight: 500;
+                margin-bottom: 0.3rem;
+                color: var(--pico-muted-color, #444);
+            }
+
+            input[type="password"], input[type="text"] {
+                width: 100%;
+                padding: 0.75rem 1rem;
+                border-radius: var(--pico-border-radius, 0.5rem);
+                border: 1px solid var(--pico-muted-border-color, #ccc);
+                font-size: 1.1rem;
+                background: var(--pico-form-element-background-color, #f8f9fa);
+            }
+
+            input[type="submit"] {
+                width: 100%;
+                padding: 0.9rem 0;
+                font-size: 1.1rem;
+                border-radius: var(--pico-border-radius, 0.5rem);
+                background: var(--pico-primary-background, #0d6efd);
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                transition: background 0.2s;
+            }
+            input[type="submit"]:hover {
+                background: var(--pico-primary-hover-background, #0b5ed7);
+            }
+
+            #password-requirements {
+                background: var(--pico-muted-background-color, #f1f3f5);
+                border-radius: var(--pico-border-radius, 0.5rem);
+                padding: 1.2rem 1.5rem;
+                margin-bottom: 1.5rem;
+                font-size: 1.05rem;
+            }
+
+            .error-message {
+                color: var(--pico-danger, #d32f2f);
+                text-align: center;
+                margin-bottom: 1rem;
+                font-weight: 500;
+            }
+
+            .success-message {
+                color: var(--pico-success, #388e3c);
+                text-align: center;
+                margin-bottom: 1rem;
+                font-weight: 500;
+            }
+
+            /* help-text same max-width as the form */
+            #help-text {
+                max-width: 700px;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+                display: block;
+                margin-top: 1rem;
+                font-size: 0.95rem;
+                text-align: justify;
+            }
+
+            @media (max-width: 900px) {
+                #formulario-cambio-contrasena,
+                #password-requirements,
+                main {
+                max-width: 98vw;
+                padding: 1rem;
+                font-size: 1rem;
+                }
+            }
+
+            @media (max-width: 600px) {
+                #formulario-cambio-contrasena,
+                #password-requirements,
+                main {
+                max-width: 100vw;
+                padding: 0.5rem;
+                font-size: 0.97rem;
+                }
+            }
+        </style>
     <link rel='icon' href='./img/favicon.png' type='image/png'>
 
     <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
@@ -423,7 +435,7 @@
     </form>
     <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
         obligatorios</p>
-    <span style="color: blue;">¿Necesita ayuda? Le recomendamos que use un navegador con gestor y generador de
+    <span id="help-text" style="color: blue;">¿Necesita ayuda? Le recomendamos que use un navegador con gestor y generador de
         contraseñas
         integrados, como Google
         Chrome o Mozilla Firefox, con la sesión iniciada en su cuenta de Google o Firefox, respectivamente. De esta
