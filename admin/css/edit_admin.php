@@ -1,4 +1,14 @@
 <style>
+    /* Máximo tamaño del body */
+    body {
+        max-width: 80%;
+        margin: 0 auto;
+        padding: 1em;
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+    }
+
     /* Estilo para la imagen ampliada */
     .zoomed-container {
         position: fixed;

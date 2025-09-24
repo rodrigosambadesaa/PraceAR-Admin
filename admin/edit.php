@@ -20,7 +20,7 @@
     <link rel="icon" sizes="192x192" href="icon-192x192.png">
 
     <!-- Manifesto Web (PWA) -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/appventurers/manifest.json">
 
     <?php
     require_once(CSS_ADMIN . 'edit_admin.php'); ?>
