@@ -1,5 +1,16 @@
 <?php
 
+if (!defined('VIRUSTOTAL_API_KEY_FILE')) {
+    define(
+        'VIRUSTOTAL_API_KEY_FILE',
+        dirname(__DIR__) . DIRECTORY_SEPARATOR . 'virustotal_api_key.php'
+    );
+}
+
+if (defined('VIRUSTOTAL_API_KEY_FILE') && is_readable(VIRUSTOTAL_API_KEY_FILE)) {
+    require_once VIRUSTOTAL_API_KEY_FILE;
+}
+
 require_once(VIRUSTOTAL_API_KEY_FILE);
 
 /**
@@ -24,6 +35,26 @@ function check_virus_total(string $filePath): array
         return [
             'success' => false,
             'is_malicious' => false,
+            'message' => 'No se pudo acceder al archivo temporal que se quiere analizar.',
+            'http_status' => 500,
+        ];
+    }
+
+    if (!defined('VIRUSTOTAL_API_KEY_FILE') || !is_readable(VIRUSTOTAL_API_KEY_FILE)) {
+        return [
+            'success' => false,
+            'is_malicious' => false,
+            'message' => 'No se encontró la configuración de la clave de la API de VirusTotal.',
+            'http_status' => 500,
+        ];
+    }
+
+    if (!defined('VIRUSTOTAL_API_KEY') || trim((string) VIRUSTOTAL_API_KEY) === '') {
+        return [
+            'success' => false,
+            'is_malicious' => false,
+            'message' => 'No se ha configurado la clave de la API de VirusTotal.',
+            'http_status' => 500,
             'message' => 'No se pudo acceder al archivo temporal que se quiere analizar.'
         ];
     }
@@ -68,6 +99,7 @@ function check_virus_total(string $filePath): array
             'success' => false,
             'is_malicious' => false,
             'message' => 'No se pudo contactar con el servicio de análisis: ' . $error,
+            'http_status' => 502,
         ];
     }
 
@@ -79,6 +111,60 @@ function check_virus_total(string $filePath): array
             'success' => false,
             'is_malicious' => false,
             'message' => "El servicio de análisis devolvió un código inesperado ($httpCode).",
+            'http_status' => 502,
+        ];
+    }
+
+    $decoded = json_decode($result, true);
+
+    if (json_last_error() !== JSON_ERROR_NONE) {
+        return [
+            'success' => false,
+            'is_malicious' => false,
+            'message' => 'La respuesta del servicio no es un JSON válido.',
+            'http_status' => 502,
+        ];
+    }
+
+    $positives = isset($decoded['positives']) ? (int) $decoded['positives'] : 0;
+    $isMalicious = $positives > 0;
+
+    $message = $decoded['verbose_msg'] ?? (
+        $isMalicious
+            ? 'La imagen presenta detecciones positivas conocidas.'
+            : 'La imagen se envió correctamente a VirusTotal para su análisis.'
+    );
+
+    return [
+        'success' => true,
+        'is_malicious' => $isMalicious,
+        'message' => $message,
+        'data' => $decoded,
+        'http_status' => 200,
+    ];
+}
+
+if (
+    php_sapi_name() !== 'cli'
+    && isset($_SERVER['REQUEST_METHOD'])
+    && $_SERVER['REQUEST_METHOD'] === 'POST'
+    && realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'] ?? '')
+) {
+    header('Content-Type: application/json; charset=utf-8');
+
+    if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'is_malicious' => false,
+            'message' => 'No se ha recibido ningún archivo válido para analizar.'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
+    $result = check_virus_total($_FILES['file']['tmp_name']);
+
+    http_response_code($result['http_status'] ?? ($result['success'] ? 200 : 502));
         ];
     }
 
