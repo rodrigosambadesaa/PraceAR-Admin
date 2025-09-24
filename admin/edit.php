@@ -59,7 +59,6 @@
         die('<h2 style="text-align: center;">Error al obtener los datos del puesto. <a href="index.php">Volver</a></h2>');
     }
 
-    $captcha_question = captcha_get_question('edit_stall_form');
     ?>
 
     <form id="formulario-editar" action="#" method="post" enctype="multipart/form-data"
@@ -162,15 +161,6 @@
             <input name="caseta_padre" type="text" id="caseta-padre"
                 value="<?= htmlspecialchars($fila["caseta_padre"]) ?>" placeholder="Código de caseta padre"
                 aria-label="Caseta padre">
-        </div>
-        <div>
-            <label for="captcha" class="required">Verificación humana <span style="color: red;">*</span></label>
-            <span id="captcha-question" style="display: block; margin-bottom: .5rem; font-weight: 600;">
-                <?= htmlspecialchars($captcha_question) ?>
-            </span>
-            <input type="text" id="captcha" name="captcha_answer" required aria-required="true"
-                aria-describedby="captcha-help" inputmode="numeric" pattern="[0-9]+">
-            <span id="captcha-help" class="visually-hidden">Responda con el resultado numérico de la pregunta.</span>
         </div>
         <div id="div-botones">
             <input id="actualizar" type="submit" value="Actualizar" aria-label="Actualizar datos del puesto">

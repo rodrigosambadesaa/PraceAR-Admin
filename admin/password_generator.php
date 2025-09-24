@@ -4,10 +4,8 @@
 
 require_once HELPERS . 'clean_input.php';
 require_once CONNECTION;
-require_once HELPERS . 'captcha.php';
 
 $app_id_config = require_once HELPERS . 'verify_strong_password.php';
-$captcha_key = 'password_generator_form';
 $pepper_config = include 'pepper2.php';
 
 $today = date('Y-m-d');
@@ -115,13 +113,9 @@ $mostrar_boton = false;
 $length = 16;
 $quantity = 1; // Fijar la cantidad de contraseñas a 1
 
-$captcha_question = '';
-
 if ($_SERVER['REQUEST_METHOD'] === "POST") {
     if (isset($_POST['csrf']) && hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
-        if (!captcha_validate($captcha_key, $_POST['captcha_answer'] ?? null)) {
-            $result = '<span style="color: red; text-align: center;">La verificación captcha no es correcta.</span>';
-        } elseif (isset($_POST['length'])) { // Eliminar referencia a 'quantity'
+        if (isset($_POST['length'])) { // Eliminar referencia a 'quantity'
             $length = limpiar_input($_POST['length']);
             $length_range = limpiar_input($_POST['length_range']);
 
@@ -174,8 +168,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         }
     }
 }
-
-$captcha_question = captcha_get_question($captcha_key);
 ?>
 
 <!DOCTYPE html>
@@ -228,16 +220,6 @@ $captcha_question = captcha_get_question($captcha_key);
         <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;" aria-live="polite">
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
         </output>
-
-        <label for="captcha" class="required" aria-hidden="false">Verificación humana:
-            <span aria-hidden="true">*</span>
-        </label>
-        <p id="captcha-question" style="margin-bottom: .5rem;">
-            <?= htmlspecialchars($captcha_question) ?>
-        </p>
-        <input type="text" id="captcha" name="captcha_answer" required aria-required="true"
-            aria-describedby="captcha-help" inputmode="numeric" pattern="[0-9]+">
-        <p id="captcha-help" class="sr-only">Responda con el resultado numérico de la pregunta para generar la contraseña.</p>
 
         <input type="submit" value="Generar Contraseña" aria-label="Generar contraseña">
     </form>
