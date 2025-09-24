@@ -31,11 +31,14 @@ async function verifyMaliciousPhoto(photo) {
         });
 
         const data = await response.json();
+        const httpStatus = data.http_status ?? response.status;
 
         if (!response.ok || !data.success) {
             return {
                 success: false,
                 isMalicious: false,
+                message: data.message || `No se pudo validar la foto (HTTP ${httpStatus}).`,
+                httpStatus,
                 message: data.message || `No se pudo validar la foto (HTTP ${response.status}).`
             };
         }
@@ -43,6 +46,8 @@ async function verifyMaliciousPhoto(photo) {
         return {
             success: true,
             isMalicious: Boolean(data.is_malicious),
+            message: data.message || '',
+            httpStatus,
             message: data.message || ''
         };
     } catch (error) {
@@ -50,6 +55,8 @@ async function verifyMaliciousPhoto(photo) {
         return {
             success: false,
             isMalicious: false,
+            message: 'Error al contactar con el servicio de verificación. Inténtelo de nuevo más tarde.',
+            httpStatus: null,
             message: 'Error al contactar con el servicio de verificación. Inténtelo de nuevo más tarde.'
         };
     }
