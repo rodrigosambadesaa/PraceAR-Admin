@@ -1,13 +1,90 @@
 <!DOCTYPE html>
 
 <html lang="es">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin - PraceAR - Editar Traducciones de Puesto - Página de administración</title>
+        <style>
+         <?php require_once(CSS_ADMIN . 'header.css'); ?>
+        /* Máximo tamaño del body */
+        body {
+            max-width: 90vw;
+            margin: 0 auto;
+            padding: 1em;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - PraceAR - Editar Traducciones de Puesto - Página de administración</title>
-     <style>
-        <?php require_once(CSS_ADMIN . 'header.css'); ?>
+        /* Formulario y contenido centrado */
+        form {
+            width: 100%;
+            max-width: 600px;
+            margin: 2em auto 0 auto;
+            padding: 1.5em;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: bold;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 0.5em;
+            margin-bottom: 1em;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 1.5em;
+            margin-bottom: 1em;
+        }
+
+        p[style] {
+            text-align: center !important;
+        }
+
+        @media (max-width: 700px) {
+            body {
+            max-width: 100vw;
+            padding: 0.5em;
+            }
+            form {
+            max-width: 100%;
+            padding: 1em;
+            }
+            h2 {
+            font-size: 1.2em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            form {
+            padding: 0.5em;
+            }
+            input[type="text"], textarea {
+            font-size: 0.95em;
+            }
+        }
+        
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
