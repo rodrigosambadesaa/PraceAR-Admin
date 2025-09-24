@@ -77,6 +77,43 @@ define('UNITY_TYPE', [
 ]);
 
 // Datos de conexión a la BBDD
+$isLocalEnvironment = isset($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] === 'localhost';
+
+if (!function_exists('unity_getenv_or_default')) {
+    /**
+     * Obtener una variable de entorno o usar un valor por defecto.
+     */
+    function unity_getenv_or_default(string $key, $default)
+    {
+        $value = getenv($key);
+        if ($value === false || $value === '') {
+            if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+                return $_ENV[$key];
+            }
+
+            return $default;
+        }
+
+        return $value;
+    }
+}
+
+if (!defined('DB_SERVER')) {
+    define('DB_SERVER', unity_getenv_or_default('DB_SERVER', $isLocalEnvironment ? 'localhost' : 'db5016239277.hosting-data.io'));
+}
+
+if (!defined('DB_USER')) {
+    define('DB_USER', unity_getenv_or_default('DB_USER', $isLocalEnvironment ? 'root' : 'dbu2777657'));
+}
+
+if (!defined('DB_PASS')) {
+    define('DB_PASS', unity_getenv_or_default('DB_PASS', $isLocalEnvironment ? '' : 'apdtmMdp27042304()'));
+}
+
+if (!defined('DB_DATABASE')) {
+    define('DB_DATABASE', unity_getenv_or_default('DB_DATABASE', 'dbs13217995'));
+}
+
 $envVariables = load_project_env(dirname(__DIR__));
 
 $servidor_bd = get_env_value('PRACEAR_DB_HOST', $envVariables);
