@@ -172,7 +172,7 @@ $captcha_question = captcha_get_question($captcha_key);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Formulario de Inicio de Sesión</title>
-    <link rel="stylesheet" href="./admin/css/header.css">
+    <link rel="stylesheet" href="./css/header.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
 
