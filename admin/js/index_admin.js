@@ -21,4 +21,5 @@ formulario.addEventListener("submit", (event) => {
         alert("Por favor, elimine los caracteres no permitidos, que son: <, >, \", ', %");
     }
 });
+console.log("Código TypeScript de la página de administración de puestos cargado correctamente.");
 export {};

@@ -30,5 +30,7 @@ formulario.addEventListener("submit", (event: SubmitEvent) => {
     }
 });
 
-export {};
+console.log("Código TypeScript de la página de administración de puestos cargado correctamente.");
+
+export { };
 
