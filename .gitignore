@@ -6,3 +6,5 @@ admin/js/helpers/api_key.js
 wolfram_alpha_app_id.php
 .env
 assets/
+
+node_modules/
