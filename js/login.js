@@ -18,7 +18,6 @@ const formulario = document.getElementById("formulario");
 if (!(formulario instanceof HTMLFormElement)) {
     throw new Error("No se encontró el formulario de autenticación.");
 }
-
 formulario.addEventListener("submit", (event) => {
     const { login, password } = obtenerInputsFormulario();
     const loginValue = login.value.trim();
