@@ -1,4 +1,4 @@
-function sanitizeText(value) {
+function sanitizeText(value: string): string {
     const trimmed = value.trim();
     const withoutBackslashes = trimmed.replace(/\\/g, "");
     const escapedHtml = withoutBackslashes
@@ -10,9 +10,11 @@ function sanitizeText(value) {
     const withoutHtmlTags = escapedHtml.replace(/<\/?[^>]+(>|$)/g, "");
     return unescape(encodeURIComponent(withoutHtmlTags));
 }
-export function limpiarInput(input) {
+
+export function limpiarInput(input: string): string {
     return sanitizeText(input);
 }
-export function limpiarTextarea(textarea) {
+
+export function limpiarTextarea(textarea: string): string {
     return sanitizeText(textarea);
 }
