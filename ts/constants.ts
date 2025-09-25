@@ -10,4 +10,6 @@ export const UNITY_TYPE = {
     "bread-sweets": "bread-sweets",
     flowers: "flowers",
     restaurants: "restaurants",
-};
+} as const;
+
+export type UnityType = typeof UNITY_TYPE[keyof typeof UNITY_TYPE];
