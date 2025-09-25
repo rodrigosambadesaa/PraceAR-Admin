@@ -8,6 +8,7 @@
             "DOM.Iterable",
             "ES2020"
         ],
+        "lib": ["DOM", "DOM.Iterable", "ES2020"],
         "rootDir": "ts",
         "outDir": "js",
         "strict": true,
@@ -25,4 +26,6 @@
     "exclude": [
         "node_modules"
     ]
+    "include": ["ts/**/*"],
+    "exclude": ["node_modules"]
 }
