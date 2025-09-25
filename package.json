@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p admin/tsconfig.json"
+    "build": "tsc"
   },
   "devDependencies": {
     "typescript": "^5.4.5"
