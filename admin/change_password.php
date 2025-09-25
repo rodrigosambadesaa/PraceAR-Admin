@@ -359,8 +359,7 @@
             $update_stmt->execute();
 
             $success_message = "Contraseña cambiada correctamente.";
-            echo "<div class='success-message'>Contraseña cambiada correctamente.</div>";
-            echo "<span><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
+            echo "<div class='success-message'>Contraseña cambiada correctamente.<br><span style='text-align: center;'><strong>Consejos para mantener tus contraseñas seguras:</strong></span>
                     <ul>
                         <li>Utiliza una contraseña única para cada cuenta.</li>
                         <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
@@ -370,7 +369,8 @@
                         <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
                         <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
                         <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
-                    </ul>";
+                    </ul>
+                </div>";
 
             // Insertar la vieja contraseña validada en la tabla de contraseñas antiguas
             $contrasenha_vieja_a_insertar_en_old_passwords_encriptada = password_hash("{$old_password}{$pepper}", PASSWORD_ARGON2ID);
