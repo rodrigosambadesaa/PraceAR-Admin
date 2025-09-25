@@ -34,7 +34,7 @@
                 flex-direction: column;
                 align-items: stretch;
                 width: 100%;
-                max-width: 700px;
+                max-width: 1200px;
                 background: var(--pico-card-background-color, #fff);
                 border-radius: var(--pico-border-radius, 0.5rem);
                 box-shadow: 0 2px 16px rgba(0,0,0,0.06);
@@ -101,7 +101,7 @@
 
             /* help-text same max-width as the form */
             #help-text {
-                max-width: 700px;
+                max-width: 1200px;
                 margin-left: auto;
                 margin-right: auto;
                 text-align: center;
@@ -109,6 +109,16 @@
                 margin-top: 1rem;
                 font-size: 0.95rem;
                 text-align: justify;
+            }
+
+            ul {
+                text-align: left;
+                margin-top: 0.5rem;
+            }
+
+            li {
+                margin-bottom: 0.3rem;
+                font-size: .8rem;
             }
 
             @media (max-width: 900px) {
@@ -401,7 +411,7 @@
         </div>
         <div id="form-group">
             <label for="new-password">Nueva contraseña: <span style="color: red;" aria-hidden="true">*</span></label>
-            <input type="password" name="new_password" id="new-password" required onblur="checkPasswordRequirements()"
+            <input type="password" name="new_password" id="new-password" required onblur="if(this.value) checkPasswordRequirements()"
                 aria-describedby="new-password-help">
             <p id="new-password-help" class="sr-only">Introduce una nueva contraseña que cumpla con los requisitos.</p>
         </div>
