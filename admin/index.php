@@ -246,7 +246,7 @@
 
 
     <?php if ($resultados_encontrados): ?>
-        <script type="module" src="<?= JS_ADMIN . 'index_admin.js' ?>"></script>
+        <script type="module" src="<?= JS_ADMIN . 'index.js' ?>"></script>
         <script>
             <?php if ($busqueda_hecha): ?>
                 const inputReseteo = document.getElementById('input-reseteo');
