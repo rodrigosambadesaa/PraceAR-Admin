@@ -154,7 +154,7 @@
         margin-top: 20px;
         margin-bottom: 13px;
         flex-wrap: wrap;
-        font-size: .85em;
+        font-size: 1.85rem;
         font-weight: bold;
     }
 
