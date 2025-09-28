@@ -132,9 +132,7 @@ formulario.addEventListener("submit", async (event) => {
         errores.push(errorCasetaPadre);
     }
     const archivo = imagenInput?.files?.[0] ?? null;
-
     const validFileExtensions = [".jpg", ".jpeg"];
-
     function validateJpgFile(oForm) {
         const arrInputs = oForm.getElementsByTagName("input");
         for (let i = 0; i < arrInputs.length; i++) {
@@ -145,19 +143,13 @@ formulario.addEventListener("submit", async (event) => {
                     let isValid = false;
                     for (let j = 0; j < validFileExtensions.length; j++) {
                         const ext = validFileExtensions[j];
-                        if (
-                            sFileName
-                                .toLowerCase()
-                                .endsWith(ext)
-                        ) {
+                        if (sFileName.toLowerCase().endsWith(ext)) {
                             isValid = true;
                             break;
                         }
                     }
                     if (!isValid) {
-                        alert(
-                            "Solo se permiten archivos .jpg o .jpeg"
-                        );
+                        alert("Solo se permiten archivos .jpg o .jpeg");
                         return false;
                     }
                 }
@@ -165,12 +157,9 @@ formulario.addEventListener("submit", async (event) => {
         }
         return true;
     }
-
     if (!validateJpgFile(formulario)) {
         return;
     }
-    // Si el archivo no es una imagen jpg/jpeg o es mayor a 2MB, rechazarlo
-
     if (archivo && archivo.size > 0) {
         const allowedTypes = new Set(["image/jpeg", "image/jpg"]);
         const maxSize = 2048 * 1024; // 2MB en bytes
