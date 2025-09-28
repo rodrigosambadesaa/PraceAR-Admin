@@ -1,10 +1,12 @@
+/* --- Mezcla de estilos antiguos y nuevos (los nuevos prevalecen) --- */
+
 /* Cabecera moderna y responsive - Compatible con Pico CSS */
 .admin-header {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #667eea 0%, #3b82f6 100%);
     padding: 2rem 1.5rem;
     margin-bottom: 2rem;
     border-radius: 16px;
@@ -12,7 +14,7 @@
     color: white;
     position: relative;
     overflow: hidden;
-    /* backdrop-filter: blur(10px); */
+    animation: headerSlideIn 0.6s ease-out;
 }
 
 .admin-header::before {
@@ -23,7 +25,6 @@
     right: 0;
     bottom: 0;
     background: rgba(255, 255, 255, 0.05);
-    /* backdrop-filter: blur(20px); */
     z-index: 0;
 }
 
@@ -48,7 +49,6 @@
     background: rgba(255, 255, 255, 0.15);
     padding: 0.75rem 1rem;
     border-radius: 25px;
-    /* backdrop-filter: blur(10px); */
     transition: all 0.3s ease;
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
@@ -88,7 +88,6 @@
     text-align: center;
     background: linear-gradient(45deg, #ffffff, #e0e7ff);
     -webkit-background-clip: text;
-    /* -webkit-text-fill-color: transparent; */
     background-clip: text;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     letter-spacing: -0.02em;
@@ -105,13 +104,194 @@
     padding: 1rem 0;
 }
 
+/* --- NUEVO: flags --- */
+.flags {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    gap: 0.5rem;
+}
+
+.flags li {
+    margin-right: 10px;
+}
+
+.flags a {
+    text-decoration: none;
+    color: black;
+}
+
+.flags a img {
+    box-shadow: 0 0 2px 1px black;
+}
+
+/* --- NUEVO: nav-link --- */
+.nav-link {
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: -2px;
+    left: 0;
+    background-color: currentColor;
+    visibility: hidden;
+    transform: scaleX(0);
+    transition: all 0.3s ease-in-out;
+}
+
+.nav-link:hover::after {
+    visibility: visible;
+    transform: scaleX(1);
+}
+
+.nav-link:hover,
+.nav-link:focus-visible {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+/* --- NUEVO: texto-azul --- */
+.texto-azul {
+    color: blue;
+}
+
+/* --- NUEVO: enlace_cierre_sesion img --- */
+.enlace_cierre_sesion img {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+}
+
+.enlace_cierre_sesion:hover img {
+    transform: rotate(180deg);
+}
+
+/* --- main-nav --- */
+.main-nav {
+    text-align: center;
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 1rem 0;
+    display: flex;
+    gap: clamp(0.5rem, 2vw, 1.25rem);
+    flex-wrap: wrap;
+    justify-content: center;
+    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
+    color: white !important;
+    font-weight: 600;
+}
+
+/* --- dropdown --- */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    min-width: 220px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    z-index: 1000;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin-top: 0.5rem;
+    animation: dropdownSlide 0.3s ease;
+    overflow: hidden;
+    pointer-events: auto;
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 1rem 1.5rem;
+    text-align: left;
+    color: #4338ca !important;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-radius: 0;
+    margin: 0;
+    background: transparent;
+    border-bottom: 1px solid rgba(67, 56, 202, 0.1);
+    cursor: pointer;
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content a:hover,
+.dropdown-content a:focus-visible {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white !important;
+    transform: translateX(4px);
+}
+
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content {
+    display: block;
+    pointer-events: auto;
+}
+
+/* --- enlace_cierre_sesion --- */
+.enlace_cierre_sesion {
+    background: rgba(239, 68, 68, 0.2) !important;
+    border: 1px solid rgba(239, 68, 68, 0.4) !important;
+    padding: 0.75rem !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.enlace_cierre_sesion:hover {
+    background: rgba(239, 68, 68, 0.35) !important;
+    transform: scale(1.05);
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+}
+
+/* --- language-selector --- */
 .language-selector {
     position: fixed;
     top: 1.5rem;
     right: 1.5rem;
     z-index: 1000;
     background: rgba(255, 255, 255, 0.1);
-    /* backdrop-filter: blur(15px); */
     border-radius: 12px;
     padding: 0.75rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
@@ -150,145 +330,7 @@
     transform: scale(1.1);
 }
 
-.main-nav {
-    text-align: center;
-    max-width: 1100px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 1rem 0;
-    display: flex;
-    gap: clamp(0.5rem, 2vw, 1.25rem);
-    flex-wrap: wrap;
-    justify-content: center;
-    font-size: clamp(0.95rem, 2.5vw, 1.15rem);
-    color: white !important;
-    font-weight: 600;
-}
-
-.main-nav .nav-link {
-    text-decoration: none;
-    color: white;
-    /* Removido !important */
-    position: relative;
-    padding: 0.75rem 1.5rem;
-    border-radius: 25px;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    /* Descomentado para el efecto blur */
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    white-space: nowrap;
-    font-weight: 600;
-}
-
-.main-nav .nav-link:hover,
-.main-nav .nav-link:focus-visible {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    color: white;
-    /* Removido !important */
-}
-
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-
-.dropdown-content {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(20px);
-    min-width: 220px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-    border-radius: 12px;
-    z-index: 1000;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    margin-top: 0.5rem;
-    animation: dropdownSlide 0.3s ease;
-    overflow: hidden;
-    pointer-events: auto;
-    /* Asegura que los elementos sean clickeables */
-}
-
-@keyframes dropdownSlide {
-    from {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-}
-
-.dropdown-content a {
-    display: block;
-    padding: 1rem 1.5rem;
-    text-align: left;
-    color: #4338ca !important;
-    text-decoration: none;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    border-radius: 0;
-    margin: 0;
-    background: transparent;
-    border-bottom: 1px solid rgba(67, 56, 202, 0.1);
-    cursor: pointer;
-    /* Asegura que se muestre el cursor de pointer */
-}
-
-.dropdown-content a:last-child {
-    border-bottom: none;
-}
-
-.dropdown-content a:hover,
-.dropdown-content a:focus-visible {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white !important;
-    transform: translateX(4px);
-}
-
-.dropdown:hover .dropdown-content,
-.dropdown:focus-within .dropdown-content {
-    display: block;
-    pointer-events: auto;
-}
-
-.enlace_cierre_sesion {
-    background: rgba(239, 68, 68, 0.2) !important;
-    border: 1px solid rgba(239, 68, 68, 0.4) !important;
-    padding: 0.75rem !important;
-    border-radius: 12px !important;
-    transition: all 0.3s ease !important;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.enlace_cierre_sesion:hover {
-    background: rgba(239, 68, 68, 0.35) !important;
-    transform: scale(1.05);
-    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
-}
-
-.enlace_cierre_sesion img {
-    width: 24px;
-    height: 24px;
-    /* filter: brightness(0) invert(1); */
-    transition: transform 0.3s ease;
-}
-
-.enlace_cierre_sesion:hover img {
-    transform: rotate(180deg);
-}
-
-/* Responsive Design */
+/* --- Responsive Design --- */
 @media screen and (max-width: 768px) {
     .admin-header {
         padding: 1.5rem 1rem;
@@ -421,11 +463,7 @@
     }
 }
 
-/* Animaciones de entrada */
-.admin-header {
-    animation: headerSlideIn 0.6s ease-out;
-}
-
+/* --- Animaciones de entrada --- */
 @keyframes headerSlideIn {
     from {
         opacity: 0;
@@ -438,16 +476,7 @@
     }
 }
 
-/* Mejoras de accesibilidad
-.main-nav .nav-link:focus-visible,
-.dropdown-content a:focus-visible,
-.language-selector .flags a:focus-visible,
-.enlace_cierre_sesion:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.8);
-    outline-offset: 2px;
-} */
-
-/* Soporte para modo oscuro del sistema */
+/* --- Soporte para modo oscuro del sistema --- */
 @media (prefers-color-scheme: dark) {
     .dropdown-content {
         background: rgba(30, 41, 59, 0.95);
@@ -463,7 +492,7 @@
     }
 }
 
-/* Asegurar que Pico CSS no interfiera */
+/* --- Asegurar que Pico CSS no interfiera --- */
 .admin-header * {
     color: inherit;
 }
@@ -471,7 +500,6 @@
 .main-nav a,
 .admin-header a {
     color: white;
-    /* Removido !important */
 }
 
 .dropdown-content a {
