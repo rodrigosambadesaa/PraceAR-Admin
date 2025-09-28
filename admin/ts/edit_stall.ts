@@ -182,6 +182,37 @@ formulario.addEventListener("submit", async (event: SubmitEvent) => {
 
     const archivo = imagenInput?.files?.[0] ?? null;
 
+    const validFileExtensions = [".jpg", ".jpeg"];
+
+    function validateJpgFile(oForm: HTMLFormElement): boolean {
+        const arrInputs = oForm.getElementsByTagName("input");
+        for (let i = 0; i < arrInputs.length; i++) {
+            const oInput = arrInputs[i];
+            if (oInput.type === "file") {
+                const sFileName = oInput.value;
+                if (sFileName.length > 0) {
+                    let isValid = false;
+                    for (let j = 0; j < validFileExtensions.length; j++) {
+                        const ext = validFileExtensions[j];
+                        if (sFileName.toLowerCase().endsWith(ext)) {
+                            isValid = true;
+                            break;
+                        }
+                    }
+                    if (!isValid) {
+                        alert("Solo se permiten archivos .jpg o .jpeg");
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    if (!validateJpgFile(formulario)) {
+        return;
+    }
+
     if (archivo && archivo.size > 0) {
         const allowedTypes = new Set(["image/jpeg", "image/jpg"]);
         const maxSize = 2048 * 1024; // 2MB en bytes

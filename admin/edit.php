@@ -200,7 +200,7 @@
     <?php
     if ($fila) {
         ?>
-        <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>edit_admin.js"></script>
+        <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>edit_stall.js"></script>
         <?php
     }
 
