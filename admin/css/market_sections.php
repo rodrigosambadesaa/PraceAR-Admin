@@ -84,8 +84,6 @@ main.maps h2 {
     background: var(--admin-overlay-background);
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    gap: 1.5rem;
     padding: 1rem;
     box-sizing: border-box;
     overflow: auto;
@@ -105,11 +103,9 @@ main.maps h2 {
 
 .zoomed-container figcaption {
     color: var(--admin-overlay-text);
-    max-width: min(960px, 90vw);
-    width: 100%;
+    margin-top: 1rem;
     font-size: 1.3rem;
     text-align: center;
-    line-height: 1.5;
 }
 
 @media (max-width: 1100px) {
