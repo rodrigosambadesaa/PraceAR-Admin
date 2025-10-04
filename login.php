@@ -167,58 +167,59 @@ $captcha_question = captcha_get_question($captcha_key);
 
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - PraceAR - Formulario de Inicio de Sesión</title>
-    <link rel="stylesheet" href="./css/header.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <link rel='icon' href='./img/favicon.png' type='image/png'>
-
-    <!-- Iconos para dispositivos Apple -->
-    <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
-
-    <!-- Icono para Android (PWA) -->
-    <link rel="icon" sizes="192x192" href="icon-192x192.png">
-
-    <!-- Manifesto Web (PWA) -->
-    <link rel="manifest" href="/manifest.json">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin - PraceAR - Formulario de Inicio de Sesión</title>
+        <link rel="stylesheet" href="./css/header.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+        <link rel='icon' href='./img/favicon.png' type='image/png'>
+        
+        <!-- Iconos para dispositivos Apple -->
+        <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
+        
+        <!-- Icono para Android (PWA) -->
+        <link rel="icon" sizes="192x192" href="icon-192x192.png">
+        
+        <!-- Manifesto Web (PWA) -->
+        <link rel="manifest" href="/manifest.json">
+        
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
-
-    <style>
-        .required::after {
-            content: " *";
-            color: red;
-        }
-
-        .note {
-            color: red;
-            text-align: center;
-        }
-
-        /* Mejorar contraste */
-        body {
-            background-color: #f9f9f9;
-            color: #333;
-        }
-
-        input[type="submit"] {
-            background-color: #007bff;
-            color: #fff;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
-    </style>
+        
+        <style>
+            .required::after {
+                content: " *";
+                color: red;
+            }
+            
+            .note {
+                color: red;
+                text-align: center;
+            }
+            
+            /* Mejorar contraste */
+            body {
+                background-color: #f9f9f9;
+                color: #333;
+            }
+            
+            input[type="submit"] {
+                background-color: #007bff;
+                color: #fff;
+            }
+            
+            input[type="submit"]:hover {
+                background-color: #0056b3;
+            }
+            </style>
+    <script type="module" src="./js/login.js" defer></script>
 </head>
 
 <body class="container"
@@ -261,7 +262,6 @@ $captcha_question = captcha_get_question($captcha_key);
     </form>
     <p class="note" role="alert" aria-live="polite">Los campos marcados con * son obligatorios</p>
     <?= $err ?>
-    <script type="module" src="./js/login.js"></script>
 </body>
 
 </html>
