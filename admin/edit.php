@@ -6,7 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Editar Datos Generales de Puesto - Página de administración</title>
      <style>
-        <?php require_once(CSS_ADMIN . 'header.css'); ?>
+        <?php
+            require_once(CSS_ADMIN . 'header.css');
+            require_once(CSS_ADMIN . 'edit_admin.css');
+        ?>
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
@@ -22,8 +25,6 @@
     <!-- Manifesto Web (PWA) -->
     <link rel="manifest" href="/appventurers/manifest.json">
 
-    <?php
-    require_once(CSS_ADMIN . 'edit_admin.php'); ?>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -36,7 +37,7 @@
 
     <?php
     $imagen_eliminada = false;
-    require_once(HELPERS . "update_stalls.php");
+    require_once(HELPERS . "update_stalls.php"); 
     require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
 
     $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
@@ -101,7 +102,7 @@
                 <div style="display: flex; flex-direction: column; align-items: center;">
                     <img src="<?= htmlspecialchars($ruta_a_imagen) ?>"
                         alt="Imagen del puesto <?= htmlspecialchars($fila["nombre"]) ?>" class="zoomable"
-                        style="object-fit: cover; height: 140px; display: block; margin: 0 auto;">
+                        style="object-fit: cover; height: 300px; width: 300px; display: block; margin: 0 auto;">
                     <a href="#" id="eliminar-imagen-link"
                         style="margin-top: 1em; color: red; text-decoration: none; text-align: center; display: block;"
                         aria-label="Eliminar imagen">Eliminar</a>

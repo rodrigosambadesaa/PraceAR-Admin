@@ -454,6 +454,27 @@
         ser de 15 caracteres, por lo que puede usar una extensión como 1Password o <a
             href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>">nuestro generador de contraseñas</a>
         para generar una contraseña de 16 caracteres o más.</span>
+    <!-- Consejos para mantener tus contraseñas seguras: -->
+    <div class="success-message">
+        <!-- Contraseña cambiada correctamente.<br> -->
+        <span style="text-align: center;">
+            <strong>Consejos para mantener tus contraseñas seguras:</strong>
+        </span>
+        <ul>
+            <li>Utiliza una contraseña única para cada cuenta.</li>
+            <li>La longitud mínima de la contraseña debe ser de 16 caracteres, con al menos una letra mayúscula, una letra minúscula, un número y tres caracteres especiales.</li>
+            <li>No compartas tu contraseña con nadie.</li>
+            <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
+            <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
+            <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
+            <li>
+                <strong>
+                    En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.
+                </strong>
+            </li>
+            <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
+        </ul>
+    </div>
     <?= $err ?>
     <script type="module" src="<?= JS_ADMIN ?>check_password_requirements.js"></script>
     <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>

@@ -191,6 +191,71 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             color: red;
             text-align: center;
         }
+
+        /* Estilos responsive para el formulario */
+        @media (max-width: 600px) {
+            form {
+                width: 90%;
+                margin: 0 auto;
+            }
+
+            input[type="number"],
+            input[type="range"] {
+                width: 100%;
+            }
+        }   
+
+        button {
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        #success-message {
+            color: green;
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        #resistencia-output {
+            color: blue;
+            text-align: center;
+            margin-top: 0.75rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        #contrasenas-generadas div {
+            margin-top: 0.5rem;
+        }
+
+        #contrasenas-generadas {
+            margin-top: 1rem;
+        }
     </style>
 </head>
 
