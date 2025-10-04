@@ -206,6 +206,8 @@
     <?php if ($puesto_encontrado) { ?>
         <script type="module" src="<?= JS_ADMIN . 'edit_translations.js' ?>"></script>
     <?php } ?>
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+
 </body>
 
 </html>

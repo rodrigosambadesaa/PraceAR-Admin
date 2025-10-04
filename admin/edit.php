@@ -207,6 +207,7 @@
 
     ?>
 
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
 </body>
 
 </html>
