@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../constants.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -14,9 +15,13 @@
     <link rel="manifest" href="/manifest.json">
 
     <style>
-        <?php require_once(CSS_ADMIN . 'header.css'); ?>
+        <?php
+            require_once(CSS_ADMIN . 'theme.css');
+            require_once(CSS_ADMIN . 'header.css');
+            require_once(CSS_ADMIN . 'market_sections.php');
+        ?>
     </style>
-    <?php require_once(CSS_ADMIN . 'market_sections.php'); ?>
+    <link rel="stylesheet" href="./css/darkmode.css">
 </head>
 
 <body>
@@ -89,6 +94,39 @@
             }
         });
     </script>
+
+    <script>
+        (function () {
+            if (window.__adminDarkModeInitialized) {
+                return;
+            }
+            const body = document.body;
+            const toggle = document.getElementById('toggle-darkmode');
+            const icon = document.getElementById('darkmode-icon');
+            if (!body || !toggle || !icon) {
+                return;
+            }
+            const applyDarkMode = function (on) {
+                body.classList.toggle('dark-mode', on);
+                icon.textContent = on ? '☀️' : '🌙';
+            };
+            const stored = localStorage.getItem('dark-mode');
+            if (stored === null) {
+                const hour = new Date().getHours();
+                applyDarkMode(hour >= 19 || hour < 7);
+            }
+            else {
+                applyDarkMode(stored === 'true');
+            }
+            toggle.addEventListener('click', function () {
+                const isDark = !body.classList.contains('dark-mode');
+                applyDarkMode(isDark);
+                localStorage.setItem('dark-mode', String(isDark));
+            });
+            window.__adminDarkModeInitialized = true;
+        })();
+    </script>
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>" defer></script>
 
 </body>
 

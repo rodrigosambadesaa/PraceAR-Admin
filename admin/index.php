@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Página Principal del Panel de Administración</title>
     <style>
+        <?php require_once(CSS_ADMIN . 'theme.css'); ?>
         <?php require_once(CSS_ADMIN . 'header.css'); ?>
         <?php require_once(CSS_ADMIN . 'index_admin.css'); ?>
     </style>
@@ -15,6 +16,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="./css/darkmode.css">
 </head>
 
 <body>
@@ -267,6 +269,7 @@
         <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
     <?php endif; ?>
 
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
 </body>
 
 </html>
