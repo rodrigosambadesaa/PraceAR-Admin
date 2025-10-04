@@ -1,14 +1,14 @@
 body.dark-mode {
-    background: #181a1b !important;
-    color: #e0e0e0 !important;
+    background: var(--admin-bg, #181a1b) !important;
+    color: var(--admin-text, #e0e0e0) !important;
 }
 
 body.dark-mode input,
 body.dark-mode textarea,
 body.dark-mode select {
-    background: #23272a !important;
-    color: #e0e0e0 !important;
-    border-color: #444 !important;
+    background: var(--admin-surface, #23272a) !important;
+    color: var(--admin-text, #e0e0e0) !important;
+    border-color: var(--admin-border, #444) !important;
 }
 
 body.dark-mode table,
@@ -20,27 +20,27 @@ body.dark-mode main,
 body.dark-mode .zoomed-container,
 body.dark-mode .maps-grid,
 body.dark-mode .note {
-    background: #23272a !important;
-    color: #e0e0e0 !important;
-    border-color: #444 !important;
+    background: var(--admin-surface, #23272a) !important;
+    color: var(--admin-text, #e0e0e0) !important;
+    border-color: var(--admin-border, #444) !important;
 }
 
 body.dark-mode a {
-    color: #8ab4f8 !important;
+    color: var(--admin-link, #8ab4f8) !important;
 }
 
 body.dark-mode .note {
-    color: #ffb4b4 !important;
+    color: var(--admin-error, #ffb4b4) !important;
 }
 
 body.dark-mode .success-message {
-    color: #7fff7f !important;
+    color: var(--admin-success, #7fff7f) !important;
 }
 
 body.dark-mode .error-message {
-    color: #ff7f7f !important;
+    color: var(--admin-error, #ff7f7f) !important;
 }
 
 body.dark-mode img {
-    filter: brightness(0.85) contrast(1.1);
+    filter: brightness(0.95) contrast(1.05);
 }
