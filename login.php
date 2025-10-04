@@ -103,6 +103,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $update_stmt->bind_param('si', $new_hash, $usuario['id']);
                     $update_stmt->execute();
 
+                    session_regenerate_id(true); // Regenerar el ID de sesión tras login exitoso
+
                     $_SESSION['id'] = $usuario['id'];
                     $_SESSION['login'] = 'logueado';
                     $_SESSION['nombre_usuario'] = $login;
@@ -132,6 +134,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $update_stmt->bind_param('si', $new_hash, $usuario['id']);
                     $update_stmt->execute();
                 }
+
+                session_regenerate_id(true); // Regenerar el ID de sesión tras login exitoso
 
                 echo "Inicio de sesión correcto";
                 $_SESSION['id'] = $usuario['id'];
