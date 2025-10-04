@@ -223,6 +223,7 @@ $captcha_question = captcha_get_question($captcha_key);
                 background-color: #0056b3;
             }
             </style>
+    <link rel="stylesheet" href="./css/darkmode.css">
     <script type="module" src="./js/login.js" defer></script>
 </head>
 
@@ -266,6 +267,7 @@ $captcha_question = captcha_get_question($captcha_key);
     </form>
     <p class="note" role="alert" aria-live="polite">Los campos marcados con * son obligatorios</p>
     <?= $err ?>
+    <script src="./js/helpers/dark_mode.js" defer></script>
 </body>
 
 </html>
