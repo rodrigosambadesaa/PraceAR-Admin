@@ -23,10 +23,10 @@ if (isset($_SESSION['login'])) {
             require_once(ADMIN . 'index.php');
             break;
 
-        case 'ships':
-            // Pasar el número de página actual a la página de naves
+        case 'market_sections':
+            // Pasar el número de página actual a la página de secciones de mercado
             $_GET['page_number'] = $current_page;
-            require_once(ADMIN . 'ships.php');
+            require_once(ADMIN . 'market_sections.php');
             break;
 
         case 'change_password':
