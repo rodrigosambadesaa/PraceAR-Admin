@@ -58,7 +58,7 @@ formulario.addEventListener("submit", (event: SubmitEvent) => {
     if (errorExist) {
         event.preventDefault();
         const div = document.createElement("div");
-        div.innerHTML = `<ul style="color: red;">${errorMessages}</ul>`;
+        div.innerHTML = `<ul class="admin-error-text">${errorMessages}</ul>`;
         formulario.insertAdjacentElement("afterend", div);
     }
 });

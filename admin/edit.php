@@ -7,12 +7,14 @@
     <title>Admin - PraceAR - Editar Datos Generales de Puesto - Página de administración</title>
      <style>
         <?php
+            require_once(CSS_ADMIN . 'theme.css');
             require_once(CSS_ADMIN . 'header.css');
             require_once(CSS_ADMIN . 'edit_admin.css');
         ?>
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
+    <link rel="stylesheet" href="./css/darkmode.css">
 
     <!-- Iconos para dispositivos Apple -->
     <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
@@ -66,10 +68,10 @@
         aria-labelledby="cabecera-tabla">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
         <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <span
-                style="color: #1e7dbd"><?= htmlspecialchars($fila["nombre"]) ?></span>
+                class="admin-accent"><?= htmlspecialchars($fila["nombre"]) ?></span>
         </h2>
         <div style="display:flex; align-items: center; gap: .5em;">
-            <label for="activo">Activo <span style="color: red;">*</span></label>
+            <label for="activo">Activo <span class="admin-required" aria-hidden="true">*</span></label>
             <?php
             $activo = $fila["activo"];
             ?>
@@ -103,8 +105,8 @@
                     <img src="<?= htmlspecialchars($ruta_a_imagen) ?>"
                         alt="Imagen del puesto <?= htmlspecialchars($fila["nombre"]) ?>" class="zoomable"
                         style="object-fit: cover; height: 300px; width: 300px; display: block; margin: 0 auto;">
-                    <a href="#" id="eliminar-imagen-link"
-                        style="margin-top: 1em; color: red; text-decoration: none; text-align: center; display: block;"
+                    <a href="#" id="eliminar-imagen-link" class="admin-error-text"
+                        style="margin-top: 1em; text-decoration: none; text-align: center; display: block;"
                         aria-label="Eliminar imagen">Eliminar</a>
                     <script>
                         document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {
@@ -136,7 +138,7 @@
                 placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'" aria-label="Teléfono de contacto">
         </div>
         <div>
-            <label for="tipo-unity">Tipo en Unity <span style="color: red;">*</span></label>
+            <label for="tipo-unity">Tipo en Unity <span class="admin-required" aria-hidden="true">*</span></label>
             <select name="tipo_unity" id="tipo-unity" aria-required="true">
                 <?php foreach (UNITY_TYPE as $key => $value) { ?>
                     <option value="<?= $key ?>" <?= $fila["tipo_unity"] == $key ? "selected" : "" ?>>
@@ -145,7 +147,7 @@
             </select>
         </div>
         <div>
-            <label for="id-nave">ID Nave <span style="color: red;">*</span></label>
+            <label for="id-nave">ID Nave <span class="admin-required" aria-hidden="true">*</span></label>
             <select required id="id-nave" name="id_nave" aria-required="true">
                 <?php
                 $sql_naves = "SELECT * FROM naves";
@@ -168,7 +170,7 @@
         </div>
     </form>
 
-    <p class="note" style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span>
+    <p class="note admin-error-text" style="text-align: center;">Los campos marcados con <span class="admin-required" aria-hidden="true">*</span>
         son
         obligatorios</p>
 

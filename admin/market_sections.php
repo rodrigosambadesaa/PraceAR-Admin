@@ -1,3 +1,4 @@
+<?php require_once __DIR__ . '/../constants.php'; ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -14,9 +15,13 @@
     <link rel="manifest" href="/manifest.json">
 
     <style>
-        <?php require_once(CSS_ADMIN . 'header.css'); ?>
+        <?php
+            require_once(CSS_ADMIN . 'theme.css');
+            require_once(CSS_ADMIN . 'header.css');
+            require_once(CSS_ADMIN . 'market_sections.php');
+        ?>
     </style>
-    <?php require_once(CSS_ADMIN . 'market_sections.php'); ?>
+    <link rel="stylesheet" href="./css/darkmode.css">
 </head>
 
 <body>
@@ -91,30 +96,37 @@
     </script>
 
     <script>
-        (function() {
-            // Detectar preferencia guardada
-            function setDarkMode(on) {
-                document.body.classList.toggle('dark-mode', on);
-                document.getElementById('darkmode-icon').textContent = on ? '☀️' : '🌙';
+        (function () {
+            if (window.__adminDarkModeInitialized) {
+                return;
             }
-            // Inicializar según hora o preferencia guardada
-            let darkPref = localStorage.getItem('dark-mode');
-            if (darkPref === null) {
-                // Automático por hora: oscuro de 19h a 7h
+            const body = document.body;
+            const toggle = document.getElementById('toggle-darkmode');
+            const icon = document.getElementById('darkmode-icon');
+            if (!body || !toggle || !icon) {
+                return;
+            }
+            const applyDarkMode = function (on) {
+                body.classList.toggle('dark-mode', on);
+                icon.textContent = on ? '☀️' : '🌙';
+            };
+            const stored = localStorage.getItem('dark-mode');
+            if (stored === null) {
                 const hour = new Date().getHours();
-                setDarkMode(hour >= 19 || hour < 7);
-            } else {
-                setDarkMode(darkPref === 'true');
+                applyDarkMode(hour >= 19 || hour < 7);
             }
-            // Cambio manual
-            document.getElementById('toggle-darkmode').addEventListener('click', function() {
-                const isDark = !document.body.classList.contains('dark-mode');
-                setDarkMode(isDark);
-                localStorage.setItem('dark-mode', isDark);
+            else {
+                applyDarkMode(stored === 'true');
+            }
+            toggle.addEventListener('click', function () {
+                const isDark = !body.classList.contains('dark-mode');
+                applyDarkMode(isDark);
+                localStorage.setItem('dark-mode', String(isDark));
             });
+            window.__adminDarkModeInitialized = true;
         })();
     </script>
-    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>" defer></script>
 
 </body>
 
