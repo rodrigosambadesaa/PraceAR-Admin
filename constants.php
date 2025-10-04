@@ -83,10 +83,19 @@ $subdominio = "appventurers";
 // Datos de conexión a la BBDD
 $envVariables = load_project_env(DIRNAME);
 
-$servidor_bd = get_env_value('PRACEAR_DB_HOST', $envVariables);
-$usuario = get_env_value('PRACEAR_DB_USER', $envVariables);
-$clave = get_env_value('PRACEAR_DB_PASSWORD', $envVariables);
-$bd = get_env_value('PRACEAR_DB_NAME', $envVariables);
+$isLocal = ($_SERVER['SERVER_NAME'] ?? 'localhost') === 'localhost';
+
+if ($isLocal) {
+    $servidor_bd = get_env_value('PRACEAR_DB_HOST_LOCAL', $envVariables);
+    $usuario = get_env_value('PRACEAR_DB_USER_LOCAL', $envVariables);
+    $clave = get_env_value('PRACEAR_DB_PASSWORD_LOCAL', $envVariables);
+    $bd = get_env_value('PRACEAR_DB_NAME_LOCAL', $envVariables);
+} else {
+    $servidor_bd = get_env_value('PRACEAR_DB_HOST_PROD', $envVariables);
+    $usuario = get_env_value('PRACEAR_DB_USER_PROD', $envVariables);
+    $clave = get_env_value('PRACEAR_DB_PASSWORD_PROD', $envVariables);
+    $bd = get_env_value('PRACEAR_DB_NAME_PROD', $envVariables);
+}
 
 define('DB_CONFIG', [
     'host' => $servidor_bd,
