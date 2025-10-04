@@ -1,9 +1,5 @@
 "use strict";
 (function () {
-    if (window.__adminDarkModeInitialized) {
-        return;
-    }
-    window.__adminDarkModeInitialized = true;
     // Helper to safely get an element by ID and assert its type
     function getElementByIdOrThrow(id) {
         const el = document.getElementById(id);
