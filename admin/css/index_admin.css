@@ -6,6 +6,8 @@ body {
     line-height: 1.25;
     margin: 0;
     padding: 0;
+    background-color: var(--admin-bg);
+    color: var(--admin-text);
 }
 
 main {
@@ -31,16 +33,19 @@ footer {
 
 /* Estilos de tablas */
 table {
-    border: 1px solid #ccc;
+    border: 1px solid var(--admin-table-border);
     border-collapse: collapse;
     margin: 0;
     padding: 0;
     width: 100%;
     table-layout: fixed;
+    background-color: var(--admin-surface);
 }
 
 thead {
     font-size: .95em;
+    background-color: var(--admin-table-header-bg);
+    color: var(--admin-table-header-text);
 }
 
 tbody {
@@ -54,9 +59,13 @@ tbody {
 }
 
 table tr {
-    background-color: #f8f8f8;
-    border: 1px solid #ddd;
+    background-color: var(--admin-table-row-bg);
+    border: 1px solid var(--admin-table-border);
     padding: .35em;
+}
+
+table tbody tr:nth-child(even) {
+    background-color: var(--admin-table-row-alt-bg);
 }
 
 table th,
@@ -71,7 +80,7 @@ table th {
 }
 
 .imagen-bandera {
-    box-shadow: 0 0 2px 1px black;
+    box-shadow: 0 0 2px 1px var(--admin-border-strong);
 }
 
 #contenedor-separacion {
@@ -86,7 +95,7 @@ table th {
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: var(--admin-overlay-background);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -109,8 +118,9 @@ table th {
     max-width: 100%;
     max-height: 80vh;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    box-shadow: var(--admin-overlay-shadow);
     transition: transform 0.3s ease;
+    background-color: var(--admin-surface);
 }
 
 .zoomed-container img:hover {
@@ -118,7 +128,7 @@ table th {
 }
 
 .zoomed-container p {
-    color: white;
+    color: var(--admin-overlay-text);
     font-size: 1.5rem;
     margin-top: 30px;
     text-align: center;
@@ -137,7 +147,7 @@ table th {
     top: 0;
     right: 0;
     font-size: 2.25rem;
-    color: white;
+    color: var(--admin-overlay-text);
     cursor: pointer;
     background: none;
     border: none;
@@ -162,22 +172,23 @@ table th {
 
 .paginacion a {
     padding: 8px 12px;
-    border: 1px solid #1e7dbd;
+    border: 1px solid var(--admin-pagination-border);
     text-decoration: none;
-    color: #1e7dbd;
+    color: var(--admin-pagination-text);
     border-radius: 4px;
     transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: transparent;
 }
 
 .paginacion a:hover {
-    background-color: #1e7dbd;
-    color: white;
+    background-color: var(--admin-pagination-hover-bg);
+    color: var(--admin-pagination-hover-color);
 }
 
 .paginacion a.activo {
-    background-color: #1e7dbd;
-    color: white;
-    border-color: #1e7dbd;
+    background-color: var(--admin-pagination-hover-bg);
+    color: var(--admin-pagination-hover-color);
+    border-color: var(--admin-pagination-border);
     font-weight: bold;
     border-radius: 5px;
 }

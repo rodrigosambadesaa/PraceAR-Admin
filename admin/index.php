@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Página Principal del Panel de Administración</title>
     <style>
+        <?php require_once(CSS_ADMIN . 'theme.css'); ?>
         <?php require_once(CSS_ADMIN . 'header.css'); ?>
         <?php require_once(CSS_ADMIN . 'index_admin.css'); ?>
     </style>
