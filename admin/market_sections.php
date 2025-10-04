@@ -90,6 +90,32 @@
         });
     </script>
 
+    <script>
+        (function() {
+            // Detectar preferencia guardada
+            function setDarkMode(on) {
+                document.body.classList.toggle('dark-mode', on);
+                document.getElementById('darkmode-icon').textContent = on ? '☀️' : '🌙';
+            }
+            // Inicializar según hora o preferencia guardada
+            let darkPref = localStorage.getItem('dark-mode');
+            if (darkPref === null) {
+                // Automático por hora: oscuro de 19h a 7h
+                const hour = new Date().getHours();
+                setDarkMode(hour >= 19 || hour < 7);
+            } else {
+                setDarkMode(darkPref === 'true');
+            }
+            // Cambio manual
+            document.getElementById('toggle-darkmode').addEventListener('click', function() {
+                const isDark = !document.body.classList.contains('dark-mode');
+                setDarkMode(isDark);
+                localStorage.setItem('dark-mode', isDark);
+            });
+        })();
+    </script>
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+
 </body>
 
 </html>

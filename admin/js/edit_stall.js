@@ -196,3 +196,14 @@ formulario.addEventListener("submit", async (event) => {
     }
     formulario.submit();
 });
+// Cuando cargue la página, meter todas las etiquetas style en el head en una sola
+window.addEventListener("load", () => {
+    const styles = Array.from(document.querySelectorAll("style"));
+    const head = document.head;
+    if (styles.length > 0) {
+        const combinedStyle = document.createElement("style");
+        combinedStyle.textContent = styles.map((style) => style.textContent).join("\n");
+        head.appendChild(combinedStyle);
+        styles.forEach((style) => style.remove());
+    }
+});
