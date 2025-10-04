@@ -14,9 +14,13 @@
     <link rel="manifest" href="/manifest.json">
 
     <style>
-        <?php require_once(CSS_ADMIN . 'header.css'); ?>
+        <?php
+            require_once(CSS_ADMIN . 'theme.css');
+            require_once(CSS_ADMIN . 'header.css');
+            require_once(CSS_ADMIN . 'market_sections.php');
+        ?>
     </style>
-    <?php require_once(CSS_ADMIN . 'market_sections.php'); ?>
+    <link rel="stylesheet" href="./css/darkmode.css">
 </head>
 
 <body>

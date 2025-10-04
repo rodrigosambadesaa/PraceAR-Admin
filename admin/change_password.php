@@ -7,7 +7,10 @@
         <title>Admin - PraceAR - Cambiar Contraseña</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
         <style>
-            <?php require_once(CSS_ADMIN . 'header.css'); ?>
+            <?php
+            require_once(CSS_ADMIN . 'theme.css');
+            require_once(CSS_ADMIN . 'header.css');
+            ?>
             /* body {
                 max-width: 80%;
                 margin: 0 auto;
@@ -37,7 +40,8 @@
                 max-width: 1200px;
                 background: var(--pico-card-background-color, #fff);
                 border-radius: var(--pico-border-radius, 0.5rem);
-                box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+                box-shadow: var(--admin-card-shadow);
+                border: 1px solid var(--admin-border);
                 padding: 2rem 2.5rem;
                 gap: 1.2rem;
             }
@@ -141,6 +145,7 @@
             }
         }
         </style>
+        <link rel="stylesheet" href="./css/darkmode.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
     
     <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
@@ -386,7 +391,7 @@
             header("refresh:2;url=$protocolo/$servidor/$subdominio"); */
             exit;
         } catch (Exception $e) {
-            $err = '<span style="color: red; text-align: center;">' . htmlspecialchars($e->getMessage() ?? 'Error desconocido') . '</span>';
+            $err = '<span class="admin-error-text" style="text-align: center;">' . htmlspecialchars($e->getMessage() ?? 'Error desconocido') . '</span>';
         }
     }
 
@@ -407,19 +412,19 @@
                 disabled aria-disabled="true">
         </div>
         <div id="form-group">
-            <label for="old-password">Contraseña actual: <span style="color: red;" aria-hidden="true">*</span></label>
+            <label for="old-password">Contraseña actual: <span class="admin-required" aria-hidden="true">*</span></label>
             <input type="password" name="old_password" id="old-password" required aria-describedby="password-help">
             <p id="password-help" class="sr-only">Introduce tu contraseña actual.</p>
         </div>
         <div id="form-group">
-            <label for="new-password">Nueva contraseña: <span style="color: red;" aria-hidden="true">*</span></label>
+            <label for="new-password">Nueva contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
             <input type="password" name="new_password" id="new-password" required onblur="if(this.value) checkPasswordRequirements()"
                 aria-describedby="new-password-help">
             <p id="new-password-help" class="sr-only">Introduce una nueva contraseña que cumpla con los requisitos.</p>
         </div>
         <div id="form-group">
-            <label for="confirm-password">Confirmar nueva contraseña: <span style="color: red;"
-                    aria-hidden="true">*</span></label>
+            <label for="confirm-password">Confirmar nueva contraseña: <span class="admin-required"
+            aria-hidden="true">*</span></label>
             <input type="password" name="confirm_password" id="confirm-password" required
                 aria-describedby="confirm-password-help">
             <p id="confirm-password-help" class="sr-only">Introduce nuevamente la nueva contraseña para confirmarla.</p>
@@ -445,9 +450,9 @@
             <input type="submit" value="Cambiar contraseña" aria-label="Cambiar contraseña">
         </div>
     </form>
-    <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;">*</span> son
+    <p class="admin-error-text" style="text-align: center;">Los campos marcados con <span class="admin-required" aria-hidden="true">*</span> son
         obligatorios</p>
-    <span id="help-text" style="color: blue;">¿Necesita ayuda? Le recomendamos que use un navegador con gestor y generador de
+    <span id="help-text" class="admin-info-text">¿Necesita ayuda? Le recomendamos que use un navegador con gestor y generador de
         contraseñas
         integrados, como Google
         Chrome o Mozilla Firefox, con la sesión iniciada en su cuenta de Google o Firefox, respectivamente. De esta
