@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputNombreUsuario = getUsernameInput();
     function crearMensajeError(texto) {
         const spanError = document.createElement("span");
-        spanError.style.color = "red";
+        spanError.classList.add("admin-error-text");
         spanError.textContent = texto;
         inputNuevaContrasena.insertAdjacentElement("afterend", spanError);
     }
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     window.checkPasswordRequirements = async () => {
         const nuevaContrasena = inputNuevaContrasena.value;
-        const mensajesError = formulario.querySelectorAll('span[style="color: red;"]');
+        const mensajesError = formulario.querySelectorAll('.admin-error-text');
         mensajesError.forEach((mensaje) => mensaje.remove());
         if (!verifyStrongPassword(nuevaContrasena)) {
             crearMensajeError("La nueva contraseña no cumple con los requisitos de seguridad. Debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.");

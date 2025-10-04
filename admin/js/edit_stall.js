@@ -190,9 +190,20 @@ formulario.addEventListener("submit", async (event) => {
         alert(errores[0]);
         const div = document.createElement("div");
         div.classList.add("form-errors");
-        div.innerHTML = `<ul style="color: red;">${errores.map((mensaje) => `<li>${mensaje}</li>`).join("")}</ul>`;
+        div.innerHTML = `<ul class="admin-error-text">${errores.map((mensaje) => `<li>${mensaje}</li>`).join("")}</ul>`;
         formulario.insertAdjacentElement("afterend", div);
         return;
     }
     formulario.submit();
+});
+// Cuando cargue la página, meter todas las etiquetas style en el head en una sola
+window.addEventListener("load", () => {
+    const styles = Array.from(document.querySelectorAll("style"));
+    const head = document.head;
+    if (styles.length > 0) {
+        const combinedStyle = document.createElement("style");
+        combinedStyle.textContent = styles.map((style) => style.textContent).join("\n");
+        head.appendChild(combinedStyle);
+        styles.forEach((style) => style.remove());
+    }
 });

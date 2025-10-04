@@ -7,15 +7,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Admin - PraceAR - Editar Traducciones de Puesto - Página de administración</title>
         <style>
-         <?php require_once(CSS_ADMIN . 'header.css'); ?>
+        <?php
+            require_once(CSS_ADMIN . 'theme.css');
+            require_once(CSS_ADMIN . 'header.css');
+        ?>
         /* Máximo tamaño del body */
         body {
             max-width: 90vw;
             margin: 0 auto;
             padding: 1em;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
+            background-color: var(--admin-bg);
+            color: var(--admin-text);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -28,9 +31,10 @@
             max-width: 600px;
             margin: 2em auto 0 auto;
             padding: 1.5em;
-            background-color: #fff;
+            background-color: var(--admin-surface);
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--admin-card-shadow);
+            border: 1px solid var(--admin-border);
             display: flex;
             flex-direction: column;
             gap: 1em;
@@ -40,22 +44,33 @@
             display: block;
             margin-bottom: 0.5em;
             font-weight: bold;
+            color: var(--admin-text-muted);
         }
 
         input[type="text"], textarea {
             width: 100%;
             padding: 0.5em;
             margin-bottom: 1em;
-            border: 1px solid #ccc;
-            border-radius: 3px;
+            border: 1px solid var(--admin-border);
+            border-radius: 6px;
             box-sizing: border-box;
             font-size: 1em;
+            background-color: var(--admin-surface-muted);
+            color: var(--admin-text);
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px var(--admin-primary-soft);
         }
 
         h2 {
             text-align: center;
             margin-top: 1.5em;
             margin-bottom: 1em;
+            color: var(--admin-heading);
         }
 
         p[style] {
@@ -64,28 +79,29 @@
 
         @media (max-width: 700px) {
             body {
-            max-width: 100vw;
-            padding: 0.5em;
+                max-width: 100vw;
+                padding: 0.5em;
             }
             form {
-            max-width: 100%;
-            padding: 1em;
+                max-width: 100%;
+                padding: 1em;
             }
             h2 {
-            font-size: 1.2em;
+                font-size: 1.2em;
             }
         }
 
         @media (max-width: 480px) {
             form {
-            padding: 0.5em;
+                padding: 0.5em;
             }
             input[type="text"], textarea {
-            font-size: 0.95em;
+                font-size: 0.95em;
             }
         }
-        
+
     </style>
+    <link rel="stylesheet" href="./css/darkmode.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
 
@@ -159,7 +175,7 @@
 
     ?>
 
-    <h2 style="text-align: center;">Traducción del puesto<span style="color: #1e7dbd;">
+    <h2 style="text-align: center;">Traducción del puesto<span class="admin-accent">
             <?php
             // Obtener el nombre del puesto
             $sql_nombre_puesto = "SELECT nombre FROM puestos WHERE id = ?";
@@ -183,7 +199,7 @@
 
     <form class="pure-form" action="#" method="POST" id="formulario" aria-labelledby="formulario-titulo">
         <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
-        <label for="tipo">Tipo <span style="color: red;" aria-hidden="true">*</span></label>
+        <label for="tipo">Tipo <span class="admin-required" aria-hidden="true">*</span></label>
         <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>"
             placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'" required aria-required="true"
             aria-describedby="tipo-descripcion">
@@ -199,13 +215,15 @@
         <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars($data['id'] ?? "") ?>">
         <input type="submit" value="Actualizar">
     </form>
-    <p style="color: red; text-align: center;">Los campos marcados con <span style="color: red;"
+    <p class="admin-error-text" style="text-align: center;">Los campos marcados con <span class="admin-required"
             aria-hidden="true">*</span> son
         obligatorios</p>
     <?= htmlspecialchars($mensaje ?? ""); ?>
     <?php if ($puesto_encontrado) { ?>
         <script type="module" src="<?= JS_ADMIN . 'edit_translations.js' ?>"></script>
     <?php } ?>
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+
 </body>
 
 </html>

@@ -120,33 +120,33 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             $length_range = limpiar_input($_POST['length_range']);
 
             if (!is_numeric($length) || !ctype_digit($length)) {
-                $result = '<span style="color: red; text-align: center;">La longitud debe ser un número natural válido.</span>';
+                $result = '<span class="admin-error-text" style="text-align: center;">La longitud debe ser un número natural válido.</span>';
             } else {
                 $length = (int) $length;
                 $length_range = (int) $length_range;
 
                 if ($length < 16 || $length > 500 || $length_range < 16 || $length_range > 500) {
-                    $result = '<span style="color: red; text-align: center;">La longitud debe estar entre 16 y 500 caracteres.</span>';
+                    $result = '<span class="admin-error-text" style="text-align: center;">La longitud debe estar entre 16 y 500 caracteres.</span>';
                 } elseif ($length !== $length_range) {
-                    $result = '<span style="color: red; text-align: center;">No se permite modificar el código Javascript que sincroniza los inputs.</span>';
+                    $result = '<span class="admin-error-text" style="text-align: center;">No se permite modificar el código Javascript que sincroniza los inputs.</span>';
                 } else {
                     try {
                         for ($i = 0; $i < $quantity; $i++) { // $quantity siempre será 1
                             $passwords[] = generate_password($length);
                         }
 
-                        $result = '<div id="contrasenas-generadas" style="color: #1e90ff; text-align: center; font-size: 1.2rem;">';
+                        $result = '<div id="contrasenas-generadas">';
                         foreach ($passwords as $index => $password) {
                             $passwordId = "password-$index";
-                            $result .= '<div style="font-size: 1.8rem; color: black;">Contraseña ' . ($index + 1) . ':</div>';
-                            $result .= '<div id="' . $passwordId . '" style="font-size: 1.3rem;">' . htmlspecialchars($password) . '</div>';
+                            $result .= '<div class="password-summary__title">Contraseña ' . ($index + 1) . ':</div>';
+                            $result .= '<div id="' . $passwordId . '" class="password-summary__value">' . htmlspecialchars($password) . '</div>';
                             $result .= '<button onclick="copyToClipboard(\'' . $passwordId . '\')">Copiar</button>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de dígitos: ' . contar_digitos($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
-                            $result .= '<div style="margin-top: 0.5rem; color: #000080; font-size: 0.75rem;"> Entropía: ' . entropia($password) . '</div>';
+                            $result .= '<div class="password-summary__stat"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
+                            $result .= '<div class="password-summary__stat"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
+                            $result .= '<div class="password-summary__stat"> Número de dígitos: ' . contar_digitos($password) . '</div>';
+                            $result .= '<div class="password-summary__stat"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
+                            $result .= '<div class="password-summary__stat"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
+                            $result .= '<div class="password-summary__stat"> Entropía: ' . entropia($password) . '</div>';
                             $result .= '<div style="margin-top: 0.5rem;">';
                         }
                         $result .= '</div>';
@@ -161,7 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         <?php
                         $mostrar_boton = true;
                     } catch (Exception $e) {
-                        $result = '<span style="color: red; text-align: center;">' . $e->getMessage() . '</span>';
+                        $result = '<span class="admin-error-text" style="text-align: center;">' . $e->getMessage() . '</span>';
                     }
                 }
             }
@@ -178,46 +178,105 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Generador de Contraseñas</title>
      <style>
-        <?php require_once(CSS_ADMIN . 'header.css'); ?>
+        <?php
+            require_once(CSS_ADMIN . 'theme.css');
+            require_once(CSS_ADMIN . 'header.css');
+        ?>
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="icon" href="./img/favicon.png" type="image/png">
+    <link rel="stylesheet" href="./css/darkmode.css">
     <style>
-        .required {
-            color: red;
+        body {
+            background-color: var(--admin-bg);
+            color: var(--admin-text);
         }
 
-        #parrafo-campos-obligatorios {
-            color: red;
+        h1 {
             text-align: center;
+            color: var(--admin-heading);
+            margin-bottom: 1rem;
         }
 
-        /* Estilos responsive para el formulario */
-        @media (max-width: 600px) {
-            form {
-                width: 90%;
-                margin: 0 auto;
-            }
+        #password-text-container {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
 
-            input[type="number"],
-            input[type="range"] {
-                width: 100%;
-            }
-        }   
+        #formulario-generacion-contrasena {
+            max-width: 480px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            border-radius: 12px;
+            padding: 2rem 2.5rem;
+            box-shadow: var(--admin-card-shadow);
+        }
+
+        #formulario-generacion-contrasena label {
+            font-weight: 600;
+            color: var(--admin-text-muted);
+        }
+
+        #formulario-generacion-contrasena input[type="number"],
+        #formulario-generacion-contrasena input[type="range"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--admin-border);
+            background: var(--admin-surface-muted);
+            color: var(--admin-text);
+        }
+
+        #formulario-generacion-contrasena input[type="number"]:focus,
+        #formulario-generacion-contrasena input[type="range"]:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px var(--admin-primary-soft);
+        }
+
+        #formulario-generacion-contrasena input[type="submit"] {
+            width: 100%;
+            padding: 0.9rem 0;
+            border-radius: 8px;
+            background: var(--admin-primary);
+            color: var(--admin-primary-contrast);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        #formulario-generacion-contrasena input[type="submit"]:hover {
+            background: var(--admin-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        #length-output {
+            display: block;
+            text-align: center;
+            margin-top: -1.5rem;
+            color: var(--admin-info);
+            font-weight: 600;
+        }
 
         button {
             margin-top: 0.5rem;
             padding: 0.5rem 1rem;
             font-size: 1rem;
             cursor: pointer;
-            background-color: #4CAF50;
-            color: white;
+            background-color: var(--admin-success);
+            color: var(--admin-primary-contrast);
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
+            transition: background-color 0.2s ease;
         }
 
         button:hover {
-            background-color: #45a049;
+            background-color: var(--admin-success-hover);
         }
 
         .sr-only {
@@ -232,14 +291,20 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         }
 
         #success-message {
-            color: green;
+            color: var(--admin-success);
+            display: block;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .copy-feedback {
             display: block;
             text-align: center;
             margin-top: 1rem;
         }
 
         #resistencia-output {
-            color: blue;
+            color: var(--admin-info);
             text-align: center;
             margin-top: 0.75rem;
             font-size: 1.2rem;
@@ -255,6 +320,56 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
         #contrasenas-generadas {
             margin-top: 1rem;
+            text-align: center;
+            color: var(--admin-info);
+            font-size: 1.1rem;
+        }
+
+        .password-summary__title {
+            font-size: 1.8rem;
+            color: var(--admin-heading);
+            margin-top: 0.75rem;
+        }
+
+        .password-summary__stat {
+            margin-top: 0.5rem;
+            color: var(--admin-info);
+            font-size: 0.85rem;
+        }
+
+        .password-summary__value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--admin-heading);
+            margin-top: 0.5rem;
+        }
+
+        .form-hint {
+            text-align: center;
+            margin-top: 0.75rem;
+        }
+
+        .password-strength {
+            color: var(--admin-info);
+            text-align: center;
+            margin-top: 0.75rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease-in-out;
+        }
+
+        @media (max-width: 600px) {
+            #formulario-generacion-contrasena {
+                width: 90%;
+                padding: 1.5rem;
+            }
+
+            input[type="number"],
+            input[type="range"] {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -262,36 +377,36 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 <body>
     <?php require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php'; ?>
 
-    <h1 style="text-align: center;" tabindex="0">Generador de Contraseñas</h1>
+    <h1 tabindex="0">Generador de Contraseñas</h1>
 
-    <div style="text-align: center; margin-bottom: 1rem;">
+    <div id="password-text-container">
         <span id="password-text"><?= $result ?></span>
     </div>
 
-    <form method="POST" action="#" style="max-width: 400px; margin: 0 auto;" id="formulario-generacion-contrasena"
+    <form method="POST" action="#" id="formulario-generacion-contrasena"
         aria-labelledby="formulario-titulo">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
-        <label for="length-number">Longitud de la Contraseña: <span class="required" aria-hidden="true">*</span></label>
+        <label for="length-number">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="number" id="length-number" name="length" min="16" max="500"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')"
             aria-describedby="length-help">
         <p id="length-help" class="sr-only">Introduce un número entre 16 y 500.</p>
 
-        <label for="length-range">Longitud de la Contraseña: <span class="required" aria-hidden="true">*</span></label>
+        <label for="length-range">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="500"
             value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')"
             aria-describedby="length-help">
 
-        <output id="length-output" style="display: block; text-align: center; margin-top: -1.5rem;" aria-live="polite">
+        <output id="length-output" aria-live="polite">
             <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
         </output>
 
         <input type="submit" value="Generar Contraseña" aria-label="Generar contraseña">
     </form>
 
-    <div style="text-align: center; color: red; margin-top: .125rem;">
-        <span id="parrafo-campos-obligatorios" aria-live="polite">Los campos marcados con <span
-                class="required">*</span> son obligatorios.</span>
+    <div class="form-hint">
+        <span id="parrafo-campos-obligatorios" class="admin-error-text" aria-live="polite">Los campos marcados con <span
+                class="admin-required" aria-hidden="true">*</span> son obligatorios.</span>
     </div>
 
     <script>
@@ -305,10 +420,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 const successMessage = document.createElement('span');
                 successMessage.id = 'success-message';
                 successMessage.textContent = 'Contraseña copiada al portapapeles. Se borrará automáticamente en 5 minutos.';
-                successMessage.style.color = 'green';
-                successMessage.style.display = 'block';
-                successMessage.style.textAlign = 'center';
-                successMessage.style.marginTop = '1rem';
+                successMessage.classList.add('admin-success-text', 'copy-feedback');
                 document.getElementById(passwordId).insertAdjacentElement('afterend', successMessage);
 
                 // Set a timer to clear the password after 5 minutes
@@ -318,10 +430,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         passwordElement.innerText = 'Contraseña borrada por seguridad.';
                         const clearMessage = document.createElement('span');
                         clearMessage.textContent = 'La contraseña ha sido borrada automáticamente.';
-                        clearMessage.style.color = 'red';
-                        clearMessage.style.display = 'block';
-                        clearMessage.style.textAlign = 'center';
-                        clearMessage.style.marginTop = '1rem';
+                        clearMessage.classList.add('admin-error-text', 'copy-feedback');
                         passwordElement.insertAdjacentElement('afterend', clearMessage);
                     }
                 }, 5 * 60 * 1000); // 5 minutes in milliseconds
@@ -382,14 +491,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             // Creamos el elemento de salida para la resistencia y lo añadimos debajo del output de longitud con texto de color adecuado
             let resistenciaOutput = document.getElementById('resistencia-output') || document.createElement('div');
             resistenciaOutput.id = 'resistencia-output';
-            resistenciaOutput.style.color = 'blue';
-            resistenciaOutput.style.textAlign = 'center';
-            resistenciaOutput.style.marginTop = '0.75rem';
-            resistenciaOutput.style.fontSize = '1.2rem';
-            resistenciaOutput.style.fontWeight = 'bold';
-            resistenciaOutput.style.display = 'block';
-            resistenciaOutput.style.marginBottom = '1rem';
-            resistenciaOutput.style.transition = 'all 0.3s ease-in-out';
+            resistenciaOutput.className = 'password-strength';
 
             if (!resistenciaOutput.parentNode) {
                 document.getElementById('length-output').insertAdjacentElement('afterend', resistenciaOutput);
@@ -421,14 +523,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         const longitud = parseInt(document.getElementById('length-number').value);
                         let resistenciaOutput = document.getElementById('resistencia-output') || document.createElement('div');
                         resistenciaOutput.id = 'resistencia-output';
-                        resistenciaOutput.style.color = 'blue';
-                        resistenciaOutput.style.textAlign = 'center';
-                        resistenciaOutput.style.marginTop = '0.75rem';
-                        resistenciaOutput.style.fontSize = '1.2rem';
-                        resistenciaOutput.style.fontWeight = 'bold';
-                        resistenciaOutput.style.display = 'block';
-                        resistenciaOutput.style.marginBottom = '1rem';
-                        resistenciaOutput.style.transition = 'all 0.3s ease-in-out';
+                        resistenciaOutput.className = 'password-strength';
 
                         resistenciaOutput.textContent = calcularResistencia(longitud);
                         contrasenasGeneradas.insertAdjacentElement('afterend', resistenciaOutput);
@@ -437,6 +532,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             });
         });
     </script>
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
 </body>
 
 </html>

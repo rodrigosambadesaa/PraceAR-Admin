@@ -1,0 +1,178 @@
+:root {
+    color-scheme: light;
+    --admin-bg: #f4f4f4;
+    --admin-surface: #ffffff;
+    --admin-surface-muted: #f8f8f8;
+    --admin-surface-subtle: #eef2f6;
+    --admin-border: #d7dbe5;
+    --admin-border-strong: #c4c9d4;
+    --admin-text: #1f2933;
+    --admin-text-muted: #4b5563;
+    --admin-heading: #101828;
+    --admin-inverse-text: #ffffff;
+    --admin-link: #1e7dbd;
+    --admin-link-hover: #16639a;
+    --admin-primary: #1e7dbd;
+    --admin-primary-hover: #16639a;
+    --admin-primary-soft: rgba(30, 125, 189, 0.12);
+    --admin-primary-contrast: #ffffff;
+    --admin-success: #2f9e44;
+    --admin-success-hover: #248232;
+    --admin-error: #e63946;
+    --admin-info: #2563eb;
+    --admin-header-gradient-start: #667eea;
+    --admin-header-gradient-end: #3b82f6;
+    --admin-header-overlay: rgba(255, 255, 255, 0.08);
+    --admin-header-shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
+    --admin-header-text-color: #ffffff;
+    --admin-header-link-color: #ffffff;
+    --admin-nav-chip-bg: rgba(255, 255, 255, 0.15);
+    --admin-nav-chip-border: rgba(255, 255, 255, 0.2);
+    --admin-nav-chip-hover-bg: rgba(255, 255, 255, 0.25);
+    --admin-nav-chip-hover-shadow: 0 8px 25px rgba(15, 23, 42, 0.2);
+    --admin-flag-border: rgba(255, 255, 255, 0.3);
+    --admin-flag-current-border: rgba(255, 255, 255, 0.9);
+    --admin-flag-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+    --admin-table-header-bg: #ffffff;
+    --admin-table-header-text: #101828;
+    --admin-table-row-bg: #f8f8f8;
+    --admin-table-row-alt-bg: #eef2f6;
+    --admin-table-border: #d7dbe5;
+    --admin-pagination-border: var(--admin-primary);
+    --admin-pagination-text: var(--admin-primary);
+    --admin-pagination-hover-bg: var(--admin-primary);
+    --admin-pagination-hover-color: var(--admin-primary-contrast);
+    --admin-overlay-background: rgba(15, 23, 42, 0.82);
+    --admin-overlay-text: #ffffff;
+    --admin-overlay-shadow: 0 0 16px rgba(15, 23, 42, 0.35);
+    --admin-card-shadow: 0 2px 16px rgba(15, 23, 42, 0.08);
+    --admin-map-card-bg: #ffffff;
+    --admin-map-card-shadow: 0 2px 12px rgba(15, 23, 42, 0.08);
+    --admin-map-caption-bg: #f8f9fa;
+    --admin-map-outline: #1e7dbd;
+    --admin-heading-gradient-start: #ffffff;
+    --admin-heading-gradient-end: #e0e7ff;
+    --admin-heading-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    --pico-background-color: var(--admin-bg);
+    --pico-color: var(--admin-text);
+    --pico-primary: var(--admin-primary);
+    --pico-primary-inverse: var(--admin-primary-contrast);
+    --pico-primary-background: var(--admin-primary);
+    --pico-primary-hover-background: var(--admin-primary-hover);
+    --pico-card-background-color: var(--admin-surface);
+    --pico-form-element-background-color: var(--admin-surface-muted);
+    --pico-muted-color: var(--admin-text-muted);
+    --pico-muted-border-color: var(--admin-border);
+    --pico-muted-background-color: var(--admin-surface-muted);
+    --pico-border-color: var(--admin-border);
+    --pico-success: var(--admin-success);
+    --pico-danger: var(--admin-error);
+}
+
+body {
+    background-color: var(--admin-bg);
+    color: var(--admin-text);
+}
+
+a {
+    color: var(--admin-link);
+    transition: color 0.2s ease;
+}
+
+a:hover,
+a:focus-visible {
+    color: var(--admin-link-hover);
+}
+
+.admin-accent {
+    color: var(--admin-primary);
+}
+
+.admin-error-text {
+    color: var(--admin-error);
+}
+
+.admin-success-text {
+    color: var(--admin-success);
+}
+
+.admin-info-text {
+    color: var(--admin-info);
+}
+
+.admin-required {
+    color: var(--admin-error);
+}
+
+body.dark-mode {
+    color-scheme: dark;
+    --admin-bg: #0f172a;
+    --admin-surface: #1e293b;
+    --admin-surface-muted: #1b2538;
+    --admin-surface-subtle: #243044;
+    --admin-border: rgba(148, 163, 184, 0.28);
+    --admin-border-strong: rgba(148, 163, 184, 0.4);
+    --admin-text: #e2e8f0;
+    --admin-text-muted: #94a3b8;
+    --admin-heading: #f8fafc;
+    --admin-inverse-text: #0b1220;
+    --admin-link: #93c5fd;
+    --admin-link-hover: #bfdbfe;
+    --admin-primary: #60a5fa;
+    --admin-primary-hover: #3b82f6;
+    --admin-primary-soft: rgba(96, 165, 250, 0.22);
+    --admin-primary-contrast: #07142b;
+    --admin-success: #4ade80;
+    --admin-success-hover: #22c55e;
+    --admin-error: #f87171;
+    --admin-info: #93c5fd;
+    --admin-header-gradient-start: #1e3a8a;
+    --admin-header-gradient-end: #1d4ed8;
+    --admin-header-overlay: rgba(8, 11, 24, 0.55);
+    --admin-header-shadow: 0 10px 40px rgba(3, 7, 18, 0.7);
+    --admin-header-text-color: #f8fafc;
+    --admin-header-link-color: #dbeafe;
+    --admin-nav-chip-bg: rgba(148, 163, 184, 0.16);
+    --admin-nav-chip-border: rgba(148, 163, 184, 0.3);
+    --admin-nav-chip-hover-bg: rgba(148, 163, 184, 0.28);
+    --admin-nav-chip-hover-shadow: 0 8px 25px rgba(3, 7, 18, 0.65);
+    --admin-flag-border: rgba(148, 163, 184, 0.5);
+    --admin-flag-current-border: rgba(224, 242, 254, 0.85);
+    --admin-flag-shadow: 0 2px 8px rgba(2, 6, 23, 0.5);
+    --admin-table-header-bg: rgba(96, 165, 250, 0.16);
+    --admin-table-header-text: #e2e8f0;
+    --admin-table-row-bg: rgba(15, 23, 42, 0.7);
+    --admin-table-row-alt-bg: rgba(96, 165, 250, 0.12);
+    --admin-table-border: rgba(148, 163, 184, 0.25);
+    --admin-pagination-border: var(--admin-primary);
+    --admin-pagination-text: var(--admin-link);
+    --admin-pagination-hover-bg: var(--admin-primary);
+    --admin-pagination-hover-color: var(--admin-primary-contrast);
+    --admin-overlay-background: rgba(2, 6, 23, 0.88);
+    --admin-overlay-text: #f8fafc;
+    --admin-overlay-shadow: 0 0 20px rgba(2, 6, 23, 0.7);
+    --admin-card-shadow: 0 2px 20px rgba(2, 6, 23, 0.6);
+    --admin-map-card-bg: rgba(15, 23, 42, 0.9);
+    --admin-map-card-shadow: 0 8px 30px rgba(3, 7, 18, 0.65);
+    --admin-map-caption-bg: rgba(15, 23, 42, 0.65);
+    --admin-map-outline: rgba(148, 197, 253, 0.9);
+    --admin-heading-gradient-start: #c7d2fe;
+    --admin-heading-gradient-end: #bfdbfe;
+    --admin-heading-shadow: 0 2px 16px rgba(2, 6, 23, 0.45);
+
+    --pico-background-color: var(--admin-bg);
+    --pico-color: var(--admin-text);
+    --pico-primary: var(--admin-primary);
+    --pico-primary-inverse: var(--admin-primary-contrast);
+    --pico-primary-background: var(--admin-primary);
+    --pico-primary-hover-background: var(--admin-primary-hover);
+    --pico-card-background-color: var(--admin-surface);
+    --pico-form-element-background-color: var(--admin-surface-muted);
+    --pico-muted-color: var(--admin-text-muted);
+    --pico-muted-border-color: var(--admin-border);
+    --pico-muted-background-color: var(--admin-surface-muted);
+    --pico-border-color: var(--admin-border);
+    --pico-success: var(--admin-success);
+    --pico-danger: var(--admin-error);
+}
