@@ -138,23 +138,25 @@
                 max-width: 100vw;
                 padding: 0.5rem;
                 font-size: 0.97rem;
-                }
             }
+        }
         </style>
     <link rel='icon' href='./img/favicon.png' type='image/png'>
-
+    
     <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
     <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
-
+    
     <link rel="icon" sizes="192x192" href="icon-192x192.png">
-
+    
     <link rel="manifest" href="/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-        rel="stylesheet">
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+    rel="stylesheet">
+    <script type="module" src="<?= JS_ADMIN ?>check_password_requirements.js" defer></script>
+    <script type="module" src="<?= JS_ADMIN ?>change_password.js" defer></script>
 </head>
 
 <body>
@@ -476,8 +478,6 @@
         </ul>
     </div>
     <?= $err ?>
-    <script type="module" src="<?= JS_ADMIN ?>check_password_requirements.js"></script>
-    <script type="module" src="<?= JS_ADMIN ?>change_password.js"></script>
 </body>
 
 </html>
