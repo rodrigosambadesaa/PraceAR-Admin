@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function crearMensajeError(texto: string): void {
         const spanError = document.createElement("span");
-        spanError.style.color = "red";
+        spanError.classList.add("admin-error-text");
         spanError.textContent = texto;
         inputNuevaContrasena.insertAdjacentElement("afterend", spanError);
     }
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.checkPasswordRequirements = async () => {
         const nuevaContrasena = inputNuevaContrasena.value;
-        const mensajesError = formulario.querySelectorAll<HTMLSpanElement>('span[style="color: red;"]');
+        const mensajesError = formulario.querySelectorAll<HTMLSpanElement>('.admin-error-text');
         mensajesError.forEach((mensaje) => mensaje.remove());
 
         if (!verifyStrongPassword(nuevaContrasena)) {

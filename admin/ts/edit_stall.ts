@@ -245,7 +245,7 @@ formulario.addEventListener("submit", async (event: SubmitEvent) => {
 
         const div = document.createElement("div");
         div.classList.add("form-errors");
-        div.innerHTML = `<ul style="color: red;">${errores.map((mensaje) => `<li>${mensaje}</li>`).join("")}</ul>`;
+        div.innerHTML = `<ul class="admin-error-text">${errores.map((mensaje) => `<li>${mensaje}</li>`).join("")}</ul>`;
         formulario.insertAdjacentElement("afterend", div);
         return;
     }
