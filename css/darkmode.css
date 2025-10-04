@@ -1,0 +1,46 @@
+body.dark-mode {
+    background: #181a1b !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode input,
+body.dark-mode textarea,
+body.dark-mode select {
+    background: #23272a !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode table,
+body.dark-mode .admin-header,
+body.dark-mode header,
+body.dark-mode #password-requirements,
+body.dark-mode form,
+body.dark-mode main,
+body.dark-mode .zoomed-container,
+body.dark-mode .maps-grid,
+body.dark-mode .note {
+    background: #23272a !important;
+    color: #e0e0e0 !important;
+    border-color: #444 !important;
+}
+
+body.dark-mode a {
+    color: #8ab4f8 !important;
+}
+
+body.dark-mode .note {
+    color: #ffb4b4 !important;
+}
+
+body.dark-mode .success-message {
+    color: #7fff7f !important;
+}
+
+body.dark-mode .error-message {
+    color: #ff7f7f !important;
+}
+
+body.dark-mode img {
+    filter: brightness(0.85) contrast(1.1);
+}

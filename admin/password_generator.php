@@ -437,6 +437,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
             });
         });
     </script>
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
 </body>
 
 </html>

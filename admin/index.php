@@ -15,6 +15,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="./css/darkmode.css">
 </head>
 
 <body>
@@ -267,6 +268,7 @@
         <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
     <?php endif; ?>
 
+    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
 </body>
 
 </html>
