@@ -3,6 +3,19 @@ require_once HELPERS . 'clean_input.php';
 require_once HELPERS . 'validate_login.php';
 require_once HELPERS . 'verify_strong_password.php';
 require_once HELPERS . 'captcha.php';
+require_once HELPERS . 'rate_limit.php';
+
+$security_config = include __DIR__ . '/config/security.php';
+$rate_limit_config = $security_config['rate_limit'];
+$argon2_options = $security_config['argon2'];
+$max_request_body_bytes = (int) $security_config['max_request_body_bytes'];
+$large_password_threshold = (int) $security_config['logging']['large_password_threshold'];
+
+if (function_exists('ini_set')) {
+    foreach ($security_config['php_limits'] as $directive => $value) {
+        ini_set($directive, $value);
+    }
+}
 
 $captcha_key = 'login_form';
 
@@ -52,59 +65,138 @@ if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
 $err = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        // Verificar CSRF token
-        if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
-            throw new Exception("CSRF token no válido");
+    $ip_address = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+    $content_length = isset($_SERVER['CONTENT_LENGTH']) ? (int) $_SERVER['CONTENT_LENGTH'] : null;
+
+    if ($content_length !== null && $content_length > $max_request_body_bytes) {
+        http_response_code(413);
+        $err = '<span style="color: red; text-align: center;">La solicitud supera el tamaño máximo permitido.</span>';
+        rate_limit_register_failure($ip_address, null, $rate_limit_config);
+        error_log(sprintf(
+            'Solicitud rechazada: tamaño de cuerpo %d bytes supera el límite de %d bytes para %s.',
+            $content_length,
+            $max_request_body_bytes,
+            $ip_address
+        ));
+    }
+
+    if ($err === '') {
+        try {
+            rate_limit_assert_can_attempt($ip_address, null, $rate_limit_config);
+        } catch (RateLimitException $exception) {
+            http_response_code(429);
+            header('Retry-After: ' . $exception->getRetryAfter());
+            $err = '<span style="color: red; text-align: center;">Se superó el límite de intentos. Espere ' . htmlspecialchars((string) $exception->getRetryAfter(), ENT_QUOTES, 'UTF-8') . ' segundos antes de volver a intentarlo.</span>';
+            error_log(sprintf(
+                'Control de velocidad activado para la IP %s. Reintentar en %d segundos.',
+                $ip_address,
+                $exception->getRetryAfter()
+            ));
         }
+    }
 
-        if (!captcha_validate($captcha_key, $_POST['captcha_answer'] ?? null)) {
-            throw new Exception("La verificación captcha no es correcta.");
-        }
+    $validated_login = null;
 
-        $login = validar_login($_POST['login']);
-        $password = trim($_POST['password']); // Eliminar espacios al principio y al final, pero conservar internos
+    if ($err === '') {
+        try {
+            // Verificar CSRF token
+            if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
+                throw new Exception("CSRF token no válido");
+            }
 
-        // La contraseña debe ser un string
-        if (!is_string($password)) {
-            throw new Exception("La contraseña debe ser un texto.");
-        }
+            if (!captcha_validate($captcha_key, $_POST['captcha_answer'] ?? null)) {
+                throw new Exception("La verificación captcha no es correcta.");
+            }
 
-        // Verificar que la contraseña no está vacía después de trim
-        if (empty($password)) {
-            throw new Exception("La contraseña no puede estar vacía.");
-        }
+            $login = validar_login($_POST['login']);
+            $validated_login = $login;
 
-        if (tiene_espacios_al_principio_o_al_final($_POST['password'])) {
-            throw new Exception("La contraseña no puede tener espacios al principio o al final.");
-        }
+            rate_limit_assert_can_attempt($ip_address, $login, $rate_limit_config);
 
-        if (strlen($password) < 16 || strlen($password) > 1024) {
-            throw new Exception("La contraseña debe tener entre 16 y 1024 caracteres.");
-        }
+            $password = trim($_POST['password']); // Eliminar espacios al principio y al final, pero conservar internos
 
-        // Consulta para obtener los datos del usuario
-        $sql = "SELECT * FROM usuarios WHERE login = ?";
-        $stmt = $conexion->prepare($sql);
-        $stmt->bind_param('s', $login);
-        $stmt->execute();
-        $result = $stmt->get_result();
+            // La contraseña debe ser un string
+            if (!is_string($password)) {
+                throw new Exception("La contraseña debe ser un texto.");
+            }
 
-        if ($result->num_rows === 1) {
-            $usuario = $result->fetch_assoc();
-            $stored_password = $usuario['password'];
+            // Verificar que la contraseña no está vacía después de trim
+            if (empty($password)) {
+                throw new Exception("La contraseña no puede estar vacía.");
+            }
 
-            // Verificar si la contraseña se ha hasheado con un pepper anterior y, si es así, actualizar el hash
-            for ($i = 0; $i < count($pepper_config); $i++) {
-                if (password_verify("{$password}{$pepper_config[$i]['PASSWORD_PEPPER']}", $stored_password)) {
-                    $new_hash = password_hash("{$password}{$pepper}", PASSWORD_ARGON2ID);
-                    $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
-                    $update_stmt = $conexion->prepare($update_sql);
-                    $update_stmt->bind_param('si', $new_hash, $usuario['id']);
-                    $update_stmt->execute();
+            if (tiene_espacios_al_principio_o_al_final($_POST['password'])) {
+                throw new Exception("La contraseña no puede tener espacios al principio o al final.");
+            }
+
+            if (strlen($password) < 16 || strlen($password) > 1024) {
+                throw new Exception("La contraseña debe tener entre 16 y 1024 caracteres.");
+            }
+
+            if (strlen($password) > $large_password_threshold) {
+                error_log(sprintf(
+                    'Intento de inicio de sesión con contraseña inusualmente larga (%d caracteres) para el usuario "%s" desde %s.',
+                    strlen($password),
+                    $login,
+                    $ip_address
+                ));
+            }
+
+            // Consulta para obtener los datos del usuario
+            $sql = "SELECT * FROM usuarios WHERE login = ?";
+            $stmt = $conexion->prepare($sql);
+            $stmt->bind_param('s', $login);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows === 1) {
+                $usuario = $result->fetch_assoc();
+                $stored_password = $usuario['password'];
+
+                // Verificar si la contraseña se ha hasheado con un pepper anterior y, si es así, actualizar el hash
+                for ($i = 0; $i < count($pepper_config); $i++) {
+                    if (password_verify("{$password}{$pepper_config[$i]['PASSWORD_PEPPER']}", $stored_password)) {
+                        $new_hash = password_hash("{$password}{$pepper}", PASSWORD_ARGON2ID, $argon2_options);
+                        $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
+                        $update_stmt = $conexion->prepare($update_sql);
+                        $update_stmt->bind_param('si', $new_hash, $usuario['id']);
+                        $update_stmt->execute();
+
+                        session_regenerate_id(true); // Regenerar el ID de sesión tras login exitoso
+
+                        $_SESSION['id'] = $usuario['id'];
+                        $_SESSION['login'] = 'logueado';
+                        $_SESSION['nombre_usuario'] = $login;
+                        $_SESSION['csrf'] = bin2hex(random_bytes(32));
+
+                        // Insertamos el inicio de sesión en la tabla accesos
+                        $insert_sql = "INSERT INTO accesos (id, id_usuario, ip, user_agent, fecha, tipo) VALUES (NULL, ?, ?, ?, ?, ?)";
+                        $insert_stmt = $conexion->prepare($insert_sql);
+                        $user_agent = $_SERVER['HTTP_USER_AGENT'];
+                        $date = date('Y-m-d H:i:s');
+                        $tipo = 'acceso';
+                        $insert_stmt->bind_param('sssss', $usuario['id'], $ip_address, $user_agent, $date, $tipo);
+                        $insert_stmt->execute();
+                        rate_limit_register_success($ip_address, $login, $rate_limit_config);
+                        header("Location: $protocolo/$servidor/$subdominio");
+                        exit;
+                    }
+                }
+
+                // Verificar la contraseña y actualizar el hash si es necesario
+                if (password_verify("{$password}{$pepper}", $stored_password)) {
+                    // Check if the hash needs to be rehashed to Argon2
+                    if (password_needs_rehash($stored_password, PASSWORD_ARGON2ID, $argon2_options)) {
+                        $new_hash = password_hash("{$password}{$pepper}", PASSWORD_ARGON2ID, $argon2_options);
+                        $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
+                        $update_stmt = $conexion->prepare($update_sql);
+                        $update_stmt->bind_param('si', $new_hash, $usuario['id']);
+                        $update_stmt->execute();
+                    }
 
                     session_regenerate_id(true); // Regenerar el ID de sesión tras login exitoso
 
+                    echo "Inicio de sesión correcto";
                     $_SESSION['id'] = $usuario['id'];
                     $_SESSION['login'] = 'logueado';
                     $_SESSION['nombre_usuario'] = $login;
@@ -113,56 +205,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     // Insertamos el inicio de sesión en la tabla accesos
                     $insert_sql = "INSERT INTO accesos (id, id_usuario, ip, user_agent, fecha, tipo) VALUES (NULL, ?, ?, ?, ?, ?)";
                     $insert_stmt = $conexion->prepare($insert_sql);
-                    $ip_address = $_SERVER['REMOTE_ADDR'];
+                    // Obtener la dirección IP del usuario
                     $user_agent = $_SERVER['HTTP_USER_AGENT'];
                     $date = date('Y-m-d H:i:s');
                     $tipo = 'acceso';
                     $insert_stmt->bind_param('sssss', $usuario['id'], $ip_address, $user_agent, $date, $tipo);
                     $insert_stmt->execute();
+                    rate_limit_register_success($ip_address, $login, $rate_limit_config);
                     header("Location: $protocolo/$servidor/$subdominio");
                     exit;
+                } else {
+                    throw new Exception("Inicio de sesión incorrecto");
                 }
-            }
-
-            // Verificar la contraseña y actualizar el hash si es necesario
-            if (password_verify("{$password}{$pepper}", $stored_password)) {
-                // Check if the hash needs to be rehashed to Argon2
-                if (password_needs_rehash($stored_password, PASSWORD_ARGON2ID)) {
-                    $new_hash = password_hash("{$password}{$pepper}", PASSWORD_ARGON2ID);
-                    $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
-                    $update_stmt = $conexion->prepare($update_sql);
-                    $update_stmt->bind_param('si', $new_hash, $usuario['id']);
-                    $update_stmt->execute();
-                }
-
-                session_regenerate_id(true); // Regenerar el ID de sesión tras login exitoso
-
-                echo "Inicio de sesión correcto";
-                $_SESSION['id'] = $usuario['id'];
-                $_SESSION['login'] = 'logueado';
-                $_SESSION['nombre_usuario'] = $login;
-                $_SESSION['csrf'] = bin2hex(random_bytes(32));
-
-                // Insertamos el inicio de sesión en la tabla accesos
-                $insert_sql = "INSERT INTO accesos (id, id_usuario, ip, user_agent, fecha, tipo) VALUES (NULL, ?, ?, ?, ?, ?)";
-                $insert_stmt = $conexion->prepare($insert_sql);
-                // Obtener la dirección IP del usuario
-                $ip_address = $_SERVER['REMOTE_ADDR'];
-                $user_agent = $_SERVER['HTTP_USER_AGENT'];
-                $date = date('Y-m-d H:i:s');
-                $tipo = 'acceso';
-                $insert_stmt->bind_param('sssss', $usuario['id'], $ip_address, $user_agent, $date, $tipo);
-                $insert_stmt->execute();
-                header("Location: $protocolo/$servidor/$subdominio");
-                exit;
             } else {
-                throw new Exception("Inicio de sesión incorrecto");
+                throw new Exception("Usuario no encontrado");
             }
-        } else {
-            throw new Exception("Usuario no encontrado");
+        } catch (RateLimitException $exception) {
+            http_response_code(429);
+            header('Retry-After: ' . $exception->getRetryAfter());
+            $err = '<span style="color: red; text-align: center;">Se superó el límite de intentos. Espere ' . htmlspecialchars((string) $exception->getRetryAfter(), ENT_QUOTES, 'UTF-8') . ' segundos antes de volver a intentarlo.</span>';
+            error_log(sprintf(
+                'Control de velocidad activado para el usuario "%s" desde la IP %s. Reintentar en %d segundos.',
+                $validated_login ?? 'desconocido',
+                $ip_address,
+                $exception->getRetryAfter()
+            ));
+        } catch (Exception $e) {
+            rate_limit_register_failure($ip_address, $validated_login, $rate_limit_config);
+            $err = '<span style="color: red; text-align: center;">' . htmlspecialchars($e->getMessage()) . '</span>';
+            error_log(sprintf(
+                'Intento de inicio de sesión fallido para el usuario "%s" desde %s: %s',
+                $validated_login ?? 'desconocido',
+                $ip_address,
+                $e->getMessage()
+            ));
         }
-    } catch (Exception $e) {
-        $err = '<span style="color: red; text-align: center;">' . htmlspecialchars($e->getMessage()) . '</span>';
     }
 }
 
