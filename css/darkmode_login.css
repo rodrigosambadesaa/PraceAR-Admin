@@ -1,0 +1,86 @@
+/* Estilos modo oscuro específicos para el formulario de login */
+
+body.dark-mode {
+    background: var(--admin-bg, #181a1b) !important;
+    color: var(--admin-text, #e0e0e0) !important;
+}
+
+body.dark-mode form {
+    /* background: var(--admin-surface, #23272a) !important; */
+    color: var(--admin-text, #e0e0e0) !important;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.25);
+    /* Quitar el borde del formulario */
+    border: none !important;
+    /* padding: 2rem 2.5rem; */
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+    color: #fff !important;
+    /* Sin fondo ni borde extra */
+    background: none !important;
+    border: none !important;
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="password"],
+body.dark-mode input[type="submit"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="email"],
+body.dark-mode textarea,
+body.dark-mode select {
+    background: var(--admin-surface, #23272a) !important;
+    color: var(--admin-text, #e0e0e0) !important;
+    border: 1px solid var(--admin-border, #444) !important;
+    border-radius: 6px;
+}
+
+body.dark-mode input[type="submit"] {
+    background: var(--admin-link, #8ab4f8) !important;
+    color: #181a1b !important;
+    border: none !important;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+body.dark-mode input[type="submit"]:hover {
+    background: #5a8fd8 !important;
+    color: #fff !important;
+}
+
+body.dark-mode label,
+body.dark-mode small,
+body.dark-mode #captcha-question {
+    color: var(--admin-text, #e0e0e0) !important;
+}
+
+body.dark-mode .note {
+    color: var(--admin-error, #ffb4b4) !important;
+    background: transparent !important;
+}
+
+body.dark-mode .required::after {
+    color: var(--admin-error, #ffb4b4) !important;
+}
+
+body.dark-mode a {
+    color: var(--admin-link, #8ab4f8) !important;
+}
+
+body.dark-mode .error-message,
+body.dark-mode [role="alert"] {
+    color: var(--admin-error, #ff7f7f) !important;
+}
+
+body.dark-mode .success-message {
+    color: var(--admin-success, #7fff7f) !important;
+}
+
+body.dark-mode img {
+    filter: brightness(0.95) contrast(1.05);
+}
