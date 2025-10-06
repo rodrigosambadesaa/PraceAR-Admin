@@ -66,8 +66,10 @@
 
     <div id="zoomed-container" class="zoomed-container" role="dialog" aria-hidden="true"
         aria-labelledby="zoomed-caption">
-        <img id="zoomed-image" src="" alt="">
-        <figcaption id="zoomed-caption"></figcaption>
+        <figure>
+            <img id="zoomed-image" src="" alt="">
+            <figcaption id="zoomed-caption"></figcaption>
+        </figure>
     </div>
 
     <script>
