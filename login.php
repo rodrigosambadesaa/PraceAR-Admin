@@ -300,7 +300,7 @@ $captcha_question = captcha_get_question($captcha_key);
                 background-color: #0056b3;
             }
             </style>
-    <link rel="stylesheet" href="./css/darkmode.css">
+    <link rel="stylesheet" href="./css/darkmode_login.css">
     <script type="module" src="./js/login.js" defer></script>
 </head>
 
