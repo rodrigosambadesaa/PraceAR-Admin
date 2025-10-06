@@ -2,34 +2,34 @@
 
 ## 🚨 Estado actual de seguridad
 
-AppVenturers es un proyecto en desarrollo que requiere una **revisión de seguridad completa** para garantizar la protección frente a vulnerabilidades comunes en aplicaciones web, especialmente aquellas desarrolladas en **PHP**.
+AppVenturers es un proyecto en desarrollo que ha completado una **revisión de seguridad inicial** para mitigar vulnerabilidades comunes en aplicaciones web desarrolladas en **PHP**.
 
-Actualmente, el proyecto presenta las siguientes necesidades de seguridad:
+**Se ha avanzado significativamente** en la protección de la aplicación:
 
-1. Implementación de protección **CSRF** (Cross-Site Request Forgery).
-2. Integración de **Google reCAPTCHA** en el formulario de login.
-3. Auditoría del código para identificar y corregir vulnerabilidades como:
-   - Inyección SQL.
-   - XSS (Cross-Site Scripting).
-   - Manejo inseguro de sesiones.
-   - Otras vulnerabilidades comunes OWASP.
+1. **Implementación de protección CSRF** (Cross-Site Request Forgery).
+2. **Integración de un Captcha Seguro** en el formulario de login (alternativa a Google reCAPTCHA).
+3. **Implementación de un Rate Limiter** en el formulario de login para prevenir ataques de fuerza bruta y abuso.
+4. Se ha completado una **auditoría inicial del código** para identificar y corregir vulnerabilidades clave, incluyendo:
+   - Inyección SQL.
+   - XSS (Cross-Site Scripting).
+   - Manejo inseguro de sesiones.
 
 ---
 
 ## 🛡️ Cómo colaborar
 
-Si eres un experto en **PHP y ciberseguridad**, te invitamos a colaborar en este proyecto open-source. Aquí algunas formas de contribuir:
+Si eres un experto en **PHP y ciberseguridad**, te invitamos a continuar colaborando en este proyecto open-source. Ahora nos centramos en las siguientes áreas:
 
-1. **Implementar mejoras de seguridad**:
-   - Revisa y mejora el formulario de login con protección **CSRF** y **Google reCAPTCHA**.
-   - Implementa filtrado y sanitización de entradas.
+1. **Refinar la seguridad existente**:
+   - Revisar la implementación actual de **CSRF** y **Rate Limiting** para buscar posibles bypasses o mejoras de rendimiento.
+   - Proponer y aplicar mejoras en el filtrado y sanitización de entradas, buscando una seguridad *de defensa en profundidad*.
 
-2. **Auditar el código**:
-   - Realiza una auditoría detallada del código en busca de vulnerabilidades.
-   - Sugiere o envía **Pull Requests** con soluciones.
+2. **Auditoría continua del código**:
+   - Realizar auditorías detalladas en nuevas secciones o funcionalidades en busca de vulnerabilidades (incluyendo las de la lista **OWASP**).
+   - Sugerir o enviar **Pull Requests** con soluciones para vulnerabilidades más sutiles o de lógica de negocio.
 
 3. **Documentar buenas prácticas de seguridad**:
-   - Añadir documentación sobre el manejo seguro de PHP (uso de PDO, sesiones seguras, etc.).
+   - Mantener y expandir la documentación sobre el manejo seguro de PHP (uso de PDO, sesiones seguras, etc.) y las protecciones ya implementadas.
 
 ---
 
@@ -38,7 +38,7 @@ Si eres un experto en **PHP y ciberseguridad**, te invitamos a colaborar en este
 Si encuentras alguna vulnerabilidad de seguridad en el proyecto, por favor **no la publiques** en los foros públicos o issues de GitHub. En su lugar, contacta al equipo principal a través de:
 
 - Correo electrónico: [tucorreo@example.com](mailto:tucorreo@example.com)
-- Issue etiquetado como **security**.
+- Issue etiquetado como **security** (solo para sugerencias no críticas o de bajo riesgo).
 
 Agradecemos a la comunidad cualquier esfuerzo para ayudar a que AppVenturers sea una aplicación segura y robusta. Tu nombre aparecerá en los créditos como **auditor de seguridad**.
 
@@ -50,45 +50,47 @@ Para comenzar a colaborar, puedes revisar los siguientes recursos:
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [Guía de implementación de CSRF en PHP](https://www.php.net/manual/en/features.session.security.php)
-- [Documentación oficial de Google reCAPTCHA](https://developers.google.com/recaptcha/)
+- Documentación sobre **Rate Limiting** (Buscar guías de implementación para PHP/servidor web).
+- Documentación de la **solución Captcha** implementada (¡Añadir enlace aquí!).
 
 ---
 
-**¡Gracias por ayudarnos a proteger AppVenturers y mejorar su seguridad!** 🚀
+**¡Gracias por ayudarnos a proteger AppVenturers y mejorar su seguridad!** 🚀🔐
+
+***
 
 # 🔐 Security Policy - AppVenturers
 
 ## 🚨 Current Security Status
 
-AppVenturers is an open-source project under development that requires a **complete security review** to ensure protection against common vulnerabilities in web applications, particularly those built with **PHP**.
+AppVenturers is an open-source project under development that has completed an **initial security review** to mitigate common vulnerabilities in web applications, particularly those built with **PHP**.
 
-### Current security needs include:
+**Significant progress has been made** in securing the application:
 
 1. **Implementation of CSRF protection (Cross-Site Request Forgery).**
-2. **Integration of Google reCAPTCHA** in the login form.
-3. **Full code audit** to identify and fix vulnerabilities such as:
-   - SQL Injection.
-   - XSS (Cross-Site Scripting).
-   - Insecure session handling.
-   - Other common OWASP vulnerabilities.
+2. **Integration of a Secure Captcha** in the login form (alternative to Google reCAPTCHA).
+3. **Implementation of a Rate Limiter** on the login form to prevent brute-force attacks and abuse.
+4. An **initial code audit has been completed** to identify and fix key vulnerabilities, including:
+   - SQL Injection.
+   - XSS (Cross-Site Scripting).
+   - Insecure session handling.
 
 ---
 
 ## 🛡️ How to Contribute
 
-If you are a PHP developer with expertise in **web security**, we invite you to contribute to this open-source project. Here’s how you can help:
+If you are a PHP developer with expertise in **web security**, we invite you to continue contributing to this open-source project. Our focus now shifts to the following areas:
 
-1. **Implement Security Features**:
-   - Add CSRF protection tokens to key forms.
-   - Integrate Google reCAPTCHA for bot prevention.
+1. **Refining Existing Security Measures**:
+   - Review the current **CSRF** and **Rate Limiting** implementation for potential bypasses or performance enhancements.
+   - Propose and apply improvements in input filtering and sanitization, aiming for *defense-in-depth* security.
 
-2. **Audit the Code**:
-   - Conduct a detailed audit to identify and fix vulnerabilities.
-   - Submit Pull Requests with solutions or security improvements.
+2. **Continuous Code Auditing**:
+   - Conduct detailed audits on new sections or functionalities for remaining vulnerabilities (including those on the **OWASP** list).
+   - Submit Pull Requests with solutions for more subtle or business logic-related vulnerabilities.
 
 3. **Document Security Best Practices**:
-   - Add clear documentation for implemented security improvements.
-   - Propose and document secure coding standards.
+   - Maintain and expand the documentation for secure PHP handling (using PDO, secure sessions, etc.) and the protections already implemented.
 
 ---
 
@@ -97,7 +99,7 @@ If you are a PHP developer with expertise in **web security**, we invite you to 
 If you find any security vulnerabilities in the project, please **do not disclose them publicly** in forums, Issues, or Discussions. Instead, report them privately to the project maintainers via:
 
 - Email: [your-email@example.com](mailto:your-email@example.com)
-- GitHub Issues: Open an issue with the **security** label (only for non-critical suggestions).
+- GitHub Issues: Open an issue with the **security** label (only for non-critical or low-risk suggestions).
 
 We greatly appreciate any effort to help make AppVenturers a more secure and robust application. Your name will be credited as a **Security Contributor** for your efforts.
 
@@ -109,7 +111,8 @@ To get started with contributing, here are some useful links:
 
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/): Learn about the most common web vulnerabilities.
 - [CSRF Implementation in PHP](https://www.php.net/manual/en/features.session.security.php): Official PHP documentation.
-- [Google reCAPTCHA Documentation](https://developers.google.com/recaptcha): Integrate reCAPTCHA v2 or v3.
+- Documentation on **Rate Limiting** (Search for implementation guides for PHP/web server).
+- Documentation for the implemented **Captcha solution** (Link to be added here!).
 
 ---
 
