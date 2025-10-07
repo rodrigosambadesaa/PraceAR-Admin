@@ -156,15 +156,22 @@
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr id="row-<?= htmlspecialchars($row['id']) ?>">
+                        <?php
+                        $edit_url = "?page=edit&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl');
+                        $translation_url = "?page=language&codigo_idioma=" . htmlspecialchars(get_language()) . "&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl');
+                        ?>
+                        <tr id="row-<?= htmlspecialchars($row['id']) ?>" data-edit-url="<?= $edit_url ?>"
+                            data-translation-url="<?= $translation_url ?>"
+                            data-caseta="<?= htmlspecialchars($row['caseta']) ?>"
+                            data-nombre="<?= htmlspecialchars($row['nombre']) ?>">
                             <td scope="row" data-label="Editar">
-                                <a href="<?= "?page=edit&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
-                                    aria-label="Editar puesto <?= htmlspecialchars($row['caseta']) ?>">
+                                <a href="<?= $edit_url ?>" aria-label="Editar puesto <?= htmlspecialchars($row['caseta']) ?>">
                                     <img loading="lazy" width='15' height='15' src="<?= htmlspecialchars(PENCIL_IMAGE_URL) ?>"
                                         alt="Editar">
                                 </a>
                             </td>
-                            <td data-label="Activo">
+                            <td data-label="Activo" class="admin-table-cell--editable" data-edit-target="general"
+                                role="button" tabindex="0">
                                 <?= htmlspecialchars($row['activo'] ? "Sí" : "No") ?>
                             </td>
                             <td data-label="Imagen">
@@ -175,24 +182,37 @@
                                         alt="Imagen del puesto <?= htmlspecialchars($row['caseta']) ?>">
                                 <?php endif; ?>
                             </td>
-                            <td data-label="Caseta"><?= htmlspecialchars($row['caseta']) ?></td>
-                            <td data-label="Nombre"><?= htmlspecialchars($row['nombre']) ?></td>
-                            <td data-label="Tipo Unity"><?= htmlspecialchars($row['tipo_unity']) ?></td>
-                            <td data-label="Información de Contacto"><?= htmlspecialchars($row['contacto']) ?></td>
-                            <td data-label="Teléfono"><?= htmlspecialchars($row['telefono']) ?></td>
-                            <td data-label="Nave"><?= htmlspecialchars($row['nave']) ?></td>
-                            <td data-label="Caseta padre"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
+                            <td data-label="Caseta" class="admin-table-cell--editable" data-edit-target="general"
+                                role="button" tabindex="0"><?= htmlspecialchars($row['caseta']) ?></td>
+                            <td data-label="Nombre" class="admin-table-cell--editable" data-edit-target="general"
+                                role="button" tabindex="0"><?= htmlspecialchars($row['nombre']) ?></td>
+                            <td data-label="Tipo Unity" class="admin-table-cell--editable" data-edit-target="general"
+                                role="button" tabindex="0"><?= htmlspecialchars($row['tipo_unity']) ?></td>
+                            <td data-label="Información de Contacto" class="admin-table-cell--editable"
+                                data-edit-target="general" role="button" tabindex="0">
+                                <?= htmlspecialchars($row['contacto']) ?>
+                            </td>
+                            <td data-label="Teléfono" class="admin-table-cell--editable" data-edit-target="general"
+                                role="button" tabindex="0"><?= htmlspecialchars($row['telefono']) ?></td>
+                            <td data-label="Nave" class="admin-table-cell--editable" data-edit-target="general"
+                                role="button" tabindex="0"><?= htmlspecialchars($row['nave']) ?></td>
+                            <td data-label="Caseta padre" class="admin-table-cell--editable" data-edit-target="general"
+                                role="button" tabindex="0"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
                             <td data-label="" class="celda-especial-dato"></td>
-                            <td data-label="Idioma de la traducción" class="fondo-color-diferente">
-                                <a href="<?= "?page=language&codigo_idioma=" . htmlspecialchars(get_language()) . "&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
+                            <td data-label="Idioma de la traducción" class="fondo-color-diferente admin-table-cell--editable"
+                                data-edit-target="translation" role="button" tabindex="0">
+                                <a href="<?= $translation_url ?>"
                                     aria-label="Editar traducción del puesto <?= htmlspecialchars($row['caseta']) ?>">
                                     <img class="imagen-bandera" loading="lazy" width="15" height="15"
                                         src="<?= htmlspecialchars(FLAG_IMAGES_URL . (get_language()) . ".png") ?>"
                                         alt="Idioma <?= htmlspecialchars(get_language()) ?>">
                                 </a>
                             </td>
-                            <td data-label="Tipo" class="fondo-color-diferente"><?= htmlspecialchars($row['tipo']) ?></td>
-                            <td data-label="Descripción" class="fondo-color-diferente">
+                            <td data-label="Tipo" class="fondo-color-diferente admin-table-cell--editable"
+                                data-edit-target="translation" role="button" tabindex="0">
+                                <?= htmlspecialchars($row['tipo']) ?></td>
+                            <td data-label="Descripción" class="fondo-color-diferente admin-table-cell--editable"
+                                data-edit-target="translation" role="button" tabindex="0">
                                 <?= htmlspecialchars($row['descripcion'] ? truncate_text($row['descripcion'], 30) : '') ?>
                             </td>
                         </tr>
@@ -214,6 +234,20 @@
         <button class="close-button" aria-label="Cerrar vista ampliada">&times;</button>
         <img id="zoomed-image" src="" alt="Imagen ampliada del puesto">
         <p id="zoomed-name"></p>
+    </div>
+
+    <div id="admin-modal" class="admin-modal" aria-hidden="true">
+        <div class="admin-modal__overlay" data-close-modal></div>
+        <div class="admin-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="admin-modal-title">
+            <header class="admin-modal__header">
+                <h2 id="admin-modal-title" class="admin-modal__title">Editar contenido</h2>
+                <button type="button" class="admin-modal__close" aria-label="Cerrar ventana" data-close-modal>
+                    &times;
+                </button>
+            </header>
+            <iframe id="admin-modal-frame" title="Editor de administración" class="admin-modal__frame"
+                loading="lazy"></iframe>
+        </div>
     </div>
 
     <script>
