@@ -156,7 +156,9 @@
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr id="row-<?= htmlspecialchars($row['id']) ?>">
+                        <tr id="row-<?= htmlspecialchars($row['id']) ?>"
+                            data-edit-url="<?= htmlspecialchars('?page=edit&id=' . $row['id'] . '&lang=' . ($_REQUEST['lang'] ?? 'gl')) ?>"
+                            data-translation-url="<?= htmlspecialchars('?page=language&codigo_idioma=' . get_language() . '&id=' . $row['id'] . '&lang=' . ($_REQUEST['lang'] ?? 'gl')) ?>">
                             <td scope="row" data-label="Editar">
                                 <a href="<?= "?page=edit&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
                                     aria-label="Editar puesto <?= htmlspecialchars($row['caseta']) ?>">
@@ -164,7 +166,8 @@
                                         alt="Editar">
                                 </a>
                             </td>
-                            <td data-label="Activo">
+                            <td data-label="Activo" class="admin-clickable admin-clickable-general" tabindex="0"
+                                data-edit-target="general">
                                 <?= htmlspecialchars($row['activo'] ? "Sí" : "No") ?>
                             </td>
                             <td data-label="Imagen">
@@ -175,24 +178,35 @@
                                         alt="Imagen del puesto <?= htmlspecialchars($row['caseta']) ?>">
                                 <?php endif; ?>
                             </td>
-                            <td data-label="Caseta"><?= htmlspecialchars($row['caseta']) ?></td>
-                            <td data-label="Nombre"><?= htmlspecialchars($row['nombre']) ?></td>
-                            <td data-label="Tipo Unity"><?= htmlspecialchars($row['tipo_unity']) ?></td>
-                            <td data-label="Información de Contacto"><?= htmlspecialchars($row['contacto']) ?></td>
-                            <td data-label="Teléfono"><?= htmlspecialchars($row['telefono']) ?></td>
-                            <td data-label="Nave"><?= htmlspecialchars($row['nave']) ?></td>
-                            <td data-label="Caseta padre"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
+                            <td data-label="Caseta" class="admin-clickable admin-clickable-general" tabindex="0"
+                                data-edit-target="general"><?= htmlspecialchars($row['caseta']) ?></td>
+                            <td data-label="Nombre" class="admin-clickable admin-clickable-general" tabindex="0"
+                                data-edit-target="general"><?= htmlspecialchars($row['nombre']) ?></td>
+                            <td data-label="Tipo Unity" class="admin-clickable admin-clickable-general" tabindex="0"
+                                data-edit-target="general"><?= htmlspecialchars($row['tipo_unity']) ?></td>
+                            <td data-label="Información de Contacto" class="admin-clickable admin-clickable-general"
+                                tabindex="0" data-edit-target="general"><?= htmlspecialchars($row['contacto']) ?></td>
+                            <td data-label="Teléfono" class="admin-clickable admin-clickable-general" tabindex="0"
+                                data-edit-target="general"><?= htmlspecialchars($row['telefono']) ?></td>
+                            <td data-label="Nave" class="admin-clickable admin-clickable-general" tabindex="0"
+                                data-edit-target="general"><?= htmlspecialchars($row['nave']) ?></td>
+                            <td data-label="Caseta padre" class="admin-clickable admin-clickable-general" tabindex="0"
+                                data-edit-target="general"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
                             <td data-label="" class="celda-especial-dato"></td>
-                            <td data-label="Idioma de la traducción" class="fondo-color-diferente">
+                            <td data-label="Idioma de la traducción" class="fondo-color-diferente admin-clickable"
+                                tabindex="0" data-edit-target="translation">
                                 <a href="<?= "?page=language&codigo_idioma=" . htmlspecialchars(get_language()) . "&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
-                                    aria-label="Editar traducción del puesto <?= htmlspecialchars($row['caseta']) ?>">
+                                    aria-label="Editar traducción del puesto <?= htmlspecialchars($row['caseta']) ?>"
+                                    data-translation-link="true">
                                     <img class="imagen-bandera" loading="lazy" width="15" height="15"
                                         src="<?= htmlspecialchars(FLAG_IMAGES_URL . (get_language()) . ".png") ?>"
                                         alt="Idioma <?= htmlspecialchars(get_language()) ?>">
                                 </a>
                             </td>
-                            <td data-label="Tipo" class="fondo-color-diferente"><?= htmlspecialchars($row['tipo']) ?></td>
-                            <td data-label="Descripción" class="fondo-color-diferente">
+                            <td data-label="Tipo" class="fondo-color-diferente admin-clickable" tabindex="0"
+                                data-edit-target="translation"><?= htmlspecialchars($row['tipo']) ?></td>
+                            <td data-label="Descripción" class="fondo-color-diferente admin-clickable" tabindex="0"
+                                data-edit-target="translation">
                                 <?= htmlspecialchars($row['descripcion'] ? truncate_text($row['descripcion'], 30) : '') ?>
                             </td>
                         </tr>
@@ -214,6 +228,22 @@
         <button class="close-button" aria-label="Cerrar vista ampliada">&times;</button>
         <img id="zoomed-image" src="" alt="Imagen ampliada del puesto">
         <p id="zoomed-name"></p>
+    </div>
+
+    <div id="admin-modal" class="admin-modal" role="dialog" aria-modal="true" aria-hidden="true"
+        aria-labelledby="admin-modal-title">
+        <div class="admin-modal__dialog" role="document">
+            <button type="button" class="admin-modal__close" data-modal-close aria-label="Cerrar ventana de edición">
+                &times;
+            </button>
+            <h2 id="admin-modal-title" class="admin-modal__title">Editar puesto</h2>
+            <div class="admin-modal__loader" data-modal-loader role="status" aria-live="polite"
+                aria-label="Cargando contenido">
+                <span class="admin-modal__spinner" aria-hidden="true"></span>
+            </div>
+            <iframe id="admin-modal-frame" title="Formulario de edición" loading="lazy"
+                class="admin-modal__frame" tabindex="-1"></iframe>
+        </div>
     </div>
 
     <script>
