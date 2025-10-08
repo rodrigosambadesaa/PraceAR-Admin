@@ -403,7 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 class="admin-required" aria-hidden="true">*</span> son obligatorios.</span>
     </div>
 
-    <script type="module" src="./js/password_generator.js"></script>
+    <script type="module" src="<?= JS_ADMIN . '/password_generator.js' ?>"></script>
     <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
 </body>
 
