@@ -31,6 +31,8 @@ function es_contrasenha_antigua(string $contrasenha_antigua_a_verificar, int|str
 
     $nombre_usuario = (string) $nombre_usuario;
 
+function es_contrasenha_antigua(string $contrasenha_antigua_a_verificar, string $nombre_usuario): bool
+{
     require_once('./constants.php');
 
     $pepper_config = include 'pepper2.php';  // Incluimos la configuración del pepper.
@@ -176,6 +178,7 @@ function ha_sido_filtrada_en_brechas_de_seguridad(string $contrasenha): bool
  * @return bool Devuelve true si la contraseña es similar al nombre de usuario, false en caso contrario.
  */
 function contrasenha_similar_a_usuario(string $contrasenha, array|string|null $usuario): bool
+function contrasenha_similar_a_usuario(string $contrasenha, array|string $usuario): bool
 {
     if ($usuario === null || $usuario === '') {
         return false;

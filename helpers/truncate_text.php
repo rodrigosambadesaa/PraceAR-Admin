@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 function truncate_text(?string $texto, int $limite = 50): string
+function truncate_text(string $texto, int $limite = 50): string
 {
     if ($texto === null) {
         return '';
