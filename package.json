@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p admin/tsconfig.json"
+    "build": "tsc -p tsconfig.json && tsc -p admin/tsconfig.json",
+    "watch": "node scripts/watch.mjs",
+    "setup:hooks": "node scripts/setup-hooks.mjs"
   },
   "devDependencies": {
     "typescript": "^5.4.5"
