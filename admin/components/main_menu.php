@@ -1,3 +1,6 @@
+<?php
+declare(strict_types=1);
+?>
 <nav class="main-nav" role="navigation" aria-label="Menú principal">
     <a href="./?lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link" aria-label="Ir a Inicio">Inicio</a>
     <a href="./?page=market_sections&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link" aria-label="Ir a Naves">Naves</a>
