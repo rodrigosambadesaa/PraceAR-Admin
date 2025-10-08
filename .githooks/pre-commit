@@ -1,0 +1,4 @@
+#!/bin/sh
+# Ensure TypeScript assets are up to date before committing
+
+npm run build
