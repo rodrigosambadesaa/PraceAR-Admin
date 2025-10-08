@@ -103,6 +103,7 @@ function openZoom(image) {
     if (!zoomElements.container || !zoomElements.image || !zoomElements.name) {
         return;
     }
+    // Usa la ruta src del <img> original, sin modificarla
     zoomElements.image.src = image.src;
     const row = image.closest("tr");
     const nameCell = row?.querySelector("td:nth-child(5)");
@@ -309,7 +310,7 @@ function updateCellAfterSuccess(context, form) {
                     newImage.dataset.editable = "true";
                     newImage.dataset.field = "imagen";
                     newImage.dataset.id = id;
-                    newImage.src = `assets/${caseta}.jpg?${Date.now()}`;
+                    newImage.src = `/appventurers/assets/${caseta}.jpg?${Date.now()}`;
                     cell.appendChild(newImage);
                     attachZoomableImage(newImage);
                     attachEditableElement(newImage);

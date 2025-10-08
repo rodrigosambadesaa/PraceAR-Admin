@@ -38,7 +38,7 @@ declare(strict_types=1);
 
 </head>
 
-<body>
+<body class="admin-edit">
 
     <?php
     $imagen_eliminada = false;
@@ -167,6 +167,7 @@ declare(strict_types=1);
         obligatorios</p>
 
     <div id="zoomed-image-container" class="zoomed-container" role="dialog" aria-hidden="true">
+        <button id="zoomed-close" class="zoomed-close" aria-label="Cerrar imagen ampliada">&times;</button>
         <img id="zoomed-image" src="" alt="">
     </div>
 

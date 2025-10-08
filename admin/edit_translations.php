@@ -153,7 +153,7 @@ declare(strict_types=1);
     </style>
 </head>
 
-<body>
+<body class="admin-edit-translations">
     <?php
     require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php';
     require_once 'connection.php';
@@ -206,7 +206,7 @@ declare(strict_types=1);
     <form class="pure-form" action="#" method="POST" id="formulario" aria-labelledby="formulario-titulo">
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
         <label for="tipo">Tipo <span class="admin-required" aria-hidden="true">*</span></label>
-        <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>"
+        <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars(html_entity_decode($data['tipo'] ?? "")) ?>"
             placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'" required aria-required="true"
             aria-describedby="tipo-descripcion">
         <span id="tipo-descripcion" class="visually-hidden">Campo obligatorio. Introduzca el tipo de puesto.</span>
@@ -214,7 +214,7 @@ declare(strict_types=1);
         <label for="descripcion">Descripción</label>
         <textarea name="descripcion" id="descripcion" cols="10" rows="10"
             placeholder="Descripción del puesto. Por ejemplo: 'Bisutería hecha a mano'." maxlength="450"
-            aria-describedby="descripcion-descripcion"><?= htmlspecialchars($data['descripcion'] ?? "") ?></textarea>
+            aria-describedby="descripcion-descripcion"><?= htmlspecialchars(html_entity_decode($data['descripcion'] ?? "")) ?></textarea>
         <span id="descripcion-descripcion" class="visually-hidden">Introduzca una descripción del puesto, máximo 450
             caracteres.</span>
 
