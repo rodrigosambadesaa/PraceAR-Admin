@@ -76,42 +76,7 @@ require_once __DIR__ . '/../constants.php';
         </figure>
     </div>
 
-    <script>
-        const figures = document.querySelectorAll('.maps-grid figure');
-        const zoomedContainer = document.getElementById('zoomed-container');
-        const zoomedImage = document.getElementById('zoomed-image');
-        const zoomedCaption = document.getElementById('zoomed-caption');
-
-        figures.forEach(figure => {
-            figure.addEventListener('click', function () {
-                const img = figure.querySelector('img');
-                const caption = figure.querySelector('figcaption');
-                zoomedImage.src = img.src;
-                zoomedCaption.textContent = caption.textContent;
-                zoomedContainer.classList.add('show');
-                zoomedContainer.setAttribute('aria-hidden', 'false');
-            });
-        });
-
-        zoomedContainer.addEventListener('click', function (event) {
-            if (event.target === zoomedContainer || event.target === zoomedImage) {
-                zoomedContainer.classList.remove('show');
-                zoomedContainer.setAttribute('aria-hidden', 'true');
-            }
-        });
-
-        const zoomedClose = document.getElementById('zoomed-close');
-        if (zoomedClose) {
-            zoomedClose.addEventListener('click', function () {
-                zoomedContainer.classList.remove('show');
-                zoomedContainer.setAttribute('aria-hidden', 'true');
-            });
-        }
-    </script>
-
-    <script>
-        // ...existing code...
-    </script>
+    <script type="module" src="./js/market_sections.js"></script>
     <script src="<?= JS . '/helpers/dark_mode.js' ?>" defer></script>
 
 </body>

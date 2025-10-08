@@ -111,17 +111,6 @@ declare(strict_types=1);
                     <a href="#" id="eliminar-imagen-link" class="admin-error-text"
                         style="margin-top: 1em; text-decoration: none; text-align: center; display: block;"
                         aria-label="Eliminar imagen">Eliminar</a>
-                    <script>
-                        document.getElementById('eliminar-imagen-link').addEventListener('click', function (event) {
-                            event.preventDefault(); // Previene la acción predeterminada del enlace
-                            if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
-                                document.getElementById('eliminar-imagen').checked = true; // Activa el checkbox oculto para eliminar la imagen
-                                document.getElementById('formulario-editar').submit(); // Envía el formulario
-                                // Volvemos a esta página, con URL de ejemplo: http://localhost/appventurers/index.php?page=edit&id=1&lang=gl
-                                <?php $imagen_eliminada = true; ?>
-                            }
-                        });
-                    </script>
                     <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1" style="display: none;">
                 </div>
             <?php } else { ?>
@@ -182,26 +171,6 @@ declare(strict_types=1);
     </div>
 
     <div id="mensaje" role="alert"><?= htmlspecialchars($mensaje) ?></div>
-
-    <script>
-        const zoomableImage = document.querySelector('.zoomable');
-        const zoomedContainer = document.getElementById('zoomed-image-container');
-        const zoomedImage = document.getElementById('zoomed-image');
-
-        if (zoomableImage) {
-            zoomableImage.addEventListener('click', function () {
-                zoomedImage.src = this.src;
-                zoomedContainer.classList.add('show');
-                zoomedContainer.setAttribute('aria-hidden', 'false');
-            });
-        }
-
-        zoomedContainer.addEventListener('click', function () {
-            zoomedContainer.classList.remove('show');
-            zoomedContainer.setAttribute('aria-hidden', 'true');
-        });
-
-    </script>
 
     <?php
     if ($fila) {
