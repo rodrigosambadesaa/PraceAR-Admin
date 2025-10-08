@@ -38,7 +38,7 @@ declare(strict_types=1);
 
 </head>
 
-<body>
+<body class="admin-edit">
 
     <?php
     $imagen_eliminada = false;
