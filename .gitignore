@@ -1,10 +1,15 @@
 pepper.php
 pepper2.php
+pepper*.php
 virustotal_api_key.php
 wolfram_alpha_api_key.php
-admin/js/helpers/api_key.js
 wolfram_alpha_app_id.php
+*_api_key.php
+*_app_id.php
+admin/js/helpers/api_key.js
+admin/js/helpers/api_key.*
 .env
+.env.*
 assets/
 
 node_modules/
