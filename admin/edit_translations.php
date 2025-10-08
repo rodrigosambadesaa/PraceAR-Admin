@@ -1,3 +1,6 @@
+<?php
+declare(strict_types=1);
+?>
 <!DOCTYPE html>
 
 <html lang="es">
@@ -8,8 +11,8 @@
         <title>Admin - PraceAR - Editar Traducciones de Puesto - Página de administración</title>
         <style>
         <?php
-            require_once(CSS_ADMIN . 'theme.css');
-            require_once(CSS_ADMIN . 'header.css');
+            require_once CSS_ADMIN . 'theme.css';
+            require_once CSS_ADMIN . 'header.css';
         ?>
         /* Máximo tamaño del body */
         body {
@@ -114,7 +117,7 @@
     <link rel="icon" sizes="192x192" href="icon-192x192.png">
 
     <!-- Manifesto Web (PWA) -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/appventurers/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -152,15 +155,18 @@
 
 <body>
     <?php
-    require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
+    require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php';
     require_once 'connection.php';
-    require_once(HELPERS . 'update_stalls_translations.php');
+    require_once HELPERS . 'update_stalls_translations.php';
 
-    $codigo_idioma = filter_input(INPUT_GET, 'codigo_idioma', FILTER_SANITIZE_STRING);
+    $codigo_idioma = filter_input(INPUT_GET, 'codigo_idioma', FILTER_SANITIZE_SPECIAL_CHARS);
     $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
 
     $sql_seleccion = "SELECT id, tipo, descripcion FROM puestos_traducciones WHERE codigo_idioma = ? AND puesto_id = ?";
-    $stmt = $conexion->prepare($sql_seleccion);
+    $stmt = $conexion?->prepare($sql_seleccion);
+    if (!$stmt) {
+        die('<h2 style="text-align: center;">Error de conexión a la base de datos. <a href="index.php">Volver</a></h2>');
+    }
     $stmt->bind_param('si', $codigo_idioma, $id);
     $stmt->execute();
     $resultado = $stmt->get_result();
@@ -173,32 +179,32 @@
 
     $puesto_encontrado = true;
 
+    // Obtener el nombre del puesto
+    $sql_nombre_puesto = "SELECT nombre FROM puestos WHERE id = ?";
+    $stmt_nombre_puesto = $conexion ? $conexion->prepare($sql_nombre_puesto) : null;
+    $nombre_puesto = null;
+    if ($stmt_nombre_puesto) {
+        $stmt_nombre_puesto->bind_param('i', $id);
+        $stmt_nombre_puesto->execute();
+        $resultado_nombre_puesto = $stmt_nombre_puesto->get_result();
+        $nombre_puesto = $resultado_nombre_puesto->fetch_assoc();
+    }
     ?>
-
-    <h2 style="text-align: center;">Traducción del puesto<span class="admin-accent">
-            <?php
-            // Obtener el nombre del puesto
-            $sql_nombre_puesto = "SELECT nombre FROM puestos WHERE id = ?";
-            $stmt_nombre_puesto = $conexion->prepare($sql_nombre_puesto);
-            $stmt_nombre_puesto->bind_param('i', $id);
-            $stmt_nombre_puesto->execute();
-
-            $resultado_nombre_puesto = $stmt_nombre_puesto->get_result();
-            $nombre_puesto = $resultado_nombre_puesto->fetch_assoc();
-
-            echo htmlspecialchars($nombre_puesto['nombre']);
-            ?>
+    <h2>
+        <span>
+            <?= isset($nombre_puesto['nombre']) ? htmlspecialchars($nombre_puesto['nombre']) : 'Nombre no disponible'; ?>
         </span>
     </h2>
+    </h2>
     <?php
-
     if (!isset($_SESSION['csrf'])) {
         $_SESSION['csrf'] = bin2hex(random_bytes(32));
     }
     ?>
+    <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
 
     <form class="pure-form" action="#" method="POST" id="formulario" aria-labelledby="formulario-titulo">
-        <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
+        <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
         <label for="tipo">Tipo <span class="admin-required" aria-hidden="true">*</span></label>
         <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars($data['tipo'] ?? "") ?>"
             placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'" required aria-required="true"
@@ -212,7 +218,7 @@
         <span id="descripcion-descripcion" class="visually-hidden">Introduzca una descripción del puesto, máximo 450
             caracteres.</span>
 
-        <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars($data['id'] ?? "") ?>">
+        <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars((string)($data['id'] ?? "")) ?>">
         <input type="submit" value="Actualizar">
     </form>
     <p class="admin-error-text" style="text-align: center;">Los campos marcados con <span class="admin-required"

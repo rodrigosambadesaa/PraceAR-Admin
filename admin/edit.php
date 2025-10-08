@@ -1,3 +1,6 @@
+<?php
+declare(strict_types=1);
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -162,7 +165,7 @@
         <div>
             <label for="caseta-padre">Caseta padre</label>
             <input name="caseta_padre" type="text" id="caseta-padre"
-                value="<?= htmlspecialchars($fila["caseta_padre"]) ?>" placeholder="Código de caseta padre"
+                value="<?= htmlspecialchars($fila["caseta_padre"] ?? "") ?>" placeholder="Código de caseta padre"
                 aria-label="Caseta padre">
         </div>
         <div id="div-botones">
