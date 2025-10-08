@@ -1,8 +1,13 @@
 <?php
 declare(strict_types=1);
 
+function truncate_text(?string $texto, int $limite = 50): string
 function truncate_text(string $texto, int $limite = 50): string
 {
+    if ($texto === null) {
+        return '';
+    }
+
     // Si el texto es mayor que el límite, lo cortamos
     if (strlen($texto) > $limite) {
         // Utilizamos substr para recortar el texto al tamaño definido por el límite
