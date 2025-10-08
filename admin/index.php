@@ -124,7 +124,8 @@ declare(strict_types=1);
                     <h2 id="texto-cabecera-tabla">Lista de puestos del Mercado de Abastos</h2>
                     <div id="contenedor-separacion"></div>
                     <search role="search">
-                        <form id="formulario-busqueda" action="?page=1" method="POST">
+                        <form id="formulario-busqueda" action="?page=1" method="POST"
+                            data-search-executed="<?= $busqueda_hecha ? 'true' : 'false' ?>">
                             <input value="<?= htmlspecialchars($caseta) ?>" type="text" id="input-busqueda"
                                 placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta"
                                 <?php if (!$busqueda_hecha) echo 'autofocus'; ?>>
@@ -132,7 +133,7 @@ declare(strict_types=1);
                             <input type="submit" value="Buscar">
                             <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">
                             <input id="input-deshacer-busqueda" type="button" value="Deshacer"
-                                onclick="window.location.href='?lang=<?= htmlspecialchars(get_language()) ?>'">
+                                data-redirect-url="<?= htmlspecialchars('?lang=' . get_language()) ?>">
                             <input type="hidden" name="csrf" id="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
                         </form>
                     </search>
@@ -234,22 +235,6 @@ declare(strict_types=1);
 
     <?php if ($resultados_encontrados): ?>
         <script type="module" src="<?= JS_ADMIN . 'index.js' ?>"></script>
-        <script>
-            <?php if ($busqueda_hecha): ?>
-                const inputReseteo = document.getElementById('input-reseteo');
-                inputReseteo.disabled = true;
-                inputReseteo.style.display = 'none';
-            <?php else: ?>
-                const inputDeshacer = document.getElementById('input-deshacer-busqueda');
-                inputDeshacer.disabled = true;
-                inputDeshacer.style.display = 'none';
-                // Si no hay una búsqueda hecha, cada click en el botón de reiniciar formulario debe volver a poner el focus en el input de búsqueda para que el usuario pueda escribir otro término de búsqueda
-                const inputReseteo = document.getElementById('input-reseteo');
-                inputReseteo.addEventListener('click', function () {
-                    document.getElementById('input-busqueda').focus();
-                });
-            <?php endif; ?>
-        </script>
     <?php else: ?>
         <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
     <?php endif; ?>
