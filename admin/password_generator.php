@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                             $passwordId = "password-$index";
                             $result .= '<div class="password-summary__title">Contraseña ' . ($index + 1) . ':</div>';
                             $result .= '<div id="' . $passwordId . '" class="password-summary__value">' . htmlspecialchars($password) . '</div>';
-                            $result .= '<button onclick="copyToClipboard(\'' . $passwordId . '\')">Copiar</button>';
+                            $result .= '<button type="button" class="copy-password-button" data-password-id="' . htmlspecialchars($passwordId, ENT_QUOTES, 'UTF-8') . '">Copiar</button>';
                             $result .= '<div class="password-summary__stat"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
                             $result .= '<div class="password-summary__stat"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
                             $result .= '<div class="password-summary__stat"> Número de dígitos: ' . contar_digitos($password) . '</div>';
@@ -153,14 +153,6 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                         }
                         $result .= '</div>';
                         // Ocultar el formulario tras la generación de contraseñas, forzando al usuario a volver a cargar la página para generar nuevas contraseñas
-                        ?>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                document.getElementById('formulario-generacion-contrasena').style.display = 'none';
-                                document.getElementById('parrafo-campos-obligatorios').style.display = 'none';
-                            }); 
-                        </script>
-                        <?php
                         $mostrar_boton = true;
                     } catch (Exception $e) {
                         $result = '<span class="admin-error-text" style="text-align: center;">' . $e->getMessage() . '</span>';
@@ -390,13 +382,13 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
         <label for="length-number">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="number" id="length-number" name="length" min="16" max="500"
-            value="<?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')"
+            value="<?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>"
             aria-describedby="length-help">
         <p id="length-help" class="sr-only">Introduce un número entre 16 y 500.</p>
 
         <label for="length-range">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="500"
-            value="<?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')"
+            value="<?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>"
             aria-describedby="length-help">
 
         <output id="length-output" aria-live="polite">
@@ -411,129 +403,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 class="admin-required" aria-hidden="true">*</span> son obligatorios.</span>
     </div>
 
-    <script>
-        function copyToClipboard(passwordId) {
-            const passwordText = document.getElementById(passwordId).innerText;
-            navigator.clipboard.writeText(passwordText).then(() => {
-                const existingMessage = document.getElementById('success-message');
-                if (existingMessage) {
-                    existingMessage.remove();
-                }
-                const successMessage = document.createElement('span');
-                successMessage.id = 'success-message';
-                successMessage.textContent = 'Contraseña copiada al portapapeles. Se borrará automáticamente en 5 minutos.';
-                successMessage.classList.add('admin-success-text', 'copy-feedback');
-                document.getElementById(passwordId).insertAdjacentElement('afterend', successMessage);
-
-                // Set a timer to clear the password after 5 minutes
-                setTimeout(() => {
-                    const passwordElement = document.getElementById(passwordId);
-                    if (passwordElement) {
-                        passwordElement.innerText = 'Contraseña borrada por seguridad.';
-                        const clearMessage = document.createElement('span');
-                        clearMessage.textContent = 'La contraseña ha sido borrada automáticamente.';
-                        clearMessage.classList.add('admin-error-text', 'copy-feedback');
-                        passwordElement.insertAdjacentElement('afterend', clearMessage);
-                    }
-                }, 5 * 60 * 1000); // 5 minutes in milliseconds
-            }).catch(err => {
-                console.error('Fallo al copiar la contraseña al portapapeles:', err);
-            });
-        }
-
-        function syncInputs(inputType) {
-            const numberInput = document.getElementById('length-number');
-            const rangeInput = document.getElementById('length-range');
-            const output = document.getElementById('length-output');
-
-            if (inputType === 'number') {
-                rangeInput.value = numberInput.value;
-            } else if (inputType === 'range') {
-                numberInput.value = rangeInput.value;
-            }
-
-            output.textContent = rangeInput.value;
-        }
-
-        const formulario = document.getElementById('formulario-generacion-contrasena');
-        formulario.addEventListener('submit', function (event) {
-            const longitud = document.getElementById('length-number').value;
-            const longitudRange = document.getElementById('length-range').value;
-
-            const longitudParsed = parseInt(longitud);
-            const longitudRangeParsed = parseInt(longitudRange);
-
-            if (isNaN(longitudParsed) || isNaN(longitudRangeParsed) || longitudParsed < 16 || longitudParsed > 500 || longitudRangeParsed < 16 || longitudRangeParsed > 500 || longitudParsed !== longitudRangeParsed) {
-                event.preventDefault();
-                alert('La longitud de la contraseña debe estar entre 16 y 500 caracteres.');
-                return;
-            }
-        });
-
-        function calcularResistencia(longitud) {
-            let resistencia = '';
-            if (longitud >= 16 && longitud <= 20) {
-                resistencia = 'Resistente a atacantes individuales.';
-            } else if (longitud > 20 && longitud <= 30) {
-                resistencia = 'Resistente a grupos pequeños de atacantes.';
-            } else if (longitud > 30 && longitud <= 50) {
-                resistencia = 'Resistente a empresas con recursos moderados.';
-            } else if (longitud > 50 && longitud <= 70) {
-                resistencia = 'Resistente a grandes empresas.';
-            } else if (longitud > 70) {
-                resistencia = 'Resistente a gobiernos y organizaciones con recursos avanzados.';
-            } else {
-                resistencia = 'Longitud insuficiente para garantizar resistencia.';
-            }
-            return resistencia;
-        }
-
-        function actualizarResistencia() {
-            const longitud = parseInt(document.getElementById('length-number').value);
-            // Creamos el elemento de salida para la resistencia y lo añadimos debajo del output de longitud con texto de color adecuado
-            let resistenciaOutput = document.getElementById('resistencia-output') || document.createElement('div');
-            resistenciaOutput.id = 'resistencia-output';
-            resistenciaOutput.className = 'password-strength';
-
-            if (!resistenciaOutput.parentNode) {
-                document.getElementById('length-output').insertAdjacentElement('afterend', resistenciaOutput);
-            }
-
-            if (!isNaN(longitud)) {
-                resistenciaOutput.textContent = calcularResistencia(longitud);
-            } else {
-                resistenciaOutput.textContent = 'Introduce una longitud válida.';
-            }
-        }
-
-        document.getElementById('length-number').addEventListener('input', actualizarResistencia);
-        document.getElementById('length-range').addEventListener('input', actualizarResistencia);
-
-        // Mostrar la resistencia al cargar la página con el valor por defecto
-        document.addEventListener('DOMContentLoaded', () => {
-            actualizarResistencia();
-
-            // Asegurarse de que la resistencia se muestre tras el envío del formulario
-            const formulario = document.getElementById('formulario-generacion-contrasena');
-            formulario.addEventListener('submit', function (event) {
-                setTimeout(() => {
-                    actualizarResistencia();
-
-                    // Mostrar la resistencia debajo del texto de la contraseña generada
-                    const contrasenasGeneradas = document.getElementById('contrasenas-generadas');
-                    if (contrasenasGeneradas) {
-                        const longitud = parseInt(document.getElementById('length-number').value);
-                        let resistenciaOutput = document.getElementById('resistencia-output') || document.createElement('div');
-                        resistenciaOutput.id = 'resistencia-output';
-                        resistenciaOutput.className = 'password-strength';
-
-                        resistenciaOutput.textContent = calcularResistencia(longitud);
-                        contrasenasGeneradas.insertAdjacentElement('afterend', resistenciaOutput);
-                    }
-                }, 0);
-            });
-        });
-    </script>
+    <script type="module" src="./js/password_generator.js"></script>
     <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
 </body>
 

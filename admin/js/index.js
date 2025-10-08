@@ -14,6 +14,36 @@ function getSearchInput() {
 }
 const formulario = getFormElement();
 const inputBusqueda = getSearchInput();
+const inputReseteo = document.getElementById("input-reseteo");
+const inputDeshacer = document.getElementById("input-deshacer-busqueda");
+function configureSearchControls() {
+    const searchExecuted = formulario.dataset.searchExecuted === "true";
+    if (inputReseteo instanceof HTMLInputElement) {
+        if (searchExecuted) {
+            inputReseteo.disabled = true;
+            inputReseteo.style.display = "none";
+        }
+        else {
+            inputReseteo.addEventListener("click", () => {
+                inputBusqueda.focus();
+            });
+        }
+    }
+    if (inputDeshacer instanceof HTMLInputElement) {
+        if (searchExecuted) {
+            inputDeshacer.addEventListener("click", () => {
+                const redirectUrl = inputDeshacer.dataset.redirectUrl;
+                if (redirectUrl) {
+                    window.location.href = redirectUrl;
+                }
+            });
+        }
+        else {
+            inputDeshacer.disabled = true;
+            inputDeshacer.style.display = "none";
+        }
+    }
+}
 formulario.addEventListener("submit", (event) => {
     const busqueda = inputBusqueda.value.trim();
     if (busqueda && /[<>"'%]/.test(busqueda)) {
@@ -21,6 +51,7 @@ formulario.addEventListener("submit", (event) => {
         alert("Por favor, elimine los caracteres no permitidos, que son: <, >, \", ', %");
     }
 });
+configureSearchControls();
 // Cuando cargue la página, meter todas las etiquetas style en el head en una sola
 window.addEventListener("load", () => {
     const styles = Array.from(document.querySelectorAll("style"));
