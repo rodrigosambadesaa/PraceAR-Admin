@@ -20,9 +20,57 @@ declare(strict_types=1);
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="./css/darkmode.css">
+
+    <style>
+
+            /* ...existing code... */
+
+        /* Botón de cerrar imagen ampliada */
+        .zoomed-close, .close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2.5rem;
+            color: #fff;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            border-radius: 50%;
+            width: 2.5em;
+            height: 2.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .zoomed-close:hover, .zoomed-close:focus,
+        .close-button:hover, .close-button:focus {
+            background: #e53935;
+            color: #fff;
+            outline: none;
+        }
+
+        /* Modo claro: asegúrate que la cruz sea visible */
+        body:not(.darkmode) .zoomed-close,
+        body:not(.darkmode) .close-button {
+            color: #222;
+            background: rgba(255,255,255,0.85);
+        }
+
+        body:not(.darkmode) .zoomed-close:hover,
+        body:not(.darkmode) .zoomed-close:focus,
+        body:not(.darkmode) .close-button:hover,
+        body:not(.darkmode) .close-button:focus {
+            background: #e53935;
+            color: #fff;
+        }
+        /* ...existing code... */
+    </style>
 </head>
 
-<body>
+<body class="admin-index">
     <?php
     require_once(SECTIONS . 'header.php');
     require_once(HELPERS . 'truncate_text.php');
@@ -172,9 +220,16 @@ declare(strict_types=1);
                             </td>
                             <td data-label="Imagen">
                                 <?php
-                                $ruta_a_imagen = "assets/" . htmlspecialchars($row["caseta"]) . ".jpg";
-                                if (file_exists($ruta_a_imagen)) {
-                                    echo '<img loading="lazy" class="zoomable editable-image" src="' . htmlspecialchars($ruta_a_imagen) . '" alt="Imagen del puesto ' . htmlspecialchars($row['caseta']) . '" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '">';
+                                $nombre_imagen = htmlspecialchars($row["caseta"]) . ".jpg";
+                                $ruta_web = "/appventurers/assets/" . $nombre_imagen;
+                                $ruta_fisica = $_SERVER['DOCUMENT_ROOT'] . "/appventurers/assets/" . $nombre_imagen;
+
+                                // DEBUG: Mostrar la ruta física y si existe
+                                // Elimina esto después de probar
+                                echo "<!-- Ruta física: $ruta_fisica, Existe: " . (file_exists($ruta_fisica) ? "Sí" : "No") . " -->";
+
+                                if (file_exists($ruta_fisica)) {
+                                    echo '<img loading="lazy" class="zoomable editable-image" src="' . $ruta_web . '" alt="Imagen del puesto ' . htmlspecialchars($row['caseta']) . '" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '">';
                                 } else {
                                     echo '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
                                 }
@@ -196,10 +251,10 @@ declare(strict_types=1);
                                 </a>
                             </td>
                             <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo" data-id="<?= htmlspecialchars((string)$row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
-                                <?= !empty($row['tipo']) ? htmlspecialchars($row['tipo']) : 'Sin tipo' ?>
+                                <?= !empty($row['tipo']) ? htmlspecialchars(html_entity_decode($row['tipo'])) : 'Sin tipo' ?>
                             </td>
                             <td data-label="Descripción" class="fondo-color-diferente editable-descripcion" data-editable="true" data-field="descripcion" data-id="<?= htmlspecialchars((string)$row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
-                                <?= !empty($row['descripcion']) ? htmlspecialchars(truncate_text($row['descripcion'], 30)) : 'Sin descripción' ?>
+                                <?= !empty($row['descripcion']) ? htmlspecialchars(truncate_text(html_entity_decode($row['descripcion']), 30)) : 'Sin descripción' ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -255,6 +310,19 @@ declare(strict_types=1);
     <?php endif; ?>
 
     <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+    <script>
+        document.querySelectorAll('.zoomable.editable-image').forEach(img => {
+            img.addEventListener('click', function () {
+                if (img.dataset.exists === "1") {
+                    // Usa la ruta src del <img> original
+                    document.getElementById('zoomed-image').src = img.src;
+                    document.getElementById('zoomed-name').textContent = img.alt;
+                    document.getElementById('zoomed-image-container').classList.add('show');
+                    document.getElementById('zoomed-image-container').setAttribute('aria-hidden', 'false');
+                }
+            });
+        });
+</script>
 </body>
 
 </html>
