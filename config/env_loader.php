@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
 
 if (!function_exists('load_project_env')) {
     /**
      * Load key/value pairs from a .env style file.
+     *
+     * @return array<string, string>
      */
     function load_project_env(string $baseDir, string $fileName = '.env'): array
     {
@@ -55,7 +58,7 @@ if (!function_exists('get_env_value')) {
     /**
      * Retrieve an environment variable. Environment variables take precedence over file values.
      */
-    function get_env_value(string $key, array $fileValues, $default = null)
+    function get_env_value(string $key, array $fileValues, mixed $default = null): mixed
     {
         $environmentValue = getenv($key);
         if ($environmentValue !== false) {

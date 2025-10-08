@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 // admin/ajax_quick_edit_save.php
 session_start();
 require_once(dirname(__DIR__) . '/helpers/clean_input.php');
@@ -8,8 +9,8 @@ require_once(dirname(__DIR__) . '/connection.php');
 
 header('Content-Type: application/json; charset=utf-8');
 
-function response($success, $msg) {
-    echo json_encode(['success' => $success, 'msg' => $msg]);
+function response(bool $success, string $msg): void {
+    echo json_encode(['success' => $success, 'msg' => $msg], JSON_UNESCAPED_UNICODE);
     exit;
 }
 

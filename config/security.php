@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 return [
     'max_request_body_bytes' => 16384,

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 // ini_set('memory_limit', '2048M'); // o más, si es necesario
 
@@ -54,7 +55,7 @@ if (!isset($_SESSION['csrf'])) {
  * @return string The generated password.
  * @throws Exception If the length is out of the allowed range.
  */
-function generate_password(int $length)
+function generate_password(int $length): string
 {
     if ($length < 16 || $length > 835) {
         throw new Exception("La longitud de la contraseña debe estar entre 16 y 835 caracteres.");

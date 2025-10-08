@@ -1,20 +1,12 @@
 <?php
-function limpiar_input($input)
+declare(strict_types=1);
+
+function limpiar_input(string $input): string
 {
-  // Eliminar espacios innecesarios al inicio y final del input
-  $input = trim($input);
+    $sanitized = trim($input);
+    $sanitized = stripslashes($sanitized);
+    $sanitized = htmlspecialchars($sanitized, ENT_QUOTES, 'UTF-8');
+    $sanitized = strip_tags($sanitized);
 
-  // Quitar barras invertidas (previene escape no deseado)
-  $input = stripslashes($input);
-
-  // Convertir caracteres especiales en entidades HTML (previene XSS)
-  $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
-
-  // Eliminar etiquetas HTML (adicional para prevenir XSS)
-  $input = strip_tags($input);
-
-  // Codificar caracteres UTF-8 para prevenir caracteres no deseados
-  $input = mb_convert_encoding($input, 'UTF-8', 'UTF-8');
-
-  return $input;
+    return mb_convert_encoding($sanitized, 'UTF-8', 'UTF-8');
 }
