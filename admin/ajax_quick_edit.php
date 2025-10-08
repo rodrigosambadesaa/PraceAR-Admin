@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 // admin/ajax_quick_edit.php
 session_start();
 require_once(dirname(__DIR__) . '/helpers/clean_input.php');

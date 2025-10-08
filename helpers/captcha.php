@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * Utility functions to generate and validate simple math captcha challenges.
@@ -38,7 +39,7 @@ function captcha_refresh(string $form_key): array
         require_once __DIR__ . '/rate_limit.php';
         $failures = 0;
         try {
-            rate_limit_with_storage(function ($data) use ($ip, $login, &$failures) {
+            rate_limit_with_storage(function (array $data) use ($ip, $login, &$failures): void {
                 $now = time();
                 // Contar fallos por IP
                 if (isset($data['ip'][$ip]['failures'])) {
@@ -129,7 +130,7 @@ function captcha_get_question(string $form_key): string
  * @param string     $form_key    Identifier of the form the captcha belongs to.
  * @param null|mixed $user_answer Answer provided by the user.
  */
-function captcha_validate(string $form_key, $user_answer): bool
+function captcha_validate(string $form_key, mixed $user_answer): bool
 {
     captcha_ensure_storage();
 
