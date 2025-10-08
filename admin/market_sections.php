@@ -66,6 +66,7 @@
 
     <div id="zoomed-container" class="zoomed-container" role="dialog" aria-hidden="true"
         aria-labelledby="zoomed-caption">
+        <button id="zoomed-close" class="zoomed-close" aria-label="Cerrar imagen ampliada">&times;</button>
         <figure>
             <img id="zoomed-image" src="" alt="">
             <figcaption id="zoomed-caption"></figcaption>
@@ -95,38 +96,18 @@
                 zoomedContainer.setAttribute('aria-hidden', 'true');
             }
         });
+
+        const zoomedClose = document.getElementById('zoomed-close');
+        if (zoomedClose) {
+            zoomedClose.addEventListener('click', function () {
+                zoomedContainer.classList.remove('show');
+                zoomedContainer.setAttribute('aria-hidden', 'true');
+            });
+        }
     </script>
 
     <script>
-        (function () {
-            if (window.__adminDarkModeInitialized) {
-                return;
-            }
-            const body = document.body;
-            const toggle = document.getElementById('toggle-darkmode');
-            const icon = document.getElementById('darkmode-icon');
-            if (!body || !toggle || !icon) {
-                return;
-            }
-            const applyDarkMode = function (on) {
-                body.classList.toggle('dark-mode', on);
-                icon.textContent = on ? '☀️' : '🌙';
-            };
-            const stored = localStorage.getItem('dark-mode');
-            if (stored === null) {
-                const hour = new Date().getHours();
-                applyDarkMode(hour >= 19 || hour < 7);
-            }
-            else {
-                applyDarkMode(stored === 'true');
-            }
-            toggle.addEventListener('click', function () {
-                const isDark = !body.classList.contains('dark-mode');
-                applyDarkMode(isDark);
-                localStorage.setItem('dark-mode', String(isDark));
-            });
-            window.__adminDarkModeInitialized = true;
-        })();
+        // ...existing code...
     </script>
     <script src="<?= JS . '/helpers/dark_mode.js' ?>" defer></script>
 

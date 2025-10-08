@@ -89,6 +89,22 @@ main.maps h2 {
     overflow: auto;
 }
 
+.zoomed-close {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-size: 2.5rem;
+    color: var(--admin-text, #222);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 1100;
+    transition: color 0.2s;
+}
+.zoomed-close:focus {
+    outline: 2px solid var(--admin-map-outline, #8ab4f8);
+}
+
 .zoomed-container.show {
     display: flex;
 }

@@ -25,6 +25,11 @@ body.dark-mode .note {
     border-color: var(--admin-border, #444) !important;
 }
 
+body.dark-mode .zoomed-close {
+    color: #fff !important;
+    text-shadow: 0 2px 8px #000, 0 0 2px #fff;
+}
+
 body.dark-mode a {
     color: var(--admin-link, #8ab4f8) !important;
 }
