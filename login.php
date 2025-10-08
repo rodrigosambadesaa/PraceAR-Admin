@@ -305,7 +305,7 @@ $captcha_question = captcha_get_question($captcha_key);
 </head>
 
 <body class="container"
-    style='display: grid; place-content: center; min-height: 100vh; max-width: 600px; font-family: "Inter", sans-serif !important;'>
+    style='display: grid; place-content: center; min-height: 100vh; max-width: 100%; font-family: "Inter", sans-serif !important;'>
     <?php require_once "components/sections/header.php"; ?>
     <h2 style="text-align: center;" id="form-title">Inicio de sesión</h2>
     <?php
