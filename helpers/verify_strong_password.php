@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 // $app_id_config = include __DIR__ . '/../wolfram_alpha_app_id.php';
 // $app_id = $app_id_config['app_id'];
@@ -8,30 +9,38 @@
  * @param mixed $contrasenha Contraseña a verificar.
  * @return bool|int Devuelve true si la contraseña es fuerte, false en caso contrario.
  */
-function es_contrasenha_fuerte($contrasenha)
+function es_contrasenha_fuerte(string $contrasenha): bool
 {
     // Al menos 16 caracteres, al menos una letra mayúscula, al menos una letra minúscula, al menos un número y al menos tres caracteres especiales distintos, y un máximo de 1024 caracteres
     $patron = '/^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{16,1024}$/';
 
-    return preg_match($patron, $contrasenha);
+    return preg_match($patron, $contrasenha) === 1;
 }
 
 /**
  * Función para determinar si una contraseña es antigua.
  * @param contrasenha_antigua_a_verificar Contraseña a verificar.
- * @param id_usuario Id del usuario a verificar.
+ * @param int|string|null $nombre_usuario Identificador del usuario a verificar.
  * @return bool Devuelve true si la contraseña es antigua, false en caso contrario.
  */
-function es_contrasenha_antigua($contrasenha_antigua_a_verificar, $nombre_usuario) {
+function es_contrasenha_antigua(string $contrasenha_antigua_a_verificar, int|string|null $nombre_usuario): bool
+{
+    if ($nombre_usuario === null || $nombre_usuario === '') {
+        return false;
+    }
+
+    $nombre_usuario = (string) $nombre_usuario;
+
     require_once('./constants.php');
 
     $pepper_config = include 'pepper2.php';  // Incluimos la configuración del pepper.
-    
+
     $today = date('Y-m-d');
     $pepper = null;
-    for ($i = 0; $i < count($pepper_config); $i++) {
-        if ($pepper_config[$i]['last_used'] >= $today) {
-            $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
+    $pepperCount = is_array($pepper_config) ? count($pepper_config) : 0;
+    for ($i = 0; $i < $pepperCount; $i++) {
+        if (isset($pepper_config[$i]['last_used']) && $pepper_config[$i]['last_used'] >= $today) {
+            $pepper = (string) $pepper_config[$i]['PASSWORD_PEPPER'];
             break;
         }
     }
@@ -41,10 +50,6 @@ function es_contrasenha_antigua($contrasenha_antigua_a_verificar, $nombre_usuari
     }
 
     // Validaciones del pepper (las dejamos, aunque en el código original ya estaban)
-    if (!is_string($pepper)) {
-        throw new Exception("El pepper debe ser un string.");
-    }
-
     if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
         throw new Exception("El pepper debe tener entre 16 y 1024 caracteres.");
     }
@@ -114,9 +119,10 @@ function es_contrasenha_antigua($contrasenha_antigua_a_verificar, $nombre_usuari
         }
     }
 
-    if ($filas) {
+    if ($filas !== []) {
         foreach ($filas as $fila) {
-            if (password_verify($contrasenha_antigua_a_verificar . $pepper, $fila['password'])) {
+            $hashedPassword = $fila['password'] ?? '';
+            if (is_string($hashedPassword) && password_verify($contrasenha_antigua_a_verificar . $pepper, $hashedPassword)) {
                 return true; // La contraseña es antigua
             }
         }
@@ -129,7 +135,7 @@ function es_contrasenha_antigua($contrasenha_antigua_a_verificar, $nombre_usuari
  * @param mixed $contrasenha Contraseña a verificar.
  * @return bool Devuelve true si la contraseña ha sido filtrada en brechas de seguridad, false en caso contrario.
  */
-function ha_sido_filtrada_en_brechas_de_seguridad($contrasenha)
+function ha_sido_filtrada_en_brechas_de_seguridad(string $contrasenha): bool
 {
     $hash = sha1($contrasenha);
     // echo "SHA-1 Hash: " . $hash . PHP_EOL;
@@ -140,7 +146,7 @@ function ha_sido_filtrada_en_brechas_de_seguridad($contrasenha)
     $url = "https://api.pwnedpasswords.com/range/" . $hash_prefix;
     // echo "Fetching URL: " . $url . PHP_EOL;
 
-    $response = file_get_contents($url);
+    $response = @file_get_contents($url);
 
     if ($response === false) {
         // echo "Error: Unable to fetch API response." . PHP_EOL;
@@ -155,7 +161,7 @@ function ha_sido_filtrada_en_brechas_de_seguridad($contrasenha)
     foreach ($hashes as $hash) {
         $hash_parts = explode(":", $hash);
         // echo "Comparing: " . $hash_parts[0] . " with " . strtoupper($hash_suffix) . PHP_EOL;
-        if (strtoupper($hash_parts[0]) === strtoupper($hash_suffix)) {
+        if (isset($hash_parts[0]) && strtoupper($hash_parts[0]) === strtoupper($hash_suffix)) {
             return true;
         }
     }
@@ -169,8 +175,12 @@ function ha_sido_filtrada_en_brechas_de_seguridad($contrasenha)
  * @param mixed $usuario Nombre de usuario a verificar.
  * @return bool Devuelve true si la contraseña es similar al nombre de usuario, false en caso contrario.
  */
-function contrasenha_similar_a_usuario($contrasenha, $usuario)
+function contrasenha_similar_a_usuario(string $contrasenha, array|string|null $usuario): bool
 {
+    if ($usuario === null || $usuario === '') {
+        return false;
+    }
+
     // Aseguramos que todos los valores sean minúsculas para comparaciones insensibles a mayúsculas
     $contrasenha = strtolower($contrasenha);
 
@@ -179,6 +189,10 @@ function contrasenha_similar_a_usuario($contrasenha, $usuario)
 
     // Recorrer todos los nombres de usuario
     foreach ($usuarios as $nombre_usuario) {
+        if (!is_string($nombre_usuario)) {
+            continue;
+        }
+
         $nombre_usuario = strtolower($nombre_usuario);
 
         // Verificar si la contraseña contiene el nombre de usuario completo
@@ -205,7 +219,7 @@ function contrasenha_similar_a_usuario($contrasenha, $usuario)
  * @param mixed $contrasenha Contraseña a verificar.
  * @return bool Devuelve true si la contraseña contiene espacios al principio o al final, false en caso contrario.
  */
-function tiene_espacios_al_principio_o_al_final($contrasenha)
+function tiene_espacios_al_principio_o_al_final(string $contrasenha): bool
 {
     return trim($contrasenha) !== $contrasenha;
 }
@@ -215,7 +229,7 @@ function tiene_espacios_al_principio_o_al_final($contrasenha)
  * @param mixed $contrasenha Contraseña a verificar.
  * @return string Devuelve el tiempo estimado de resistencia de la contraseña a un ataque de fuerza bruta.
  */
-function tiempo_estimado_resistencia_ataque_fuerza_bruta($contrasenha)
+function tiempo_estimado_resistencia_ataque_fuerza_bruta(string $contrasenha): string
 {
     /*
      * Esta función utiliza una biblioteca de matemáticas de terceros para manejar valores grandes
@@ -246,7 +260,7 @@ function tiempo_estimado_resistencia_ataque_fuerza_bruta($contrasenha)
  * @param mixed $segundos Segundos a convertir.
  * @return string Devuelve el tiempo en un formato más legible.
  */
-function convertir_segundos_a_tiempo($segundos)
+function convertir_segundos_a_tiempo(string $segundos): string
 {
     $conversiones = [
         "cuatordecillones de años" => bcpow("10", "84"),
@@ -287,7 +301,7 @@ function convertir_segundos_a_tiempo($segundos)
  * @param mixed $contrasenha Contraseña a verificar.
  * @return string Devuelve la entropía de la contraseña.
  */
-function entropia($contrasenha)
+function entropia(string $contrasenha): string
 {
     // Cálculo manual de la entropía de la contraseña, teniendo en cuenta que la almacenamos en Argon2ID con pepper
     $longitud = strlen($contrasenha);
@@ -328,7 +342,7 @@ function entropia($contrasenha)
  * @param mixed $contrasenha Contraseña a verificar.
  * @return bool Devuelve true si la contraseña contiene secuencias numéricas inseguras, false en caso contrario.
  */
-function tiene_secuencias_numericas_inseguras($contrasenha)
+function tiene_secuencias_numericas_inseguras(string $contrasenha): bool
 {
     $secuencias_numericas_inseguras = [];
     $numeros = "0123456789";
@@ -354,7 +368,6 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
     }
 
     return false;
-
 }
 
 /**
@@ -362,7 +375,7 @@ function tiene_secuencias_numericas_inseguras($contrasenha)
  * @param mixed $contrasenha Contraseña a verificar.
  * @return bool Devuelve true si la contraseña contiene secuencias alfabéticas inseguras, false en caso contrario.
  */
-function tiene_secuencias_alfabeticas_inseguras($contrasenha)
+function tiene_secuencias_alfabeticas_inseguras(string $contrasenha): bool
 {
     $alfabeto = "abcdefghijklmnopqrstuvwxyz";
     $alfabeto_reverso = strrev($alfabeto);
@@ -420,7 +433,6 @@ function tiene_secuencias_alfabeticas_inseguras($contrasenha)
     }
 
     return false;
-
 }
 
 /**
@@ -428,7 +440,7 @@ function tiene_secuencias_alfabeticas_inseguras($contrasenha)
  * @param mixed $contrasenha Contraseña a verificar.
  * @return bool Devuelve true si la contraseña contiene secuencias de caracteres especiales inseguras, false en caso contrario.
  */
-function tiene_secuencias_caracteres_especiales_inseguras($contrasenha)
+function tiene_secuencias_caracteres_especiales_inseguras(string $contrasenha): bool
 {
     // Detectar secuencias de caracteres especiales basadas en la distribución de caracteres en el teclado español
     $secuencias_caracteres_especiales_inseguras = [
@@ -462,9 +474,11 @@ function tiene_secuencias_caracteres_especiales_inseguras($contrasenha)
  * @param mixed $contrasenha Contraseña de la que se quiere contar el número de mayúsculas.
  * @return bool|int Devuelve el número de mayúsculas en la contraseña.
  */
-function contar_mayusculas($contrasenha)
+function contar_mayusculas(string $contrasenha): int
 {
-    return preg_match_all('/[A-Z]/', $contrasenha);
+    $count = preg_match_all('/[A-Z]/', $contrasenha);
+
+    return $count === false ? 0 : $count;
 }
 
 /**
@@ -472,18 +486,22 @@ function contar_mayusculas($contrasenha)
  * @param mixed $contrasenha Contraseña de la que se quiere contar el número de minúsculas.
  * @return bool|int Devuelve el número de minúsculas en la contraseña.
  */
-function contar_minusculas($contrasenha)
+function contar_minusculas(string $contrasenha): int
 {
-    return preg_match_all('/[a-z]/', $contrasenha);
+    $count = preg_match_all('/[a-z]/', $contrasenha);
+
+    return $count === false ? 0 : $count;
 }
 /**
  * Función para contar el nº de dígitos en una contraseña.
  * @param mixed $contrasenha Contraseña de la que se quiere contar el número de dígitos.
  * @return bool|int Devuelve el número de dígitos en la contraseña.
  */
-function contar_digitos($contrasenha)
+function contar_digitos(string $contrasenha): int
 {
-    return preg_match_all('/[0-9]/', $contrasenha);
+    $count = preg_match_all('/[0-9]/', $contrasenha);
+
+    return $count === false ? 0 : $count;
 }
 
 /**
@@ -491,9 +509,11 @@ function contar_digitos($contrasenha)
  * @param mixed $contrasenha Contraseña de la que se quiere contar el número de caracteres especiales.
  * @return bool|int Devuelve el número de caracteres especiales en la contraseña.
  */
-function contar_caracteres_especiales($contrasenha)
+function contar_caracteres_especiales(string $contrasenha): int
 {
-    return preg_match_all('/[^A-Za-z0-9]/', $contrasenha);
+    $count = preg_match_all('/[^A-Za-z0-9]/', $contrasenha);
+
+    return $count === false ? 0 : $count;
 }
 
 /**
@@ -502,7 +522,7 @@ function contar_caracteres_especiales($contrasenha)
  * @param mixed $contrasenha_anterior Contraseña anterior a comparar.
  * @return bool Devuelve true si la contraseña es similar a la anterior, false en caso contrario.
  */
-function contrasenha_similar_a_contrasenha_anterior($contrasenha, $contrasenha_anterior)
+function contrasenha_similar_a_contrasenha_anterior(string $contrasenha, string $contrasenha_anterior): bool
 {
     // Verificar coincidencias parciales y completas
     $longitud = strlen($contrasenha);

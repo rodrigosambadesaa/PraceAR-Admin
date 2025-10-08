@@ -1,6 +1,10 @@
 <?php
-function get_language()
+declare(strict_types=1);
+
+function get_language(): string
 {
-  return $_REQUEST['lang'] ?? 'gl';
+    $language = $_REQUEST['lang'] ?? 'gl';
+
+    return is_string($language) && $language !== '' ? $language : 'gl';
 }
 
