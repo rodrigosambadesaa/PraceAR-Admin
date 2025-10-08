@@ -1,3 +1,6 @@
+<?php
+declare(strict_types=1);
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -156,48 +159,48 @@
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr id="row-<?= htmlspecialchars($row['id']) ?>">
+                        <tr id="row-<?= htmlspecialchars((string)$row['id']) ?>">
                             <td scope="row" data-label="Editar">
-                                <a href="<?= "?page=edit&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
+                                <a href="<?= "?page=edit&id=" . htmlspecialchars((string)$row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
                                     aria-label="Editar puesto <?= htmlspecialchars($row['caseta']) ?>">
                                     <img loading="lazy" width='15' height='15' src="<?= htmlspecialchars(PENCIL_IMAGE_URL) ?>"
                                         alt="Editar">
                                 </a>
                             </td>
                             <td data-label="Activo">
-                                <?= htmlspecialchars($row['activo'] ? "Sí" : "No") ?>
+                                <?= htmlspecialchars((string)($row['activo'] ? "Sí" : "No")) ?>
                             </td>
                             <td data-label="Imagen">
                                 <?php
                                 $ruta_a_imagen = "assets/" . htmlspecialchars($row["caseta"]) . ".jpg";
                                 if (file_exists($ruta_a_imagen)) {
-                                    echo '<img loading="lazy" class="zoomable editable-image" src="' . htmlspecialchars($ruta_a_imagen) . '" alt="Imagen del puesto ' . htmlspecialchars($row['caseta']) . '" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars($row['id']) . '">';
+                                    echo '<img loading="lazy" class="zoomable editable-image" src="' . htmlspecialchars($ruta_a_imagen) . '" alt="Imagen del puesto ' . htmlspecialchars($row['caseta']) . '" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '">';
                                 } else {
-                                    // Celda vacía pero editable para subir imagen
-                                    echo '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars($row['id']) . '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
+                                    echo '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
                                 }
                                 ?>
                             </td>
-                                <td data-label="Caseta" data-editable="true" data-field="caseta" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['caseta']) ?></td>
-                                <td data-label="Nombre" data-editable="true" data-field="nombre" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['nombre']) ?></td>
-                            <td data-label="Tipo Unity"><?= htmlspecialchars($row['tipo_unity']) ?></td>
-                                <td data-label="Información de Contacto" data-editable="true" data-field="contacto" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['contacto']) ?></td>
-                                <td data-label="Teléfono" data-editable="true" data-field="telefono" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['telefono']) ?></td>
-                            <td data-label="Nave"><?= htmlspecialchars($row['nave']) ?></td>
-                                <td data-label="Caseta padre" data-editable="true" data-field="caseta_padre" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
-                            <td data-label="" class="celda-especial-dato"></td>
-                                <td data-label="Idioma de la traducción" class="fondo-color-diferente">
-                                    <a href="?page=language&codigo_idioma=<?= htmlspecialchars(get_language()) ?>&id=<?= htmlspecialchars($row['id']) ?>&lang=<?= htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
-                                        aria-label="Editar traducción del puesto <?= htmlspecialchars($row['caseta']) ?>">
-                                        <img class="imagen-bandera" loading="lazy" width="15" height="15"
-                                            src="<?= htmlspecialchars(FLAG_IMAGES_URL . (get_language()) . ".png") ?>"
-                                            alt="Idioma <?= htmlspecialchars(get_language()) ?>">
-                                    </a>
-                                </td>
-                                <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo" data-id="<?= htmlspecialchars($row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>"><?= htmlspecialchars($row['tipo']) ?></td>
-                                <td data-label="Descripción" class="fondo-color-diferente editable-descripcion" data-editable="true" data-field="descripcion" data-id="<?= htmlspecialchars($row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
-                                    <?= htmlspecialchars($row['descripcion'] ? truncate_text($row['descripcion'], 30) : '') ?>
-                                </td>
+                            <td data-label="Caseta" data-editable="true" data-field="caseta" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['caseta']) ?></td>
+                            <td data-label="Nombre" data-editable="true" data-field="nombre" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
+                            <td data-label="Tipo Unity"><?= htmlspecialchars($row['tipo_unity'] ?? '') ?></td>
+                            <td data-label="Información de Contacto" data-editable="true" data-field="contacto" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['contacto'] ?? '') ?></td>
+                            <td data-label="Teléfono" data-editable="true" data-field="telefono" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['telefono'] ?? '') ?></td>
+                            <td data-label="ID Nave"><?= htmlspecialchars((string)($row['id_nave'] ?? '')) ?></td>
+                            <td data-label="Puesto padre" data-editable="true" data-field="caseta_padre" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
+                            <td data-label="" id="celda-especial"></td>
+                            <td data-label="Editar Traducción">
+                                <a href="<?= "?page=language&id=" . htmlspecialchars((string)$row['id']) . "&codigo_idioma=" . htmlspecialchars(get_language()) ?>"
+                                   aria-label="Editar traducción de <?= htmlspecialchars($row['caseta']) ?>">
+                                    <img src="/appventurers/img/flags/<?= htmlspecialchars(get_language()) ?>.png"
+                                         alt="Editar traducción" width="18" height="18">
+                                </a>
+                            </td>
+                            <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo" data-id="<?= htmlspecialchars((string)$row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
+                                <?= !empty($row['tipo']) ? htmlspecialchars($row['tipo']) : 'Sin tipo' ?>
+                            </td>
+                            <td data-label="Descripción" class="fondo-color-diferente editable-descripcion" data-editable="true" data-field="descripcion" data-id="<?= htmlspecialchars((string)$row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
+                                <?= !empty($row['descripcion']) ? htmlspecialchars(truncate_text($row['descripcion'], 30)) : 'Sin descripción' ?>
+                            </td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>
@@ -227,292 +230,6 @@
         <p id="zoomed-name"></p>
     </div>
 
-    <script>
-        const zoomableImages = document.querySelectorAll('.zoomable');
-        const zoomedContainer = document.getElementById('zoomed-image-container');
-        const zoomedImage = document.getElementById('zoomed-image');
-        const zoomedName = document.getElementById('zoomed-name');
-        const closeButton = document.querySelector('.zoomed-container .close-button');
-
-        zoomableImages.forEach(image => {
-            image.addEventListener('click', function (e) {
-                e.stopPropagation();
-                zoomedImage.src = this.src;
-                zoomedName.textContent = this.closest('tr').querySelector('td:nth-child(5)').textContent;
-                zoomedContainer.classList.add('show');
-                zoomedContainer.setAttribute('aria-hidden', 'false');
-            });
-        });
-
-        closeButton.addEventListener('click', function () {
-            zoomedContainer.classList.remove('show');
-            zoomedContainer.setAttribute('aria-hidden', 'true');
-        });
-
-        zoomedContainer.addEventListener('click', function (e) {
-            if (e.target === this) {
-                zoomedContainer.classList.remove('show');
-                zoomedContainer.setAttribute('aria-hidden', 'true');
-            }
-        });
-
-            // Edición rápida en modal
-            document.querySelectorAll('[data-editable="true"]').forEach(cell => {
-                cell.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const field = cell.getAttribute('data-field');
-                    const id = cell.getAttribute('data-id');
-                    const codigo_idioma = cell.getAttribute('data-codigo_idioma');
-                    let modalBody = document.getElementById('modal-body');
-                    modalBody.innerHTML = '<div style="text-align:center;">Cargando...</div>';
-                    document.getElementById('modal-edicion').style.display = 'flex';
-                    // AJAX para obtener el formulario de edición rápida
-                    fetch('admin/ajax_quick_edit.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ id, field, codigo_idioma })
-                    })
-                    .then(res => res.text())
-                    .then(html => {
-                        // Insert CSRF token if missing
-                        modalBody.innerHTML = html;
-                        setTimeout(() => {
-                            const quickForm = modalBody.querySelector('form');
-                            if (quickForm && !quickForm.querySelector('[name="csrf"]')) {
-                                const csrfInput = document.createElement('input');
-                                csrfInput.type = 'hidden';
-                                csrfInput.name = 'csrf';
-                                csrfInput.value = document.getElementById('csrf').value;
-                                quickForm.appendChild(csrfInput);
-                            }
-                        }, 50);
-                        // Interceptar el submit para actualizar la celda sin recargar
-                        setTimeout(() => {
-                            const quickForm = modalBody.querySelector('form');
-                            if (quickForm) {
-                                quickForm.onsubmit = function(ev) {
-                                    ev.preventDefault();
-                                    const formData = new FormData(quickForm);
-                                    fetch('admin/ajax_quick_edit_save.php', {
-                                        method: 'POST',
-                                        body: formData
-                                    })
-                                    .then(async res => {
-                                        const rawText = await res.text();
-                                        let data;
-                                        try {
-                                            data = JSON.parse(rawText);
-                                        } catch (err) {
-                                            modalBody.querySelector('#quick-edit-msg').innerHTML = '<span style="color:red">Error inesperado:<br>' + rawText + '</span>';
-                                            return;
-                                        }
-                                        modalBody.querySelector('#quick-edit-msg').textContent = data.msg;
-                                        if (data.success) {
-                                            // Actualizar la celda editada
-                                            if (field === 'nombre' || field === 'contacto' || field === 'telefono' || field === 'caseta_padre') {
-                                                cell.textContent = quickForm.querySelector('[name="value"]').value;
-                                            } else if (field === 'tipo') {
-                                                cell.textContent = quickForm.querySelector('[name="tipo"]').value;
-                                            } else if (field === 'descripcion') {
-                                                cell.textContent = quickForm.querySelector('[name="descripcion"]').value.substring(0, 30) + (quickForm.querySelector('[name="descripcion"]').value.length > 30 ? '...' : '');
-                                            } else if (field === 'traduccion') {
-                                                // Actualizar tipo y descripción
-                                                const row = cell.closest('tr');
-                                                row.querySelector('[data-field="tipo"]').textContent = quickForm.querySelector('[name="tipo"]').value;
-                                                row.querySelector('[data-field="descripcion"]').textContent = quickForm.querySelector('[name="descripcion"]').value.substring(0, 30) + (quickForm.querySelector('[name="descripcion"]').value.length > 30 ? '...' : '');
-                                            } else if (field === 'imagen') {
-                                                // Para imagen, recargar solo la imagen o mostrar opción de subir si se elimina
-                                                const img = cell.querySelector('img');
-                                                if (img && quickForm.querySelector('[name="delete"]') && quickForm.querySelector('[name="delete"]').checked) {
-                                                    img.remove();
-                                                    cell.innerHTML = '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' + id + '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
-                                                } else if (img) {
-                                                    img.src = img.src + '?' + new Date().getTime();
-                                                } else {
-                                                    cell.innerHTML = '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' + id + '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
-                                                }
-                                                // Reasignar el event listener para el nuevo div si se elimina la imagen
-                                                setTimeout(() => {
-                                                    cell.querySelectorAll('[data-editable="true"]').forEach(newCell => {
-                                                        newCell.addEventListener('click', function(e) {
-                                                            e.stopPropagation();
-                                                            const field = newCell.getAttribute('data-field');
-                                                            const id = newCell.getAttribute('data-id');
-                                                            const codigo_idioma = newCell.getAttribute('data-codigo_idioma');
-                                                            let modalBody = document.getElementById('modal-body');
-                                                            modalBody.innerHTML = '<div style="text-align:center;">Cargando...</div>';
-                                                            document.getElementById('modal-edicion').style.display = 'flex';
-                                                            fetch('admin/ajax_quick_edit.php', {
-                                                                method: 'POST',
-                                                                headers: { 'Content-Type': 'application/json' },
-                                                                body: JSON.stringify({ id, field, codigo_idioma })
-                                                            })
-                                                            .then(res => res.text())
-                                                            .then(html => {
-                                                                modalBody.innerHTML = html;
-                                                                setTimeout(() => {
-                                                                    const quickForm = modalBody.querySelector('form');
-                                                                    if (quickForm) {
-                                                                        quickForm.onsubmit = function(ev) {
-                                                                            ev.preventDefault();
-                                                                            const formData = new FormData(quickForm);
-                                                                            fetch('admin/ajax_quick_edit_save.php', {
-                                                                                method: 'POST',
-                                                                                body: formData
-                                                                            })
-                                                                            .then(async res => {
-                                                                                const rawText = await res.text();
-                                                                                let data;
-                                                                                try {
-                                                                                    data = JSON.parse(rawText);
-                                                                                } catch (err) {
-                                                                                    modalBody.querySelector('#quick-edit-msg').innerHTML = '<span style="color:red">Error inesperado:<br>' + rawText + '</span>';
-                                                                                    return;
-                                                                                }
-                                                                                modalBody.querySelector('#quick-edit-msg').textContent = data.msg;
-                                                                                if (data.success) {
-                                                                                    // Actualizar la celda editada
-                                                                                    cell.innerHTML = '<img loading="lazy" class="zoomable editable-image" src="assets/' + quickForm.querySelector('[name="caseta"]').value + '.jpg?' + new Date().getTime() + '" alt="Imagen del puesto" data-editable="true" data-field="imagen" data-id="' + id + '">';
-                                                                                    // Reasignar event listener para la nueva imagen
-                                                                                    const newImg = cell.querySelector('img');
-                                                                                    if (newImg) {
-                                                                                        newImg.addEventListener('click', function (e) {
-                                                                                            e.stopPropagation();
-                                                                                            zoomedImage.src = newImg.src;
-                                                                                            const tr = newImg.closest('tr');
-                                                                                            if (tr) {
-                                                                                                zoomedName.textContent = tr.querySelector('td:nth-child(5)').textContent;
-                                                                                            }
-                                                                                            zoomedContainer.classList.add('show');
-                                                                                            zoomedContainer.setAttribute('aria-hidden', 'false');
-                                                                                        });
-                                                                                    }
-                                                                                    // Reasignar edición rápida para la nueva imagen
-                                                                                    cell.querySelectorAll('[data-editable="true"]').forEach(newCell => {
-                                                                                        newCell.addEventListener('click', function(e) {
-                                                                                            e.stopPropagation();
-                                                                                            const field = newCell.getAttribute('data-field');
-                                                                                            const id = newCell.getAttribute('data-id');
-                                                                                            const codigo_idioma = newCell.getAttribute('data-codigo_idioma');
-                                                                                            let modalBody = document.getElementById('modal-body');
-                                                                                            modalBody.innerHTML = '<div style="text-align:center;">Cargando...</div>';
-                                                                                            document.getElementById('modal-edicion').style.display = 'flex';
-                                                                                            fetch('admin/ajax_quick_edit.php', {
-                                                                                                method: 'POST',
-                                                                                                headers: { 'Content-Type': 'application/json' },
-                                                                                                body: JSON.stringify({ id, field, codigo_idioma })
-                                                                                            })
-                                                                                            .then(res => res.text())
-                                                                                            .then(html => {
-                                                                                                modalBody.innerHTML = html;
-                                                                                                setTimeout(() => {
-                                                                                                    const quickForm = modalBody.querySelector('form');
-                                                                                                    if (quickForm) {
-                                                                                                        quickForm.onsubmit = function(ev) {
-                                                                                                            ev.preventDefault();
-                                                                                                            const formData = new FormData(quickForm);
-                                                                                                            fetch('admin/ajax_quick_edit_save.php', {
-                                                                                                                method: 'POST',
-                                                                                                                body: formData
-                                                                                                            })
-                                                                                                            .then(async res => {
-                                                                                                                const rawText = await res.text();
-                                                                                                                let data;
-                                                                                                                try {
-                                                                                                                    data = JSON.parse(rawText);
-                                                                                                                } catch (err) {
-                                                                                                                    modalBody.querySelector('#quick-edit-msg').innerHTML = '<span style="color:red">Error inesperado:<br>' + rawText + '</span>';
-                                                                                                                    return;
-                                                                                                                }
-                                                                                                                modalBody.querySelector('#quick-edit-msg').textContent = data.msg;
-                                                                                                                if (data.success) {
-                                                                                                                    if (quickForm.querySelector('[name="delete"]') && quickForm.querySelector('[name="delete"]').checked) {
-                                                                                                                        cell.innerHTML = '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' + id + '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
-                                                                                                                    } else {
-                                                                                                                        cell.innerHTML = '<img loading="lazy" class="zoomable editable-image" src="assets/' + quickForm.querySelector('[name="caseta"]').value + '.jpg?' + new Date().getTime() + '" alt="Imagen del puesto" data-editable="true" data-field="imagen" data-id="' + id + '">';
-                                                                                                                    }
-                                                                                                                    // Reasignar event listeners para el nuevo contenido
-                                                                                                                    setTimeout(() => {
-                                                                                                                        cell.querySelectorAll('[data-editable="true"]').forEach(newCell2 => {
-                                                                                                                            newCell2.addEventListener('click', function(e) {
-                                                                                                                                e.stopPropagation();
-                                                                                                                                const field = newCell2.getAttribute('data-field');
-                                                                                                                                const id = newCell2.getAttribute('data-id');
-                                                                                                                                const codigo_idioma = newCell2.getAttribute('data-codigo_idioma');
-                                                                                                                                let modalBody = document.getElementById('modal-body');
-                                                                                                                                modalBody.innerHTML = '<div style="text-align:center;">Cargando...</div>';
-                                                                                                                                document.getElementById('modal-edicion').style.display = 'flex';
-                                                                                                                                fetch('admin/ajax_quick_edit.php', {
-                                                                                                                                    method: 'POST',
-                                                                                                                                    headers: { 'Content-Type': 'application/json' },
-                                                                                                                                    body: JSON.stringify({ id, field, codigo_idioma })
-                                                                                                                                })
-                                                                                                                                .then(res => res.text())
-                                                                                                                                .then(html => {
-                                                                                                                                    modalBody.innerHTML = html;
-                                                                                                                                    // ...continúa el ciclo de edición rápida...
-                                                                                                                                });
-                                                                                                                            });
-                                                                                                                        });
-                                                                                                                        // Si es imagen, reasignar zoom
-                                                                                                                        const newImg2 = cell.querySelector('img');
-                                                                                                                        if (newImg2) {
-                                                                                                                            newImg2.addEventListener('click', function (e) {
-                                                                                                                                e.stopPropagation();
-                                                                                                                                zoomedImage.src = newImg2.src;
-                                                                                                                                const tr = newImg2.closest('tr');
-                                                                                                                                if (tr) {
-                                                                                                                                    zoomedName.textContent = tr.querySelector('td:nth-child(5)').textContent;
-                                                                                                                                }
-                                                                                                                                zoomedContainer.classList.add('show');
-                                                                                                                                zoomedContainer.setAttribute('aria-hidden', 'false');
-                                                                                                                            });
-                                                                                                                        }
-                                                                                                                    }, 100);
-                                                                                                                    setTimeout(() => {
-                                                                                                                        document.getElementById('modal-edicion').style.display = 'none';
-                                                                                                                    }, 800);
-                                                                                                                }
-                                                                                                            });
-                                                                                                        };
-                                                                                                    }
-                                                                                                }, 100);
-                                                                                            });
-                                                                                        });
-                                                                                    }, 100);
-                                                                                    setTimeout(() => {
-                                                                                        document.getElementById('modal-edicion').style.display = 'none';
-                                                                                    }, 800);
-                                                                                }
-                                                                            });
-                                                                        };
-                                                                    }
-                                                                }, 100);
-                                                            });
-                                                        });
-                                                    });
-                                                }, 100);
-                                            }
-                                            setTimeout(() => {
-                                                document.getElementById('modal-edicion').style.display = 'none';
-                                            }, 800);
-                                        }
-                                    });
-                                };
-                            }
-                        }, 100);
-                    });
-                });
-            });
-            document.getElementById('modal-close').addEventListener('click', function() {
-                document.getElementById('modal-edicion').style.display = 'none';
-            });
-            document.getElementById('modal-edicion').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    document.getElementById('modal-edicion').style.display = 'none';
-                }
-            });
-    </script>
 
 
     <?php if ($resultados_encontrados): ?>

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 require_once __DIR__ . '/../config/env_loader.php';
 
@@ -83,18 +84,18 @@ if (!function_exists('unity_getenv_or_default')) {
     /**
      * Obtener una variable de entorno o usar un valor por defecto.
      */
-    function unity_getenv_or_default(string $key, $default)
+    function unity_getenv_or_default(string $key, string $default): string
     {
         $value = getenv($key);
         if ($value === false || $value === '') {
-            if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+            if (isset($_ENV[$key]) && is_string($_ENV[$key]) && $_ENV[$key] !== '') {
                 return $_ENV[$key];
             }
 
             return $default;
         }
 
-        return $value;
+        return (string) $value;
     }
 }
 

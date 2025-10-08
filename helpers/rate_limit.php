@@ -1,11 +1,9 @@
 <?php
+declare(strict_types=1);
 
 class RateLimitException extends Exception
 {
-    /**
-     * @var int
-     */
-    private $retryAfter;
+    private int $retryAfter;
 
     public function __construct(string $message, int $retryAfter)
     {
@@ -15,7 +13,7 @@ class RateLimitException extends Exception
 
     public function getRetryAfter(): int
     {
-        return (int) $this->retryAfter;
+        return $this->retryAfter;
     }
 }
 
@@ -25,7 +23,7 @@ function rate_limit_storage_path(): string
     return rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'pracear_login_rate_limit.json';
 }
 
-function rate_limit_with_storage(callable $callback)
+function rate_limit_with_storage(callable $callback): mixed
 {
     $path = rate_limit_storage_path();
     $handle = fopen($path, 'c+');
@@ -67,7 +65,9 @@ function rate_limit_with_storage(callable $callback)
 
         ftruncate($handle, 0);
         rewind($handle);
-        fwrite($handle, $encoded);
+        if (fwrite($handle, $encoded) === false) {
+            throw new RuntimeException('No se pudo escribir en el almacenamiento de control de velocidad.');
+        }
 
         if ($exception instanceof Throwable) {
             throw $exception;
@@ -101,7 +101,7 @@ function rate_limit_assert_can_attempt(string $ip, ?string $login, array $config
     $ip = trim($ip) !== '' ? $ip : 'unknown';
     $now = time();
 
-    rate_limit_with_storage(function (&$data) use ($ip, $login, $config, $now) {
+    rate_limit_with_storage(function (array &$data) use ($ip, $login, $config, $now): void {
         $ipConfig = $config['ip'];
         $accountConfig = $config['account'];
 
@@ -166,7 +166,7 @@ function rate_limit_register_failure(string $ip, ?string $login, array $config):
     $ip = trim($ip) !== '' ? $ip : 'unknown';
     $now = time();
 
-    rate_limit_with_storage(function (&$data) use ($ip, $login, $config, $now) {
+    rate_limit_with_storage(function (array &$data) use ($ip, $login, $config, $now): void {
         $ipConfig = $config['ip'];
         $accountConfig = $config['account'];
         $backoffConfig = $config['backoff'];
@@ -230,7 +230,7 @@ function rate_limit_register_success(string $ip, ?string $login, array $config):
 {
     $ip = trim($ip) !== '' ? $ip : 'unknown';
 
-    rate_limit_with_storage(function (&$data) use ($ip, $login) {
+    rate_limit_with_storage(function (array &$data) use ($ip, $login): void {
         if (isset($data['ip'][$ip])) {
             unset($data['ip'][$ip]);
         }
