@@ -62,7 +62,9 @@ define('PENCIL_IMAGE_URL', BASE_URL . 'appventurers/img/pencil.png');
 
 define('JS', BASE_URL . 'appventurers/js/');
 define('JS_ADMIN', BASE_URL . 'appventurers/admin/js/');
-define('VIRUSTOTAL_API_KEY_FILE', DIRNAME . DIRECTORY_SEPARATOR . 'virustotal_api_key.php');
+if (!defined('VIRUSTOTAL_API_KEY_FILE')) {
+    define('VIRUSTOTAL_API_KEY_FILE', DIRNAME . DIRECTORY_SEPARATOR . 'virustotal_api_key.php');
+}
 
 
 

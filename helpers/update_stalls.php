@@ -1,9 +1,9 @@
 <?php
-require_once HELPERS . "clean_input.php";
-require_once HELPERS . "get_language.php";
-require_once HELPERS . "save_image.php";
-require_once HELPERS . "delete_image.php";
-require_once HELPERS . "verify_malicious_photo.php";
+require_once dirname(__DIR__) . '/helpers/clean_input.php';
+require_once dirname(__DIR__) . '/helpers/get_language.php';
+require_once dirname(__DIR__) . '/helpers/save_image.php';
+require_once dirname(__DIR__) . '/helpers/delete_image.php';
+require_once dirname(__DIR__) . '/helpers/verify_malicious_photo.php';
 
 $mensaje = '';
 
@@ -13,7 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         throw new Exception("Token CSRF inválido.");
     }
 
-    $stall_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+    $stall_id = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+    if ($stall_id === null || $stall_id === false) {
+        $stall_id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+    }
     if ($stall_id === null || $stall_id === false) {
         throw new Exception("Identificador de puesto no válido.");
     }
