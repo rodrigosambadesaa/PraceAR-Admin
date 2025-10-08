@@ -1,5 +1,5 @@
 <?php
-include 'constants.php';
+declare(strict_types=1);
 
 require_once 'constants.php';
 

@@ -1,4 +1,7 @@
-<?php require_once __DIR__ . '/../constants.php'; ?>
+<?php
+declare(strict_types=1);
+require_once __DIR__ . '/../constants.php';
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -12,7 +15,7 @@
     <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
     <link rel="icon" sizes="192x192" href="icon-192x192.png">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/appventurers/manifest.json">
 
     <style>
         <?php

@@ -1,3 +1,6 @@
+<?php
+declare(strict_types=1);
+?>
 <nav class="language-selector" aria-label="Selector de idioma">
     <ul class="flags">
         <?php foreach (LANGUAGES as $key_language => $text_language): ?>

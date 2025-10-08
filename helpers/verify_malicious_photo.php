@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 if (!defined('VIRUSTOTAL_API_KEY_FILE')) {
     define(
@@ -10,8 +11,6 @@ if (!defined('VIRUSTOTAL_API_KEY_FILE')) {
 if (defined('VIRUSTOTAL_API_KEY_FILE') && is_readable(VIRUSTOTAL_API_KEY_FILE)) {
     require_once VIRUSTOTAL_API_KEY_FILE;
 }
-
-require_once(VIRUSTOTAL_API_KEY_FILE);
 
 /**
  * Verifica si un archivo subido es potencialmente malicioso utilizando la API de VirusTotal.
