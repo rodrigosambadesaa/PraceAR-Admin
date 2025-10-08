@@ -157,7 +157,7 @@ declare(strict_types=1);
     
     <link rel="icon" sizes="192x192" href="icon-192x192.png">
     
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/appventurers/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link

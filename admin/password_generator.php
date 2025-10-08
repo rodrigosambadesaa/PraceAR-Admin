@@ -101,7 +101,7 @@ function generate_password(int $length): string
         contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario'] ?? null) ||
         ha_sido_filtrada_en_brechas_de_seguridad($password) ||
         !es_contrasenha_fuerte($password) ||
-        es_contrasenha_antigua($password, $_SESSION['id'] ?? null)
+        es_contrasenha_antigua($password, $_SESSION['nombre_usuario'] ?? '')
     ) {
         return generate_password($length);
     }
@@ -390,17 +390,17 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
         <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
         <label for="length-number">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="number" id="length-number" name="length" min="16" max="500"
-            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')"
+            value="<?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('number')"
             aria-describedby="length-help">
         <p id="length-help" class="sr-only">Introduce un número entre 16 y 500.</p>
 
         <label for="length-range">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="500"
-            value="<?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')"
+            value="<?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>" oninput="syncInputs('range')"
             aria-describedby="length-help">
 
         <output id="length-output" aria-live="polite">
-            <?= htmlspecialchars($length, ENT_QUOTES, 'UTF-8') ?>
+            <?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>
         </output>
 
         <input type="submit" value="Generar Contraseña" aria-label="Generar contraseña">
