@@ -267,7 +267,7 @@ $captcha_question = captcha_get_question($captcha_key);
         <link rel="icon" sizes="192x192" href="icon-192x192.png">
         
         <!-- Manifesto Web (PWA) -->
-        <link rel="manifest" href="/manifest.json">
+        <link rel="manifest" href="/appventurers/manifest.json">
         
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
