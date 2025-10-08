@@ -116,6 +116,54 @@ const contactoInput = getOptionalInput("contacto");
 const telefonoInput = getOptionalInput("telefono");
 const casetaPadreInput = getOptionalInput("caseta-padre");
 const imagenInput = getOptionalInput("imagen");
+const eliminarImagenLink = document.getElementById("eliminar-imagen-link");
+const zoomedContainer = document.getElementById("zoomed-image-container");
+const zoomedImage = document.getElementById("zoomed-image");
+
+if (eliminarImagenLink instanceof HTMLAnchorElement && eliminarImagenInput instanceof HTMLInputElement) {
+    eliminarImagenLink.addEventListener("click", event => {
+        event.preventDefault();
+
+        if (window.confirm("¿Estás seguro de que deseas eliminar esta imagen?")) {
+            eliminarImagenInput.checked = true;
+            formulario.submit();
+        }
+    });
+}
+
+function openZoom(image: HTMLImageElement): void {
+    if (!(zoomedContainer instanceof HTMLElement) || !(zoomedImage instanceof HTMLImageElement)) {
+        return;
+    }
+
+    zoomedImage.src = image.src;
+    zoomedContainer.classList.add("show");
+    zoomedContainer.setAttribute("aria-hidden", "false");
+}
+
+function closeZoom(): void {
+    if (!(zoomedContainer instanceof HTMLElement) || !(zoomedImage instanceof HTMLImageElement)) {
+        return;
+    }
+
+    zoomedContainer.classList.remove("show");
+    zoomedContainer.setAttribute("aria-hidden", "true");
+    zoomedImage.src = "";
+}
+
+const zoomableImage = document.querySelector<HTMLImageElement>(".zoomable");
+
+if (zoomableImage) {
+    zoomableImage.addEventListener("click", () => {
+        openZoom(zoomableImage);
+    });
+}
+
+if (zoomedContainer instanceof HTMLElement) {
+    zoomedContainer.addEventListener("click", () => {
+        closeZoom();
+    });
+}
 
 function limpiarMensajesPrevios(): void {
     const siguienteElemento = formulario.nextElementSibling;

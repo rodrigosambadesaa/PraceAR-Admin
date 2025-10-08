@@ -1,0 +1,4 @@
+#!/bin/sh
+# Rebuild TypeScript assets after pulling new changes
+
+npm run build

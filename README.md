@@ -15,6 +15,12 @@ Clonar el repositorio en una carpeta llamada appventurers
 
 ![Requisitos](https://github.com/user-attachments/assets/2ba5d275-9420-436a-bc1a-619ddfcd072d)
 
+## Automatización del build de TypeScript
+
+- Ejecuta `npm run setup:hooks` una vez para que Git use los hooks definidos en `.githooks/`. A partir de ese momento `npm run build` se lanzará automáticamente antes de cada commit y después de cada `git pull`/`git merge`.
+- Durante el desarrollo puedes mantener los bundles generados en todo momento usando `npm run watch`, que compila en caliente los proyectos TypeScript de `ts/` y `admin/ts/`.
+- En despliegues manuales basta con ejecutar `npm run build` (o dejar que el hook `post-merge` lo haga por ti) antes de subir la web al servidor.
+
 ## Guía de uso
 
 - Lo primero que debe hacer es importar la base de datos, configurar un pepper como se indica más abajo, crear un usuario con su contraseña encriptada en Argon2ID (teniendo en cuenta el pepper), configurar los archivos que hacen referencia a la API Key de VirusTotal e iniciar sesión.
