@@ -30,7 +30,7 @@ formulario.addEventListener("submit", (event: SubmitEvent) => {
     }
 });
 
-console.log("Código TypeScript de la página de administración de puestos cargado correctamente.");
+// console.log("Código TypeScript de la página de administración de puestos cargado correctamente.");
 
 // Cuando cargue la página, meter todas las etiquetas style en el head en una sola
 window.addEventListener("load", () => {
