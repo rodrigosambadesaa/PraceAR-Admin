@@ -1,6 +1,6 @@
 <?php
 
-require_once('./constants.php');
+require_once(__DIR__ . '/constants.php');
 
 $conexion = null;
 

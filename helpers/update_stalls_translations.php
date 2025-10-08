@@ -1,5 +1,5 @@
 <?php
-require_once HELPERS . "clean_input.php";
+require_once dirname(__DIR__) . '/helpers/clean_input.php';
 
 $mensaje = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
