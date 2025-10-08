@@ -118,7 +118,7 @@ require_once __DIR__ . '/../constants.php';
         </figure>
     </div>
 
-    <script type="module" src="./js/market_sections.js"></script>
+    <script type="module" src="<?= JS_ADMIN . '/market_sections.js' ?>"></script>
     <script src="<?= JS . '/helpers/dark_mode.js' ?>" defer></script>
 
 </body>
