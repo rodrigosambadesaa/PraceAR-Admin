@@ -338,6 +338,15 @@
   transform: scale(1.1);
 }
 
+/* Oculta el selector de idioma por defecto */
+nav.language-selector { display: none; }
+
+/* Muestra solo en las páginas principales */
+body.admin-index nav.language-selector,
+body.admin-edit-translations nav.language-selector {
+    display: flex !important;
+}
+
 /* --- Responsive Design --- */
 @media screen and (max-width: 768px) {
   .admin-header {

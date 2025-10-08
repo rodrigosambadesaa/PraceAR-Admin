@@ -142,7 +142,9 @@ function openZoom(image: HTMLImageElement): void {
         return;
     }
 
+    // Usa la ruta src del <img> original, sin modificarla
     zoomElements.image.src = image.src;
+
     const row = image.closest("tr");
     const nameCell = row?.querySelector<HTMLElement>("td:nth-child(5)");
     zoomElements.name.textContent = nameCell?.textContent ?? "";
@@ -364,7 +366,7 @@ function updateCellAfterSuccess(context: QuickEditTargetInfo, form: HTMLFormElem
                     newImage.dataset.editable = "true";
                     newImage.dataset.field = "imagen";
                     newImage.dataset.id = id;
-                    newImage.src = `assets/${caseta}.jpg?${Date.now()}`;
+                    newImage.src = `/appventurers/assets/${caseta}.jpg?${Date.now()}`;
                     cell.appendChild(newImage);
                     attachZoomableImage(newImage);
                     attachEditableElement(newImage);
