@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require_once HELPERS . 'clean_input.php';
 require_once HELPERS . 'validate_login.php';
 require_once HELPERS . 'verify_strong_password.php';

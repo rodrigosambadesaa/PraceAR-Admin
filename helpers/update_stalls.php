@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 require_once dirname(__DIR__) . '/helpers/clean_input.php';
 require_once dirname(__DIR__) . '/helpers/get_language.php';
 require_once dirname(__DIR__) . '/helpers/save_image.php';
