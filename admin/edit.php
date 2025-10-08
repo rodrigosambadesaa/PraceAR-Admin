@@ -175,6 +175,7 @@
         obligatorios</p>
 
     <div id="zoomed-image-container" class="zoomed-container" role="dialog" aria-hidden="true">
+        <button id="zoomed-close" class="zoomed-close" aria-label="Cerrar imagen ampliada">&times;</button>
         <img id="zoomed-image" src="" alt="">
     </div>
 
@@ -184,6 +185,7 @@
         const zoomableImage = document.querySelector('.zoomable');
         const zoomedContainer = document.getElementById('zoomed-image-container');
         const zoomedImage = document.getElementById('zoomed-image');
+        const zoomedClose = document.getElementById('zoomed-close');
 
         if (zoomableImage) {
             zoomableImage.addEventListener('click', function () {
@@ -193,9 +195,18 @@
             });
         }
 
-        zoomedContainer.addEventListener('click', function () {
-            zoomedContainer.classList.remove('show');
-            zoomedContainer.setAttribute('aria-hidden', 'true');
+        if (zoomedClose) {
+            zoomedClose.addEventListener('click', function () {
+                zoomedContainer.classList.remove('show');
+                zoomedContainer.setAttribute('aria-hidden', 'true');
+            });
+        }
+
+        zoomedContainer.addEventListener('click', function (event) {
+            if (event.target === zoomedContainer || event.target === zoomedImage) {
+                zoomedContainer.classList.remove('show');
+                zoomedContainer.setAttribute('aria-hidden', 'true');
+            }
         });
 
     </script>

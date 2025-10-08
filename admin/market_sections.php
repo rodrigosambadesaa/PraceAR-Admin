@@ -20,6 +20,48 @@
             require_once(CSS_ADMIN . 'header.css');
             require_once(CSS_ADMIN . 'market_sections.php');
         ?>
+
+        /* ...existing code... */
+
+        /* Botón de cerrar imagen ampliada */
+        .zoomed-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2.5rem;
+            color: #fff;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            border-radius: 50%;
+            width: 2.5em;
+            height: 2.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .zoomed-close:hover,
+        .zoomed-close:focus {
+            background: #e53935;
+            color: #fff;
+            outline: none;
+        }
+
+        /* Modo claro: asegúrate que la cruz sea visible */
+        body:not(.darkmode) .zoomed-close {
+            color: #222;
+            background: rgba(255,255,255,0.85);
+        }
+
+        body:not(.darkmode) .zoomed-close:hover,
+        body:not(.darkmode) .zoomed-close:focus {
+            background: #e53935;
+            color: #fff;
+        }
+/* ...existing code... */
     </style>
     <link rel="stylesheet" href="./css/darkmode.css">
 </head>
