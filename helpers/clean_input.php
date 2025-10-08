@@ -16,9 +16,6 @@ function limpiar_input(null|string|int|float $input): string
         $input = (string) $input;
     }
 
-
-function limpiar_input(string $input): string
-{
     $sanitized = trim($input);
     $sanitized = stripslashes($sanitized);
     $sanitized = htmlspecialchars($sanitized, ENT_QUOTES, 'UTF-8');

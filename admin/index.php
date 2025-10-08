@@ -159,48 +159,48 @@ declare(strict_types=1);
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr id="row-<?= htmlspecialchars($row['id']) ?>">
+                        <tr id="row-<?= htmlspecialchars((string)$row['id']) ?>">
                             <td scope="row" data-label="Editar">
-                                <a href="<?= "?page=edit&id=" . htmlspecialchars($row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
+                                <a href="<?= "?page=edit&id=" . htmlspecialchars((string)$row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
                                     aria-label="Editar puesto <?= htmlspecialchars($row['caseta']) ?>">
                                     <img loading="lazy" width='15' height='15' src="<?= htmlspecialchars(PENCIL_IMAGE_URL) ?>"
                                         alt="Editar">
                                 </a>
                             </td>
                             <td data-label="Activo">
-                                <?= htmlspecialchars($row['activo'] ? "Sí" : "No") ?>
+                                <?= htmlspecialchars((string)($row['activo'] ? "Sí" : "No")) ?>
                             </td>
                             <td data-label="Imagen">
                                 <?php
                                 $ruta_a_imagen = "assets/" . htmlspecialchars($row["caseta"]) . ".jpg";
                                 if (file_exists($ruta_a_imagen)) {
-                                    echo '<img loading="lazy" class="zoomable editable-image" src="' . htmlspecialchars($ruta_a_imagen) . '" alt="Imagen del puesto ' . htmlspecialchars($row['caseta']) . '" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars($row['id']) . '">';
+                                    echo '<img loading="lazy" class="zoomable editable-image" src="' . htmlspecialchars($ruta_a_imagen) . '" alt="Imagen del puesto ' . htmlspecialchars($row['caseta']) . '" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '">';
                                 } else {
-                                    // Celda vacía pero editable para subir imagen
-                                    echo '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars($row['id']) . '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
+                                    echo '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
                                 }
                                 ?>
                             </td>
-                                <td data-label="Caseta" data-editable="true" data-field="caseta" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['caseta']) ?></td>
-                                <td data-label="Nombre" data-editable="true" data-field="nombre" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['nombre']) ?></td>
-                            <td data-label="Tipo Unity"><?= htmlspecialchars($row['tipo_unity']) ?></td>
-                                <td data-label="Información de Contacto" data-editable="true" data-field="contacto" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['contacto']) ?></td>
-                                <td data-label="Teléfono" data-editable="true" data-field="telefono" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row['telefono']) ?></td>
-                            <td data-label="Nave"><?= htmlspecialchars($row['nave']) ?></td>
-                                <td data-label="Caseta padre" data-editable="true" data-field="caseta_padre" data-id="<?= htmlspecialchars($row['id']) ?>"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
-                            <td data-label="" class="celda-especial-dato"></td>
-                                <td data-label="Idioma de la traducción" class="fondo-color-diferente">
-                                    <a href="?page=language&codigo_idioma=<?= htmlspecialchars(get_language()) ?>&id=<?= htmlspecialchars($row['id']) ?>&lang=<?= htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
-                                        aria-label="Editar traducción del puesto <?= htmlspecialchars($row['caseta']) ?>">
-                                        <img class="imagen-bandera" loading="lazy" width="15" height="15"
-                                            src="<?= htmlspecialchars(FLAG_IMAGES_URL . (get_language()) . ".png") ?>"
-                                            alt="Idioma <?= htmlspecialchars(get_language()) ?>">
-                                    </a>
-                                </td>
-                                <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo" data-id="<?= htmlspecialchars($row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>"><?= htmlspecialchars($row['tipo']) ?></td>
-                                <td data-label="Descripción" class="fondo-color-diferente editable-descripcion" data-editable="true" data-field="descripcion" data-id="<?= htmlspecialchars($row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
-                                    <?= htmlspecialchars($row['descripcion'] ? truncate_text($row['descripcion'], 30) : '') ?>
-                                </td>
+                            <td data-label="Caseta" data-editable="true" data-field="caseta" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['caseta']) ?></td>
+                            <td data-label="Nombre" data-editable="true" data-field="nombre" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
+                            <td data-label="Tipo Unity"><?= htmlspecialchars($row['tipo_unity'] ?? '') ?></td>
+                            <td data-label="Información de Contacto" data-editable="true" data-field="contacto" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['contacto'] ?? '') ?></td>
+                            <td data-label="Teléfono" data-editable="true" data-field="telefono" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['telefono'] ?? '') ?></td>
+                            <td data-label="ID Nave"><?= htmlspecialchars((string)($row['id_nave'] ?? '')) ?></td>
+                            <td data-label="Puesto padre" data-editable="true" data-field="caseta_padre" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
+                            <td data-label="" id="celda-especial"></td>
+                            <td data-label="Editar Traducción">
+                                <a href="<?= "?page=language&id=" . htmlspecialchars((string)$row['id']) . "&codigo_idioma=" . htmlspecialchars(get_language()) ?>"
+                                   aria-label="Editar traducción de <?= htmlspecialchars($row['caseta']) ?>">
+                                    <img src="/appventurers/img/flags/<?= htmlspecialchars(get_language()) ?>.png"
+                                         alt="Editar traducción" width="18" height="18">
+                                </a>
+                            </td>
+                            <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo" data-id="<?= htmlspecialchars((string)$row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
+                                <?= !empty($row['tipo']) ? htmlspecialchars($row['tipo']) : 'Sin tipo' ?>
+                            </td>
+                            <td data-label="Descripción" class="fondo-color-diferente editable-descripcion" data-editable="true" data-field="descripcion" data-id="<?= htmlspecialchars((string)$row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
+                                <?= !empty($row['descripcion']) ? htmlspecialchars(truncate_text($row['descripcion'], 30)) : 'Sin descripción' ?>
+                            </td>
                         </tr>
                     <?php endwhile; ?>
                 </tbody>

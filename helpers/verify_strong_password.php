@@ -20,19 +20,16 @@ function es_contrasenha_fuerte(string $contrasenha): bool
 /**
  * Función para determinar si una contraseña es antigua.
  * @param contrasenha_antigua_a_verificar Contraseña a verificar.
- * @param int|string|null $nombre_usuario Identificador del usuario a verificar.
+ * @param string $nombre_usuario Identificador del usuario a verificar.
  * @return bool Devuelve true si la contraseña es antigua, false en caso contrario.
  */
-function es_contrasenha_antigua(string $contrasenha_antigua_a_verificar, int|string|null $nombre_usuario): bool
+function es_contrasenha_antigua(string $contrasenha_antigua_a_verificar, string $nombre_usuario): bool
 {
     if ($nombre_usuario === null || $nombre_usuario === '') {
         return false;
     }
 
     $nombre_usuario = (string) $nombre_usuario;
-
-function es_contrasenha_antigua(string $contrasenha_antigua_a_verificar, string $nombre_usuario): bool
-{
     require_once('./constants.php');
 
     $pepper_config = include 'pepper2.php';  // Incluimos la configuración del pepper.
@@ -177,7 +174,6 @@ function ha_sido_filtrada_en_brechas_de_seguridad(string $contrasenha): bool
  * @param mixed $usuario Nombre de usuario a verificar.
  * @return bool Devuelve true si la contraseña es similar al nombre de usuario, false en caso contrario.
  */
-function contrasenha_similar_a_usuario(string $contrasenha, array|string|null $usuario): bool
 function contrasenha_similar_a_usuario(string $contrasenha, array|string $usuario): bool
 {
     if ($usuario === null || $usuario === '') {
