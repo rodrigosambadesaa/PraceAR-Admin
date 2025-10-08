@@ -1,14 +1,13 @@
-<Files "pepper2.php">
-    Order Allow,Deny
-    Deny from all
-</Files>
+# Restringir el acceso web directo a archivos sensibles y copias de seguridad.
+<IfModule mod_authz_core.c>
+    <FilesMatch "(?i)^(?:\.env(?:\..*)?|pepper.*\.php|virustotal_api_key\.php|wolfram_alpha_api_key\.php|wolfram_alpha_app_id\.php|constants\.php|connection\.php|security\.php|env_loader\.php|api_key\.js|.+\.sql)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
 
-<Files "virustotal_api_key.php">
-    Order Allow,Deny
-    Deny from all
-</Files>
-
-<Files "api_key.js">
-    Order Allow,Deny
-    Deny from all
-</Files>
+<IfModule !mod_authz_core.c>
+    <FilesMatch "(?i)^(?:\.env(?:\..*)?|pepper.*\.php|virustotal_api_key\.php|wolfram_alpha_api_key\.php|wolfram_alpha_app_id\.php|constants\.php|connection\.php|security\.php|env_loader\.php|api_key\.js|.+\.sql)$">
+        Order Allow,Deny
+        Deny from all
+    </FilesMatch>
+</IfModule>
