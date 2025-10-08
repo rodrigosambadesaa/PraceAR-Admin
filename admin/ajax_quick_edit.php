@@ -43,22 +43,7 @@ if (in_array($field, ['nombre', 'contacto', 'telefono', 'caseta_padre'])) {
         <input type='text' id='quick-edit-input' name='value' value='" . htmlspecialchars($valor) . "' required>
         <button type='submit'>Guardar</button>
     </form>
-    <div id='quick-edit-msg'></div>
-    <script>
-    document.getElementById('quick-edit-form').onsubmit = function(e) {
-        e.preventDefault();
-        const form = e.target;
-        fetch('admin/ajax_quick_edit_save.php', {
-            method: 'POST',
-            body: new FormData(form)
-        })
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('quick-edit-msg').textContent = data.msg;
-            if (data.success) setTimeout(() => window.location.reload(), 700);
-        });
-    };
-    </script>";
+    <div id='quick-edit-msg'></div>";
     exit;
 }
 
@@ -83,22 +68,7 @@ if ($field === 'imagen') {
         <label><input type='checkbox' name='eliminar_imagen' value='1'> Eliminar imagen</label><br>
         <button type='submit'>Guardar</button>
     </form>
-    <div id='quick-edit-msg'></div>
-    <script>
-    document.getElementById('quick-edit-img-form').onsubmit = function(e) {
-        e.preventDefault();
-        const form = e.target;
-        fetch('admin/ajax_quick_edit_save.php', {
-            method: 'POST',
-            body: new FormData(form)
-        })
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('quick-edit-msg').textContent = data.msg;
-            if (data.success) setTimeout(() => window.location.reload(), 700);
-        });
-    };
-    </script>";
+    <div id='quick-edit-msg'></div>";
     exit;
 }
 
@@ -125,22 +95,7 @@ if (in_array($field, ['tipo', 'descripcion', 'traduccion'])) {
         <textarea id='quick-edit-descripcion' name='descripcion' maxlength='450'>" . htmlspecialchars($row['descripcion']) . "</textarea><br>
         <button type='submit'>Guardar</button>
     </form>
-    <div id='quick-edit-msg'></div>
-    <script>
-    document.getElementById('quick-edit-trad-form').onsubmit = function(e) {
-        e.preventDefault();
-        const form = e.target;
-        fetch('admin/ajax_quick_edit_save.php', {
-            method: 'POST',
-            body: new FormData(form)
-        })
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('quick-edit-msg').textContent = data.msg;
-            if (data.success) setTimeout(() => window.location.reload(), 700);
-        });
-    };
-    </script>";
+    <div id='quick-edit-msg'></div>";
     exit;
 }
 
