@@ -1,3 +1,6 @@
+<?php
+declare(strict_types=1);
+?>
 <div class="paginacion">
     <?php if ($current_page > 1) {
         $first_page = 1;
