@@ -1,84 +1,120 @@
 <?php
 declare(strict_types=1);
+header('Content-Type: application/json');
 
-session_start();
+require_once(__DIR__ . '/../../helpers/verify_strong_password.php');
 
-require_once dirname(__DIR__, 2) . '/constants.php';
-require_once HELPERS . 'clean_input.php';
-require_once HELPERS . 'password_generator.php';
-
-header('Content-Type: application/json; charset=utf-8');
-
-function json_response(array $payload, int $status = 200): void
-{
-    http_response_code($status);
-    echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Método no permitido.'
+    ]);
     exit;
 }
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    json_response([
-        'success' => false,
-        'message' => 'Método no permitido.',
-    ], 405);
+$min_length = 16;
+$max_length = 1024;
+
+$length = isset($_POST['length']) ? (int)$_POST['length'] : $min_length;
+if ($length < $min_length) $length = $min_length;
+if ($length > $max_length) $length = $max_length;
+
+$mayusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+$minusculas = 'abcdefghijklmnopqrstuvwxyz';
+$numeros = '0123456789';
+$especiales = '!@#$%^&*()-_=+[]{}|;:,.<>?';
+$todos = $mayusculas . $minusculas . $numeros . $especiales;
+
+// Genera una subcontraseña segura
+function generar_subcontrasena($length, $mayusculas, $minusculas, $numeros, $especiales, $todos) {
+    while (true) {
+        $password_array = [];
+        // Garantiza requisitos mínimos
+        $password_array[] = $mayusculas[random_int(0, strlen($mayusculas) - 1)];
+        $password_array[] = $minusculas[random_int(0, strlen($minusculas) - 1)];
+        $password_array[] = $numeros[random_int(0, strlen($numeros) - 1)];
+        // Tres caracteres especiales distintos
+        $especiales_usados = [];
+        while (count($especiales_usados) < 3) {
+            $c = $especiales[random_int(0, strlen($especiales) - 1)];
+            if (!in_array($c, $especiales_usados)) {
+                $especiales_usados[] = $c;
+            }
+        }
+        $password_array = array_merge($password_array, $especiales_usados);
+
+        // Rellena el resto
+        while (count($password_array) < $length) {
+            $password_array[] = $todos[random_int(0, strlen($todos) - 1)];
+        }
+
+        shuffle($password_array);
+        $password = implode('', $password_array);
+
+        if (
+            es_contrasenha_fuerte($password)
+            && !tiene_secuencias_alfabeticas_inseguras($password)
+            && !tiene_secuencias_numericas_inseguras($password)
+            && !tiene_secuencias_caracteres_especiales_inseguras($password)
+            && !tiene_espacios_al_principio_o_al_final($password)
+        ) {
+            return $password;
+        }
+        // Si no cumple, vuelve a intentar
+    }
 }
 
-$rawInput = file_get_contents('php://input') ?: '';
-$data = json_decode($rawInput, true);
-
-if (!is_array($data)) {
-    $data = $_POST;
-}
-
-$csrf = isset($data['csrf']) ? (string)$data['csrf'] : '';
-
-if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $csrf)) {
-    json_response([
-        'success' => false,
-        'message' => 'Petición no válida (CSRF).',
-    ], 403);
-}
-
-$lengthValue = $data['length'] ?? null;
-
-if (!is_string($lengthValue) && !is_numeric($lengthValue)) {
-    json_response([
-        'success' => false,
-        'message' => 'La longitud debe ser un número natural válido.',
-    ], 400);
-}
-
-$length = (int)limpiar_input((string)$lengthValue);
-
-if ($length < 16 || $length > 500) {
-    json_response([
-        'success' => false,
-        'message' => 'La longitud debe estar entre 16 y 500 caracteres.',
-    ], 400);
-}
-
-try {
-    $password = generate_secure_password($length, $_SESSION['nombre_usuario'] ?? null);
-
-    $stats = [
-        'uppercase' => contar_mayusculas($password),
-        'lowercase' => contar_minusculas($password),
-        'digits' => contar_digitos($password),
-        'special' => contar_caracteres_especiales($password),
-        'entropy' => entropia($password),
-        'hashResistanceTime' => tiempo_estimado_resistencia_ataque_fuerza_bruta($password),
-    ];
-
-    json_response([
+// Si la longitud es muy grande, divide en 3 subcontraseñas y concatena
+if ($length > 256) {
+    while (true) {
+        $partes = 3;
+        $longitud_parte = intdiv($length, $partes);
+        $resto = $length % $partes;
+        $password_final = '';
+        for ($i = 0; $i < $partes; $i++) {
+            $l = $longitud_parte + ($i === $partes - 1 ? $resto : 0);
+            $sub = generar_subcontrasena($l, $mayusculas, $minusculas, $numeros, $especiales, $todos);
+            $password_final .= $sub;
+        }
+        // Validación final
+        if (
+            es_contrasenha_fuerte($password_final)
+            && !tiene_secuencias_alfabeticas_inseguras($password_final)
+            && !tiene_secuencias_numericas_inseguras($password_final)
+            && !tiene_secuencias_caracteres_especiales_inseguras($password_final)
+            && !tiene_espacios_al_principio_o_al_final($password_final)
+        ) {
+            echo json_encode([
+                'success' => true,
+                'password' => $password_final,
+                'stats' => [
+                    'uppercase' => contar_mayusculas($password_final),
+                    'lowercase' => contar_minusculas($password_final),
+                    'digits' => contar_digitos($password_final),
+                    'special' => contar_caracteres_especiales($password_final),
+                    'entropy' => entropia($password_final),
+                    'hashResistanceTime' => tiempo_estimado_resistencia_ataque_fuerza_bruta($password_final),
+                ]
+            ]);
+            exit;
+        }
+        // Si la concatenación genera una secuencia insegura, vuelve a intentar
+    }
+} else {
+    // Para longitudes normales, generación directa
+    $password = generar_subcontrasena($length, $mayusculas, $minusculas, $numeros, $especiales, $todos);
+    echo json_encode([
         'success' => true,
         'password' => $password,
-        'stats' => $stats,
+        'stats' => [
+            'uppercase' => contar_mayusculas($password),
+            'lowercase' => contar_minusculas($password),
+            'digits' => contar_digitos($password),
+            'special' => contar_caracteres_especiales($password),
+            'entropy' => entropia($password),
+            'hashResistanceTime' => tiempo_estimado_resistencia_ataque_fuerza_bruta($password),
+        ]
     ]);
-} catch (Throwable $exception) {
-    error_log('Error al generar contraseña: ' . $exception->getMessage());
-    json_response([
-        'success' => false,
-        'message' => 'No se pudo generar una contraseña segura. Inténtelo de nuevo más tarde.',
-    ], 500);
+    exit;
 }
 
