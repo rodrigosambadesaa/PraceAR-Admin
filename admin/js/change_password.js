@@ -153,8 +153,8 @@ async function handleGenerateClick() {
         return;
     }
 
-    if (lengthValue < 16 || lengthValue > 500) {
-        setGeneratorFeedback("La longitud debe estar entre 16 y 500 caracteres.", "error");
+    if (lengthValue < 16 || lengthValue > 1024) {
+        setGeneratorFeedback("La longitud debe estar entre 16 y 1024 caracteres.", "error");
         resetGeneratedPassword();
         return;
     }
@@ -170,15 +170,14 @@ async function handleGenerateClick() {
         generateButton.disabled = true;
         setGeneratorFeedback("Generando contraseña segura…", "info");
 
-        const response = await fetch("./ajax/generate_password.php", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                length: lengthValue,
-                csrf: csrfToken,
-            }),
+        const length = document.getElementById('password-length-number').value;
+        const formData = new FormData();
+
+        formData.append('length', length);
+
+        const response = await fetch('/appventurers/admin/ajax/generate_password.php', {
+            method: 'POST',
+            body: formData
         });
 
         if (!response.ok) {

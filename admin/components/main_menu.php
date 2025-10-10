@@ -6,7 +6,7 @@ declare(strict_types=1);
     <a href="./?page=market_sections&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link" aria-label="Ir a Naves">Naves</a>
 
     <a href="./?page=change_password&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link" aria-label="Cambiar contraseña">Cambiar contraseña</a>
-    <a href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link" aria-label="Ir a Generador de contraseñas">Generador de contraseñas</a>
+    <!-- <a href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link" aria-label="Ir a Generador de contraseñas">Generador de contraseñas</a> -->
 
     <a href="./?page=logout&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>" class="nav-link enlace_cierre_sesion"
         aria-label="Cerrar sesión">
