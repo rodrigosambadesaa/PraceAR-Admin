@@ -83,6 +83,7 @@ if ($length > 256) {
             && !tiene_secuencias_numericas_inseguras($password_final)
             && !tiene_secuencias_caracteres_especiales_inseguras($password_final)
             && !tiene_espacios_al_principio_o_al_final($password_final)
+            && !es_contrasenha_antigua($password_final, $_SESSION['nombre_usuario'])
         ) {
             echo json_encode([
                 'success' => true,
