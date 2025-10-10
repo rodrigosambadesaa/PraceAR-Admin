@@ -59,6 +59,196 @@ declare(strict_types=1);
                 color: var(--pico-muted-color, #444);
             }
 
+            .password-input-wrapper {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                align-items: stretch;
+            }
+
+            .password-input-wrapper input[type="password"] {
+                flex: 1 1 260px;
+            }
+
+            .password-generator-toggle {
+                flex: 0 0 auto;
+                padding: 0.75rem 1.5rem;
+                border-radius: var(--pico-border-radius, 0.5rem);
+                background: var(--pico-secondary-background-color, #6c757d);
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
+            }
+
+            .password-generator-toggle:hover,
+            .password-generator-toggle:focus {
+                background: var(--pico-secondary-hover-background-color, #5c636a);
+                transform: translateY(-1px);
+            }
+
+            .password-generator-toggle:focus {
+                outline: 3px solid var(--pico-primary-background, #0d6efd);
+                outline-offset: 2px;
+            }
+
+            .password-generator-panel {
+                margin-top: 1rem;
+                padding: 1.25rem;
+                border-radius: var(--pico-border-radius, 0.5rem);
+                border: 1px solid var(--pico-muted-border-color, #ced4da);
+                background: var(--pico-card-background-color, #fff);
+                box-shadow: var(--admin-card-shadow);
+                text-align: left;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .password-generator-panel h2 {
+                margin: 0;
+                font-size: 1.2rem;
+                color: var(--pico-muted-color, #444);
+            }
+
+            .password-generator-length {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+                gap: 0.75rem;
+                align-items: center;
+            }
+
+            .password-generator-length label {
+                margin-bottom: 0;
+                font-weight: 600;
+            }
+
+            .password-generator-length input[type="number"] {
+                max-width: 100%;
+            }
+
+            .password-generator-length input[type="range"] {
+                width: 100%;
+            }
+
+            .password-length-output {
+                font-weight: 600;
+                text-align: center;
+            }
+
+            .password-generator-actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.75rem;
+                align-items: center;
+            }
+
+            .password-generator-button {
+                padding: 0.75rem 1.25rem;
+                border-radius: var(--pico-border-radius, 0.5rem);
+                border: none;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
+                background: var(--pico-primary-background, #0d6efd);
+                color: #fff;
+            }
+
+            .password-generator-button:hover,
+            .password-generator-button:focus {
+                background: var(--pico-primary-hover-background, #0b5ed7);
+                transform: translateY(-1px);
+            }
+
+            .password-generator-feedback {
+                flex: 1 1 auto;
+                min-height: 1.2rem;
+            }
+
+            .password-generator-result {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                border-top: 1px solid var(--pico-muted-border-color, #ced4da);
+                padding-top: 1rem;
+            }
+
+            .password-generator-password {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .password-generator-password-value {
+                font-family: 'Fira Code', 'Courier New', Courier, monospace;
+                font-size: 1.05rem;
+                word-break: break-all;
+                padding: 0.75rem;
+                background: var(--pico-muted-background-color, #f1f3f5);
+                border-radius: var(--pico-border-radius, 0.5rem);
+            }
+
+            .password-generator-stats {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .password-generator-stats div {
+                background: var(--pico-muted-background-color, #f8f9fa);
+                padding: 0.75rem;
+                border-radius: var(--pico-border-radius, 0.5rem);
+                font-size: 0.95rem;
+            }
+
+            .password-generator-stat-label {
+                display: block;
+                font-weight: 600;
+                margin-bottom: 0.2rem;
+            }
+
+            .password-generator-stat-value {
+                font-size: 1.05rem;
+            }
+
+            .password-generator-stats dt {
+                font-weight: 600;
+                margin-bottom: 0.25rem;
+            }
+
+            .password-generator-resistance {
+                font-weight: 600;
+                margin: 0;
+            }
+
+            .password-generator-copy {
+                align-self: flex-start;
+            }
+
+            @media (max-width: 600px) {
+                .password-generator-toggle {
+                    width: 100%;
+                }
+
+                .password-input-wrapper input[type="password"] {
+                    flex: 1 1 100%;
+                }
+
+                .password-generator-actions {
+                    flex-direction: column;
+                    align-items: stretch;
+                }
+
+                .password-generator-actions .password-generator-button {
+                    width: 100%;
+                }
+
+                .password-generator-feedback {
+                    text-align: center;
+                }
+            }
+
             input[type="password"], input[type="text"] {
                 width: 100%;
                 padding: 0.75rem 1rem;
@@ -419,11 +609,75 @@ declare(strict_types=1);
             <input type="password" name="old_password" id="old-password" required aria-describedby="password-help">
             <p id="password-help" class="sr-only">Introduce tu contraseña actual.</p>
         </div>
-        <div id="form-group">
+        <div id="form-group" class="password-generator-group">
             <label for="new-password">Nueva contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
-            <input type="password" name="new_password" id="new-password" required onblur="if(this.value) checkPasswordRequirements()"
-                aria-describedby="new-password-help">
+            <div class="password-input-wrapper">
+                <input type="password" name="new_password" id="new-password" required onblur="if(this.value) checkPasswordRequirements()"
+                    aria-describedby="new-password-help">
+                <button type="button" id="toggle-password-generator" class="password-generator-toggle" aria-expanded="false"
+                    aria-controls="password-generator-panel">
+                    Generar contraseña segura
+                </button>
+            </div>
             <p id="new-password-help" class="sr-only">Introduce una nueva contraseña que cumpla con los requisitos.</p>
+            <section id="password-generator-panel" class="password-generator-panel" aria-live="polite" hidden>
+                <h2 id="password-generator-heading">Generador de contraseñas</h2>
+                <div class="password-generator-length" role="group" aria-labelledby="password-generator-heading">
+                    <label for="password-length-number">Longitud de la contraseña (16-500)</label>
+                    <input type="number" id="password-length-number" min="16" max="500" value="16"
+                        aria-describedby="password-length-help">
+                    <input type="range" id="password-length-range" min="16" max="500" value="16"
+                        aria-describedby="password-length-help">
+                    <output id="password-length-output" class="password-length-output">16</output>
+                </div>
+                <p id="password-length-help" class="sr-only">Selecciona una longitud entre 16 y 500 caracteres.</p>
+                <div class="password-generator-actions">
+                    <button type="button" class="password-generator-button" id="generate-password-button">
+                        Generar contraseña
+                    </button>
+                    <span id="password-generator-feedback" class="password-generator-feedback admin-info-text" role="status"
+                        aria-live="polite"></span>
+                </div>
+                <div id="generated-password-container" class="password-generator-result" hidden>
+                    <div class="password-generator-password">
+                        <span class="password-generator-password-label">Contraseña generada</span>
+                        <div id="generated-password-value" class="password-generator-password-value" aria-live="polite"></div>
+                    </div>
+                    <div class="password-generator-actions">
+                        <button type="button" class="password-generator-button password-generator-copy" id="copy-generated-password">
+                            Copiar contraseña
+                        </button>
+                        <span id="password-copy-feedback" class="password-generator-feedback" role="status" aria-live="polite"></span>
+                    </div>
+                    <div class="password-generator-stats" aria-live="polite">
+                        <div>
+                            <span class="password-generator-stat-label">Mayúsculas</span>
+                            <span id="password-stat-uppercase" class="password-generator-stat-value">0</span>
+                        </div>
+                        <div>
+                            <span class="password-generator-stat-label">Minúsculas</span>
+                            <span id="password-stat-lowercase" class="password-generator-stat-value">0</span>
+                        </div>
+                        <div>
+                            <span class="password-generator-stat-label">Dígitos</span>
+                            <span id="password-stat-digits" class="password-generator-stat-value">0</span>
+                        </div>
+                        <div>
+                            <span class="password-generator-stat-label">Caracteres especiales</span>
+                            <span id="password-stat-special" class="password-generator-stat-value">0</span>
+                        </div>
+                        <div>
+                            <span class="password-generator-stat-label">Resistencia del hash</span>
+                            <span id="password-stat-hash" class="password-generator-stat-value">-</span>
+                        </div>
+                        <div>
+                            <span class="password-generator-stat-label">Entropía estimada</span>
+                            <span id="password-stat-entropy" class="password-generator-stat-value">-</span>
+                        </div>
+                    </div>
+                    <p id="password-length-resistance" class="password-generator-resistance"></p>
+                </div>
+            </section>
         </div>
         <div id="form-group">
             <label for="confirm-password">Confirmar nueva contraseña: <span class="admin-required"
@@ -456,14 +710,11 @@ declare(strict_types=1);
     <p class="admin-error-text" style="text-align: center;">Los campos marcados con <span class="admin-required" aria-hidden="true">*</span> son
         obligatorios</p>
     <span id="help-text" class="admin-info-text">¿Necesita ayuda? Le recomendamos que use un navegador con gestor y generador de
-        contraseñas
-        integrados, como Google
-        Chrome o Mozilla Firefox, con la sesión iniciada en su cuenta de Google o Firefox, respectivamente. De esta
-        forma, podrá guardar la nueva contraseña en su gestor de contraseñas. El problema es que las contraseñas
-        generadas por esos gestores suelen
-        ser de 15 caracteres, por lo que puede usar una extensión como 1Password o <a
-            href="./?page=password_generator&lang=<?= $_REQUEST['lang'] ?? 'gl' ?>">nuestro generador de contraseñas</a>
-        para generar una contraseña de 16 caracteres o más.</span>
+        contraseñas integrados, como Google Chrome o Mozilla Firefox, con la sesión iniciada en su cuenta de Google o
+        Firefox, respectivamente. De esta forma, podrá guardar la nueva contraseña en su gestor de contraseñas. El
+        problema es que las contraseñas generadas por esos gestores suelen ser de 15 caracteres, por lo que puede usar
+        una extensión como 1Password o el generador integrado junto al campo de nueva contraseña para crear una de 16
+        caracteres o más.</span>
     <!-- Consejos para mantener tus contraseñas seguras: -->
     <div class="success-message">
         <!-- Contraseña cambiada correctamente.<br> -->
