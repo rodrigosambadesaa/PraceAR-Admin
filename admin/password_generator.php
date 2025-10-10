@@ -5,8 +5,8 @@ declare(strict_types=1);
 
 require_once HELPERS . 'clean_input.php';
 require_once CONNECTION;
+require_once HELPERS . 'password_generator.php';
 
-$app_id_config = require_once HELPERS . 'verify_strong_password.php';
 $pepper_config = include 'pepper2.php';
 
 $today = date('Y-m-d');
@@ -43,72 +43,6 @@ if (!isset($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
 
-/**
- * Generates a password of the specified length that meets the criteria:
- * - Length between 16 and 835 characters.
- * - At least 1 uppercase letter.
- * - At least 1 lowercase letter.
- * - At least 1 digit.
- * - At least 3 distinct special characters.
- *
- * @param int $length Desired password length.
- * @return string The generated password.
- * @throws Exception If the length is out of the allowed range.
- */
-function generate_password(int $length): string
-{
-    if ($length < 16 || $length > 835) {
-        throw new Exception("La longitud de la contraseña debe estar entre 16 y 835 caracteres.");
-    }
-
-    $uppercase_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    $lowercase_chars = 'abcdefghijklmnopqrstuvwxyz';
-    $number_chars = '0123456789';
-    $special_chars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-
-    $password_chars = [];
-    $password = '';
-
-    // Ensure at least one uppercase, one lowercase, and one number
-    $password_chars[] = $uppercase_chars[random_int(0, strlen($uppercase_chars) - 1)];
-    $password_chars[] = $lowercase_chars[random_int(0, strlen($lowercase_chars) - 1)];
-    $password_chars[] = $number_chars[random_int(0, strlen($number_chars) - 1)];
-
-    // Ensure three distinct special characters
-    $special_array = str_split($special_chars);
-    shuffle($special_array);
-    $password_chars[] = $special_array[0];
-    unset($special_array[array_search($password_chars[3], $special_array)]);
-    $special_array = array_values($special_array);
-    $password_chars[] = $special_array[0];
-    unset($special_array[array_search($password_chars[4], $special_array)]);
-    $special_array = array_values($special_array);
-    $password_chars[] = $special_array[0];
-
-    $remaining_length = $length - 6;
-    $all_chars = "{$uppercase_chars}{$lowercase_chars}{$number_chars}{$special_chars}";
-
-    for ($i = 0; $i < $remaining_length; $i++) {
-        $password .= $all_chars[random_int(0, strlen($all_chars) - 1)];
-    }
-    $password = str_shuffle(implode('', $password_chars) . $password);
-
-    // Validate password
-    if (
-        tiene_secuencias_numericas_inseguras($password) ||
-        tiene_secuencias_alfabeticas_inseguras($password) ||
-        tiene_secuencias_caracteres_especiales_inseguras($password) ||
-        contrasenha_similar_a_usuario($password, $_SESSION['nombre_usuario'] ?? null) ||
-        ha_sido_filtrada_en_brechas_de_seguridad($password) ||
-        !es_contrasenha_fuerte($password) ||
-        es_contrasenha_antigua($password, $_SESSION['nombre_usuario'] ?? '')
-    ) {
-        return generate_password($length);
-    }
-
-    return $password;
-}
-
 $result = '';
 $passwords = [];
 $mostrar_boton = false;
@@ -134,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 } else {
                     try {
                         for ($i = 0; $i < $quantity; $i++) { // $quantity siempre será 1
-                            $passwords[] = generate_password($length);
+                            $passwords[] = generate_secure_password($length, $_SESSION['nombre_usuario'] ?? null);
                         }
 
                         $result = '<div id="contrasenas-generadas">';
