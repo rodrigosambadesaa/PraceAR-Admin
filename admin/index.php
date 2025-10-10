@@ -67,6 +67,31 @@ declare(strict_types=1);
             color: #fff;
         }
         /* ...existing code... */
+
+/* Sugerencias elegantes debajo del campo de búsqueda */
+        #sugerencias-busqueda {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            width: 100%;
+            max-height: 180px;
+            overflow-y: auto;
+            font-size: 0.95em;
+            z-index: 100;
+            margin-top: -2px;
+        }
+        #sugerencias-busqueda div {
+            padding: 0.5em 1em;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        #sugerencias-busqueda div:hover, #sugerencias-busqueda div:focus {
+            background: #f0f4fa;
+        }
     </style>
 </head>
 
@@ -263,7 +288,14 @@ declare(strict_types=1);
             </table>
 
         <?php else: ?>
-            <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
+            <div style="text-align:center; margin-top:2em;">
+                <h2>No se encontraron resultados para <strong><?= htmlspecialchars($caseta) ?></strong>.</h2>
+                <p>Prueba con otro código de caseta o revisa la ortografía.</p>
+                <ul style="display:inline-block; text-align:left; margin:1em auto;">
+                    <li>Ejemplo: <code>CE001</code>, <code>CO121</code>, <code>MC001</code>, <code>NA338</code>, <code>NC041</code></li>
+                    <li>¿Buscas todos los puestos? Deja el campo vacío y pulsa <strong>Buscar</strong>.</li>
+                </ul>
+            </div>
         <?php endif; ?>
     </main>
 
@@ -291,7 +323,9 @@ declare(strict_types=1);
     <?php if ($resultados_encontrados): ?>
         <script type="module" src="<?= JS_ADMIN . 'index.js' ?>"></script>
     <?php else: ?>
-        <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
+        <?php if (!$busqueda_hecha): ?>
+            <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
+        <?php endif; ?>
     <?php endif; ?>
 
     <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
@@ -305,6 +339,113 @@ declare(strict_types=1);
                     document.getElementById('zoomed-image-container').classList.add('show');
                     document.getElementById('zoomed-image-container').setAttribute('aria-hidden', 'false');
                 }
+            });
+        });
+
+        // Sugerencias de búsqueda en tiempo real
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputBusqueda = document.getElementById('input-busqueda');
+            if (!inputBusqueda) return;
+
+        //     // Crear contenedor de sugerencias
+        //     let sugerenciasDiv = document.createElement('div');
+        //     sugerenciasDiv.id = 'sugerencias-busqueda';
+        //     sugerenciasDiv.style.position = 'absolute';
+        //     sugerenciasDiv.style.background = '#fff';
+        //     sugerenciasDiv.style.border = '1px solid #ccc';
+        //     sugerenciasDiv.style.zIndex = '1000';
+        //     sugerenciasDiv.style.width = inputBusqueda.offsetWidth + 'px';
+        //     sugerenciasDiv.style.maxHeight = '200px';
+        //     sugerenciasDiv.style.overflowY = 'auto';
+        //     sugerenciasDiv.style.display = 'none';
+        //     inputBusqueda.parentNode.appendChild(sugerenciasDiv);
+
+        //     inputBusqueda.addEventListener('input', function() {
+        //         const termino = this.value.trim();
+        //         if (termino.length < 2) {
+        //             sugerenciasDiv.style.display = 'none';
+        //             return;
+        //         }
+        //         fetch(`/appventurers/admin/ajax_sugerencias.php?caseta=${encodeURIComponent(termino)}&lang=${encodeURIComponent(document.getElementById('lang').value)}`)
+        //             .then(res => res.json())
+        //             .then(data => {
+        //                 sugerenciasDiv.innerHTML = '';
+        //                 if (data.length > 0) {
+        //                     data.forEach(sug => {
+        //                         let item = document.createElement('div');
+        //                         item.textContent = sug;
+        //                         item.style.padding = '0.5em';
+        //                         item.style.cursor = 'pointer';
+        //                         item.addEventListener('mousedown', () => {
+        //                             inputBusqueda.value = sug;
+        //                             sugerenciasDiv.style.display = 'none';
+        //                         });
+        //                         sugerenciasDiv.appendChild(item);
+        //                     });
+        //                     sugerenciasDiv.style.display = 'block';
+        //                 } else {
+        //                     sugerenciasDiv.innerHTML = '<div style="padding:0.5em;color:#888;">Sin sugerencias</div>';
+        //                     sugerenciasDiv.style.display = 'block';
+        //                 }
+        //             });
+        //     });
+
+        //     // Ocultar sugerencias al perder foco
+        //     inputBusqueda.addEventListener('blur', () => {
+        //         setTimeout(() => sugerenciasDiv.style.display = 'none', 150);
+        //     });
+        // });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputBusqueda = document.getElementById('input-busqueda');
+            const formulario = inputBusqueda?.closest('form');
+            if (!inputBusqueda || !formulario) return;
+
+            // Crear contenedor de sugerencias
+            let sugerenciasDiv = document.createElement('div');
+            sugerenciasDiv.id = 'sugerencias-busqueda';
+            sugerenciasDiv.style.display = 'none';
+            inputBusqueda.parentNode.style.position = 'relative';
+            inputBusqueda.parentNode.appendChild(sugerenciasDiv);
+
+            inputBusqueda.addEventListener('input', function() {
+                const termino = this.value.trim();
+                if (termino.length < 2) {
+                    sugerenciasDiv.style.display = 'none';
+                    return;
+                }
+                fetch(`/appventurers/admin/ajax_sugerencias.php?caseta=${encodeURIComponent(termino)}&lang=gl`)
+                    .then(res => res.json())
+                    .then(data => {
+                        sugerenciasDiv.innerHTML = '';
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(sug => {
+                                let item = document.createElement('div');
+                                item.textContent = sug;
+                                item.tabIndex = 0;
+                                item.addEventListener('mousedown', e => {
+                                    e.preventDefault();
+                                    inputBusqueda.value = sug;
+                                    sugerenciasDiv.style.display = 'none';
+                                    formulario.submit();
+                                });
+                                sugerenciasDiv.appendChild(item);
+                            });
+                            sugerenciasDiv.style.display = 'block';
+                        } else {
+                            sugerenciasDiv.innerHTML = '<div style="color:#888;">Sin sugerencias</div>';
+                            sugerenciasDiv.style.display = 'block';
+                        }
+                    });
+            });
+
+            // Ocultar sugerencias al perder foco
+            inputBusqueda.addEventListener('blur', () => {
+                setTimeout(() => sugerenciasDiv.style.display = 'none', 120);
+            });
+            inputBusqueda.addEventListener('focus', () => {
+                if (sugerenciasDiv.innerHTML.trim()) sugerenciasDiv.style.display = 'block';
             });
         });
 </script>
