@@ -35,11 +35,11 @@ if (isset($_SESSION['login'])) {
             require_once(ADMIN . 'change_password.php');
             break;
 
-        case 'password_generator':
-            // Pasar el número de página actual a la página del generador de contraseñas
-            $_GET['page_number'] = $current_page;
-            require_once(ADMIN . 'password_generator.php');
-            break;
+        // case 'password_generator':
+        //     // Pasar el número de página actual a la página del generador de contraseñas
+        //     $_GET['page_number'] = $current_page;
+        //     require_once(ADMIN . 'password_generator.php');
+        //     break;
 
         case 'edit':
             require_once(ADMIN . 'edit.php');
