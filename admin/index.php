@@ -343,9 +343,9 @@ declare(strict_types=1);
         });
 
         // Sugerencias de búsqueda en tiempo real
-        document.addEventListener('DOMContentLoaded', () => {
-            const inputBusqueda = document.getElementById('input-busqueda');
-            if (!inputBusqueda) return;
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     const inputBusqueda = document.getElementById('input-busqueda');
+        //     if (!inputBusqueda) return;
 
         //     // Crear contenedor de sugerencias
         //     let sugerenciasDiv = document.createElement('div');
@@ -395,8 +395,6 @@ declare(strict_types=1);
         //         setTimeout(() => sugerenciasDiv.style.display = 'none', 150);
         //     });
         // });
-    </script>
-    <script>
         document.addEventListener('DOMContentLoaded', () => {
             const inputBusqueda = document.getElementById('input-busqueda');
             const formulario = inputBusqueda?.closest('form');
@@ -448,7 +446,7 @@ declare(strict_types=1);
                 if (sugerenciasDiv.innerHTML.trim()) sugerenciasDiv.style.display = 'block';
             });
         });
-</script>
+    </script>
 </body>
 
 </html>
