@@ -623,14 +623,14 @@ declare(strict_types=1);
             <section id="password-generator-panel" class="password-generator-panel" aria-live="polite" hidden>
                 <h2 id="password-generator-heading">Generador de contraseñas</h2>
                 <div class="password-generator-length" role="group" aria-labelledby="password-generator-heading">
-                    <label for="password-length-number">Longitud de la contraseña (16-500)</label>
-                    <input type="number" id="password-length-number" min="16" max="500" value="16"
+                    <label for="password-length-number">Longitud de la contraseña (16-1024)</label>
+                    <input type="number" id="password-length-number" min="16" max="1024" value="16"
                         aria-describedby="password-length-help">
-                    <input type="range" id="password-length-range" min="16" max="500" value="16"
+                    <input type="range" id="password-length-range" min="16" max="1024" value="16"
                         aria-describedby="password-length-help">
                     <output id="password-length-output" class="password-length-output">16</output>
                 </div>
-                <p id="password-length-help" class="sr-only">Selecciona una longitud entre 16 y 500 caracteres.</p>
+                <p id="password-length-help" class="sr-only">Selecciona una longitud entre 16 y 1024 caracteres.</p>
                 <div class="password-generator-actions">
                     <button type="button" class="password-generator-button" id="generate-password-button">
                         Generar contraseña
