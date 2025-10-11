@@ -84,7 +84,7 @@ declare(strict_types=1);
 
             .password-generator-toggle:hover,
             .password-generator-toggle:focus {
-                background: var(--pico-secondary-hover-background-color, #5c636a);
+                background: var(--pico-secondary-hover-background, #5c636a);
                 transform: translateY(-1px);
             }
 
@@ -739,145 +739,41 @@ declare(strict_types=1);
     </div>
     <?= $err ?>
     <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // --- Secuencias inseguras precomputadas ---
-    const NUM_SEQS = (() => {
-        const nums = "0123456789", rev = nums.split("").reverse().join("");
-        let arr = [];
-        for (let l = 2; l <= 5; l++) {
-            for (let i = 0; i <= nums.length - l; i++) arr.push(nums.slice(i, i + l), rev.slice(i, i + l));
-        }
-        arr.push(...["159", "951", "753", "357", "147", "741", "369", "963", "258", "852"]);
-        return arr;
-    })();
-    const ALPHA_SEQS = (() => {
-        const abc = "abcdefghijklmnopqrstuvwxyz", rev = abc.split("").reverse().join("");
-        const filas = ["qwertyuiop", "asdfghjklñ", "zxcvbnm"];
-        let arr = [];
-        for (let l = 2; l <= 5; l++) {
-            for (let i = 0; i <= abc.length - l; i++) arr.push(abc.slice(i, i + l), rev.slice(i, i + l));
-        }
-        for (const f of filas) {
-            const fr = f.split("").reverse().join("");
-            for (let l = 2; l <= f.length; l++) {
-                for (let i = 0; i <= f.length - l; i++) arr.push(f.slice(i, i + l), fr.slice(i, i + l));
-            }
-        }
-        arr.push(...["qaz", "wsx", "edc", "rfv", "tgb", "yhn", "ujm",
-            "qazwsx", "wsxedc", "edcrfv", "rfvtgb", "tgbnhy", "yhnujm"]);
-        arr.push(...["zxc", "vbn", "mnb", "poi", "lkj", "hgf", "dsq"]);
-        return arr;
-    })();
-    const SPECIAL_SEQS = [
-        "!@#$%^&*()_+", "-=", "[]", ";'", ",./", "{}", ":\"", "<>?"
-    ];
+    <script type="module">
+import { SecurePasswordGenerator } from '<?= JS . 'helpers/secure_password_generator.js' ?>';
 
-    // --- Chequeo optimizado ---
-    function verifyStrongPassword(password) {
-        if (password.length < 16 || password.length > 1024) return false;
-        if (!/[a-z]/.test(password)) return false;
-        if (!/[A-Z]/.test(password)) return false;
-        if (!/[0-9]/.test(password)) return false;
-        let especiales = new Set();
-        for (const c of password) if ("!@#$%^&*()-_=+[]{}|;:,.<>?/".includes(c)) especiales.add(c);
-        if (especiales.size < 3) return false;
-        if (password.startsWith(" ") || password.endsWith(" ")) return false;
-        if (NUM_SEQS.some(seq => password.includes(seq))) return false;
-        if (ALPHA_SEQS.some(seq => password.toLowerCase().includes(seq))) return false;
-        for (const seq of SPECIAL_SEQS) {
-            for (let i = 0; i <= password.length - seq.length; i++) {
-                if (seq.includes(password.substring(i, i + seq.length))) return false;
-            }
-        }
-        return true;
-    }
-
-    function shuffleString(str) {
-        const arr = str.split("");
-        for (let i = arr.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr.join("");
-    }
-
-    function generarSubcontrasena(length) {
-        const mayus = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", minus = "abcdefghijklmnopqrstuvwxyz", nums = "0123456789";
-        const esp = "!@#$%^&*()-_=+[]{}|;:,.<>?/", todos = mayus + minus + nums + esp;
-        while (true) {
-            let arr = [
-                mayus[Math.floor(Math.random() * mayus.length)],
-                minus[Math.floor(Math.random() * minus.length)],
-                nums[Math.floor(Math.random() * nums.length)]
-            ];
-            let usados = new Set();
-            while (usados.size < 3) usados.add(esp[Math.floor(Math.random() * esp.length)]);
-            arr.push(...usados);
-            while (arr.length < length) arr.push(todos[Math.floor(Math.random() * todos.length)]);
-            let pwd = shuffleString(arr.join(""));
-            for (let i = 0; i < 10; i++) {
-                if (verifyStrongPassword(pwd)) return pwd;
-                pwd = shuffleString(pwd);
-            }
-        }
-    }
-
-    function generarPassword(length) {
-        if (length > 256) {
-            const partes = length > 512 ? 4 : 2;
-            const longitudParte = Math.floor(length / partes), resto = length % partes;
-            while (true) {
-            let pwd = "";
-            for (let i = 0; i < partes; i++) {
-                let l = longitudParte + (i === partes - 1 ? resto : 0);
-                pwd += generarSubcontrasena(l);
-            }
-            for (let i = 0; i < 10; i++) {
-                if (verifyStrongPassword(pwd)) return pwd;
-                pwd = shuffleString(pwd);
-            }
-            }
-        } else {
-            return generarSubcontrasena(length);
-        }
-    }
-
-    function contarMayusculas(pwd) { return (pwd.match(/[A-Z]/g) || []).length; }
-    function contarMinusculas(pwd) { return (pwd.match(/[a-z]/g) || []).length; }
-    function contarDigitos(pwd) { return (pwd.match(/[0-9]/g) || []).length; }
-    function contarEspeciales(pwd) { return (pwd.match(/[^A-Za-z0-9]/g) || []).length; }
-    function calcularEntropia(pwd) {
-        let minus = contarMinusculas(pwd), mayus = contarMayusculas(pwd), dig = contarDigitos(pwd), esp = contarEspeciales(pwd);
-        return (minus * 5 + mayus * 6 + dig * 7 + esp * 8) + " bits";
-    }
-
+document.addEventListener('DOMContentLoaded', function() {
     // Sincronización de longitud
-    document.getElementById('password-length-number').addEventListener('input', function(e) {
-        document.getElementById('password-length-range').value = e.target.value;
-        document.getElementById('password-length-output').textContent = e.target.value;
+    const numberInput = document.getElementById('password-length-number');
+    const rangeInput = document.getElementById('password-length-range');
+    const output = document.getElementById('password-length-output');
+    numberInput.addEventListener('input', function(e) {
+        rangeInput.value = numberInput.value;
+        output.textContent = numberInput.value;
     });
-    document.getElementById('password-length-range').addEventListener('input', function(e) {
-        document.getElementById('password-length-number').value = e.target.value;
-        document.getElementById('password-length-output').textContent = e.target.value;
+    rangeInput.addEventListener('input', function(e) {
+        numberInput.value = rangeInput.value;
+        output.textContent = rangeInput.value;
     });
 
     // Generar y aplicar contraseña
     document.getElementById('generate-password-button').addEventListener('click', function() {
-        const length = parseInt(document.getElementById('password-length-number').value, 10);
+        const length = parseInt(numberInput.value, 10);
+        const feedback = document.getElementById('password-generator-feedback');
         if (length < 16 || length > 1024) {
-            document.getElementById('password-generator-feedback').textContent = 'La longitud debe estar entre 16 y 1024.';
+            feedback.textContent = 'La longitud debe estar entre 16 y 1024.';
             return;
         }
-        let password = generarPassword(length);
+        const password = SecurePasswordGenerator.generarPassword(length);
+        const stats = SecurePasswordGenerator.getStats(password);
         document.getElementById('generated-password-value').textContent = password;
-        document.getElementById('password-stat-uppercase').textContent = contarMayusculas(password);
-        document.getElementById('password-stat-lowercase').textContent = contarMinusculas(password);
-        document.getElementById('password-stat-digits').textContent = contarDigitos(password);
-        document.getElementById('password-stat-special').textContent = contarEspeciales(password);
-        document.getElementById('password-stat-entropy').textContent = calcularEntropia(password);
+        document.getElementById('password-stat-uppercase').textContent = stats.uppercase.toString();
+        document.getElementById('password-stat-lowercase').textContent = stats.lowercase.toString();
+        document.getElementById('password-stat-digits').textContent = stats.digits.toString();
+        document.getElementById('password-stat-special').textContent = stats.special.toString();
+        document.getElementById('password-stat-entropy').textContent = stats.entropy;
         document.getElementById('generated-password-container').hidden = false;
-        document.getElementById('password-generator-feedback').textContent = '';
+        feedback.textContent = '';
         // Aplicar directamente al formulario
         document.getElementById('new-password').value = password;
         document.getElementById('confirm-password').value = password;
