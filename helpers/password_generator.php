@@ -14,8 +14,8 @@ require_once __DIR__ . '/verify_strong_password.php';
  */
 function generate_secure_password(int $length, ?string $username = null): string
 {
-    if ($length < 16 || $length > 835) {
-        throw new InvalidArgumentException('La longitud de la contraseña debe estar entre 16 y 835 caracteres.');
+    if ($length < 16 || $length > 1024) {
+        throw new InvalidArgumentException('La longitud de la contraseña debe estar entre 16 y 1024 caracteres.');
     }
 
     $uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
