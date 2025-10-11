@@ -180,6 +180,11 @@ declare(strict_types=1);
                 gap: 0.5rem;
             }
 
+            .password-generator-password-label {
+                font-weight: 600;
+                color: green;
+            }
+
             .password-generator-password-value {
                 font-family: 'Fira Code', 'Courier New', Courier, monospace;
                 font-size: 1.05rem;
@@ -641,7 +646,7 @@ declare(strict_types=1);
                 </div>
                 <div id="generated-password-container" class="password-generator-result" hidden>
                     <div class="password-generator-password">
-                        <span class="password-generator-password-label">Contraseña generada</span>
+                        <span class="password-generator-password-label">Contraseña generada y aplicada al formulario:</span>
                         <div id="generated-password-value" class="password-generator-password-value" aria-live="polite"></div>
                     </div>
                     <div class="password-generator-actions">
