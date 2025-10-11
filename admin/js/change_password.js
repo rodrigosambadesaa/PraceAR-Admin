@@ -14,7 +14,6 @@ const campoContrasenaActual = getPasswordInput("old-password");
 const campoNuevaContrasena = getPasswordInput("new-password");
 const campoConfirmacion = getPasswordInput("confirm-password");
 const csrfInput = formulario.querySelector('input[name="csrf"]');
-
 const generatorToggleButton = document.getElementById("toggle-password-generator");
 const generatorPanel = document.getElementById("password-generator-panel");
 const lengthNumberInput = document.getElementById("password-length-number");
@@ -35,15 +34,11 @@ const statsElements = {
     hashResistance: document.getElementById("password-stat-hash"),
     entropy: document.getElementById("password-stat-entropy"),
 };
-
 function setGeneratorFeedback(message, type = "info") {
-    if (!generatorFeedback) {
+    if (!generatorFeedback)
         return;
-    }
-
     generatorFeedback.textContent = message;
     generatorFeedback.classList.remove("admin-error-text", "admin-success-text", "admin-info-text");
-
     if (type === "error") {
         generatorFeedback.classList.add("admin-error-text");
     }
@@ -54,30 +49,22 @@ function setGeneratorFeedback(message, type = "info") {
         generatorFeedback.classList.add("admin-info-text");
     }
 }
-
 function calculateLengthResistance(length) {
-    if (length >= 16 && length <= 20) {
+    if (length >= 16 && length <= 20)
         return "Resistente a atacantes individuales.";
-    }
-    if (length > 20 && length <= 30) {
+    if (length > 20 && length <= 30)
         return "Resistente a grupos pequeños de atacantes.";
-    }
-    if (length > 30 && length <= 50) {
+    if (length > 30 && length <= 50)
         return "Resistente a empresas con recursos moderados.";
-    }
-    if (length > 50 && length <= 70) {
+    if (length > 50 && length <= 70)
         return "Resistente a grandes empresas.";
-    }
-    if (length > 70) {
+    if (length > 70)
         return "Resistente a gobiernos y organizaciones con recursos avanzados.";
-    }
     return "Longitud insuficiente para garantizar resistencia.";
 }
-
 function updateResistance() {
-    if (!resistanceElement || !(lengthNumberInput instanceof HTMLInputElement)) {
+    if (!resistanceElement || !(lengthNumberInput instanceof HTMLInputElement))
         return;
-    }
     const lengthValue = Number.parseInt(lengthNumberInput.value, 10);
     if (Number.isNaN(lengthValue)) {
         resistanceElement.textContent = "Selecciona una longitud válida.";
@@ -85,34 +72,26 @@ function updateResistance() {
     }
     resistanceElement.textContent = calculateLengthResistance(lengthValue);
 }
-
 function updateLengthOutput(value) {
-    if (lengthOutput) {
+    if (lengthOutput)
         lengthOutput.textContent = value;
-    }
     updateResistance();
 }
-
 function syncLengthFromNumber() {
-    if (!(lengthNumberInput instanceof HTMLInputElement) || !(lengthRangeInput instanceof HTMLInputElement)) {
+    if (!(lengthNumberInput instanceof HTMLInputElement) || !(lengthRangeInput instanceof HTMLInputElement))
         return;
-    }
     lengthRangeInput.value = lengthNumberInput.value;
     updateLengthOutput(lengthNumberInput.value);
 }
-
 function syncLengthFromRange() {
-    if (!(lengthNumberInput instanceof HTMLInputElement) || !(lengthRangeInput instanceof HTMLInputElement)) {
+    if (!(lengthNumberInput instanceof HTMLInputElement) || !(lengthRangeInput instanceof HTMLInputElement))
         return;
-    }
     lengthNumberInput.value = lengthRangeInput.value;
     updateLengthOutput(lengthRangeInput.value);
 }
-
 function toggleGeneratorPanel() {
-    if (!(generatorPanel instanceof HTMLElement) || !(generatorToggleButton instanceof HTMLButtonElement)) {
+    if (!(generatorPanel instanceof HTMLElement) || !(generatorToggleButton instanceof HTMLButtonElement))
         return;
-    }
     const isHidden = generatorPanel.hasAttribute("hidden");
     if (isHidden) {
         generatorPanel.removeAttribute("hidden");
@@ -122,11 +101,9 @@ function toggleGeneratorPanel() {
     }
     const expanded = generatorPanel.hasAttribute("hidden") ? "false" : "true";
     generatorToggleButton.setAttribute("aria-expanded", expanded);
-    if (!generatorPanel.hasAttribute("hidden")) {
+    if (!generatorPanel.hasAttribute("hidden"))
         updateResistance();
-    }
 }
-
 function resetGeneratedPassword() {
     if (generatedPasswordContainer instanceof HTMLElement) {
         generatedPasswordContainer.setAttribute("hidden", "");
@@ -139,53 +116,39 @@ function resetGeneratedPassword() {
         copyFeedback.classList.remove("admin-error-text", "admin-success-text", "admin-info-text");
     }
 }
-
 async function handleGenerateClick() {
-    if (!(lengthNumberInput instanceof HTMLInputElement) || !(generateButton instanceof HTMLButtonElement)) {
+    if (!(lengthNumberInput instanceof HTMLInputElement) || !(generateButton instanceof HTMLButtonElement))
         return;
-    }
-
     const lengthValue = Number.parseInt(lengthNumberInput.value, 10);
-
     if (Number.isNaN(lengthValue)) {
         setGeneratorFeedback("La longitud debe ser un número natural válido.", "error");
         resetGeneratedPassword();
         return;
     }
-
     if (lengthValue < 16 || lengthValue > 1024) {
         setGeneratorFeedback("La longitud debe estar entre 16 y 1024 caracteres.", "error");
         resetGeneratedPassword();
         return;
     }
-
     const csrfToken = csrfInput instanceof HTMLInputElement ? csrfInput.value : "";
     if (!csrfToken) {
         setGeneratorFeedback("No se pudo validar la petición (token CSRF no disponible).", "error");
         resetGeneratedPassword();
         return;
     }
-
     try {
         generateButton.disabled = true;
         setGeneratorFeedback("Generando contraseña segura…", "info");
-
-        const length = document.getElementById('password-length-number').value;
+        const length = lengthNumberInput.value;
         const formData = new FormData();
-
         formData.append('length', length);
-
         const response = await fetch('/appventurers/admin/ajax/generate_password.php', {
             method: 'POST',
             body: formData
         });
-
-        if (!response.ok) {
+        if (!response.ok)
             throw new Error(`Respuesta inesperada (${response.status})`);
-        }
-
         const data = await response.json();
-
         if (!data || data.success !== true) {
             const message = data && typeof data.message === "string"
                 ? data.message
@@ -194,33 +157,25 @@ async function handleGenerateClick() {
             resetGeneratedPassword();
             return;
         }
-
         if (!(generatedPasswordContainer instanceof HTMLElement)
             || !(generatedPasswordValue instanceof HTMLElement)) {
             return;
         }
-
         const password = typeof data.password === "string" ? data.password : "";
-
         if (!password) {
             setGeneratorFeedback("No se recibió ninguna contraseña generada.", "error");
             resetGeneratedPassword();
             return;
         }
-
         generatedPasswordValue.textContent = password;
         generatedPasswordContainer.removeAttribute("hidden");
-
         if (campoNuevaContrasena instanceof HTMLInputElement) {
             campoNuevaContrasena.value = password;
         }
-
         if (campoConfirmacion instanceof HTMLInputElement) {
             campoConfirmacion.value = password;
         }
-
         const stats = data.stats && typeof data.stats === "object" ? data.stats : {};
-
         if (statsElements.uppercase instanceof HTMLElement) {
             const value = Object.prototype.hasOwnProperty.call(stats, "uppercase") ? stats.uppercase : 0;
             statsElements.uppercase.textContent = String(value);
@@ -245,7 +200,6 @@ async function handleGenerateClick() {
             const value = Object.prototype.hasOwnProperty.call(stats, "entropy") ? stats.entropy : "-";
             statsElements.entropy.textContent = String(value);
         }
-
         setGeneratorFeedback("Contraseña generada y aplicada al formulario.", "success");
         updateResistance();
     }
@@ -260,20 +214,15 @@ async function handleGenerateClick() {
         }
     }
 }
-
 function resetCopyFeedback() {
-    if (!(copyFeedback instanceof HTMLElement)) {
+    if (!(copyFeedback instanceof HTMLElement))
         return;
-    }
     copyFeedback.textContent = "";
     copyFeedback.classList.remove("admin-error-text", "admin-success-text", "admin-info-text");
 }
-
 function handleCopyPassword() {
-    if (!(generatedPasswordValue instanceof HTMLElement) || !generatedPasswordValue.textContent) {
+    if (!(generatedPasswordValue instanceof HTMLElement) || !generatedPasswordValue.textContent)
         return;
-    }
-
     navigator.clipboard.writeText(generatedPasswordValue.textContent)
         .then(() => {
         if (copyFeedback instanceof HTMLElement) {
@@ -364,7 +313,7 @@ formulario.addEventListener("submit", (event) => {
         || tieneSecuenciasDeCaracteresEspecialesInseguras(nuevaContrasena)
         || tieneSecuenciasNumericasInseguras(nuevaContrasena)) {
         event.preventDefault();
-        alert("La nueva contraseña no puede contener secuencias alfabéticas, de caracteres especiales o numéricas inseguras como \"abc\", \"qwerty\", \"qaz\", \"123\", \"147\", \"159\"");
+        alert('La nueva contraseña no puede contener secuencias alfabéticas, de caracteres especiales o numéricas inseguras como "abc", "qwerty", "qaz", "123", "147", "159"');
     }
 });
 // Cuando cargue la página, meter todas las etiquetas style en el head en una sola
@@ -378,27 +327,21 @@ window.addEventListener("load", () => {
         styles.forEach((style) => style.remove());
     }
 });
-
 if (generatorToggleButton instanceof HTMLButtonElement) {
     generatorToggleButton.addEventListener("click", toggleGeneratorPanel);
 }
-
 if (lengthNumberInput instanceof HTMLInputElement) {
     lengthNumberInput.addEventListener("input", syncLengthFromNumber);
 }
-
 if (lengthRangeInput instanceof HTMLInputElement) {
     lengthRangeInput.addEventListener("input", syncLengthFromRange);
 }
-
 if (generateButton instanceof HTMLButtonElement) {
     generateButton.addEventListener("click", handleGenerateClick);
 }
-
 if (copyButton instanceof HTMLButtonElement) {
     copyButton.addEventListener("click", handleCopyPassword);
 }
-
 if (lengthNumberInput instanceof HTMLInputElement) {
     updateLengthOutput(lengthNumberInput.value);
 }
