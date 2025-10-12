@@ -264,7 +264,7 @@ $captcha_question = captcha_get_question($captcha_key);
         <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
         
         <!-- Icono para Android (PWA) -->
-        <link rel="icon" sizes="192x192" href="icon-192x192.png">
+        <link rel="icon" sizes="192x192" href="./img/icon-192x192.png">
         
         <!-- Manifesto Web (PWA) -->
         <link rel="manifest" href="/appventurers/manifest.json">
