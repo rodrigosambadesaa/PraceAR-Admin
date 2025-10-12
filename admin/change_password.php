@@ -350,7 +350,7 @@ declare(strict_types=1);
     <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
     <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
     
-    <link rel="icon" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" sizes="192x192" href="../img/icon-192x192.png">
     
     <link rel="manifest" href="/appventurers/manifest.json">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -676,6 +676,19 @@ declare(strict_types=1);
                             <span class="password-generator-stat-label">Entropía estimada</span>
                             <span id="password-stat-entropy" class="password-generator-stat-value">-</span>
                         </div>
+                        </div>
+                        <div class="password-generator-stats" style="margin-top: 0.5rem;">
+                            <div style="grid-column: 1 / -1; font-size: 0.85rem; color: #555; text-align: left;">
+                                <span class="password-generator-stat-label" style="font-weight: 600;">Resistencia estimada:</span>
+                                <span id="password-stat-resistance" class="password-generator-stat-value password-generator-resistance" style="font-weight: 600;">
+                                    -
+                                </span>
+                                <div style="font-size: 0.8rem; color: #888;">
+                                    (Tiempo estimado ante ataque de fuerza bruta, usando hardware especializado)<br>
+                                    Considera usar un gestor de contraseñas.
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -772,6 +785,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('password-stat-digits').textContent = stats.digits.toString();
         document.getElementById('password-stat-special').textContent = stats.special.toString();
         document.getElementById('password-stat-entropy').textContent = stats.entropy;
+        document.getElementById('password-stat-resistance').textContent = stats.resistanceTimeToBruteForceAttack || 'N/A';
         document.getElementById('generated-password-container').hidden = false;
         feedback.textContent = '';
         // Aplicar directamente al formulario
