@@ -4,6 +4,7 @@ type PasswordStats = {
     digits: number;
     special: number;
     entropy: string;
+    resistanceTimeToBruteForceAttack?: string;
 };
 
 export class SecurePasswordGenerator {
@@ -117,6 +118,26 @@ export class SecurePasswordGenerator {
         const digits = (password.match(/[0-9]/g) || []).length;
         const special = (password.match(/[^A-Za-z0-9]/g) || []).length;
         const entropy = (lowercase * 5 + uppercase * 6 + digits * 7 + special * 8) + " bits";
-        return { uppercase, lowercase, digits, special, entropy };
+
+        // Usar BigInt y exponentiación para evitar overflow de Number/Infinity
+        const totalCombinations = (26n ** BigInt(lowercase + uppercase)) *
+            (10n ** BigInt(digits)) *
+            (32n ** BigInt(special));
+
+        const attemptsPerSecond = 1000n;
+        const secondsInYear = 31557600n; // 365.25 * 24 * 3600
+        const yearsToCrack = totalCombinations / (attemptsPerSecond * secondsInYear);
+
+        let resistanceTimeToBruteForceAttack: string;
+        if (yearsToCrack < 1_000n) {
+            resistanceTimeToBruteForceAttack = yearsToCrack.toString() + " años";
+        } else if (yearsToCrack < 1_000_000n) {
+            resistanceTimeToBruteForceAttack = (yearsToCrack / 1_000n).toString() + " mil años";
+        } else {
+            const millones = yearsToCrack / 1_000_000n;
+            resistanceTimeToBruteForceAttack = millones.toString() + " millones de años";
+        }
+
+        return { uppercase, lowercase, digits, special, entropy, resistanceTimeToBruteForceAttack };
     }
 }
