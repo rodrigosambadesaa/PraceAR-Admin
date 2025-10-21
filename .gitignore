@@ -1,16 +1,25 @@
-pepper.php
-pepper2.php
-pepper*.php
+# Environment
+.env
+.env.*
+
+# API keys / app ids
+*_api_key.php
+*_app_id.php
 virustotal_api_key.php
 wolfram_alpha_api_key.php
 wolfram_alpha_app_id.php
-*_api_key.php
-*_app_id.php
-admin/js/helpers/api_key.js
-admin/js/helpers/api_key.*
-.env
-.env.*
-assets/
-.vscode/
 
+# Pepper files
+pepper*.php
+pepper.php
+pepper2.php
+
+# Frontend helper
+admin/js/helpers/api_key.*
+admin/js/helpers/api_key.js
+
+# Folders
+assets/
 node_modules/
+.vscode/
+unity/constants.php
