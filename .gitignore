@@ -11,5 +11,6 @@ admin/js/helpers/api_key.*
 .env
 .env.*
 assets/
+.vscode/
 
 node_modules/
