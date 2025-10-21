@@ -57,8 +57,12 @@ if (!function_exists('load_project_env')) {
 if (!function_exists('get_env_value')) {
     /**
      * Retrieve an environment variable. Environment variables take precedence over file values.
+     *
+     * @param string|null $default
+     *
+     * @return string|null
      */
-    function get_env_value(string $key, array $fileValues, mixed $default = null): mixed
+    function get_env_value(string $key, array $fileValues, $default = null)
     {
         $environmentValue = getenv($key);
         if ($environmentValue !== false) {
