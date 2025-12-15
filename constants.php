@@ -57,18 +57,21 @@ define('UNITY_TYPE', [
 
 // Detectar el protocolo
 $protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-define('BASE_URL', $protocolo . $_SERVER['HTTP_HOST'] . '/');
-define('FLAG_IMAGES_URL', BASE_URL . 'appventurers/img/flags/');
-define('PENCIL_IMAGE_URL', BASE_URL . 'appventurers/img/pencil.png');
+$host = $_SERVER['HTTP_HOST'];
 
-define('JS', BASE_URL . 'appventurers/js/');
-define('JS_ADMIN', BASE_URL . 'appventurers/admin/js/');
+// Define BASE_URL dynamically based on the script path relative to the document root
+// This assumes constants.php is in the root of the project (appventurers/)
+$projectDir = basename(__DIR__);
+define('BASE_URL', $protocolo . $host . '/' . $projectDir . '/');
+
+define('FLAG_IMAGES_URL', BASE_URL . 'img/flags/');
+define('PENCIL_IMAGE_URL', BASE_URL . 'img/pencil.png');
+
+define('JS', BASE_URL . 'js/');
+define('JS_ADMIN', BASE_URL . 'admin/js/');
 if (!defined('VIRUSTOTAL_API_KEY_FILE')) {
     define('VIRUSTOTAL_API_KEY_FILE', DIRNAME . DIRECTORY_SEPARATOR . 'virustotal_api_key.php');
 }
-
-
-
 
 // Detectar el servidor
 $servidor = $_SERVER['HTTP_HOST'];
@@ -77,16 +80,21 @@ $servidor = $_SERVER['HTTP_HOST'];
 $url = $protocolo . $servidor . '/';
 
 // Subdominio
-
-$subdominio = "appventurers";
-
-
+$subdominio = $projectDir;
 
 
 // Datos de conexión a la BBDD
 $envVariables = load_project_env(DIRNAME);
 
-$isLocal = ($_SERVER['SERVER_NAME'] ?? 'localhost') === 'localhost';
+// Prioriza APP_ENV; si no está, comprueba varios nombres/IP locales
+$appEnv = get_env_value('APP_ENV', $envVariables);
+$host = $_SERVER['SERVER_NAME'] ?? ($_SERVER['HTTP_HOST'] ?? '');
+$isLocal = $appEnv === 'development'
+    || ($appEnv === null && in_array($host, ['localhost', '127.0.0.1', '::1'], true));
+
+if (!defined('APP_ENV')) {
+    define('APP_ENV', $isLocal ? 'development' : ($appEnv ?? 'production'));
+}
 
 if ($isLocal) {
     $servidor_bd = get_env_value('PRACEAR_DB_HOST_LOCAL', $envVariables);
@@ -94,10 +102,11 @@ if ($isLocal) {
     $clave = get_env_value('PRACEAR_DB_PASSWORD_LOCAL', $envVariables);
     $bd = get_env_value('PRACEAR_DB_NAME_LOCAL', $envVariables);
 } else {
-    $servidor_bd = get_env_value('PRACEAR_DB_HOST_PROD', $envVariables);
-    $usuario = get_env_value('PRACEAR_DB_USER_PROD', $envVariables);
-    $clave = get_env_value('PRACEAR_DB_PASSWORD_PROD', $envVariables);
-    $bd = get_env_value('PRACEAR_DB_NAME_PROD', $envVariables);
+    // En producción (Dinahosting), intentamos leer las variables estándar o las de PROD
+    $servidor_bd = get_env_value('PRACEAR_DB_HOST', $envVariables) ?? get_env_value('PRACEAR_DB_HOST_PROD', $envVariables);
+    $usuario = get_env_value('PRACEAR_DB_USER', $envVariables) ?? get_env_value('PRACEAR_DB_USER_PROD', $envVariables);
+    $clave = get_env_value('PRACEAR_DB_PASSWORD', $envVariables) ?? get_env_value('PRACEAR_DB_PASSWORD_PROD', $envVariables);
+    $bd = get_env_value('PRACEAR_DB_NAME', $envVariables) ?? get_env_value('PRACEAR_DB_NAME_PROD', $envVariables);
 }
 
 define('DB_CONFIG', [

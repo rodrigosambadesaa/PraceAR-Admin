@@ -5,7 +5,8 @@ ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 
 ob_start();
-session_start();
+require_once __DIR__ . '/config/session.php';
+start_secure_session();
 
 require_once('./constants.php');
 require_once(CONNECTION);

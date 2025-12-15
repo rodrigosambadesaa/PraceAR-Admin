@@ -347,17 +347,6 @@ declare(strict_types=1);
     <link rel='icon' href='./img/favicon.png' type='image/png'>
     
     <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
-    
-    <link rel="icon" sizes="192x192" href="../img/icon-192x192.png">
-    
-    <link rel="manifest" href="/appventurers/manifest.json">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-    rel="stylesheet">
     <script type="module" src="<?= JS_ADMIN ?>check_password_requirements.js" defer></script>
     <!-- <script type="module" src="<?= JS_ADMIN ?>change_password.js" defer></script> -->
 </head>
@@ -746,78 +735,68 @@ declare(strict_types=1);
                 <strong>
                     En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.
                 </strong>
-            </li>
-            <li>Utiliza un gestor de contraseñas para almacenar tus contraseñas de forma segura. Asegúrate de que la contraseña maestra cumpla los mismos requisitos de seguridad.</li>
-        </ul>
-    </div>
-    <?= $err ?>
-    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
-    <script type="module">
-import { SecurePasswordGenerator } from '<?= JS . 'helpers/secure_password_generator.js' ?>';
+                <script type="module">
+                    import { SecurePasswordGenerator } from "./js/helpers/secure_password_generator.js";
+                    const rangeInput = document.getElementById('password-length-range');
+                    const output = document.getElementById('password-length-output');
+                    const numberInput = document.getElementById('password-length-number');
+                    numberInput.addEventListener('input', function(e) {
+                        rangeInput.value = numberInput.value;
+                        output.textContent = numberInput.value;
+                    });
+                    rangeInput.addEventListener('input', function(e) {
+                        numberInput.value = rangeInput.value;
+                        output.textContent = rangeInput.value;
+                    });
 
-document.addEventListener('DOMContentLoaded', function() {
-    // Sincronización de longitud
-    const numberInput = document.getElementById('password-length-number');
-    const rangeInput = document.getElementById('password-length-range');
-    const output = document.getElementById('password-length-output');
-    numberInput.addEventListener('input', function(e) {
-        rangeInput.value = numberInput.value;
-        output.textContent = numberInput.value;
-    });
-    rangeInput.addEventListener('input', function(e) {
-        numberInput.value = rangeInput.value;
-        output.textContent = rangeInput.value;
-    });
+                    // Generar y aplicar contraseña
+                    document.getElementById('generate-password-button').addEventListener('click', function() {
+                        const length = parseInt(numberInput.value, 10);
+                        const feedback = document.getElementById('password-generator-feedback');
+                        if (length < 16 || length > 1024) {
+                            feedback.textContent = 'La longitud debe estar entre 16 y 1024.';
+                            return;
+                        }
+                        const password = SecurePasswordGenerator.generarPassword(length);
+                        const stats = SecurePasswordGenerator.getStats(password);
+                        document.getElementById('generated-password-value').textContent = password;
+                        document.getElementById('password-stat-uppercase').textContent = stats.uppercase.toString();
+                        document.getElementById('password-stat-lowercase').textContent = stats.lowercase.toString();
+                        document.getElementById('password-stat-digits').textContent = stats.digits.toString();
+                        document.getElementById('password-stat-special').textContent = stats.special.toString();
+                        document.getElementById('password-stat-entropy').textContent = stats.entropy;
+                        document.getElementById('password-stat-resistance').textContent = stats.resistanceTimeToBruteForceAttack || 'N/A';
+                        document.getElementById('generated-password-container').hidden = false;
+                        feedback.textContent = '';
+                        // Aplicar directamente al formulario
+                        document.getElementById('new-password').value = password;
+                        document.getElementById('confirm-password').value = password;
+                    });
 
-    // Generar y aplicar contraseña
-    document.getElementById('generate-password-button').addEventListener('click', function() {
-        const length = parseInt(numberInput.value, 10);
-        const feedback = document.getElementById('password-generator-feedback');
-        if (length < 16 || length > 1024) {
-            feedback.textContent = 'La longitud debe estar entre 16 y 1024.';
-            return;
-        }
-        const password = SecurePasswordGenerator.generarPassword(length);
-        const stats = SecurePasswordGenerator.getStats(password);
-        document.getElementById('generated-password-value').textContent = password;
-        document.getElementById('password-stat-uppercase').textContent = stats.uppercase.toString();
-        document.getElementById('password-stat-lowercase').textContent = stats.lowercase.toString();
-        document.getElementById('password-stat-digits').textContent = stats.digits.toString();
-        document.getElementById('password-stat-special').textContent = stats.special.toString();
-        document.getElementById('password-stat-entropy').textContent = stats.entropy;
-        document.getElementById('password-stat-resistance').textContent = stats.resistanceTimeToBruteForceAttack || 'N/A';
-        document.getElementById('generated-password-container').hidden = false;
-        feedback.textContent = '';
-        // Aplicar directamente al formulario
-        document.getElementById('new-password').value = password;
-        document.getElementById('confirm-password').value = password;
-    });
+                    document.getElementById('copy-generated-password').addEventListener('click', function() {
+                        const password = document.getElementById('generated-password-value').textContent;
+                        navigator.clipboard.writeText(password).then(function() {
+                            document.getElementById('password-copy-feedback').textContent = '¡Copiada!';
+                        }, function() {
+                            document.getElementById('password-copy-feedback').textContent = 'No se pudo copiar.';
+                        });
+                    });
 
-    document.getElementById('copy-generated-password').addEventListener('click', function() {
-        const password = document.getElementById('generated-password-value').textContent;
-        navigator.clipboard.writeText(password).then(function() {
-            document.getElementById('password-copy-feedback').textContent = '¡Copiada!';
-        }, function() {
-            document.getElementById('password-copy-feedback').textContent = 'No se pudo copiar.';
-        });
-    });
-
-    // Mostrar/ocultar el panel correctamente
-    const toggleBtn = document.getElementById('toggle-password-generator');
-    const panel = document.getElementById('password-generator-panel');
-    toggleBtn.addEventListener('click', function() {
-        if (panel.style.display === "none" || panel.hasAttribute("hidden")) {
-            panel.style.display = "block";
-            panel.removeAttribute("hidden");
-            this.setAttribute('aria-expanded', "true");
-            panel.scrollIntoView({behavior: "smooth"});
-        } else {
-            panel.style.display = "none";
-            panel.setAttribute("hidden", "");
-            this.setAttribute('aria-expanded', "false");
-        }
-    });
-});
+                    // Mostrar/ocultar el panel correctamente
+                    const toggleBtn = document.getElementById('toggle-password-generator');
+                    const panel = document.getElementById('password-generator-panel');
+                    toggleBtn.addEventListener('click', function() {
+                        if (panel.style.display === "none" || panel.hasAttribute("hidden")) {
+                            panel.style.display = "block";
+                            panel.removeAttribute("hidden");
+                            this.setAttribute('aria-expanded', "true");
+                            panel.scrollIntoView({behavior: "smooth"});
+                        } else {
+                            panel.style.display = "none";
+                            panel.setAttribute("hidden", "");
+                            this.setAttribute('aria-expanded', "false");
+                        }
+                    });
 </script>
 </body>
 
