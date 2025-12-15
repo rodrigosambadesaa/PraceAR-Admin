@@ -126,11 +126,12 @@ export class SecurePasswordGenerator {
         let resistanceTimeToBruteForceAttack;
         if (yearsToCrack < 1000n) {
             resistanceTimeToBruteForceAttack = yearsToCrack.toString() + " años";
-        } else if (yearsToCrack < 1_000_000n) {
+        }
+        else if (yearsToCrack < 1000000n) {
             resistanceTimeToBruteForceAttack = (yearsToCrack / 1000n).toString() + " mil años";
-        } else {
-            // Representar en millones de años usando BigInt (evitar conversiones a Number)
-            const millones = yearsToCrack / 1_000_000n;
+        }
+        else {
+            const millones = yearsToCrack / 1000000n;
             resistanceTimeToBruteForceAttack = millones.toString() + " millones de años";
         }
         return { uppercase, lowercase, digits, special, entropy, resistanceTimeToBruteForceAttack };

@@ -1,7 +1,8 @@
 <?php
 declare(strict_types=1);
 header('Content-Type: application/json');
-session_start();
+require_once __DIR__ . '/../../config/session.php';
+start_secure_session();
 
 require_once(__DIR__ . '/../../helpers/password_generator.php');
 require_once(__DIR__ . '/../../helpers/verify_strong_password.php');

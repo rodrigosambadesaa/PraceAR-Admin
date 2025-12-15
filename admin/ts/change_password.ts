@@ -143,7 +143,7 @@ async function handleGenerateClick() {
         const length = lengthNumberInput.value;
         const formData = new FormData();
         formData.append('length', length);
-        const response = await fetch('/appventurers/admin/ajax/generate_password.php', {
+        const response = await fetch(`${(window as any).BASE_URL}admin/ajax/generate_password.php`, {
             method: 'POST',
             body: formData
         });

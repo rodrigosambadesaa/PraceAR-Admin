@@ -1,5 +1,52 @@
 <?php
 declare(strict_types=1);
+
+require_once(HELPERS . 'clean_input.php');
+
+$mensaje = "";
+$fila = null;
+
+// Obtener el ID del puesto a editar
+if (isset($_GET['id'])) {
+    $id = (int)$_GET['id'];
+    $sql = "SELECT * FROM puestos WHERE id = ?";
+    $stmt = $conexion->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    $fila = $resultado->fetch_assoc();
+}
+
+// Procesar el formulario de actualización
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET['id'])) {
+    $id = (int)$_GET['id'];
+    $telefono = limpiar_input($_POST['telefono'] ?? '');
+    $tipo_unity = limpiar_input($_POST['tipo_unity'] ?? '');
+    $id_nave = (int)$_POST['id_nave'];
+    $caseta_padre = !empty($_POST['caseta_padre']) ? limpiar_input($_POST['caseta_padre']) : null;
+
+    $sql_update = "UPDATE puestos SET telefono = ?, tipo_unity = ?, id_nave = ?, caseta_padre = ? WHERE id = ?";
+    $stmt_update = $conexion->prepare($sql_update);
+    $stmt_update->bind_param("ssisi", $telefono, $tipo_unity, $id_nave, $caseta_padre, $id);
+
+    if ($stmt_update->execute()) {
+        $mensaje = "Datos actualizados correctamente.";
+        // Refrescar los datos
+        $sql = "SELECT * FROM puestos WHERE id = ?";
+        $stmt = $conexion->prepare($sql);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        $fila = $resultado->fetch_assoc();
+    } else {
+        $mensaje = "Error al actualizar los datos: " . $conexion->error;
+    }
+}
+
+if (!$fila) {
+    echo "<div class='container'><p class='admin-error-text'>No se encontró el puesto especificado.</p></div>";
+    return;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -20,169 +67,83 @@ declare(strict_types=1);
     <link rel="stylesheet" href="./css/darkmode.css">
 
     <!-- Iconos para dispositivos Apple -->
-    <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="./img/apple-touch-icon-120x120.png">
-
-    <!-- Icono para Android (PWA) -->
-    <link rel="icon" sizes="192x192" href="icon-192x192.png">
-
-    <!-- Manifesto Web (PWA) -->
-    <link rel="manifest" href="/appventurers/manifest.json">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-        rel="stylesheet">
-
+    <link rel="apple-touch-icon" href="./img/favicon.png">
 </head>
 
 <body class="admin-edit">
+    <?php require_once(SECTIONS . 'header.php'); ?>
 
-    <?php
-    $imagen_eliminada = false;
-    require_once(HELPERS . "update_stalls.php"); 
-    require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php');
-
-    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-
-    $conexion = new mysqli($servidor_bd, $usuario, $clave, $bd);
-
-    if ($conexion->connect_error) {
-        die('Error en la conexión: ' . htmlspecialchars($conexion->connect_error));
-    }
-
-    $sql = "SELECT * FROM puestos WHERE id = ?";
-
-    $stmt = $conexion->prepare($sql);
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $resultado = $stmt->get_result();
-    $fila = $resultado->fetch_assoc();
-
-    if (!$fila) {
-        die('<h2 style="text-align: center;">Error al obtener los datos del puesto. <a href="index.php">Volver</a></h2>');
-    }
-
-    ?>
-
-    <form id="formulario-editar" action="#" method="post" enctype="multipart/form-data"
-        aria-labelledby="cabecera-tabla">
-        <input type="hidden" name="csrf" value="<?= isset($_SESSION['csrf']) ? $_SESSION['csrf'] : '' ?>">
-        <h2 id="cabecera-tabla" style="text-align: center;">Datos del puesto <span
-                class="admin-accent"><?= htmlspecialchars($fila["nombre"]) ?></span>
-        </h2>
-        <div style="display:flex; align-items: center; gap: .5em;">
-            <label for="activo">Activo <span class="admin-required" aria-hidden="true">*</span></label>
-            <?php
-            $activo = $fila["activo"];
-            ?>
-            <input type="checkbox" id="activo" name="activo" value="<?= $activo ?>" <?= $activo == 1 ? "checked" : "" ?>
-                aria-label="Activo">
-        </div>
-        <div>
-            <label for="caseta">Caseta</label>
-            <input type="text" id="caseta" disabled required value="<?= htmlspecialchars($fila["caseta"]) ?>"
-                aria-describedby="caseta-desc">
-            <input type="hidden" name="caseta" value="<?= htmlspecialchars($fila["caseta"]) ?>"
-                placeholder="Código de caseta">
-            <span id="caseta-desc" class="visually-hidden">Código único de la caseta</span>
-        </div>
-        <div>
-            <label for="nombre">Nombre</label>
-            <input id="nombre" type="text" name="nombre" value="<?= htmlspecialchars($fila["nombre"]) ?>"
-                placeholder="Nombre del puesto. Por ejemplo: 'Bibi Handmades'" aria-required="true">
-        </div>
-        <div>
-            <?php
-            $ruta_a_imagen = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
-            $imagen_encontrada = false;
-            if (file_exists($ruta_a_imagen)) {
-                $imagen_encontrada = true;
-            }
-            ?>
-            <?php if ($imagen_encontrada) { ?>
-                <span>Imagen</span>
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <img src="<?= htmlspecialchars($ruta_a_imagen) ?>"
-                        alt="Imagen del puesto <?= htmlspecialchars($fila["nombre"]) ?>" class="zoomable"
-                        style="object-fit: cover; height: 300px; width: 300px; display: block; margin: 0 auto;">
-                    <a href="#" id="eliminar-imagen-link" class="admin-error-text"
-                        style="margin-top: 1em; text-decoration: none; text-align: center; display: block;"
-                        aria-label="Eliminar imagen">Eliminar</a>
-                    <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1" style="display: none;">
-                </div>
-            <?php } else { ?>
-                <label for="imagen">Imagen</label>
-                <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg" aria-label="Subir imagen">
-            <?php } ?>
-        </div>
-
-        <div>
-            <label for="contacto">Contacto</label>
-            <input type="text" id="contacto" name="contacto" value="<?= htmlspecialchars($fila["contacto"]) ?>"
-                placeholder="Información de contacto del puesto." aria-label="Contacto del puesto">
-        </div>
-        <div>
-            <label for="telefono">Teléfono</label>
-            <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"]) ?>"
-                placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'" aria-label="Teléfono de contacto">
-        </div>
-        <div>
-            <label for="tipo-unity">Tipo en Unity <span class="admin-required" aria-hidden="true">*</span></label>
-            <select name="tipo_unity" id="tipo-unity" aria-required="true">
-                <?php foreach (UNITY_TYPE as $key => $value) { ?>
-                    <option value="<?= $key ?>" <?= $fila["tipo_unity"] == $key ? "selected" : "" ?>>
-                        <?= $value ?>
+    <main class="container">
+        <h1 id="cabecera_pagina_edicion">Editar Datos Generales de Puesto</h1>
+        
+        <form action="?page=edit&id=<?= htmlspecialchars((string)$id) ?>" method="POST" class="form-group" id="formulario-editar">
+            <div>
+                <label for="caseta">Caseta</label>
+                <input type="text" id="caseta" name="caseta" value="<?= htmlspecialchars($fila['caseta'] ?? '') ?>" readonly aria-label="Código de caseta">
+            </div>
+            <div>
+                <label for="telefono">Teléfono</label>
+                <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"] ?? '') ?>"
+                    placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'" aria-label="Teléfono de contacto">
+            </div>
+            <div>
+                <label for="tipo-unity">Tipo en Unity <span class="admin-required" aria-hidden="true">*</span></label>
+                <select name="tipo_unity" id="tipo-unity" aria-required="true">
+                    <?php foreach (UNITY_TYPE as $key => $value) { ?>
+                        <option value="<?= $key ?>" <?= ($fila["tipo_unity"] ?? '') == $key ? "selected" : "" ?>>
+                            <?= $value ?>
+                        </option>
                     <?php } ?>
-            </select>
-        </div>
-        <div>
-            <label for="id-nave">ID Nave <span class="admin-required" aria-hidden="true">*</span></label>
-            <select required id="id-nave" name="id_nave" aria-required="true">
-                <?php
-                $sql_naves = "SELECT * FROM naves";
-                $resultado_naves = $conexion->query($sql_naves);
-                while ($fila_naves = $resultado_naves->fetch_assoc()) { ?>
-                    <option value="<?= htmlspecialchars($fila_naves["id"]) ?>" <?= $fila["id_nave"] == $fila_naves["id"] ? "selected" : "" ?>>
-                        <?= htmlspecialchars($fila_naves["tipo"]) ?>
-                    </option>
-                <?php } ?>
-            </select>
-        </div>
-        <div>
-            <label for="caseta-padre">Caseta padre</label>
-            <input name="caseta_padre" type="text" id="caseta-padre"
-                value="<?= htmlspecialchars($fila["caseta_padre"] ?? "") ?>" placeholder="Código de caseta padre"
-                aria-label="Caseta padre">
-        </div>
-        <div id="div-botones">
-            <input id="actualizar" type="submit" value="Actualizar" aria-label="Actualizar datos del puesto">
-        </div>
-    </form>
+                </select>
+            </div>
+            <div>
+                <label for="id-nave">ID Nave <span class="admin-required" aria-hidden="true">*</span></label>
+                <select required id="id-nave" name="id_nave" aria-required="true">
+                    <?php
+                    $sql_naves = "SELECT * FROM naves";
+                    $resultado_naves = $conexion->query($sql_naves);
+                    while ($fila_naves = $resultado_naves->fetch_assoc()) { ?>
+                        <option value="<?= htmlspecialchars((string)$fila_naves["id"]) ?>" <?= $fila["id_nave"] == $fila_naves["id"] ? "selected" : "" ?>>
+                            <?= htmlspecialchars($fila_naves["tipo"]) ?>
+                        </option>
+                    <?php } ?>
+                </select>
+            </div>
+            <div>
+                <label for="caseta-padre">Caseta padre</label>
+                <input name="caseta_padre" type="text" id="caseta-padre"
+                    value="<?= htmlspecialchars($fila["caseta_padre"] ?? "") ?>" placeholder="Código de caseta padre"
+                    aria-label="Caseta padre">
+            </div>
+            <div id="div-botones">
+                <input id="actualizar" type="submit" value="Actualizar" aria-label="Actualizar datos del puesto">
+            </div>
+        </form>
 
-    <p class="note admin-error-text" style="text-align: center;">Los campos marcados con <span class="admin-required" aria-hidden="true">*</span>
-        son
-        obligatorios</p>
+        <p class="note admin-error-text" style="text-align: center;">Los campos marcados con <span class="admin-required" aria-hidden="true">*</span>
+            son
+            obligatorios</p>
 
-    <div id="zoomed-image-container" class="zoomed-container" role="dialog" aria-hidden="true">
-        <button id="zoomed-close" class="zoomed-close" aria-label="Cerrar imagen ampliada">&times;</button>
-        <img id="zoomed-image" src="" alt="">
-    </div>
+        <div id="zoomed-image-container" class="zoomed-container" role="dialog" aria-hidden="true">
+            <button id="zoomed-close" class="zoomed-close" aria-label="Cerrar imagen ampliada">&times;</button>
+            <img id="zoomed-image" src="" alt="">
+        </div>
 
-    <div id="mensaje" role="alert"><?= htmlspecialchars($mensaje) ?></div>
+        <div id="mensaje" role="alert"><?= htmlspecialchars($mensaje) ?></div>
 
-    <?php
-    if ($fila) {
-        ?>
-        <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>edit_stall.js"></script>
         <?php
-    }
+        if ($fila) {
+            ?>
+            <script type="module" src="<?= htmlspecialchars(JS_ADMIN) ?>edit_stall.js"></script>
+            <?php
+        }
+        ?>
 
-    ?>
-
-    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+        <script>
+            window.BASE_URL = "<?= BASE_URL ?>";
+        </script>
+        <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+    </main>
 </body>
 
 </html>

@@ -13,23 +13,6 @@ body {
 }
 
 main {
-    margin: 0 auto;
-    max-width: 1500px;
-    padding: 20px;
-    margin-bottom: -62.5px;
-}
-
-.admin-header {
-    width: 100%;
-    text-align: center;
-    /* margin-bottom: 20px; */
-    margin-top: 0;
-    border-radius: 0;
-}
-
-footer {
-    text-align: center;
-    font-size: 1.2em;
 }
 
 #cabecera-tabla {

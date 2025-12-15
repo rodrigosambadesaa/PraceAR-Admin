@@ -35,12 +35,21 @@ try {
     $conexion = new mysqli($servidor_bd, $usuario, $password, $bd);
     $conexion->set_charset('utf8mb4');
 } catch (RuntimeException $exception) {
+    // En producción no mostramos el error detallado al usuario
     error_log($exception->getMessage());
     http_response_code(500);
-    exit('La configuración de la base de datos no está completa. Póngase en contacto con la persona administradora.');
+    if (defined('APP_ENV') && APP_ENV === 'development') {
+         echo 'La configuración de la base de datos no está completa: ' . $exception->getMessage();
+    } else {
+         exit('Error de configuración. Póngase en contacto con la persona administradora.');
+    }
 } catch (mysqli_sql_exception $exception) {
     error_log('Error al conectar con la base de datos: ' . $exception->getMessage());
     http_response_code(500);
-    exit('No se ha podido establecer conexión con la base de datos. Inténtelo de nuevo más tarde.');
+    if (defined('APP_ENV') && APP_ENV === 'development') {
+        echo 'Error de conexión: ' . $exception->getMessage();
+    } else {
+        exit('No se ha podido establecer conexión con la base de datos. Inténtelo de nuevo más tarde.');
+    }
 }
 

@@ -7,7 +7,7 @@
   "theme_color": "#222222",
   "icons": [
     {
-      "src": "/appventurers/img/favicon.png",
+      "src": "./img/favicon.png",
       "sizes": "64x64",
       "type": "image/png"
     }
