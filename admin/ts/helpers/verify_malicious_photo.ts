@@ -11,7 +11,7 @@ interface VerifyMaliciousPhotoResponse {
     message?: string;
 }
 
-const VERIFY_MALICIOUS_PHOTO_ENDPOINT = "/appventurers/helpers/verify_malicious_photo.php";
+const VERIFY_MALICIOUS_PHOTO_ENDPOINT = `${(window as any).BASE_URL}helpers/verify_malicious_photo.php`;
 
 export async function verifyMaliciousPhoto(file: File): Promise<VerifyMaliciousPhotoResult> {
     try {

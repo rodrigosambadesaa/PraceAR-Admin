@@ -20,7 +20,7 @@ declare(strict_types=1);
                     if (isset($_REQUEST['codigo_idioma'])) $params['codigo_idioma'] = $key_language;
                     // Si estamos en la edición de traducción desde index.php, redirige a index.php?page=language
                     if (isset($_REQUEST['page']) && $_REQUEST['page'] === 'language' && isset($_REQUEST['id'])) {
-                        $url_file = '/appventurers/index.php';
+                        $url_file = BASE_URL . 'index.php';
                         $params = [
                             'page' => 'language',
                             'id' => $_REQUEST['id'],
@@ -33,7 +33,7 @@ declare(strict_types=1);
                     if (isset($_REQUEST['id'])) $params['id'] = $_REQUEST['id'];
                 } elseif ($current_file === 'edit_translations.php') {
                     // Siempre redirige a index.php?page=language para edición de traducciones
-                    $url_file = '/appventurers/index.php';
+                    $url_file = BASE_URL . 'index.php';
                     $params['page'] = 'language';
                     $params['id'] = $_REQUEST['id'] ?? '';
                     $params['codigo_idioma'] = $key_language;

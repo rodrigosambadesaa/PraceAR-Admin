@@ -7,7 +7,8 @@ declare(strict_types=1);
 function captcha_ensure_storage(): void
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
-        session_start();
+    require_once __DIR__ . '/../config/session.php';
+    start_secure_session();
     }
 
     if (!isset($_SESSION['captcha']) || !is_array($_SESSION['captcha'])) {

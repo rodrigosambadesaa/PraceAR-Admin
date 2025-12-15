@@ -52,6 +52,20 @@ declare(strict_types=1);
             outline: none;
         }
 
+        /* Ajustes específicos para el botón de cierre del modal de edición rápida:
+          más pequeño y ligeramente desplazado para no solapar inputs.
+          Se mantiene la clase/ID para compatibilidad con JS. */
+        #modal-close {
+            font-size: 1.6rem;
+            width: 2em;
+            height: 2em;
+            top: 0.6rem;
+            right: 0.6rem;
+        }
+
+        /* Asegurar que el botón sigue teniendo prioridad visual dentro del modal */
+        #modal-close { z-index: 20; }
+
         /* Modo claro: asegúrate que la cruz sea visible */
         body:not(.darkmode) .zoomed-close,
         body:not(.darkmode) .close-button {
@@ -247,12 +261,12 @@ declare(strict_types=1);
                             <td data-label="Imagen">
                                 <?php
                                 $nombre_imagen = htmlspecialchars($row["caseta"]) . ".jpg";
-                                $ruta_web = "/appventurers/assets/" . $nombre_imagen;
-                                $ruta_fisica = $_SERVER['DOCUMENT_ROOT'] . "/appventurers/assets/" . $nombre_imagen;
+                                $ruta_web = BASE_URL . "assets/" . $nombre_imagen;
+                                $ruta_fisica = ASSETS . $nombre_imagen;
 
                                 // DEBUG: Mostrar la ruta física y si existe
                                 // Elimina esto después de probar
-                                echo "<!-- Ruta física: $ruta_fisica, Existe: " . (file_exists($ruta_fisica) ? "Sí" : "No") . " -->";
+                                // echo "<!-- Ruta física: $ruta_fisica, Existe: " . (file_exists($ruta_fisica) ? "Sí" : "No") . " -->";
 
                                 if (file_exists($ruta_fisica)) {
                                     echo '<img loading="lazy" class="zoomable editable-image" src="' . $ruta_web . '" alt="Imagen del puesto ' . htmlspecialchars($row['caseta']) . '" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '">';
@@ -266,13 +280,13 @@ declare(strict_types=1);
                             <td data-label="Tipo Unity"><?= htmlspecialchars($row['tipo_unity'] ?? '') ?></td>
                             <td data-label="Información de Contacto" data-editable="true" data-field="contacto" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['contacto'] ?? '') ?></td>
                             <td data-label="Teléfono" data-editable="true" data-field="telefono" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['telefono'] ?? '') ?></td>
-                            <td data-label="ID Nave"><?= htmlspecialchars((string)($row['id_nave'] ?? '')) ?></td>
+                            <td data-label="ID Nave" data-editable="true" data-field="id_nave" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars((string)($row['id_nave'] ?? '')) ?></td>
                             <td data-label="Puesto padre" data-editable="true" data-field="caseta_padre" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
                             <td data-label="" id="celda-especial"></td>
                             <td data-label="Editar Traducción">
                                 <a href="<?= "?page=language&id=" . htmlspecialchars((string)$row['id']) . "&codigo_idioma=" . htmlspecialchars(get_language()) ?>"
                                    aria-label="Editar traducción de <?= htmlspecialchars($row['caseta']) ?>">
-                                    <img src="/appventurers/img/flags/<?= htmlspecialchars(get_language()) ?>.png"
+                                    <img src="<?= BASE_URL ?>img/flags/<?= htmlspecialchars(get_language()) ?>.png"
                                          alt="Editar traducción" width="18" height="18">
                                 </a>
                             </td>
@@ -305,8 +319,9 @@ declare(strict_types=1);
 
         <!-- Modal para edición rápida -->
         <div id="modal-edicion" class="modal-edicion" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-            <div id="modal-content" style="background:#fff; border-radius:10px; padding:2em; min-width:300px; max-width:90vw; box-shadow:0 2px 20px rgba(0,0,0,0.2); position:relative;">
-                <button id="modal-close" style="position:absolute; top:1em; right:1em; font-size:1.5em; background:none; border:none; cursor:pointer;">&times;</button>
+            <div id="modal-content" style="background:#fff; border-radius:10px; padding:3.5em 2em 2em 2em; min-width:300px; max-width:90vw; box-shadow:0 2px 20px rgba(0,0,0,0.2); position:relative;">
+                <!-- Usar mismas clases que el botón de cierre de la imagen ampliada para coherencia visual -->
+                <button id="modal-close" class="zoomed-close close-button" aria-label="Cerrar edición rápida">&times;</button>
                 <div id="modal-body"></div>
             </div>
         </div>
@@ -318,7 +333,9 @@ declare(strict_types=1);
         <p id="zoomed-name"></p>
     </div>
 
-
+    <script>
+        window.BASE_URL = "<?= BASE_URL ?>";
+    </script>
 
     <?php if ($resultados_encontrados): ?>
         <script type="module" src="<?= JS_ADMIN . 'index.js' ?>"></script>
@@ -343,58 +360,6 @@ declare(strict_types=1);
         });
 
         // Sugerencias de búsqueda en tiempo real
-        // document.addEventListener('DOMContentLoaded', () => {
-        //     const inputBusqueda = document.getElementById('input-busqueda');
-        //     if (!inputBusqueda) return;
-
-        //     // Crear contenedor de sugerencias
-        //     let sugerenciasDiv = document.createElement('div');
-        //     sugerenciasDiv.id = 'sugerencias-busqueda';
-        //     sugerenciasDiv.style.position = 'absolute';
-        //     sugerenciasDiv.style.background = '#fff';
-        //     sugerenciasDiv.style.border = '1px solid #ccc';
-        //     sugerenciasDiv.style.zIndex = '1000';
-        //     sugerenciasDiv.style.width = inputBusqueda.offsetWidth + 'px';
-        //     sugerenciasDiv.style.maxHeight = '200px';
-        //     sugerenciasDiv.style.overflowY = 'auto';
-        //     sugerenciasDiv.style.display = 'none';
-        //     inputBusqueda.parentNode.appendChild(sugerenciasDiv);
-
-        //     inputBusqueda.addEventListener('input', function() {
-        //         const termino = this.value.trim();
-        //         if (termino.length < 2) {
-        //             sugerenciasDiv.style.display = 'none';
-        //             return;
-        //         }
-        //         fetch(`/appventurers/admin/ajax_sugerencias.php?caseta=${encodeURIComponent(termino)}&lang=${encodeURIComponent(document.getElementById('lang').value)}`)
-        //             .then(res => res.json())
-        //             .then(data => {
-        //                 sugerenciasDiv.innerHTML = '';
-        //                 if (data.length > 0) {
-        //                     data.forEach(sug => {
-        //                         let item = document.createElement('div');
-        //                         item.textContent = sug;
-        //                         item.style.padding = '0.5em';
-        //                         item.style.cursor = 'pointer';
-        //                         item.addEventListener('mousedown', () => {
-        //                             inputBusqueda.value = sug;
-        //                             sugerenciasDiv.style.display = 'none';
-        //                         });
-        //                         sugerenciasDiv.appendChild(item);
-        //                     });
-        //                     sugerenciasDiv.style.display = 'block';
-        //                 } else {
-        //                     sugerenciasDiv.innerHTML = '<div style="padding:0.5em;color:#888;">Sin sugerencias</div>';
-        //                     sugerenciasDiv.style.display = 'block';
-        //                 }
-        //             });
-        //     });
-
-        //     // Ocultar sugerencias al perder foco
-        //     inputBusqueda.addEventListener('blur', () => {
-        //         setTimeout(() => sugerenciasDiv.style.display = 'none', 150);
-        //     });
-        // });
         document.addEventListener('DOMContentLoaded', () => {
             const inputBusqueda = document.getElementById('input-busqueda');
             const formulario = inputBusqueda?.closest('form');
@@ -413,7 +378,7 @@ declare(strict_types=1);
                     sugerenciasDiv.style.display = 'none';
                     return;
                 }
-                fetch(`/appventurers/admin/ajax_sugerencias.php?caseta=${encodeURIComponent(termino)}&lang=gl`)
+                fetch(`${window.BASE_URL}admin/ajax_sugerencias.php?caseta=${encodeURIComponent(termino)}&lang=gl`)
                     .then(res => res.json())
                     .then(data => {
                         sugerenciasDiv.innerHTML = '';
@@ -447,6 +412,7 @@ declare(strict_types=1);
             });
         });
     </script>
+
 </body>
 
 </html>

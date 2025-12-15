@@ -310,7 +310,12 @@ function updateCellAfterSuccess(context, form) {
                     newImage.dataset.editable = "true";
                     newImage.dataset.field = "imagen";
                     newImage.dataset.id = id;
-                    newImage.src = `/appventurers/assets/${caseta}.jpg?${Date.now()}`;
+                    newImage.dataset.id = id;
+                    // @ts-ignore
+                    newImage.src = `${window.BASE_URL}assets/${caseta}.jpg?${Date.now()}`;
+                    cell.appendChild(newImage);
+                    attachZoomableImage(newImage);
+                    attachEditableElement(newImage);
                     cell.appendChild(newImage);
                     attachZoomableImage(newImage);
                     attachEditableElement(newImage);
@@ -403,6 +408,39 @@ function handleEditableClick(element) {
             return;
         }
         modalElements.body.innerHTML = html;
+        // Normalizar labels del formulario (p. ej. "nombre" -> "Nombre",
+        // "caseta_padre" -> "Caseta padre", "telefono" -> "Teléfono", etc.)
+        // Se hace aquí justo después de insertar el HTML para cubrir distintos formatos
+        // (label con for=, o label con texto plano).
+        const labelMap = {
+            "nombre": "Nombre",
+            "caseta_padre": "Caseta padre",
+            "contacto": "Contacto",
+            "telefono": "Teléfono",
+            "tipo": "Tipo",
+            "descripcion": "Descripción",
+            "id_nave": "ID Nave",
+            "traduccion": "Traducción",
+        };
+        const possibleForm = modalElements.body.querySelector("form");
+        if (possibleForm) {
+            possibleForm.querySelectorAll("label").forEach(lbl => {
+                const forAttr = (lbl.getAttribute("for") || "").trim();
+                // 1) Si el for coincide con el mapping, reemplazamos.
+                if (forAttr && labelMap[forAttr]) {
+                    lbl.textContent = labelMap[forAttr];
+                    return;
+                }
+                // 2) Si no, intentamos normalizar a partir del texto actual del label.
+                const raw = (lbl.textContent || "").trim();
+                if (!raw)
+                    return;
+                const key = raw.replace(/\s+/g, "_").toLowerCase();
+                if (labelMap[key]) {
+                    lbl.textContent = labelMap[key];
+                }
+            });
+        }
         const form = modalElements.body.querySelector("form");
         if (!form) {
             return;

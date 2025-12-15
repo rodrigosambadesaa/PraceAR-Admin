@@ -1,7 +1,8 @@
 <?php
 declare(strict_types=1);
 // admin/ajax_quick_edit.php
-session_start();
+require_once __DIR__ . '/../config/session.php';
+start_secure_session();
 require_once(dirname(__DIR__) . '/helpers/clean_input.php');
 require_once(dirname(__DIR__) . '/helpers/verify_malicious_photo.php');
 require_once(dirname(__DIR__) . '/config/env_loader.php');
