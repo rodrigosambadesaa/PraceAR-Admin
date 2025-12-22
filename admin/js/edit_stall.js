@@ -95,18 +95,33 @@ if (eliminarImagenLink instanceof HTMLAnchorElement && eliminarImagenInput insta
         }
     });
 }
+let lastFocusedElement = null;
+
 function openZoom(image) {
     if (!(zoomedContainer instanceof HTMLElement) || !(zoomedImage instanceof HTMLImageElement)) {
         return;
     }
+    lastFocusedElement = document.activeElement;
     zoomedImage.src = image.src;
     zoomedContainer.classList.add("show");
     zoomedContainer.setAttribute("aria-hidden", "false");
+    
+    // Move focus to close button for accessibility
+    const closeBtn = zoomedContainer.querySelector('.zoomed-close');
+    if (closeBtn instanceof HTMLElement) {
+        closeBtn.focus();
+    }
 }
+
 function closeZoom() {
     if (!(zoomedContainer instanceof HTMLElement) || !(zoomedImage instanceof HTMLImageElement)) {
         return;
     }
+    
+    if (lastFocusedElement instanceof HTMLElement) {
+        lastFocusedElement.focus();
+    }
+    
     zoomedContainer.classList.remove("show");
     zoomedContainer.setAttribute("aria-hidden", "true");
     zoomedImage.src = "";
