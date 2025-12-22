@@ -5,9 +5,7 @@ function delete_image(string $caseta): bool
 {
     $imagenPath = ASSETS . $caseta . '.jpg';
     if (file_exists($imagenPath)) {
-        unlink($imagenPath);
-
-        return true;
+        return unlink($imagenPath);
     }
 
     return false;
