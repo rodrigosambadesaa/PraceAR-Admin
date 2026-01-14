@@ -35,7 +35,7 @@ function check_virus_total(string $filePath): array
             'success' => false,
             'is_malicious' => false,
             'message' => 'No se pudo acceder al archivo temporal que se quiere analizar.',
-            'http_status' => 500,
+            'http_status' => 200,
         ];
     }
 
@@ -44,7 +44,7 @@ function check_virus_total(string $filePath): array
             'success' => false,
             'is_malicious' => false,
             'message' => 'No se encontró la configuración de la clave de la API de VirusTotal.',
-            'http_status' => 500,
+            'http_status' => 200,
         ];
     }
 
@@ -53,7 +53,7 @@ function check_virus_total(string $filePath): array
             'success' => false,
             'is_malicious' => false,
             'message' => 'No se ha configurado la clave de la API de VirusTotal.',
-            'http_status' => 500
+            'http_status' => 200
         ];
     }
 
@@ -89,7 +89,7 @@ function check_virus_total(string $filePath): array
             'success' => false,
             'is_malicious' => false,
             'message' => 'No se pudo contactar con el servicio de análisis: ' . $error,
-            'http_status' => 502,
+            'http_status' => 200,
         ];
     }
 
@@ -97,11 +97,15 @@ function check_virus_total(string $filePath): array
     curl_close($ch);
 
     if ($httpCode !== 200) {
+        $msg = "El servicio de análisis devolvió un código inesperado ($httpCode).";
+        if ($httpCode === 403) {
+            $msg .= " Verifique que la API Key en virustotal_api_key.php es correcta.";
+        }
         return [
             'success' => false,
             'is_malicious' => false,
-            'message' => "El servicio de análisis devolvió un código inesperado ($httpCode).",
-            'http_status' => 502,
+            'message' => $msg,
+            'http_status' => 200,
         ];
     }
 
@@ -112,7 +116,7 @@ function check_virus_total(string $filePath): array
             'success' => false,
             'is_malicious' => false,
             'message' => 'La respuesta del servicio no es un JSON válido.',
-            'http_status' => 502,
+            'http_status' => 200,
         ];
     }
 
