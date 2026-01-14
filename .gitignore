@@ -24,3 +24,5 @@ node_modules/
 .vscode/
 unity/constants.php
 .githooks/
+
+sync_config.jsonc

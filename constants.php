@@ -89,11 +89,17 @@ $envVariables = load_project_env(DIRNAME);
 // Prioriza APP_ENV; si no está, comprueba varios nombres/IP locales
 $appEnv = get_env_value('APP_ENV', $envVariables);
 $host = $_SERVER['SERVER_NAME'] ?? ($_SERVER['HTTP_HOST'] ?? '');
-$isLocal = $appEnv === 'development'
-    || ($appEnv === null && in_array($host, ['localhost', '127.0.0.1', '::1'], true));
+
+// Local detection depends ONLY on the hostname, not on the APP_ENV mode
+$isLocal = in_array($host, ['localhost', '127.0.0.1', '::1'], true);
+
+// var_dump($isLocal);
+// var_dump($appEnv);
+// var_dump($host);
 
 if (!defined('APP_ENV')) {
-    define('APP_ENV', $isLocal ? 'development' : ($appEnv ?? 'production'));
+    // If APP_ENV is set in .env, use it. Otherwise, default to 'development' if local, 'production' if remote.
+    define('APP_ENV', $appEnv ?? ($isLocal ? 'development' : 'production'));
 }
 
 if ($isLocal) {
