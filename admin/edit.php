@@ -168,98 +168,113 @@ if (!$fila) {
     <main class="container">
         <h1 id="cabecera_pagina_edicion">Editar Datos Generales de Puesto</h1>
         
-        <form action="?page=edit&id=<?= htmlspecialchars((string)$id) ?>" method="POST" class="form-group" id="formulario-editar" enctype="multipart/form-data">
-            <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
-            
-            <div>
-                <label for="activo">Activo</label>
-                <input type="checkbox" id="activo" name="activo" value="1" <?= $fila['activo'] ? 'checked' : '' ?>>
-            </div>
-            
-            <?php
-            $ruta_a_imagen = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
-            $imagen_encontrada = file_exists($ruta_a_imagen);
-            ?>
-            
-            <?php if ($imagen_encontrada) { ?>
-                <span>Imagen actual</span>
-                <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem;">
-                    <img src="<?= htmlspecialchars($ruta_a_imagen) ?>"
-                        alt="Imagen del puesto <?= htmlspecialchars($fila["nombre"]) ?>" class="zoomable"
-                        style="object-fit: cover; height: 300px; width: 300px; display: block; margin: 0 auto;">
+        <article>
+            <form action="?page=edit&id=<?= htmlspecialchars((string)$id) ?>" method="POST" class="form-group" id="formulario-editar" enctype="multipart/form-data">
+                <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+                
+                <div class="grid">
+                    <div>
+                        <label for="activo">Activo</label>
+                        <input type="checkbox" id="activo" name="activo" value="1" <?= $fila['activo'] ? 'checked' : '' ?>>
+                    </div>
+                    <div>
+                         <!-- Espacio vacío para alinear si es necesario, o poner otro campo aquí -->
+                    </div>
+                </div>
+
+                <?php
+                $ruta_a_imagen = "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
+                $imagen_encontrada = file_exists($ruta_a_imagen);
+                ?>
+                
+                <?php if ($imagen_encontrada) { ?>
+                    <span>Imagen actual</span>
+                    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem;">
+                        <img src="<?= htmlspecialchars($ruta_a_imagen) ?>"
+                            alt="Imagen del puesto <?= htmlspecialchars($fila["nombre"]) ?>" class="zoomable"
+                            style="object-fit: cover; height: 300px; width: 300px; display: block; margin: 0 auto;">
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                        <label for="imagen">Reemplazar imagen (.jpg, máx 2MB)</label>
+                        <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg" aria-label="Reemplazar imagen">
+                    </div>
+                    
+                    <div style="margin-bottom: 1rem;">
+                         <label for="eliminar-imagen">
+                            <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1">
+                            Eliminar imagen actual
+                         </label>
+                    </div>
+                <?php } else { ?>
+                    <label for="imagen">Subir Imagen (.jpg, máx 2MB)</label>
+                    <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg" aria-label="Subir imagen">
+                <?php } ?>
+
+                <div class="grid">
+                    <div>
+                        <label for="caseta">Caseta</label>
+                        <input type="text" id="caseta" name="caseta" value="<?= htmlspecialchars($fila['caseta'] ?? '') ?>" readonly aria-label="Código de caseta">
+                    </div>
+                    
+                    <div>
+                        <label for="nombre">Nombre</label>
+                        <input type="text" id="nombre" name="nombre" value="<?= htmlspecialchars($fila["nombre"] ?? '') ?>" 
+                            placeholder="Nombre del puesto" aria-label="Nombre del puesto">
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div>
+                        <label for="contacto">Información de Contacto</label>
+                        <input type="text" id="contacto" name="contacto" aria-label="Información de contacto" value="<?= htmlspecialchars($fila["contacto"] ?? '') ?>">
+                    </div>
+
+                    <div>
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"] ?? '') ?>"
+                            placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'" aria-label="Teléfono de contacto">
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div>
+                        <label for="tipo-unity">Tipo en Unity <span class="admin-required" aria-hidden="true">*</span></label>
+                        <select name="tipo_unity" id="tipo-unity" aria-required="true">
+                            <?php foreach (UNITY_TYPE as $key => $value) { ?>
+                                <option value="<?= $key ?>" <?= ($fila["tipo_unity"] ?? '') == $key ? "selected" : "" ?>>
+                                    <?= $value ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="id-nave">ID Nave <span class="admin-required" aria-hidden="true">*</span></label>
+                        <select required id="id-nave" name="id_nave" aria-required="true">
+                            <?php
+                            $sql_naves = "SELECT * FROM naves";
+                            $resultado_naves = $conexion->query($sql_naves);
+                            while ($fila_naves = $resultado_naves->fetch_assoc()) { ?>
+                                <option value="<?= htmlspecialchars((string)$fila_naves["id"]) ?>" <?= $fila["id_nave"] == $fila_naves["id"] ? "selected" : "" ?>>
+                                    <?= htmlspecialchars($fila_naves["tipo"]) ?>
+                                </option>
+                            <?php } ?>
+                        </select>
+                    </div>
                 </div>
                 
-                <div style="margin-bottom: 1rem;">
-                    <label for="imagen">Reemplazar imagen (.jpg, máx 2MB)</label>
-                    <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg" aria-label="Reemplazar imagen">
+                <div>
+                    <label for="caseta-padre">Caseta padre</label>
+                    <input name="caseta_padre" type="text" id="caseta-padre"
+                        value="<?= htmlspecialchars($fila["caseta_padre"] ?? "") ?>" placeholder="Código de caseta padre"
+                        aria-label="Caseta padre">
                 </div>
                 
-                <div style="margin-bottom: 1rem;">
-                     <label for="eliminar-imagen">
-                        <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1">
-                        Eliminar imagen actual
-                     </label>
+                <div id="div-botones">
+                    <input id="actualizar" type="submit" value="Actualizar" aria-label="Actualizar datos del puesto">
                 </div>
-            <?php } else { ?>
-                <label for="imagen">Subir Imagen (.jpg, máx 2MB)</label>
-                <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg" aria-label="Subir imagen">
-            <?php } ?>
-
-            </div>
-            <div>
-                <label for="caseta">Caseta</label>
-                <input type="text" id="caseta" name="caseta" value="<?= htmlspecialchars($fila['caseta'] ?? '') ?>" readonly aria-label="Código de caseta">
-            </div>
-            
-            <div>
-                <label for="nombre">Nombre</label>
-                <input type="text" id="nombre" name="nombre" value="<?= htmlspecialchars($fila["nombre"] ?? '') ?>" 
-                    placeholder="Nombre del puesto" aria-label="Nombre del puesto">
-            </div>
-
-            <div>
-                <label for="contacto">Información de Contacto</label>
-                <input type="text" id="contacto" name="contacto" aria-label="Información de contacto" value="<?= htmlspecialchars($fila["contacto"] ?? '') ?>">
-            </div>
-
-            <div>
-                <label for="telefono">Teléfono</label>
-                <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars($fila["telefono"] ?? '') ?>"
-                    placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'" aria-label="Teléfono de contacto">
-            </div>
-            <div>
-                <label for="tipo-unity">Tipo en Unity <span class="admin-required" aria-hidden="true">*</span></label>
-                <select name="tipo_unity" id="tipo-unity" aria-required="true">
-                    <?php foreach (UNITY_TYPE as $key => $value) { ?>
-                        <option value="<?= $key ?>" <?= ($fila["tipo_unity"] ?? '') == $key ? "selected" : "" ?>>
-                            <?= $value ?>
-                        </option>
-                    <?php } ?>
-                </select>
-            </div>
-            <div>
-                <label for="id-nave">ID Nave <span class="admin-required" aria-hidden="true">*</span></label>
-                <select required id="id-nave" name="id_nave" aria-required="true">
-                    <?php
-                    $sql_naves = "SELECT * FROM naves";
-                    $resultado_naves = $conexion->query($sql_naves);
-                    while ($fila_naves = $resultado_naves->fetch_assoc()) { ?>
-                        <option value="<?= htmlspecialchars((string)$fila_naves["id"]) ?>" <?= $fila["id_nave"] == $fila_naves["id"] ? "selected" : "" ?>>
-                            <?= htmlspecialchars($fila_naves["tipo"]) ?>
-                        </option>
-                    <?php } ?>
-                </select>
-            </div>
-            <div>
-                <label for="caseta-padre">Caseta padre</label>
-                <input name="caseta_padre" type="text" id="caseta-padre"
-                    value="<?= htmlspecialchars($fila["caseta_padre"] ?? "") ?>" placeholder="Código de caseta padre"
-                    aria-label="Caseta padre">
-            </div>
-            <div id="div-botones">
-                <input id="actualizar" type="submit" value="Actualizar" aria-label="Actualizar datos del puesto">
-            </div>
-        </form>
+            </form>
+        </article>
 
         <p class="note admin-error-text" style="text-align: center;">Los campos marcados con <span class="admin-required" aria-hidden="true">*</span>
             son
