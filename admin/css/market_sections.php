@@ -2,9 +2,9 @@
 declare(strict_types=1);
 ?>
 body {
-    max-width: 80%;
+    <!-- max-width: 80%; -->
     margin: 0 auto;
-    padding: 1em;
+    <!-- padding: 1em; -->
     font-family: Arial, sans-serif;
     background-color: var(--admin-bg);
     color: var(--admin-text);
