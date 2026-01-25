@@ -19,6 +19,7 @@
   position: relative;
   overflow: hidden;
   animation: headerSlideIn 0.6s ease-out;
+  width: 100%;
 }
 
 .admin-header::before {
