@@ -16,9 +16,9 @@ declare(strict_types=1);
         ?>
         /* Máximo tamaño del body */
         body {
-            max-width: 90vw;
-            margin: 0 auto;
-            padding: 1em;
+            /* max-width: 90vw; */
+            /* margin: 0 auto; */
+            /* padding: 1em; */
             font-family: Arial, sans-serif;
             background-color: var(--admin-bg);
             color: var(--admin-text);
