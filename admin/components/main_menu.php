@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 $currentLang = isset($_REQUEST['lang']) ? (string) $_REQUEST['lang'] : 'gl';
