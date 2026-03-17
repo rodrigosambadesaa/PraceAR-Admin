@@ -19,6 +19,7 @@ declare(strict_types=1);
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="stylesheet" href="./css/darkmode.css">
 
     <style>
@@ -203,7 +204,6 @@ declare(strict_types=1);
     $resultados_encontrados = $result->num_rows > 0;
     ?>
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <main role="main">
         <?php if ($resultados_encontrados): ?>
             <table id="tabla-puestos" role="table" aria-label="Lista de puestos del Mercado de Abastos">
