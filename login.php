@@ -1,17 +1,23 @@
 <?php
+
 declare(strict_types=1);
 require_once HELPERS . "clean_input.php";
 require_once HELPERS . "validate_login.php";
 require_once HELPERS . "verify_strong_password.php";
 require_once HELPERS . "captcha.php";
 require_once HELPERS . "rate_limit.php";
+require_once __DIR__ . "/config/security_headers.php";
 
 $security_config = include __DIR__ . "/config/security.php";
+apply_security_headers($security_config);
 $rate_limit_config = $security_config["rate_limit"];
 $argon2_options = $security_config["argon2"];
 $max_request_body_bytes = (int) $security_config["max_request_body_bytes"];
 $large_password_threshold =
     (int) $security_config["logging"]["large_password_threshold"];
+$generic_login_error_message =
+    (string) ($security_config["auth"]["generic_login_error_message"] ??
+        "Credenciales inválidas.");
 
 if (function_exists("ini_set")) {
     foreach ($security_config["php_limits"] as $directive => $value) {
@@ -283,7 +289,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
                     session_regenerate_id(true); // Regenerar el ID de sesión tras login exitoso
 
-                    echo "Inicio de sesión correcto";
                     $_SESSION["id"] = $usuario["id"];
                     $_SESSION["login"] = "logueado";
                     $_SESSION["nombre_usuario"] = $login;
@@ -314,10 +319,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     header("Location: $protocolo/$servidor/$subdominio");
                     exit();
                 } else {
-                    throw new Exception("Inicio de sesión incorrecto");
+                    throw new Exception($generic_login_error_message);
                 }
             } else {
-                throw new Exception("Usuario no encontrado");
+                throw new Exception($generic_login_error_message);
             }
         } catch (RateLimitException $exception) {
             http_response_code(429);
@@ -365,45 +370,45 @@ $captcha_question = captcha_get_question($captcha_key);
 
 <!DOCTYPE html>
 <html lang="es">
-    
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Admin - PraceAR - Formulario de Inicio de Sesión</title>
-        <link rel="stylesheet" href="./css/header.css">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-        <link rel='icon' href='./img/favicon.png' type='image/png'>
-        
-        <!-- Iconos para dispositivos Apple -->
-        <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
-        <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
-        
-        <style>
-            .required::after {
-                content: " *";
-                color: red;
-            }
-            
-            .note {
-                color: red;
-                text-align: center;
-            }
-            
-            /* Mejorar contraste */
-            body {
-                background-color: #f9f9f9;
-                color: #333;
-            }
-            
-            input[type="submit"] {
-                background-color: #007bff;
-                color: #fff;
-            }
-            
-            input[type="submit"]:hover {
-                background-color: #0056b3;
-            }
-            </style>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - PraceAR - Formulario de Inicio de Sesión</title>
+    <link rel="stylesheet" href="./css/header.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel='icon' href='./img/favicon.png' type='image/png'>
+
+    <!-- Iconos para dispositivos Apple -->
+    <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./img/apple-touch-icon-152x152.png">
+
+    <style>
+        .required::after {
+            content: " *";
+            color: red;
+        }
+
+        .note {
+            color: red;
+            text-align: center;
+        }
+
+        /* Mejorar contraste */
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
     <link rel="stylesheet" href="./css/darkmode_login.css">
     <script type="module" src="./js/login.js" defer></script>
 </head>
@@ -418,8 +423,8 @@ $captcha_question = captcha_get_question($captcha_key);
 
     <form method="POST" id="formulario" aria-labelledby="form-title" novalidate>
         <input type="hidden" name="csrf" value="<?= isset($_SESSION["csrf"])
-            ? $_SESSION["csrf"]
-            : "" ?>">
+                                                    ? $_SESSION["csrf"]
+                                                    : "" ?>">
         <div id="form-group">
             <label for="login" class="required"><strong>Usuario:</strong></label>
             <input type="text" name="login" id="login" required aria-required="true" aria-describedby="login-help">

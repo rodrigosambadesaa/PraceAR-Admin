@@ -1,119 +1,121 @@
-# 🔐 Política de Seguridad - AppVenturers
+# Security Policy - AppVenturers
 
-## 🚨 Estado actual de seguridad
+## Alcance
 
-AppVenturers es un proyecto en desarrollo que ha completado una **revisión de seguridad inicial** para mitigar vulnerabilidades comunes en aplicaciones web desarrolladas en **PHP**.
+Este documento describe la postura de seguridad actual del proyecto y el mínimo de cobertura aplicado respecto a OWASP Top 10 (2021).
 
-**Se ha avanzado significativamente** en la protección de la aplicación:
+## Controles implementados
 
-1. **Implementación de protección CSRF** (Cross-Site Request Forgery).
-2. **Integración de un Captcha Seguro** en el formulario de login (alternativa a Google reCAPTCHA).
-3. **Implementación de un Rate Limiter** en el formulario de login para prevenir ataques de fuerza bruta y abuso.
-4. Se ha completado una **auditoría inicial del código** para identificar y corregir vulnerabilidades clave, incluyendo:
-      - Inyección SQL.
-      - XSS (Cross-Site Scripting).
-      - Manejo inseguro de sesiones.
+- Gestión de sesión endurecida:
+  - Cookies `HttpOnly`, `SameSite=Strict` y `Secure` cuando hay HTTPS.
+  - Regeneración de sesión tras login (`session_regenerate_id(true)`).
+- Autenticación:
+  - Hash de contraseñas con `Argon2id` + `pepper`.
+  - Mensaje de error genérico en login para evitar enumeración de usuarios.
+  - Rate limiting por IP/cuenta y captcha en login.
+- Protección CSRF:
+  - Token CSRF en formularios críticos y validación en servidor.
+- Mitigación de inyección:
+  - Uso de sentencias preparadas para consultas SQL.
+  - Validación/sanitización de entradas en helpers.
+- Endurecimiento HTTP:
+  - `Content-Security-Policy`.
+  - `X-Content-Type-Options: nosniff`.
+  - `X-Frame-Options: SAMEORIGIN`.
+  - `Referrer-Policy: strict-origin-when-cross-origin`.
+  - `Permissions-Policy` restrictiva.
+  - `Cross-Origin-Resource-Policy: same-origin`.
+  - `Strict-Transport-Security` cuando la conexión es HTTPS.
+- Mitigación de Host Header Injection:
+  - Normalización de `HTTP_HOST` y lista blanca opcional `APP_ALLOWED_HOSTS`.
+- Manejo seguro de errores:
+  - En producción (`APP_ENV=production`) no se muestran errores detallados.
+- Carga de archivos:
+  - Validaciones de tipo y verificación de ficheros maliciosos vía integración externa.
+- Logging básico de eventos de seguridad:
+  - Intentos fallidos de login y eventos de control de velocidad.
 
----
+## Mapeo OWASP Top 10 (2021)
 
-## 🛡️ Cómo colaborar
+### A01: Broken Access Control
 
-Si eres un experto en **PHP y ciberseguridad**, te invitamos a continuar colaborando en este proyecto open-source. Ahora nos centramos en las siguientes áreas:
+- Control de acceso por sesión para rutas de administración.
+- Validación de sesión en flujo principal.
 
-1. **Refinar la seguridad existente**:
-      - Revisar la implementación actual de **CSRF** y **Rate Limiting** para buscar posibles bypasses o mejoras de rendimiento.
-      - Proponer y aplicar mejoras en el filtrado y sanitización de entradas, buscando una seguridad _de defensa en profundidad_.
+### A02: Cryptographic Failures
 
-2. **Auditoría continua del código**:
-      - Realizar auditorías detalladas en nuevas secciones o funcionalidades en busca de vulnerabilidades (incluyendo las de la lista **OWASP**).
-      - Sugerir o enviar **Pull Requests** con soluciones para vulnerabilidades más sutiles o de lógica de negocio.
+- Contraseñas con `Argon2id` + `pepper`.
+- Cookies de sesión endurecidas.
+- HSTS en HTTPS.
 
-3. **Documentar buenas prácticas de seguridad**:
-      - Mantener y expandir la documentación sobre el manejo seguro de PHP (uso de PDO, sesiones seguras, etc.) y las protecciones ya implementadas.
+### A03: Injection
 
----
+- Sentencias preparadas (`mysqli->prepare`) en operaciones de base de datos.
+- Validación y normalización de entrada.
 
-## 📢 Reporte de vulnerabilidades
+### A04: Insecure Design
 
-Si encuentras alguna vulnerabilidad de seguridad en el proyecto, por favor **no la publiques** en los foros públicos o issues de GitHub. En su lugar, contacta al equipo principal a través de:
+- Defensa en profundidad en autenticación: captcha + rate limiting + CSRF.
+- Límites de tamaño de petición en login.
 
-- Correo electrónico: [tucorreo@example.com](mailto:tucorreo@example.com)
-- Issue etiquetado como **security** (solo para sugerencias no críticas o de bajo riesgo).
+### A05: Security Misconfiguration
 
-Agradecemos a la comunidad cualquier esfuerzo para ayudar a que AppVenturers sea una aplicación segura y robusta. Tu nombre aparecerá en los créditos como **auditor de seguridad**.
+- Cabeceras de seguridad centralizadas.
+- Errores ocultos en producción.
+- Bloqueo de acceso a archivos sensibles mediante configuración web.
 
----
+### A06: Vulnerable and Outdated Components
 
-## 🛠️ Recursos útiles
+- Dependencias de frontend gestionadas por `npm`.
+- Recomendación operativa: ejecutar auditorías periódicas (`npm audit`) en CI/CD.
 
-Para comenzar a colaborar, puedes revisar los siguientes recursos:
+### A07: Identification and Authentication Failures
 
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [Guía de implementación de CSRF en PHP](https://www.php.net/manual/en/features.session.security.php)
-- Documentación sobre **Rate Limiting** (Buscar guías de implementación para PHP/servidor web).
-- Documentación de la **solución Captcha** implementada (¡Añadir enlace aquí!).
+- Política de contraseñas robustas.
+- Argon2id + pepper.
+- Mensajes de login genéricos para evitar enumeración.
+- Regeneración de sesión post-login.
 
----
+### A08: Software and Data Integrity Failures
 
-**¡Gracias por ayudarnos a proteger AppVenturers y mejorar su seguridad!** 🚀🔐
+- Validaciones server-side antes de persistir datos sensibles.
+- Recomendación operativa: firma/validación de artefactos en pipeline de despliegue.
 
----
+### A09: Security Logging and Monitoring Failures
 
-# 🔐 Security Policy - AppVenturers
+- Registro de fallos de autenticación y eventos de rate limit.
+- Recomendación operativa: centralizar logs y alertado en entorno productivo.
 
-## 🚨 Current Security Status
+### A10: Server-Side Request Forgery (SSRF)
 
-AppVenturers is an open-source project under development that has completed an **initial security review** to mitigate common vulnerabilities in web applications, particularly those built with **PHP**.
+- No se aceptan URLs arbitrarias de usuario para fetch de recursos internos.
+- Integración externa acotada a endpoints conocidos en funcionalidades concretas.
 
-**Significant progress has been made** in securing the application:
+## Configuración mínima recomendada
 
-1. **Implementation of CSRF protection (Cross-Site Request Forgery).**
-2. **Integration of a Secure Captcha** in the login form (alternative to Google reCAPTCHA).
-3. **Implementation of a Rate Limiter** on the login form to prevent brute-force attacks and abuse.
-4. An **initial code audit has been completed** to identify and fix key vulnerabilities, including:
-      - SQL Injection.
-      - XSS (Cross-Site Scripting).
-      - Insecure session handling.
+En `.env` de producción:
 
----
+```env
+APP_ENV="production"
+APP_BASE_URL="https://tu-dominio/"
+APP_ALLOWED_HOSTS="tu-dominio,www.tu-dominio"
+```
 
-## 🛡️ How to Contribute
+Y mantener fuera de repositorio:
 
-If you are a PHP developer with expertise in **web security**, we invite you to continue contributing to this open-source project. Our focus now shifts to the following areas:
+- `pepper2.php`
+- `virustotal_api_key.php`
 
-1. **Refining Existing Security Measures**:
-      - Review the current **CSRF** and **Rate Limiting** implementation for potential bypasses or performance enhancements.
-      - Propose and apply improvements in input filtering and sanitization, aiming for _defense-in-depth_ security.
+## Vulnerability Disclosure
 
-2. **Continuous Code Auditing**:
-      - Conduct detailed audits on new sections or functionalities for remaining vulnerabilities (including those on the **OWASP** list).
-      - Submit Pull Requests with solutions for more subtle or business logic-related vulnerabilities.
+Si detectas una vulnerabilidad, no la publiques en abierto de inmediato. Envíala por canal privado al mantenedor del proyecto con:
 
-3. **Document Security Best Practices**:
-      - Maintain and expand the documentation for secure PHP handling (using PDO, secure sessions, etc.) and the protections already implemented.
+- Descripción
+- Impacto
+- Pasos para reproducir
+- Prueba de concepto mínima
+- Propuesta de remediación
 
----
+## English Summary
 
-## 📢 Reporting Security Issues
-
-If you find any security vulnerabilities in the project, please **do not disclose them publicly** in forums, Issues, or Discussions. Instead, report them privately to the project maintainers via:
-
-- Email: [your-email@example.com](mailto:your-email@example.com)
-- GitHub Issues: Open an issue with the **security** label (only for non-critical or low-risk suggestions).
-
-We greatly appreciate any effort to help make AppVenturers a more secure and robust application. Your name will be credited as a **Security Contributor** for your efforts.
-
----
-
-## 🛠️ Useful Resources
-
-To get started with contributing, here are some useful links:
-
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/): Learn about the most common web vulnerabilities.
-- [CSRF Implementation in PHP](https://www.php.net/manual/en/features.session.security.php): Official PHP documentation.
-- Documentation on **Rate Limiting** (Search for implementation guides for PHP/web server).
-- Documentation for the implemented **Captcha solution** (Link to be added here!).
-
----
-
-**Thank you for helping secure AppVenturers!** 🚀🔐
+This project implements a baseline OWASP Top 10 coverage with hardening controls: secure sessions, Argon2id + pepper, CSRF, rate limiting, captcha, generic auth errors, SQL prepared statements, security headers (including CSP), host header validation, and production-safe error handling. Additional operational controls (CI dependency scanning, centralized logging, artifact integrity checks) are recommended for production environments.
