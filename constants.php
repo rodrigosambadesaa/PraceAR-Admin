@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once __DIR__ . '/config/env_loader.php';
@@ -55,14 +56,23 @@ define('UNITY_TYPE', [
 
 ]);
 
+// Datos de conexión y configuración desde .env / variables de entorno
+$envVariables = load_project_env(DIRNAME);
+
 // Detectar el protocolo
 $protocolo = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 $host = $_SERVER['HTTP_HOST'];
 
-// Define BASE_URL dynamically based on the script path relative to the document root
-// This assumes constants.php is in the root of the project (appventurers/)
-$projectDir = basename(__DIR__);
-define('BASE_URL', $protocolo . $host . '/' . $projectDir . '/');
+// Permite forzar la URL base (útil en Docker/reverse proxy) y mantiene fallback histórico.
+$configuredBaseUrl = get_env_value('APP_BASE_URL', $envVariables);
+if (is_string($configuredBaseUrl) && $configuredBaseUrl !== '') {
+    $normalizedBaseUrl = rtrim($configuredBaseUrl, '/') . '/';
+    define('BASE_URL', $normalizedBaseUrl);
+} else {
+    // Fallback histórico para despliegues en subcarpeta.
+    $projectDir = basename(__DIR__);
+    define('BASE_URL', $protocolo . $host . '/' . $projectDir . '/');
+}
 
 define('FLAG_IMAGES_URL', BASE_URL . 'img/flags/');
 define('PENCIL_IMAGE_URL', BASE_URL . 'img/pencil.png');
@@ -79,13 +89,11 @@ $servidor = $_SERVER['HTTP_HOST'];
 // Construir la URL completa
 $url = $protocolo . $servidor . '/';
 
-// Subdominio
-$subdominio = $projectDir;
+// Subdominio (compatibilidad con lógica existente)
+$subdominio = basename(__DIR__);
 
 
 // Datos de conexión a la BBDD
-$envVariables = load_project_env(DIRNAME);
-
 // Prioriza APP_ENV; si no está, comprueba varios nombres/IP locales
 $appEnv = get_env_value('APP_ENV', $envVariables);
 $host = $_SERVER['SERVER_NAME'] ?? ($_SERVER['HTTP_HOST'] ?? '');
@@ -103,10 +111,10 @@ if (!defined('APP_ENV')) {
 }
 
 if ($isLocal) {
-    $servidor_bd = get_env_value('PRACEAR_DB_HOST_LOCAL', $envVariables);
-    $usuario = get_env_value('PRACEAR_DB_USER_LOCAL', $envVariables);
-    $clave = get_env_value('PRACEAR_DB_PASSWORD_LOCAL', $envVariables);
-    $bd = get_env_value('PRACEAR_DB_NAME_LOCAL', $envVariables);
+    $servidor_bd = get_env_value('PRACEAR_DB_HOST_LOCAL', $envVariables) ?? get_env_value('PRACEAR_DB_HOST', $envVariables);
+    $usuario = get_env_value('PRACEAR_DB_USER_LOCAL', $envVariables) ?? get_env_value('PRACEAR_DB_USER', $envVariables);
+    $clave = get_env_value('PRACEAR_DB_PASSWORD_LOCAL', $envVariables) ?? get_env_value('PRACEAR_DB_PASSWORD', $envVariables);
+    $bd = get_env_value('PRACEAR_DB_NAME_LOCAL', $envVariables) ?? get_env_value('PRACEAR_DB_NAME', $envVariables);
 } else {
     // En producción (Dinahosting), intentamos leer las variables estándar o las de PROD
     $servidor_bd = get_env_value('PRACEAR_DB_HOST', $envVariables) ?? get_env_value('PRACEAR_DB_HOST_PROD', $envVariables);
@@ -121,4 +129,3 @@ define('DB_CONFIG', [
     'password' => $clave,
     'database' => $bd,
 ]);
-

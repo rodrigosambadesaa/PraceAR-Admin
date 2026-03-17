@@ -21,6 +21,26 @@ Clonar el repositorio en una carpeta llamada appventurers
 - Durante el desarrollo puedes mantener los bundles generados en todo momento usando `npm run watch`, que compila en caliente los proyectos TypeScript de `ts/` y `admin/ts/`.
 - En despliegues manuales basta con ejecutar `npm run build` (o dejar que el hook `post-merge` lo haga por ti) antes de subir la web al servidor.
 
+## Docker (frontend + backend + base de datos)
+
+La aplicación puede levantarse completa con un único comando usando Docker Compose.
+
+1. Construir y arrancar todo:
+	```bash
+	docker compose up --build -d
+	```
+2. Abrir la web en `http://localhost:8081`.
+	- Si necesitas otro puerto: `FRONTEND_PORT=8090 docker compose up --build -d`
+3. Parar los contenedores:
+	```bash
+	docker compose down
+	```
+
+Servicios incluidos:
+- `frontend`: Nginx (sirve estáticos y enruta PHP hacia backend)
+- `backend`: PHP-FPM 8.2
+- `db`: MySQL 8.0 (inicializa automáticamente desde `dbs13217995.sql`)
+
 ## Guía de uso
 
 - Lo primero que debe hacer es importar la base de datos, configurar un pepper como se indica más abajo, crear un usuario con su contraseña encriptada en Argon2ID (teniendo en cuenta el pepper), configurar los archivos que hacen referencia a la API Key de VirusTotal e iniciar sesión.
