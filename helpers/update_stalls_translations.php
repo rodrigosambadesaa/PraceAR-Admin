@@ -45,7 +45,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->close();
         $conexion->close();
         header(
-            "Location: $protocolo/$servidor/$subdominio/?lang=" .
+            "Location: " .
+                BASE_URL .
+                "?lang=" .
                 get_language() .
                 "#row_" .
                 $_GET["id"],
