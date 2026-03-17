@@ -41,6 +41,8 @@ Servicios incluidos:
 - `backend`: PHP-FPM 8.2
 - `db`: MySQL 8.0 (inicializa automáticamente desde `dbs13217995.sql`)
 
+Documentación técnica completa de esta dockerización en `DOCKERIZATION.md`.
+
 ## Guía de uso
 
 - Lo primero que debe hacer es importar la base de datos, configurar un pepper como se indica más abajo, crear un usuario con su contraseña encriptada en Argon2ID (teniendo en cuenta el pepper), configurar los archivos que hacen referencia a la API Key de VirusTotal e iniciar sesión.
