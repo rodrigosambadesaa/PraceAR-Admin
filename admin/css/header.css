@@ -23,7 +23,7 @@
 }
 
 .admin-header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -150,7 +150,7 @@
 }
 
 .nav-link::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 100%;
   height: 2px;
@@ -340,12 +340,14 @@
 }
 
 /* Oculta el selector de idioma por defecto */
-nav.language-selector { display: none; }
+nav.language-selector {
+  display: none;
+}
 
 /* Muestra solo en las páginas principales */
 body.admin-index nav.language-selector,
 body.admin-edit-translations nav.language-selector {
-    display: flex !important;
+  display: flex !important;
 }
 
 /* --- Responsive Design --- */

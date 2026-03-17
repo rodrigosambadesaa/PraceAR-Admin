@@ -1,22 +1,22 @@
 <?php
 declare(strict_types=1);
-header('Content-Type: application/json');
-ini_set('display_errors', 0);
+header("Content-Type: application/json");
+ini_set("display_errors", 0);
 
 // Incluye la conexión a la base de datos
-require_once(__DIR__ . '/../connection.php');
+require_once __DIR__ . "/../connection.php";
 
-$caseta = $_GET['caseta'] ?? '';
-$lang = $_GET['lang'] ?? 'gl';
+$caseta = $_GET["caseta"] ?? "";
+$lang = $_GET["lang"] ?? "gl";
 
 if (strlen($caseta) < 2) {
     echo json_encode([]);
-    exit;
+    exit();
 }
 
 if (!isset($conexion) || !$conexion) {
-    echo json_encode(['error' => 'No hay conexión a la base de datos']);
-    exit;
+    echo json_encode(["error" => "No hay conexión a la base de datos"]);
+    exit();
 }
 
 try {
@@ -26,18 +26,18 @@ try {
             ORDER BY p.caseta LIMIT 10";
     $stmt = $conexion->prepare($sql);
     if (!$stmt) {
-        echo json_encode(['error' => 'Error en la consulta']);
-        exit;
+        echo json_encode(["error" => "Error en la consulta"]);
+        exit();
     }
     $like = "%$caseta%";
-    $stmt->bind_param('ss', $lang, $like);
+    $stmt->bind_param("ss", $lang, $like);
     $stmt->execute();
     $res = $stmt->get_result();
     $sugerencias = [];
     while ($row = $res->fetch_assoc()) {
-        $sugerencias[] = $row['caseta'];
+        $sugerencias[] = $row["caseta"];
     }
     echo json_encode($sugerencias);
 } catch (Throwable $e) {
-    echo json_encode(['error' => $e->getMessage()]);
+    echo json_encode(["error" => $e->getMessage()]);
 }

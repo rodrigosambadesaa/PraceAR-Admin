@@ -20,28 +20,34 @@ class RateLimitException extends Exception
 function rate_limit_storage_path(): string
 {
     $directory = sys_get_temp_dir();
-    return rtrim($directory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'pracear_login_rate_limit.json';
+    return rtrim($directory, DIRECTORY_SEPARATOR) .
+        DIRECTORY_SEPARATOR .
+        "pracear_login_rate_limit.json";
 }
 
 function rate_limit_with_storage(callable $callback): mixed
 {
     $path = rate_limit_storage_path();
-    $handle = fopen($path, 'c+');
+    $handle = fopen($path, "c+");
 
     if ($handle === false) {
-        throw new RuntimeException('No se pudo acceder al almacenamiento de control de velocidad.');
+        throw new RuntimeException(
+            "No se pudo acceder al almacenamiento de control de velocidad.",
+        );
     }
 
     try {
         if (!flock($handle, LOCK_EX)) {
-            throw new RuntimeException('No se pudo bloquear el almacenamiento de control de velocidad.');
+            throw new RuntimeException(
+                "No se pudo bloquear el almacenamiento de control de velocidad.",
+            );
         }
 
         rewind($handle);
         $contents = stream_get_contents($handle);
         $data = [];
 
-        if (is_string($contents) && $contents !== '') {
+        if (is_string($contents) && $contents !== "") {
             $decoded = json_decode($contents, true);
 
             if (is_array($decoded)) {
@@ -60,13 +66,17 @@ function rate_limit_with_storage(callable $callback): mixed
 
         $encoded = json_encode($data, JSON_PRETTY_PRINT);
         if ($encoded === false) {
-            throw new RuntimeException('No se pudo serializar el almacenamiento de control de velocidad.');
+            throw new RuntimeException(
+                "No se pudo serializar el almacenamiento de control de velocidad.",
+            );
         }
 
         ftruncate($handle, 0);
         rewind($handle);
         if (fwrite($handle, $encoded) === false) {
-            throw new RuntimeException('No se pudo escribir en el almacenamiento de control de velocidad.');
+            throw new RuntimeException(
+                "No se pudo escribir en el almacenamiento de control de velocidad.",
+            );
         }
 
         if ($exception instanceof Throwable) {
@@ -81,14 +91,17 @@ function rate_limit_with_storage(callable $callback): mixed
     }
 }
 
-function rate_limit_prune_attempts(array $attempts, int $now, int $interval): array
-{
+function rate_limit_prune_attempts(
+    array $attempts,
+    int $now,
+    int $interval,
+): array {
     $filtered = [];
 
     foreach ($attempts as $timestamp) {
         $timestamp = (int) $timestamp;
 
-        if ($timestamp >= ($now - $interval)) {
+        if ($timestamp >= $now - $interval) {
             $filtered[] = $timestamp;
         }
     }
@@ -96,147 +109,205 @@ function rate_limit_prune_attempts(array $attempts, int $now, int $interval): ar
     return array_values($filtered);
 }
 
-function rate_limit_assert_can_attempt(string $ip, ?string $login, array $config): void
-{
-    $ip = trim($ip) !== '' ? $ip : 'unknown';
+function rate_limit_assert_can_attempt(
+    string $ip,
+    ?string $login,
+    array $config,
+): void {
+    $ip = trim($ip) !== "" ? $ip : "unknown";
     $now = time();
 
-    rate_limit_with_storage(function (array &$data) use ($ip, $login, $config, $now): void {
-        $ipConfig = $config['ip'];
-        $accountConfig = $config['account'];
+    rate_limit_with_storage(function (array &$data) use (
+        $ip,
+        $login,
+        $config,
+        $now,
+    ): void {
+        $ipConfig = $config["ip"];
+        $accountConfig = $config["account"];
 
-        if (!isset($data['ip'][$ip]['failures'])) {
-            $data['ip'][$ip]['failures'] = [];
+        if (!isset($data["ip"][$ip]["failures"])) {
+            $data["ip"][$ip]["failures"] = [];
         }
 
-        $data['ip'][$ip]['failures'] = rate_limit_prune_attempts(
-            $data['ip'][$ip]['failures'],
+        $data["ip"][$ip]["failures"] = rate_limit_prune_attempts(
+            $data["ip"][$ip]["failures"],
             $now,
-            (int) $ipConfig['interval_seconds']
+            (int) $ipConfig["interval_seconds"],
         );
 
-        if (count($data['ip'][$ip]['failures']) >= (int) $ipConfig['max_attempts']) {
-            $oldest = (int) min($data['ip'][$ip]['failures']);
-            $retryAfter = ($oldest + (int) $ipConfig['interval_seconds']) - $now;
-            throw new RateLimitException('Se superó el límite de intentos para esta dirección IP. Inténtelo más tarde.', max(1, $retryAfter));
+        if (
+            count($data["ip"][$ip]["failures"]) >=
+            (int) $ipConfig["max_attempts"]
+        ) {
+            $oldest = (int) min($data["ip"][$ip]["failures"]);
+            $retryAfter = $oldest + (int) $ipConfig["interval_seconds"] - $now;
+            throw new RateLimitException(
+                "Se superó el límite de intentos para esta dirección IP. Inténtelo más tarde.",
+                max(1, $retryAfter),
+            );
         }
 
-        if ($login !== null && $login !== '') {
-            if (!isset($data['account'][$login])) {
-                $data['account'][$login] = [
-                    'failures' => [],
-                    'streak' => 0,
-                    'last_failure' => null,
-                    'lock_until' => null,
+        if ($login !== null && $login !== "") {
+            if (!isset($data["account"][$login])) {
+                $data["account"][$login] = [
+                    "failures" => [],
+                    "streak" => 0,
+                    "last_failure" => null,
+                    "lock_until" => null,
                 ];
             }
 
-            $accountData = $data['account'][$login];
-            $accountData['failures'] = rate_limit_prune_attempts(
-                $accountData['failures'],
+            $accountData = $data["account"][$login];
+            $accountData["failures"] = rate_limit_prune_attempts(
+                $accountData["failures"],
                 $now,
-                (int) $accountConfig['interval_seconds']
+                (int) $accountConfig["interval_seconds"],
             );
 
-            $lockUntil = isset($accountData['lock_until']) ? (int) $accountData['lock_until'] : null;
+            $lockUntil = isset($accountData["lock_until"])
+                ? (int) $accountData["lock_until"]
+                : null;
             if ($lockUntil !== null && $lockUntil <= $now) {
-                $accountData['lock_until'] = null;
+                $accountData["lock_until"] = null;
                 $lockUntil = null;
             }
 
             if ($lockUntil !== null && $lockUntil > $now) {
                 $retryAfter = $lockUntil - $now;
-                $data['account'][$login] = $accountData;
-                throw new RateLimitException('La cuenta se encuentra temporalmente bloqueada. Inténtelo de nuevo más tarde.', max(1, $retryAfter));
+                $data["account"][$login] = $accountData;
+                throw new RateLimitException(
+                    "La cuenta se encuentra temporalmente bloqueada. Inténtelo de nuevo más tarde.",
+                    max(1, $retryAfter),
+                );
             }
 
-            if (count($accountData['failures']) >= (int) $accountConfig['max_attempts']) {
-                $oldest = (int) min($accountData['failures']);
-                $retryAfter = ($oldest + (int) $accountConfig['interval_seconds']) - $now;
-                throw new RateLimitException('Se superó el límite de intentos para esta cuenta. Inténtelo de nuevo más tarde.', max(1, $retryAfter));
+            if (
+                count($accountData["failures"]) >=
+                (int) $accountConfig["max_attempts"]
+            ) {
+                $oldest = (int) min($accountData["failures"]);
+                $retryAfter =
+                    $oldest + (int) $accountConfig["interval_seconds"] - $now;
+                throw new RateLimitException(
+                    "Se superó el límite de intentos para esta cuenta. Inténtelo de nuevo más tarde.",
+                    max(1, $retryAfter),
+                );
             }
 
-            $data['account'][$login] = $accountData;
+            $data["account"][$login] = $accountData;
         }
     });
 }
 
-function rate_limit_register_failure(string $ip, ?string $login, array $config): void
-{
-    $ip = trim($ip) !== '' ? $ip : 'unknown';
+function rate_limit_register_failure(
+    string $ip,
+    ?string $login,
+    array $config,
+): void {
+    $ip = trim($ip) !== "" ? $ip : "unknown";
     $now = time();
 
-    rate_limit_with_storage(function (array &$data) use ($ip, $login, $config, $now): void {
-        $ipConfig = $config['ip'];
-        $accountConfig = $config['account'];
-        $backoffConfig = $config['backoff'];
+    rate_limit_with_storage(function (array &$data) use (
+        $ip,
+        $login,
+        $config,
+        $now,
+    ): void {
+        $ipConfig = $config["ip"];
+        $accountConfig = $config["account"];
+        $backoffConfig = $config["backoff"];
 
-        if (!isset($data['ip'][$ip]['failures'])) {
-            $data['ip'][$ip]['failures'] = [];
+        if (!isset($data["ip"][$ip]["failures"])) {
+            $data["ip"][$ip]["failures"] = [];
         }
 
-        $data['ip'][$ip]['failures'] = rate_limit_prune_attempts(
-            $data['ip'][$ip]['failures'],
+        $data["ip"][$ip]["failures"] = rate_limit_prune_attempts(
+            $data["ip"][$ip]["failures"],
             $now,
-            (int) $ipConfig['interval_seconds']
+            (int) $ipConfig["interval_seconds"],
         );
-        $data['ip'][$ip]['failures'][] = $now;
+        $data["ip"][$ip]["failures"][] = $now;
 
-        if ($login !== null && $login !== '') {
-            if (!isset($data['account'][$login])) {
-                $data['account'][$login] = [
-                    'failures' => [],
-                    'streak' => 0,
-                    'last_failure' => null,
-                    'lock_until' => null,
+        if ($login !== null && $login !== "") {
+            if (!isset($data["account"][$login])) {
+                $data["account"][$login] = [
+                    "failures" => [],
+                    "streak" => 0,
+                    "last_failure" => null,
+                    "lock_until" => null,
                 ];
             }
 
-            $accountData = $data['account'][$login];
-            $accountData['failures'] = rate_limit_prune_attempts(
-                $accountData['failures'],
+            $accountData = $data["account"][$login];
+            $accountData["failures"] = rate_limit_prune_attempts(
+                $accountData["failures"],
                 $now,
-                (int) $accountConfig['interval_seconds']
+                (int) $accountConfig["interval_seconds"],
             );
-            $accountData['failures'][] = $now;
+            $accountData["failures"][] = $now;
 
-            $lastFailure = isset($accountData['last_failure']) ? (int) $accountData['last_failure'] : null;
-            if ($lastFailure !== null && ($now - $lastFailure) <= (int) $backoffConfig['streak_reset_seconds']) {
-                $accountData['streak'] = (int) $accountData['streak'] + 1;
+            $lastFailure = isset($accountData["last_failure"])
+                ? (int) $accountData["last_failure"]
+                : null;
+            if (
+                $lastFailure !== null &&
+                $now - $lastFailure <=
+                    (int) $backoffConfig["streak_reset_seconds"]
+            ) {
+                $accountData["streak"] = (int) $accountData["streak"] + 1;
             } else {
-                $accountData['streak'] = 1;
+                $accountData["streak"] = 1;
             }
 
-            $accountData['last_failure'] = $now;
+            $accountData["last_failure"] = $now;
 
-            if (!empty($backoffConfig['enabled']) && $accountData['streak'] >= (int) $backoffConfig['start_after_failures']) {
-                $exponent = $accountData['streak'] - (int) $backoffConfig['start_after_failures'];
-                $delay = (int) ($backoffConfig['base_seconds'] * pow(2, max(0, $exponent)));
-                $delay = min($delay, (int) $backoffConfig['max_seconds']);
+            if (
+                !empty($backoffConfig["enabled"]) &&
+                $accountData["streak"] >=
+                    (int) $backoffConfig["start_after_failures"]
+            ) {
+                $exponent =
+                    $accountData["streak"] -
+                    (int) $backoffConfig["start_after_failures"];
+                $delay =
+                    (int) ($backoffConfig["base_seconds"] *
+                        pow(2, max(0, $exponent)));
+                $delay = min($delay, (int) $backoffConfig["max_seconds"]);
                 $lockUntil = $now + $delay;
-                if (!isset($accountData['lock_until']) || $lockUntil > (int) $accountData['lock_until']) {
-                    $accountData['lock_until'] = $lockUntil;
+                if (
+                    !isset($accountData["lock_until"]) ||
+                    $lockUntil > (int) $accountData["lock_until"]
+                ) {
+                    $accountData["lock_until"] = $lockUntil;
                 }
             } else {
-                $accountData['lock_until'] = null;
+                $accountData["lock_until"] = null;
             }
 
-            $data['account'][$login] = $accountData;
+            $data["account"][$login] = $accountData;
         }
     });
 }
 
-function rate_limit_register_success(string $ip, ?string $login, array $config): void
-{
-    $ip = trim($ip) !== '' ? $ip : 'unknown';
+function rate_limit_register_success(
+    string $ip,
+    ?string $login,
+    array $config,
+): void {
+    $ip = trim($ip) !== "" ? $ip : "unknown";
 
     rate_limit_with_storage(function (array &$data) use ($ip, $login): void {
-        if (isset($data['ip'][$ip])) {
-            unset($data['ip'][$ip]);
+        if (isset($data["ip"][$ip])) {
+            unset($data["ip"][$ip]);
         }
 
-        if ($login !== null && $login !== '' && isset($data['account'][$login])) {
-            unset($data['account'][$login]);
+        if (
+            $login !== null &&
+            $login !== "" &&
+            isset($data["account"][$login])
+        ) {
+            unset($data["account"][$login]);
         }
     });
 }

@@ -1,14 +1,17 @@
 <?php
 declare(strict_types=1);
 
-if (!defined('VIRUSTOTAL_API_KEY_FILE')) {
+if (!defined("VIRUSTOTAL_API_KEY_FILE")) {
     define(
-        'VIRUSTOTAL_API_KEY_FILE',
-        dirname(__DIR__) . DIRECTORY_SEPARATOR . 'virustotal_api_key.php'
+        "VIRUSTOTAL_API_KEY_FILE",
+        dirname(__DIR__) . DIRECTORY_SEPARATOR . "virustotal_api_key.php",
     );
 }
 
-if (defined('VIRUSTOTAL_API_KEY_FILE') && is_readable(VIRUSTOTAL_API_KEY_FILE)) {
+if (
+    defined("VIRUSTOTAL_API_KEY_FILE") &&
+    is_readable(VIRUSTOTAL_API_KEY_FILE)
+) {
     require_once VIRUSTOTAL_API_KEY_FILE;
 }
 
@@ -32,47 +35,56 @@ function check_virus_total(string $filePath): array
 {
     if (!is_readable($filePath)) {
         return [
-            'success' => false,
-            'is_malicious' => false,
-            'message' => 'No se pudo acceder al archivo temporal que se quiere analizar.',
-            'http_status' => 200,
+            "success" => false,
+            "is_malicious" => false,
+            "message" =>
+                "No se pudo acceder al archivo temporal que se quiere analizar.",
+            "http_status" => 200,
         ];
     }
 
-    if (!defined('VIRUSTOTAL_API_KEY_FILE') || !is_readable(VIRUSTOTAL_API_KEY_FILE)) {
+    if (
+        !defined("VIRUSTOTAL_API_KEY_FILE") ||
+        !is_readable(VIRUSTOTAL_API_KEY_FILE)
+    ) {
         return [
-            'success' => false,
-            'is_malicious' => false,
-            'message' => 'No se encontró la configuración de la clave de la API de VirusTotal.',
-            'http_status' => 200,
+            "success" => false,
+            "is_malicious" => false,
+            "message" =>
+                "No se encontró la configuración de la clave de la API de VirusTotal.",
+            "http_status" => 200,
         ];
     }
 
-    if (!defined('VIRUSTOTAL_API_KEY') || trim((string) VIRUSTOTAL_API_KEY) === '') {
+    if (
+        !defined("VIRUSTOTAL_API_KEY") ||
+        trim((string) VIRUSTOTAL_API_KEY) === ""
+    ) {
         return [
-            'success' => false,
-            'is_malicious' => false,
-            'message' => 'No se ha configurado la clave de la API de VirusTotal.',
-            'http_status' => 200
+            "success" => false,
+            "is_malicious" => false,
+            "message" =>
+                "No se ha configurado la clave de la API de VirusTotal.",
+            "http_status" => 200,
         ];
     }
 
     $apiKey = VIRUSTOTAL_API_KEY;
-    $mimeType = mime_content_type($filePath) ?: 'application/octet-stream';
+    $mimeType = mime_content_type($filePath) ?: "application/octet-stream";
     $fileName = basename($filePath);
 
     $postFields = [
-        'apikey' => $apiKey,
-        'file' => curl_file_create($filePath, $mimeType, $fileName)
+        "apikey" => $apiKey,
+        "file" => curl_file_create($filePath, $mimeType, $fileName),
     ];
 
-    $ch = curl_init('https://www.virustotal.com/vtapi/v2/file/scan');
+    $ch = curl_init("https://www.virustotal.com/vtapi/v2/file/scan");
     curl_setopt_array($ch, [
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_POST => true,
         CURLOPT_POSTFIELDS => $postFields,
-        CURLOPT_USERAGENT => 'PraceAR-Admin/1.0 (+https://virustotal.com)',
-        CURLOPT_HTTPHEADER => ['Accept: application/json'],
+        CURLOPT_USERAGENT => "PraceAR-Admin/1.0 (+https://virustotal.com)",
+        CURLOPT_HTTPHEADER => ["Accept: application/json"],
         CURLOPT_CONNECTTIMEOUT => 10,
         CURLOPT_TIMEOUT => 30,
         CURLOPT_SSL_VERIFYPEER => true,
@@ -86,10 +98,11 @@ function check_virus_total(string $filePath): array
         curl_close($ch);
 
         return [
-            'success' => false,
-            'is_malicious' => false,
-            'message' => 'No se pudo contactar con el servicio de análisis: ' . $error,
-            'http_status' => 200,
+            "success" => false,
+            "is_malicious" => false,
+            "message" =>
+                "No se pudo contactar con el servicio de análisis: " . $error,
+            "http_status" => 200,
         ];
     }
 
@@ -99,13 +112,14 @@ function check_virus_total(string $filePath): array
     if ($httpCode !== 200) {
         $msg = "El servicio de análisis devolvió un código inesperado ($httpCode).";
         if ($httpCode === 403) {
-            $msg .= " Verifique que la API Key en virustotal_api_key.php es correcta.";
+            $msg .=
+                " Verifique que la API Key en virustotal_api_key.php es correcta.";
         }
         return [
-            'success' => false,
-            'is_malicious' => false,
-            'message' => $msg,
-            'http_status' => 200,
+            "success" => false,
+            "is_malicious" => false,
+            "message" => $msg,
+            "http_status" => 200,
         ];
     }
 
@@ -113,54 +127,63 @@ function check_virus_total(string $filePath): array
 
     if (json_last_error() !== JSON_ERROR_NONE) {
         return [
-            'success' => false,
-            'is_malicious' => false,
-            'message' => 'La respuesta del servicio no es un JSON válido.',
-            'http_status' => 200,
+            "success" => false,
+            "is_malicious" => false,
+            "message" => "La respuesta del servicio no es un JSON válido.",
+            "http_status" => 200,
         ];
     }
 
-    $positives = isset($decoded['positives']) ? (int) $decoded['positives'] : 0;
+    $positives = isset($decoded["positives"]) ? (int) $decoded["positives"] : 0;
     $isMalicious = $positives > 0;
 
-    $message = $decoded['verbose_msg'] ?? (
-        $isMalicious
-            ? 'La imagen presenta detecciones positivas conocidas.'
-            : 'La imagen se envió correctamente a VirusTotal para su análisis.'
-    );
+    $message =
+        $decoded["verbose_msg"] ??
+        ($isMalicious
+            ? "La imagen presenta detecciones positivas conocidas."
+            : "La imagen se envió correctamente a VirusTotal para su análisis.");
 
     return [
-        'success' => true,
-        'is_malicious' => $isMalicious,
-        'message' => $message,
-        'data' => $decoded,
-        'http_status' => 200,
+        "success" => true,
+        "is_malicious" => $isMalicious,
+        "message" => $message,
+        "data" => $decoded,
+        "http_status" => 200,
     ];
 }
 
 if (
-    php_sapi_name() !== 'cli'
-    && isset($_SERVER['REQUEST_METHOD'])
-    && $_SERVER['REQUEST_METHOD'] === 'POST'
-    && realpath(__FILE__) === realpath($_SERVER['SCRIPT_FILENAME'] ?? '')
+    php_sapi_name() !== "cli" &&
+    isset($_SERVER["REQUEST_METHOD"]) &&
+    $_SERVER["REQUEST_METHOD"] === "POST" &&
+    realpath(__FILE__) === realpath($_SERVER["SCRIPT_FILENAME"] ?? "")
 ) {
-    header('Content-Type: application/json; charset=utf-8');
+    header("Content-Type: application/json; charset=utf-8");
 
     // Cambiar 'file' por 'imagen' para coincidir con el JavaScript
-    if (!isset($_FILES['imagen']) || $_FILES['imagen']['error'] !== UPLOAD_ERR_OK) {
+    if (
+        !isset($_FILES["imagen"]) ||
+        $_FILES["imagen"]["error"] !== UPLOAD_ERR_OK
+    ) {
         http_response_code(400);
-        echo json_encode([
-            'success' => false,
-            'is_malicious' => false,
-            'message' => 'No se ha recibido ningún archivo válido para analizar.'
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
+        echo json_encode(
+            [
+                "success" => false,
+                "is_malicious" => false,
+                "message" =>
+                    "No se ha recibido ningún archivo válido para analizar.",
+            ],
+            JSON_UNESCAPED_UNICODE,
+        );
+        exit();
     }
 
     // Cambiar 'file' por 'imagen'
-    $result = check_virus_total($_FILES['imagen']['tmp_name']);
+    $result = check_virus_total($_FILES["imagen"]["tmp_name"]);
 
-    http_response_code($result['http_status'] ?? ($result['success'] ? 200 : 502));
+    http_response_code(
+        $result["http_status"] ?? ($result["success"] ? 200 : 502),
+    );
     echo json_encode($result, JSON_UNESCAPED_UNICODE);
-    exit;
+    exit();
 }

@@ -1,14 +1,18 @@
 <?php
 declare(strict_types=1);
 
-require_once 'connection.php';
+require_once "connection.php";
 $custom_lang = $_REQUEST["language"] ?? "gl";
 try {
     if (!$conn) {
-        echo json_encode(["codigo" => 400, "mensaje" => "Error intentando conectar", "respuesta" => ""]);
+        echo json_encode([
+            "codigo" => 400,
+            "mensaje" => "Error intentando conectar",
+            "respuesta" => "",
+        ]);
     } else {
-        if (isset($_GET['id_nave'])) {
-            $id_nave = $_GET['id_nave'];
+        if (isset($_GET["id_nave"])) {
+            $id_nave = $_GET["id_nave"];
             $sql = "SELECT 
                     p.id, p.caseta, pt.descripcion, 
                     p.contacto, p.telefono, 
@@ -33,15 +37,31 @@ try {
                 while ($row = $resultado->fetch_assoc()) {
                     $puesto[] = $row;
                 }
-                echo json_encode(["codigo" => 202, "mensaje" => "El puesto existe en el sistema", "respuesta" => $puesto]);
+                echo json_encode([
+                    "codigo" => 202,
+                    "mensaje" => "El puesto existe en el sistema",
+                    "respuesta" => $puesto,
+                ]);
             } else {
-                echo json_encode(["codigo" => 203, "mensaje" => "El puesto no existe en el sistema", "respuesta" => ""]);
+                echo json_encode([
+                    "codigo" => 203,
+                    "mensaje" => "El puesto no existe en el sistema",
+                    "respuesta" => "",
+                ]);
             }
             $stmt->close();
         } else {
-            echo json_encode(["codigo" => 402, "mensaje" => "Faltan datos para ejecutar la acción solicitada", "respuesta" => ""]);
+            echo json_encode([
+                "codigo" => 402,
+                "mensaje" => "Faltan datos para ejecutar la acción solicitada",
+                "respuesta" => "",
+            ]);
         }
     }
 } catch (Exception $e) {
-    echo json_encode(["codigo" => 400, "mensaje" => "Error intentando conectar", "respuesta" => ""]);
+    echo json_encode([
+        "codigo" => 400,
+        "mensaje" => "Error intentando conectar",
+        "respuesta" => "",
+    ]);
 }

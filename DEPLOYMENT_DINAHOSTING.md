@@ -53,10 +53,10 @@ Ejemplo de `pepper2.php`:
 ```php
 <?php
 return [
-    [
-        'PASSWORD_PEPPER' => 'TU_PEPPER_LARGO_Y_ALEATORIO',
-        'last_used' => '9999-12-31',
-    ],
+  [
+    "PASSWORD_PEPPER" => "TU_PEPPER_LARGO_Y_ALEATORIO",
+    "last_used" => "9999-12-31",
+  ],
 ];
 ```
 
