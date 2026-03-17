@@ -1,8 +1,19 @@
 <?php
+
 declare(strict_types=1);
 error_reporting(E_ALL);
-ini_set("display_errors", "1");
-ini_set("display_startup_errors", "1");
+
+require_once __DIR__ . "/config/env_loader.php";
+$bootstrapEnv = load_project_env(__DIR__);
+$bootstrapAppEnv = get_env_value("APP_ENV", $bootstrapEnv) ?? "production";
+$isDevelopment = $bootstrapAppEnv === "development";
+
+ini_set("display_errors", $isDevelopment ? "1" : "0");
+ini_set("display_startup_errors", $isDevelopment ? "1" : "0");
+
+require_once __DIR__ . "/config/security_headers.php";
+$security_config = include __DIR__ . "/config/security.php";
+apply_security_headers($security_config);
 
 ob_start();
 require_once __DIR__ . "/config/session.php";
@@ -69,4 +80,3 @@ if (isset($_SESSION["login"])) {
     // Si no se ha iniciado sesión, redirigir al formulario de login
     require_once "./login.php";
 }
-?>
