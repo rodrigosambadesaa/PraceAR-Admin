@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once HELPERS . "clean_input.php";
@@ -52,8 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET["id"])) {
         $activo_filtrado !== null &&
         $activo_filtrado !== false &&
         intval($activo_filtrado) === 1
-            ? 1
-            : 0;
+        ? 1
+        : 0;
 
     // Obtener caseta actual para manejo de imágenes
     $sql_caseta = "SELECT caseta FROM puestos WHERE id = ?";
@@ -207,7 +208,7 @@ if (!$fila) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Editar Datos Generales de Puesto - Página de administración</title>
-     <style>
+    <style>
         <?php
         require_once CSS_ADMIN . "theme.css";
         require_once CSS_ADMIN . "header.css";
@@ -225,27 +226,31 @@ if (!$fila) {
 <body class="admin-edit">
     <?php require_once SECTIONS . "header.php"; ?>
 
-    <main class="container">
-        <h1 id="cabecera_pagina_edicion">Editar Datos Generales de Puesto</h1>
-        
-        <article>
+    <main class="container edit-layout">
+        <section class="edit-hero" aria-labelledby="cabecera_pagina_edicion">
+            <h1 id="cabecera_pagina_edicion">Editar Datos Generales de Puesto</h1>
+            <p class="edit-subtitle">Actualiza la información comercial, de ubicación e imagen de este puesto.</p>
+        </section>
+
+        <article class="edit-card">
             <form action="?page=edit&id=<?= htmlspecialchars(
-                (string) $id,
-            ) ?>" method="POST" class="form-group" id="formulario-editar" enctype="multipart/form-data">
+                                            (string) $id,
+                                        ) ?>" method="POST" class="form-group" id="formulario-editar" enctype="multipart/form-data">
                 <input type="hidden" name="csrf" value="<?= $_SESSION["csrf"] ??
-                    "" ?>">
-                
+                                                            "" ?>">
+
                 <div class="grid">
-                    <div>
-                        <label for="activo">Activo</label>
-                        <input type="checkbox" id="activo" name="activo" value="1" <?= $fila[
-                            "activo"
-                        ]
-                            ? "checked"
-                            : "" ?>>
+                    <div class="switch-field">
+                        <label for="activo">Estado del puesto</label>
+                        <label class="switch-control" for="activo">
+                            <input type="checkbox" id="activo" name="activo" value="1" <?= $fila["activo"]
+                                                                                            ? "checked"
+                                                                                            : "" ?>>
+                            <span>Activo</span>
+                        </label>
                     </div>
                     <div>
-                         <!-- Espacio vacío para alinear si es necesario, o poner otro campo aquí -->
+                        <p class="field-hint">Puedes desactivar temporalmente el puesto sin borrar sus datos.</p>
                     </div>
                 </div>
 
@@ -254,27 +259,26 @@ if (!$fila) {
                     "assets/" . htmlspecialchars($fila["caseta"]) . ".jpg";
                 $imagen_encontrada = file_exists($ruta_a_imagen);
                 ?>
-                
+
                 <?php if ($imagen_encontrada) { ?>
-                    <span>Imagen actual</span>
-                    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1rem;">
+                    <span class="section-label">Imagen actual</span>
+                    <div class="image-preview-wrapper">
                         <img src="<?= htmlspecialchars($ruta_a_imagen) ?>"
                             alt="Imagen del puesto <?= htmlspecialchars(
-                                $fila["nombre"],
-                            ) ?>" class="zoomable"
-                            style="object-fit: cover; height: 300px; width: 300px; display: block; margin: 0 auto;">
+                                                        $fila["nombre"],
+                                                    ) ?>" class="zoomable">
                     </div>
-                    
-                    <div style="margin-bottom: 1rem;">
+
+                    <div class="image-actions">
                         <label for="imagen">Reemplazar imagen (.jpg, máx 2MB)</label>
                         <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg" aria-label="Reemplazar imagen">
                     </div>
-                    
-                    <div style="margin-bottom: 1rem;">
-                         <label for="eliminar-imagen">
+
+                    <div class="image-actions">
+                        <label for="eliminar-imagen">
                             <input type="checkbox" id="eliminar-imagen" name="eliminar_imagen" value="1">
                             Eliminar imagen actual
-                         </label>
+                        </label>
                     </div>
                 <?php } else { ?>
                     <label for="imagen">Subir Imagen (.jpg, máx 2MB)</label>
@@ -285,15 +289,15 @@ if (!$fila) {
                     <div>
                         <label for="caseta">Caseta</label>
                         <input type="text" id="caseta" name="caseta" value="<?= htmlspecialchars(
-                            $fila["caseta"] ?? "",
-                        ) ?>" readonly aria-label="Código de caseta">
+                                                                                $fila["caseta"] ?? "",
+                                                                            ) ?>" readonly aria-label="Código de caseta">
                     </div>
-                    
+
                     <div>
                         <label for="nombre">Nombre</label>
                         <input type="text" id="nombre" name="nombre" value="<?= htmlspecialchars(
-                            $fila["nombre"] ?? "",
-                        ) ?>" 
+                                                                                $fila["nombre"] ?? "",
+                                                                            ) ?>"
                             placeholder="Nombre del puesto" aria-label="Nombre del puesto">
                     </div>
                 </div>
@@ -302,15 +306,15 @@ if (!$fila) {
                     <div>
                         <label for="contacto">Información de Contacto</label>
                         <input type="text" id="contacto" name="contacto" aria-label="Información de contacto" value="<?= htmlspecialchars(
-                            $fila["contacto"] ?? "",
-                        ) ?>">
+                                                                                                                            $fila["contacto"] ?? "",
+                                                                                                                        ) ?>">
                     </div>
 
                     <div>
                         <label for="telefono">Teléfono</label>
                         <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars(
-                            $fila["telefono"] ?? "",
-                        ) ?>"
+                                                                                    $fila["telefono"] ?? "",
+                                                                                ) ?>"
                             placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'" aria-label="Teléfono de contacto">
                     </div>
                 </div>
@@ -320,13 +324,11 @@ if (!$fila) {
                         <label for="tipo-unity">Tipo en Unity <span class="admin-required" aria-hidden="true">*</span></label>
                         <select name="tipo_unity" id="tipo-unity" aria-required="true">
                             <?php foreach (UNITY_TYPE as $key => $value) { ?>
-                                <option value="<?= $key ?>" <?= ($fila[
-    "tipo_unity"
-] ??
-    "") ==
-$key
-    ? "selected"
-    : "" ?>>
+                                <option value="<?= $key ?>" <?= ($fila["tipo_unity"] ??
+                                                                "") ==
+                                                                $key
+                                                                ? "selected"
+                                                                : "" ?>>
                                     <?= $value ?>
                                 </option>
                             <?php } ?>
@@ -342,10 +344,10 @@ $key
                                 $fila_naves = $resultado_naves->fetch_assoc()
                             ) { ?>
                                 <option value="<?= htmlspecialchars(
-                                    (string) $fila_naves["id"],
-                                ) ?>" <?= $fila["id_nave"] == $fila_naves["id"]
-    ? "selected"
-    : "" ?>>
+                                                    (string) $fila_naves["id"],
+                                                ) ?>" <?= $fila["id_nave"] == $fila_naves["id"]
+                                            ? "selected"
+                                            : "" ?>>
                                     <?= htmlspecialchars($fila_naves["tipo"]) ?>
                                 </option>
                             <?php }
@@ -353,18 +355,18 @@ $key
                         </select>
                     </div>
                 </div>
-                
+
                 <div>
                     <label for="caseta-padre">Caseta padre</label>
                     <input name="caseta_padre" type="text" id="caseta-padre"
                         value="<?= htmlspecialchars(
-                            $fila["caseta_padre"] ?? "",
-                        ) ?>" placeholder="Código de caseta padre"
+                                    $fila["caseta_padre"] ?? "",
+                                ) ?>" placeholder="Código de caseta padre"
                         aria-label="Caseta padre">
                 </div>
-                
+
                 <div id="div-botones">
-                    <input id="actualizar" type="submit" value="Actualizar" aria-label="Actualizar datos del puesto">
+                    <input id="actualizar" type="submit" value="Guardar cambios" aria-label="Actualizar datos del puesto">
                 </div>
             </form>
         </article>
@@ -382,9 +384,9 @@ $key
 
         <?php if ($fila) { ?>
             <script type="module" src="<?= htmlspecialchars(
-                JS_ADMIN,
-            ) ?>edit_stall.js"></script>
-            <?php } ?>
+                                            JS_ADMIN,
+                                        ) ?>edit_stall.js"></script>
+        <?php } ?>
 
         <script>
             window.BASE_URL = "<?= BASE_URL ?>";
