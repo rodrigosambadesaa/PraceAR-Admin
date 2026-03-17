@@ -227,8 +227,8 @@ if (!$fila) {
     <?php require_once SECTIONS . "header.php"; ?>
 
     <main class="container edit-layout">
-        <section class="edit-hero" aria-labelledby="cabecera_pagina_edicion">
-            <h1 id="cabecera_pagina_edicion">Editar Datos Generales de Puesto</h1>
+        <section class="edit-hero" aria-labelledby="edit-page-title">
+            <h1 id="edit-page-title">Editar Datos Generales de Puesto</h1>
             <p class="edit-subtitle">Actualiza la información comercial, de ubicación e imagen de este puesto.</p>
         </section>
 
