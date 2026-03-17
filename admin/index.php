@@ -121,7 +121,10 @@ declare(strict_types=1) ?>
         $_SESSION["csrf"] = bin2hex(random_bytes(32)); // Generar un nuevo token CSRF
     }
 
-    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $isSearchPost =
+        $_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["caseta"]);
+
+    if ($isSearchPost) {
         if (
             !isset($_POST["csrf"]) ||
             !hash_equals($_SESSION["csrf"], $_POST["csrf"])
@@ -147,7 +150,7 @@ declare(strict_types=1) ?>
     $caseta = "";
 
     // Manejo de búsqueda por caseta
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["caseta"])) {
+    if ($isSearchPost) {
         $caseta = limpiar_input($_POST["caseta"]);
         // Redirigir usando GET para mantener la búsqueda en la URL
         $params = [
