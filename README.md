@@ -21,25 +21,20 @@ Clonar el repositorio en una carpeta llamada appventurers
 - Durante el desarrollo puedes mantener los bundles generados en todo momento usando `npm run watch`, que compila en caliente los proyectos TypeScript de `ts/` y `admin/ts/`.
 - En despliegues manuales basta con ejecutar `npm run build` (o dejar que el hook `post-merge` lo haga por ti) antes de subir la web al servidor.
 
-## Docker (frontend + backend + base de datos)
+## Despliegue en hosting real (sin Docker)
 
-La aplicación puede levantarse completa con un único comando usando Docker Compose.
+Esta rama está preparada para despliegue tradicional en servidor PHP (por ejemplo Dinahosting en hosting compartido o VPS sin contenedores).
 
-1. Construir y arrancar todo:
+1. Compilar frontend antes de subir:
 	```bash
-	docker compose up --build -d
+	npm run build
 	```
-2. Abrir la web en `http://localhost:8081`.
-	- Si necesitas otro puerto: `FRONTEND_PORT=8090 docker compose up --build -d`
-3. Parar los contenedores:
-	```bash
-	docker compose down
-	```
-
-Servicios incluidos:
-- `frontend`: Nginx (sirve estáticos y enruta PHP hacia backend)
-- `backend`: PHP-FPM 8.2
-- `db`: MySQL 8.0 (inicializa automáticamente desde `dbs13217995.sql`)
+2. Copiar `.env.example` a `.env` en el servidor y completar credenciales reales.
+3. Verificar que `APP_BASE_URL` apunte al dominio final, por ejemplo `https://example.com/`.
+4. Crear en producción los archivos secretos no versionados:
+	- `pepper2.php`
+	- `virustotal_api_key.php`
+5. Revisar la guía detallada en `DEPLOYMENT_DINAHOSTING.md`.
 
 ## Guía de uso
 
