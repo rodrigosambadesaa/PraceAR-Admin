@@ -3,19 +3,19 @@ declare(strict_types=1);
 
 // ini_set('memory_limit', '2048M'); // o más, si es necesario
 
-require_once HELPERS . 'clean_input.php';
+require_once HELPERS . "clean_input.php";
 require_once CONNECTION;
-require_once HELPERS . 'password_generator.php';
+require_once HELPERS . "password_generator.php";
 
-$pepper_config = include 'pepper2.php';
+$pepper_config = include "pepper2.php";
 
-$today = date('Y-m-d');
+$today = date("Y-m-d");
 $pepper = null;
 for ($i = 0; $i < count($pepper_config); $i++) {
-    if ($pepper_config[$i]['last_used'] < $today) {
+    if ($pepper_config[$i]["last_used"] < $today) {
         continue;
     }
-    $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
+    $pepper = $pepper_config[$i]["PASSWORD_PEPPER"];
     break;
 }
 
@@ -27,69 +27,131 @@ if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
     throw new Exception("El pepper debe tener entre 16 y 1024 caracteres.");
 }
 if (tiene_espacios_al_principio_o_al_final($pepper)) {
-    throw new Exception("El pepper no puede tener espacios al principio o al final.");
+    throw new Exception(
+        "El pepper no puede tener espacios al principio o al final.",
+    );
 }
 if (tiene_secuencias_alfabeticas_inseguras($pepper)) {
-    throw new Exception("El pepper no puede tener secuencias alfabeticas inseguras.");
+    throw new Exception(
+        "El pepper no puede tener secuencias alfabeticas inseguras.",
+    );
 }
 if (tiene_secuencias_numericas_inseguras($pepper)) {
-    throw new Exception("El pepper no puede tener secuencias numericas inseguras.");
+    throw new Exception(
+        "El pepper no puede tener secuencias numericas inseguras.",
+    );
 }
 if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
-    throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
+    throw new Exception(
+        "El pepper no puede tener secuencias de caracteres especiales inseguras.",
+    );
 }
 
-if (!isset($_SESSION['csrf'])) {
-    $_SESSION['csrf'] = bin2hex(random_bytes(32));
+if (!isset($_SESSION["csrf"])) {
+    $_SESSION["csrf"] = bin2hex(random_bytes(32));
 }
 
-$result = '';
+$result = "";
 $passwords = [];
 $mostrar_boton = false;
 $length = 16;
 $quantity = 1; // Fijar la cantidad de contraseñas a 1
 
-if ($_SERVER['REQUEST_METHOD'] === "POST") {
-    if (isset($_POST['csrf']) && hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
-        if (isset($_POST['length'])) { // Eliminar referencia a 'quantity'
-            $length = limpiar_input($_POST['length']);
-            $length_range = limpiar_input($_POST['length_range']);
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (
+        isset($_POST["csrf"]) &&
+        hash_equals($_SESSION["csrf"], $_POST["csrf"])
+    ) {
+        if (isset($_POST["length"])) {
+            // Eliminar referencia a 'quantity'
+            $length = limpiar_input($_POST["length"]);
+            $length_range = limpiar_input($_POST["length_range"]);
 
             if (!is_numeric($length) || !ctype_digit($length)) {
-                $result = '<span class="admin-error-text" style="text-align: center;">La longitud debe ser un número natural válido.</span>';
+                $result =
+                    '<span class="admin-error-text" style="text-align: center;">La longitud debe ser un número natural válido.</span>';
             } else {
                 $length = (int) $length;
                 $length_range = (int) $length_range;
 
-                if ($length < 16 || $length > 500 || $length_range < 16 || $length_range > 500) {
-                    $result = '<span class="admin-error-text" style="text-align: center;">La longitud debe estar entre 16 y 500 caracteres.</span>';
+                if (
+                    $length < 16 ||
+                    $length > 500 ||
+                    $length_range < 16 ||
+                    $length_range > 500
+                ) {
+                    $result =
+                        '<span class="admin-error-text" style="text-align: center;">La longitud debe estar entre 16 y 500 caracteres.</span>';
                 } elseif ($length !== $length_range) {
-                    $result = '<span class="admin-error-text" style="text-align: center;">No se permite modificar el código Javascript que sincroniza los inputs.</span>';
+                    $result =
+                        '<span class="admin-error-text" style="text-align: center;">No se permite modificar el código Javascript que sincroniza los inputs.</span>';
                 } else {
                     try {
-                        for ($i = 0; $i < $quantity; $i++) { // $quantity siempre será 1
-                            $passwords[] = generate_secure_password($length, $_SESSION['nombre_usuario'] ?? null);
+                        for ($i = 0; $i < $quantity; $i++) {
+                            // $quantity siempre será 1
+                            $passwords[] = generate_secure_password(
+                                $length,
+                                $_SESSION["nombre_usuario"] ?? null,
+                            );
                         }
 
                         $result = '<div id="contrasenas-generadas">';
                         foreach ($passwords as $index => $password) {
                             $passwordId = "password-$index";
-                            $result .= '<div class="password-summary__title">Contraseña ' . ($index + 1) . ':</div>';
-                            $result .= '<div id="' . $passwordId . '" class="password-summary__value">' . htmlspecialchars($password) . '</div>';
-                            $result .= '<button type="button" class="copy-password-button" data-password-id="' . htmlspecialchars($passwordId, ENT_QUOTES, 'UTF-8') . '">Copiar</button>';
-                            $result .= '<div class="password-summary__stat"> Número de mayúsculas: ' . contar_mayusculas($password) . '</div>';
-                            $result .= '<div class="password-summary__stat"> Número de minúsculas: ' . contar_minusculas($password) . '</div>';
-                            $result .= '<div class="password-summary__stat"> Número de dígitos: ' . contar_digitos($password) . '</div>';
-                            $result .= '<div class="password-summary__stat"> Número de caracteres especiales: ' . contar_caracteres_especiales($password) . '</div>';
-                            $result .= '<div class="password-summary__stat"> Tiempo estimado de resistencia del hash: ' . tiempo_estimado_resistencia_ataque_fuerza_bruta($password) . '</div>';
-                            $result .= '<div class="password-summary__stat"> Entropía: ' . entropia($password) . '</div>';
+                            $result .=
+                                '<div class="password-summary__title">Contraseña ' .
+                                ($index + 1) .
+                                ":</div>";
+                            $result .=
+                                '<div id="' .
+                                $passwordId .
+                                '" class="password-summary__value">' .
+                                htmlspecialchars($password) .
+                                "</div>";
+                            $result .=
+                                '<button type="button" class="copy-password-button" data-password-id="' .
+                                htmlspecialchars(
+                                    $passwordId,
+                                    ENT_QUOTES,
+                                    "UTF-8",
+                                ) .
+                                '">Copiar</button>';
+                            $result .=
+                                '<div class="password-summary__stat"> Número de mayúsculas: ' .
+                                contar_mayusculas($password) .
+                                "</div>";
+                            $result .=
+                                '<div class="password-summary__stat"> Número de minúsculas: ' .
+                                contar_minusculas($password) .
+                                "</div>";
+                            $result .=
+                                '<div class="password-summary__stat"> Número de dígitos: ' .
+                                contar_digitos($password) .
+                                "</div>";
+                            $result .=
+                                '<div class="password-summary__stat"> Número de caracteres especiales: ' .
+                                contar_caracteres_especiales($password) .
+                                "</div>";
+                            $result .=
+                                '<div class="password-summary__stat"> Tiempo estimado de resistencia del hash: ' .
+                                tiempo_estimado_resistencia_ataque_fuerza_bruta(
+                                    $password,
+                                ) .
+                                "</div>";
+                            $result .=
+                                '<div class="password-summary__stat"> Entropía: ' .
+                                entropia($password) .
+                                "</div>";
                             $result .= '<div style="margin-top: 0.5rem;">';
                         }
-                        $result .= '</div>';
+                        $result .= "</div>";
                         // Ocultar el formulario tras la generación de contraseñas, forzando al usuario a volver a cargar la página para generar nuevas contraseñas
                         $mostrar_boton = true;
                     } catch (Exception $e) {
-                        $result = '<span class="admin-error-text" style="text-align: center;">' . $e->getMessage() . '</span>';
+                        $result =
+                            '<span class="admin-error-text" style="text-align: center;">' .
+                            $e->getMessage() .
+                            "</span>";
                     }
                 }
             }
@@ -107,8 +169,8 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
     <title>Admin - PraceAR - Generador de Contraseñas</title>
      <style>
         <?php
-            require_once(CSS_ADMIN . 'theme.css');
-            require_once(CSS_ADMIN . 'header.css');
+        require_once CSS_ADMIN . "theme.css";
+        require_once CSS_ADMIN . "header.css";
         ?>
     </style>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
@@ -303,7 +365,10 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 </head>
 
 <body>
-    <?php require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php'; ?>
+    <?php require_once COMPONENT_ADMIN .
+        "sections" .
+        DIRECTORY_SEPARATOR .
+        "header.php"; ?>
 
     <h1 tabindex="0">Generador de Contraseñas</h1>
 
@@ -313,20 +378,28 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
 
     <form method="POST" action="#" id="formulario-generacion-contrasena"
         aria-labelledby="formulario-titulo">
-        <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?>">
+        <input type="hidden" name="csrf" value="<?= $_SESSION["csrf"] ?>">
         <label for="length-number">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="number" id="length-number" name="length" min="16" max="500"
-            value="<?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>"
+            value="<?= htmlspecialchars(
+                (string) $length,
+                ENT_QUOTES,
+                "UTF-8",
+            ) ?>"
             aria-describedby="length-help">
         <p id="length-help" class="sr-only">Introduce un número entre 16 y 500.</p>
 
         <label for="length-range">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="500"
-            value="<?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>"
+            value="<?= htmlspecialchars(
+                (string) $length,
+                ENT_QUOTES,
+                "UTF-8",
+            ) ?>"
             aria-describedby="length-help">
 
         <output id="length-output" aria-live="polite">
-            <?= htmlspecialchars((string)$length, ENT_QUOTES, 'UTF-8') ?>
+            <?= htmlspecialchars((string) $length, ENT_QUOTES, "UTF-8") ?>
         </output>
 
         <input type="submit" value="Generar Contraseña" aria-label="Generar contraseña">
@@ -337,8 +410,9 @@ if ($_SERVER['REQUEST_METHOD'] === "POST") {
                 class="admin-required" aria-hidden="true">*</span> son obligatorios.</span>
     </div>
 
-    <script type="module" src="<?= JS_ADMIN . '/password_generator.js' ?>"></script>
-    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+    <script type="module" src="<?= JS_ADMIN .
+        "/password_generator.js" ?>"></script>
+    <script src="<?= JS . "/helpers/dark_mode.js" ?>"></script>
 </body>
 
 </html>

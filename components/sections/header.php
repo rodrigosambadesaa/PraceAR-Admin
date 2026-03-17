@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-require_once(HELPERS . 'get_language.php');
+require_once HELPERS . "get_language.php";
 ?>
 
 <header style="display:flex; justify-content: space-around; align-items: center;">

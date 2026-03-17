@@ -1,15 +1,18 @@
 <?php
 declare(strict_types=1);
 
-if (!function_exists('load_project_env')) {
+if (!function_exists("load_project_env")) {
     /**
      * Load key/value pairs from a .env style file.
      *
      * @return array<string, string>
      */
-    function load_project_env(string $baseDir, string $fileName = '.env'): array
+    function load_project_env(string $baseDir, string $fileName = ".env"): array
     {
-        $path = rtrim($baseDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $fileName;
+        $path =
+            rtrim($baseDir, DIRECTORY_SEPARATOR) .
+            DIRECTORY_SEPARATOR .
+            $fileName;
 
         if (!is_readable($path)) {
             return [];
@@ -23,11 +26,11 @@ if (!function_exists('load_project_env')) {
         $values = [];
         foreach ($lines as $line) {
             $line = trim($line);
-            if ($line === '' || $line[0] === '#') {
+            if ($line === "" || $line[0] === "#") {
                 continue;
             }
 
-            $delimiterPosition = strpos($line, '=');
+            $delimiterPosition = strpos($line, "=");
             if ($delimiterPosition === false) {
                 continue;
             }
@@ -35,14 +38,18 @@ if (!function_exists('load_project_env')) {
             $key = trim(substr($line, 0, $delimiterPosition));
             $value = trim(substr($line, $delimiterPosition + 1));
 
-            if ($key === '') {
+            if ($key === "") {
                 continue;
             }
 
-            if ($value !== '') {
+            if ($value !== "") {
                 $firstCharacter = $value[0];
                 $lastCharacter = substr($value, -1);
-                if ((($firstCharacter === '"' && $lastCharacter === '"') || ($firstCharacter === "'" && $lastCharacter === "'")) && strlen($value) >= 2) {
+                if (
+                    (($firstCharacter === '"' && $lastCharacter === '"') ||
+                        ($firstCharacter === "'" && $lastCharacter === "'")) &&
+                    strlen($value) >= 2
+                ) {
                     $value = substr($value, 1, -1);
                 }
             }
@@ -54,7 +61,7 @@ if (!function_exists('load_project_env')) {
     }
 }
 
-if (!function_exists('get_env_value')) {
+if (!function_exists("get_env_value")) {
     /**
      * Retrieve an environment variable. Environment variables take precedence over file values.
      *
