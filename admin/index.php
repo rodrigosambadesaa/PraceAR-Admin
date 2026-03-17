@@ -1,6 +1,5 @@
 <?php
-declare(strict_types=1);
-?>
+declare(strict_types=1) ?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -9,9 +8,9 @@ declare(strict_types=1);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Página Principal del Panel de Administración</title>
     <style>
-        <?php require_once(CSS_ADMIN . 'theme.css'); ?>
-        <?php require_once(CSS_ADMIN . 'header.css'); ?>
-        <?php require_once(CSS_ADMIN . 'index_admin.css'); ?>
+        <?php require_once CSS_ADMIN . "theme.css"; ?>
+        <?php require_once CSS_ADMIN . "header.css"; ?>
+        <?php require_once CSS_ADMIN . "index_admin.css"; ?>
     </style>
     <link rel='icon' href='./img/favicon.png' type='image/png'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -112,18 +111,21 @@ declare(strict_types=1);
 
 <body class="admin-index">
     <?php
-    require_once(SECTIONS . 'header.php');
-    require_once(HELPERS . 'truncate_text.php');
-    require_once(HELPERS . 'clean_input.php');
+    require_once SECTIONS . "header.php";
+    require_once HELPERS . "truncate_text.php";
+    require_once HELPERS . "clean_input.php";
     ?>
 
     <?php
-    if (!isset($_SESSION['csrf'])) {
-        $_SESSION['csrf'] = bin2hex(random_bytes(32)); // Generar un nuevo token CSRF
+    if (!isset($_SESSION["csrf"])) {
+        $_SESSION["csrf"] = bin2hex(random_bytes(32)); // Generar un nuevo token CSRF
     }
 
     if ($_SERVER["REQUEST_METHOD"] === "POST") {
-        if (!isset($_POST['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
+        if (
+            !isset($_POST["csrf"]) ||
+            !hash_equals($_SESSION["csrf"], $_POST["csrf"])
+        ) {
             die("Petición no válida");
         }
     }
@@ -132,29 +134,32 @@ declare(strict_types=1);
 
     $results_per_page = 50;
     $busqueda_hecha = false;
-    $current_page = (isset($_GET['page']) && is_numeric($_GET['page'])) ? (int) $_GET['page'] : 1;
+    $current_page =
+        isset($_GET["page"]) && is_numeric($_GET["page"])
+            ? (int) $_GET["page"]
+            : 1;
 
     if ($current_page < 1) {
         $current_page = 1;
     }
 
     $start_from = ($current_page - 1) * $results_per_page;
-    $caseta = '';
+    $caseta = "";
 
     // Manejo de búsqueda por caseta
-    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['caseta'])) {
-        $caseta = limpiar_input($_POST['caseta']);
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["caseta"])) {
+        $caseta = limpiar_input($_POST["caseta"]);
         // Redirigir usando GET para mantener la búsqueda en la URL
         $params = [
-            'page' => 1,
-            'caseta' => $caseta,
-            'lang' => get_language()
+            "page" => 1,
+            "caseta" => $caseta,
+            "lang" => get_language(),
         ];
         header("Location: ?" . http_build_query($params));
-        exit;
-    } elseif (isset($_GET['caseta'])) {
+        exit();
+    } elseif (isset($_GET["caseta"])) {
         // Si hay parámetro GET 'caseta', lo limpiamos
-        $caseta = limpiar_input($_GET['caseta']);
+        $caseta = limpiar_input($_GET["caseta"]);
     }
 
     $sql_total = "SELECT COUNT(p.id) as total FROM puestos p 
@@ -171,11 +176,11 @@ declare(strict_types=1);
     }
 
     $stmt_total = $conexion->prepare($sql_total);
-    $stmt_total->bind_param(str_repeat('s', count($params)), ...$params);
+    $stmt_total->bind_param(str_repeat("s", count($params)), ...$params);
     $stmt_total->execute();
     $result_total = $stmt_total->get_result();
     $row_total = $result_total->fetch_assoc();
-    $total_results = $row_total['total'];
+    $total_results = $row_total["total"];
 
     $total_pages = ceil($total_results / $results_per_page);
 
@@ -198,7 +203,7 @@ declare(strict_types=1);
     $params[] = $results_per_page;
 
     $stmt = $conexion->prepare($sql);
-    $stmt->bind_param(str_repeat('s', count($params) - 2) . 'ii', ...$params);
+    $stmt->bind_param(str_repeat("s", count($params) - 2) . "ii", ...$params);
     $stmt->execute();
     $result = $stmt->get_result();
     $resultados_encontrados = $result->num_rows > 0;
@@ -212,19 +217,31 @@ declare(strict_types=1);
                     <div id="contenedor-separacion"></div>
                     <search role="search">
                         <form id="formulario-busqueda" action="?page=1" method="POST"
-                            data-search-executed="<?= $busqueda_hecha ? 'true' : 'false' ?>">
-                            <input value="<?= htmlspecialchars($caseta) ?>" type="text" id="input-busqueda"
+                            data-search-executed="<?= $busqueda_hecha
+                                ? "true"
+                                : "false" ?>">
+                            <input value="<?= htmlspecialchars(
+                                $caseta,
+                            ) ?>" type="text" id="input-busqueda"
                                 placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta"
-                                <?php if (!$busqueda_hecha) echo 'autofocus'; ?>>
-                            <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(get_language()) ?>">
+                                <?php if (!$busqueda_hecha) {
+                                    echo "autofocus";
+                                } ?>>
+                            <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(
+                                get_language(),
+                            ) ?>">
                             <input type="submit" value="Buscar">
                             <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">
                             <input id="input-deshacer-busqueda" type="button" value="Deshacer"
-                                data-redirect-url="<?= htmlspecialchars('?lang=' . get_language()) ?>">
-                            <input type="hidden" name="csrf" id="csrf" value="<?= htmlspecialchars($_SESSION['csrf']) ?>">
+                                data-redirect-url="<?= htmlspecialchars(
+                                    "?lang=" . get_language(),
+                                ) ?>">
+                            <input type="hidden" name="csrf" id="csrf" value="<?= htmlspecialchars(
+                                $_SESSION["csrf"],
+                            ) ?>">
                         </form>
                     </search>
-                    <?php require_once(SECTIONS . 'pagination.php'); ?>
+                    <?php require_once SECTIONS . "pagination.php"; ?>
                 </caption>
 
                 <thead>
@@ -247,21 +264,36 @@ declare(strict_types=1);
                 </thead>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr id="row-<?= htmlspecialchars((string)$row['id']) ?>">
+                        <tr id="row-<?= htmlspecialchars(
+                            (string) $row["id"],
+                        ) ?>">
                             <td scope="row" data-label="Editar">
-                                <a href="<?= "?page=edit&id=" . htmlspecialchars((string)$row['id']) . "&lang=" . htmlspecialchars($_REQUEST['lang'] ?? 'gl') ?>"
-                                    aria-label="Editar puesto <?= htmlspecialchars($row['caseta']) ?>">
-                                    <img loading="lazy" width='15' height='15' src="<?= htmlspecialchars(PENCIL_IMAGE_URL) ?>"
+                                <a href="<?= "?page=edit&id=" .
+                                    htmlspecialchars((string) $row["id"]) .
+                                    "&lang=" .
+                                    htmlspecialchars(
+                                        $_REQUEST["lang"] ?? "gl",
+                                    ) ?>"
+                                    aria-label="Editar puesto <?= htmlspecialchars(
+                                        $row["caseta"],
+                                    ) ?>">
+                                    <img loading="lazy" width='15' height='15' src="<?= htmlspecialchars(
+                                        PENCIL_IMAGE_URL,
+                                    ) ?>"
                                         alt="Editar">
                                 </a>
                             </td>
                             <td data-label="Activo">
-                                <?= htmlspecialchars((string)($row['activo'] ? "Sí" : "No")) ?>
+                                <?= htmlspecialchars(
+                                    (string) ($row["activo"] ? "Sí" : "No"),
+                                ) ?>
                             </td>
                             <td data-label="Imagen">
                                 <?php
-                                $nombre_imagen = htmlspecialchars($row["caseta"]) . ".jpg";
-                                $ruta_web = BASE_URL . "assets/" . $nombre_imagen;
+                                $nombre_imagen =
+                                    htmlspecialchars($row["caseta"]) . ".jpg";
+                                $ruta_web =
+                                    BASE_URL . "assets/" . $nombre_imagen;
                                 $ruta_fisica = ASSETS . $nombre_imagen;
 
                                 // DEBUG: Mostrar la ruta física y si existe
@@ -269,32 +301,92 @@ declare(strict_types=1);
                                 // echo "<!-- Ruta física: $ruta_fisica, Existe: " . (file_exists($ruta_fisica) ? "Sí" : "No") . " -->";
 
                                 if (file_exists($ruta_fisica)) {
-                                    echo '<img loading="lazy" class="zoomable editable-image" src="' . $ruta_web . '" alt="Imagen del puesto ' . htmlspecialchars($row['caseta']) . '" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '">';
+                                    echo '<img loading="lazy" class="zoomable editable-image" src="' .
+                                        $ruta_web .
+                                        '" alt="Imagen del puesto ' .
+                                        htmlspecialchars($row["caseta"]) .
+                                        '" data-editable="true" data-field="imagen" data-id="' .
+                                        htmlspecialchars((string) $row["id"]) .
+                                        '">';
                                 } else {
-                                    echo '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' . htmlspecialchars((string)$row['id']) . '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
+                                    echo '<div class="editable-image-blank" data-editable="true" data-field="imagen" data-id="' .
+                                        htmlspecialchars((string) $row["id"]) .
+                                        '" style="height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:0.9em;">Subir imagen</div>';
                                 }
                                 ?>
                             </td>
-                            <td data-label="Caseta" data-editable="true" data-field="caseta" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['caseta']) ?></td>
-                            <td data-label="Nombre" data-editable="true" data-field="nombre" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['nombre'] ?? '') ?></td>
-                            <td data-label="Tipo Unity"><?= htmlspecialchars($row['tipo_unity'] ?? '') ?></td>
-                            <td data-label="Información de Contacto" data-editable="true" data-field="contacto" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['contacto'] ?? '') ?></td>
-                            <td data-label="Teléfono" data-editable="true" data-field="telefono" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row['telefono'] ?? '') ?></td>
-                            <td data-label="ID Nave" data-editable="true" data-field="id_nave" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars((string)($row['id_nave'] ?? '')) ?></td>
-                            <td data-label="Puesto padre" data-editable="true" data-field="caseta_padre" data-id="<?= htmlspecialchars((string)$row['id']) ?>"><?= htmlspecialchars($row["caseta_padre"] ?? "Ninguno") ?></td>
+                            <td data-label="Caseta" data-editable="true" data-field="caseta" data-id="<?= htmlspecialchars(
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars($row["caseta"]) ?></td>
+                            <td data-label="Nombre" data-editable="true" data-field="nombre" data-id="<?= htmlspecialchars(
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    $row["nombre"] ?? "",
+) ?></td>
+                            <td data-label="Tipo Unity"><?= htmlspecialchars(
+                                $row["tipo_unity"] ?? "",
+                            ) ?></td>
+                            <td data-label="Información de Contacto" data-editable="true" data-field="contacto" data-id="<?= htmlspecialchars(
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    $row["contacto"] ?? "",
+) ?></td>
+                            <td data-label="Teléfono" data-editable="true" data-field="telefono" data-id="<?= htmlspecialchars(
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    $row["telefono"] ?? "",
+) ?></td>
+                            <td data-label="ID Nave" data-editable="true" data-field="id_nave" data-id="<?= htmlspecialchars(
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    (string) ($row["id_nave"] ?? ""),
+) ?></td>
+                            <td data-label="Puesto padre" data-editable="true" data-field="caseta_padre" data-id="<?= htmlspecialchars(
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    $row["caseta_padre"] ?? "Ninguno",
+) ?></td>
                             <td data-label="" id="celda-especial"></td>
                             <td data-label="Editar Traducción">
-                                <a href="<?= "?page=language&id=" . htmlspecialchars((string)$row['id']) . "&codigo_idioma=" . htmlspecialchars(get_language()) ?>"
-                                   aria-label="Editar traducción de <?= htmlspecialchars($row['caseta']) ?>">
-                                    <img src="<?= BASE_URL ?>img/flags/<?= htmlspecialchars(get_language()) ?>.png"
+                                <a href="<?= "?page=language&id=" .
+                                    htmlspecialchars((string) $row["id"]) .
+                                    "&codigo_idioma=" .
+                                    htmlspecialchars(get_language()) ?>"
+                                   aria-label="Editar traducción de <?= htmlspecialchars(
+                                       $row["caseta"],
+                                   ) ?>">
+                                    <img src="<?= BASE_URL ?>img/flags/<?= htmlspecialchars(
+    get_language(),
+) ?>.png"
                                          alt="Editar traducción" width="18" height="18">
                                 </a>
                             </td>
-                            <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo" data-id="<?= htmlspecialchars((string)$row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
-                                <?= !empty($row['tipo']) ? htmlspecialchars(html_entity_decode($row['tipo'])) : 'Sin tipo' ?>
+                            <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo" data-id="<?= htmlspecialchars(
+                                (string) $row["id"],
+                            ) ?>" data-codigo_idioma="<?= htmlspecialchars(
+    get_language(),
+) ?>">
+                                <?= !empty($row["tipo"])
+                                    ? htmlspecialchars(
+                                        html_entity_decode($row["tipo"]),
+                                    )
+                                    : "Sin tipo" ?>
                             </td>
-                            <td data-label="Descripción" class="fondo-color-diferente editable-descripcion" data-editable="true" data-field="descripcion" data-id="<?= htmlspecialchars((string)$row['id']) ?>" data-codigo_idioma="<?= htmlspecialchars(get_language()) ?>">
-                                <?= !empty($row['descripcion']) ? htmlspecialchars(truncate_text(html_entity_decode($row['descripcion']), 30)) : 'Sin descripción' ?>
+                            <td data-label="Descripción" class="fondo-color-diferente editable-descripcion" data-editable="true" data-field="descripcion" data-id="<?= htmlspecialchars(
+                                (string) $row["id"],
+                            ) ?>" data-codigo_idioma="<?= htmlspecialchars(
+    get_language(),
+) ?>">
+                                <?= !empty($row["descripcion"])
+                                    ? htmlspecialchars(
+                                        truncate_text(
+                                            html_entity_decode(
+                                                $row["descripcion"],
+                                            ),
+                                            30,
+                                        ),
+                                    )
+                                    : "Sin descripción" ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
@@ -303,7 +395,9 @@ declare(strict_types=1);
 
         <?php else: ?>
             <div style="text-align:center; margin-top:2em;">
-                <h2>No se encontraron resultados para <strong><?= htmlspecialchars($caseta) ?></strong>.</h2>
+                <h2>No se encontraron resultados para <strong><?= htmlspecialchars(
+                    $caseta,
+                ) ?></strong>.</h2>
                 <p>Prueba con otro código de caseta o revisa la ortografía.</p>
                 <ul style="display:inline-block; text-align:left; margin:1em auto;">
                     <li>Ejemplo: <code>CE001</code>, <code>CO121</code>, <code>MC001</code>, <code>NA338</code>, <code>NC041</code></li>
@@ -314,7 +408,7 @@ declare(strict_types=1);
     </main>
 
     <footer role="contentinfo">
-        <?php require(SECTIONS . 'pagination.php'); ?>
+        <?php require SECTIONS . "pagination.php"; ?>
     </footer>
 
         <!-- Modal para edición rápida -->
@@ -338,14 +432,14 @@ declare(strict_types=1);
     </script>
 
     <?php if ($resultados_encontrados): ?>
-        <script type="module" src="<?= JS_ADMIN . 'index.js' ?>"></script>
+        <script type="module" src="<?= JS_ADMIN . "index.js" ?>"></script>
     <?php else: ?>
         <?php if (!$busqueda_hecha): ?>
             <h2 style="text-align: center;">No se encontraron resultados. Configure la base de datos</h2>
         <?php endif; ?>
     <?php endif; ?>
 
-    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+    <script src="<?= JS . "/helpers/dark_mode.js" ?>"></script>
     <script>
         document.querySelectorAll('.zoomable.editable-image').forEach(img => {
             img.addEventListener('click', function () {

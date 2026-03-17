@@ -1,6 +1,5 @@
 <?php
-declare(strict_types=1);
-?>
+declare(strict_types=1) ?>
 <!DOCTYPE html>
 
 <html lang="es">
@@ -11,8 +10,8 @@ declare(strict_types=1);
         <title>Admin - PraceAR - Editar Traducciones de Puesto - Página de administración</title>
         <style>
         <?php
-            require_once CSS_ADMIN . 'theme.css';
-            require_once CSS_ADMIN . 'header.css';
+        require_once CSS_ADMIN . "theme.css";
+        require_once CSS_ADMIN . "header.css";
         ?>
         /* Máximo tamaño del body */
         body {
@@ -142,36 +141,50 @@ declare(strict_types=1);
 
 <body class="admin-edit-translations">
     <?php
-    require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php';
-    require_once 'connection.php';
-    require_once HELPERS . 'update_stalls_translations.php';
+    require_once COMPONENT_ADMIN .
+        "sections" .
+        DIRECTORY_SEPARATOR .
+        "header.php";
+    require_once "connection.php";
+    require_once HELPERS . "update_stalls_translations.php";
 
-    $codigo_idioma = filter_input(INPUT_GET, 'codigo_idioma', FILTER_SANITIZE_SPECIAL_CHARS);
-    $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+    $codigo_idioma = filter_input(
+        INPUT_GET,
+        "codigo_idioma",
+        FILTER_SANITIZE_SPECIAL_CHARS,
+    );
+    $id = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
 
-    $sql_seleccion = "SELECT id, tipo, descripcion FROM puestos_traducciones WHERE codigo_idioma = ? AND puesto_id = ?";
+    $sql_seleccion =
+        "SELECT id, tipo, descripcion FROM puestos_traducciones WHERE codigo_idioma = ? AND puesto_id = ?";
     $stmt = $conexion?->prepare($sql_seleccion);
     if (!$stmt) {
-        die('<h2 style="text-align: center;">Error de conexión a la base de datos. <a href="index.php">Volver</a></h2>');
+        die(
+            '<h2 style="text-align: center;">Error de conexión a la base de datos. <a href="index.php">Volver</a></h2>'
+        );
     }
-    $stmt->bind_param('si', $codigo_idioma, $id);
+    $stmt->bind_param("si", $codigo_idioma, $id);
     $stmt->execute();
     $resultado = $stmt->get_result();
     $puesto_encontrado = false;
 
     $data = $resultado->fetch_assoc();
     if (!$data) {
-        die('<h2 style="text-align: center;">No se encontró la traducción. <a href="index.php">Volver</a></h2>');
+        die(
+            '<h2 style="text-align: center;">No se encontró la traducción. <a href="index.php">Volver</a></h2>'
+        );
     }
 
     $puesto_encontrado = true;
 
     // Obtener el nombre del puesto
     $sql_nombre_puesto = "SELECT nombre FROM puestos WHERE id = ?";
-    $stmt_nombre_puesto = $conexion ? $conexion->prepare($sql_nombre_puesto) : null;
+    $stmt_nombre_puesto = $conexion
+        ? $conexion->prepare($sql_nombre_puesto)
+        : null;
     $nombre_puesto = null;
     if ($stmt_nombre_puesto) {
-        $stmt_nombre_puesto->bind_param('i', $id);
+        $stmt_nombre_puesto->bind_param("i", $id);
         $stmt_nombre_puesto->execute();
         $resultado_nombre_puesto = $stmt_nombre_puesto->get_result();
         $nombre_puesto = $resultado_nombre_puesto->fetch_assoc();
@@ -179,21 +192,23 @@ declare(strict_types=1);
     ?>
     <h2>
         <span>
-            <?= isset($nombre_puesto['nombre']) ? htmlspecialchars($nombre_puesto['nombre']) : 'Nombre no disponible'; ?>
+            <?= isset($nombre_puesto["nombre"])
+                ? htmlspecialchars($nombre_puesto["nombre"])
+                : "Nombre no disponible" ?>
         </span>
     </h2>
     </h2>
-    <?php
-    if (!isset($_SESSION['csrf'])) {
-        $_SESSION['csrf'] = bin2hex(random_bytes(32));
-    }
-    ?>
-    <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+    <?php if (!isset($_SESSION["csrf"])) {
+        $_SESSION["csrf"] = bin2hex(random_bytes(32));
+    } ?>
+    <input type="hidden" name="csrf" value="<?= $_SESSION["csrf"] ?? "" ?>">
 
     <form class="pure-form" action="#" method="POST" id="formulario" aria-labelledby="formulario-titulo">
-        <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+        <input type="hidden" name="csrf" value="<?= $_SESSION["csrf"] ?? "" ?>">
         <label for="tipo">Tipo <span class="admin-required" aria-hidden="true">*</span></label>
-        <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars(html_entity_decode($data['tipo'] ?? "")) ?>"
+        <input type="text" id="tipo" name="tipo" value="<?= htmlspecialchars(
+            html_entity_decode($data["tipo"] ?? ""),
+        ) ?>"
             placeholder="Tipo de puesto. Por ejemplo: 'Bisutería'" required aria-required="true"
             aria-describedby="tipo-descripcion">
         <span id="tipo-descripcion" class="visually-hidden">Campo obligatorio. Introduzca el tipo de puesto.</span>
@@ -201,21 +216,26 @@ declare(strict_types=1);
         <label for="descripcion">Descripción</label>
         <textarea name="descripcion" id="descripcion" cols="10" rows="10"
             placeholder="Descripción del puesto. Por ejemplo: 'Bisutería hecha a mano'." maxlength="450"
-            aria-describedby="descripcion-descripcion"><?= htmlspecialchars(html_entity_decode($data['descripcion'] ?? "")) ?></textarea>
+            aria-describedby="descripcion-descripcion"><?= htmlspecialchars(
+                html_entity_decode($data["descripcion"] ?? ""),
+            ) ?></textarea>
         <span id="descripcion-descripcion" class="visually-hidden">Introduzca una descripción del puesto, máximo 450
             caracteres.</span>
 
-        <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars((string)($data['id'] ?? "")) ?>">
+        <input type="hidden" name="id_traduccion" value="<?= htmlspecialchars(
+            (string) ($data["id"] ?? ""),
+        ) ?>">
         <input type="submit" value="Actualizar">
     </form>
     <p class="admin-error-text" style="text-align: center;">Los campos marcados con <span class="admin-required"
             aria-hidden="true">*</span> son
         obligatorios</p>
-    <?= htmlspecialchars($mensaje ?? ""); ?>
+    <?= htmlspecialchars($mensaje ?? "") ?>
     <?php if ($puesto_encontrado) { ?>
-        <script type="module" src="<?= JS_ADMIN . 'edit_translations.js' ?>"></script>
+        <script type="module" src="<?= JS_ADMIN .
+            "edit_translations.js" ?>"></script>
     <?php } ?>
-    <script src="<?= JS . '/helpers/dark_mode.js' ?>"></script>
+    <script src="<?= JS . "/helpers/dark_mode.js" ?>"></script>
 
 </body>
 
