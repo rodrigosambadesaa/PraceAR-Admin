@@ -256,7 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             $login,
                             $rate_limit_config,
                         );
-                        header("Location: $protocolo/$servidor/$subdominio");
+                        header("Location: " . BASE_URL);
                         exit();
                     }
                 }
@@ -316,7 +316,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         $login,
                         $rate_limit_config,
                     );
-                    header("Location: $protocolo/$servidor/$subdominio");
+                    header("Location: " . BASE_URL);
                     exit();
                 } else {
                     throw new Exception($generic_login_error_message);
