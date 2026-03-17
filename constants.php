@@ -98,7 +98,7 @@ define("UNITY_TYPE", [
     "cod-frozen" => "Bacallau e conxelados: cod-frozen",
     "poultry-eggs" => "Aves e ovos: poultry-eggs",
     "vegetables-organics" =>
-        "Froitas e verduras e ecolóxicos: vegetables-organics",
+    "Froitas e verduras e ecolóxicos: vegetables-organics",
     "bread-sweets" => "Pan e doces: bread-sweets",
     "flowers" => "Flores: flowers",
     "restaurants" => "Restauración e produtos elaborados: retaurants",
@@ -107,13 +107,39 @@ define("UNITY_TYPE", [
 // Datos de conexión y configuración desde .env / variables de entorno
 $envVariables = load_project_env(DIRNAME);
 
+// Normaliza HTTP_HOST para evitar inyección de cabecera Host en generación de URLs.
+$rawHostHeader = (string) ($_SERVER["HTTP_HOST"] ?? ($_SERVER["SERVER_NAME"] ?? "localhost"));
+$hostWithoutPort = preg_replace('/:\\d+$/', "", $rawHostHeader);
+$normalizedHost = is_string($hostWithoutPort) ? strtolower(trim($hostWithoutPort)) : "localhost";
+if ($normalizedHost === "" || preg_match('/^[a-z0-9.-]+$/', $normalizedHost) !== 1) {
+    $normalizedHost = "localhost";
+}
+
+$configuredAllowedHosts = get_env_value("APP_ALLOWED_HOSTS", $envVariables);
+$allowedHosts = [];
+if (is_string($configuredAllowedHosts) && $configuredAllowedHosts !== "") {
+    $candidateHosts = explode(",", $configuredAllowedHosts);
+    foreach ($candidateHosts as $candidateHost) {
+        $candidateHost = strtolower(trim($candidateHost));
+        if ($candidateHost !== "" && preg_match('/^[a-z0-9.-]+$/', $candidateHost) === 1) {
+            $allowedHosts[] = $candidateHost;
+        }
+    }
+}
+
+$effectiveHost = $normalizedHost;
+if ($allowedHosts !== [] && !in_array($normalizedHost, $allowedHosts, true)) {
+    $effectiveHost = $allowedHosts[0];
+    error_log(sprintf('Cabecera Host no permitida detectada: "%s". Se usará "%s".', $normalizedHost, $effectiveHost));
+}
+
 // Detectar el protocolo
 $protocolo =
     (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off") ||
     $_SERVER["SERVER_PORT"] == 443
-        ? "https://"
-        : "http://";
-$host = $_SERVER["HTTP_HOST"];
+    ? "https://"
+    : "http://";
+$host = $effectiveHost;
 
 // Permite forzar la URL base (útil en Docker/reverse proxy) y mantiene fallback histórico.
 $configuredBaseUrl = get_env_value("APP_BASE_URL", $envVariables);
@@ -139,7 +165,7 @@ if (!defined("VIRUSTOTAL_API_KEY_FILE")) {
 }
 
 // Detectar el servidor
-$servidor = $_SERVER["HTTP_HOST"];
+$servidor = $effectiveHost;
 
 // Construir la URL completa
 $url = $protocolo . $servidor . "/";
@@ -150,7 +176,7 @@ $subdominio = basename(__DIR__);
 // Datos de conexión a la BBDD
 // Prioriza APP_ENV; si no está, comprueba varios nombres/IP locales
 $appEnv = get_env_value("APP_ENV", $envVariables);
-$host = $_SERVER["SERVER_NAME"] ?? ($_SERVER["HTTP_HOST"] ?? "");
+$host = $effectiveHost;
 
 // Local detection depends ONLY on the hostname, not on the APP_ENV mode
 $isLocal = in_array($host, ["localhost", "127.0.0.1", "::1"], true);
