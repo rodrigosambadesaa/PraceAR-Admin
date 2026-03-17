@@ -6,7 +6,8 @@ declare(strict_types=1);
  */
 function get_languages(mysqli $conexion): array
 {
-    $sql = 'SELECT DISTINCT codigo_idioma, nombre_idioma FROM puestos_traducciones';
+    $sql =
+        "SELECT DISTINCT codigo_idioma, nombre_idioma FROM puestos_traducciones";
 
     $stmt = $conexion->prepare($sql);
     $stmt->execute();

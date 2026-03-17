@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-require_once __DIR__ . '/../constants.php';
+require_once __DIR__ . "/../constants.php";
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -19,9 +19,9 @@ require_once __DIR__ . '/../constants.php';
 
     <style>
         <?php
-            require_once(CSS_ADMIN . 'theme.css');
-            require_once(CSS_ADMIN . 'header.css');
-            require_once(CSS_ADMIN . 'market_sections.php');
+        require_once CSS_ADMIN . "theme.css";
+        require_once CSS_ADMIN . "header.css";
+        require_once CSS_ADMIN . "market_sections.php";
         ?>
 
         /* ...existing code... */
@@ -70,7 +70,10 @@ require_once __DIR__ . '/../constants.php';
 </head>
 
 <body>
-    <?php require_once(COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php'); ?>
+    <?php require_once COMPONENT_ADMIN .
+        "sections" .
+        DIRECTORY_SEPARATOR .
+        "header.php"; ?>
 
     <main class="maps">
         <h2>Mapas de las Ameas, Naves y Murallones</h2>
@@ -78,34 +81,53 @@ require_once __DIR__ . '/../constants.php';
             <?php
             // Recoger todas las imágenes en un solo array (máximo 12)
             $imagenes = [];
-            foreach (NAVES['ameas'] as $amea) {
+            foreach (NAVES["ameas"] as $amea) {
                 $imagenes[] = [
-                    'src' => './img/amea' . $amea['indice'] . '.jpg',
-                    'alt' => 'Imagen de Amea ' . $amea['indice'],
-                    'caption' => 'Amea ' . $amea['indice'] . ' / ' . implode("-", $amea['range'])
+                    "src" => "./img/amea" . $amea["indice"] . ".jpg",
+                    "alt" => "Imagen de Amea " . $amea["indice"],
+                    "caption" =>
+                        "Amea " .
+                        $amea["indice"] .
+                        " / " .
+                        implode("-", $amea["range"]),
                 ];
             }
-            foreach (NAVES['naves'] as $nave) {
+            foreach (NAVES["naves"] as $nave) {
                 $imagenes[] = [
-                    'src' => './img/nave' . $nave['indice'] . '.jpg',
-                    'alt' => 'Imagen de Nave ' . $nave['indice'],
-                    'caption' => 'Nave ' . $nave['indice'] . ' / ' . implode("-", $nave['range'])
+                    "src" => "./img/nave" . $nave["indice"] . ".jpg",
+                    "alt" => "Imagen de Nave " . $nave["indice"],
+                    "caption" =>
+                        "Nave " .
+                        $nave["indice"] .
+                        " / " .
+                        implode("-", $nave["range"]),
                 ];
             }
-            foreach (NAVES['murallones'] as $murallon) {
+            foreach (NAVES["murallones"] as $murallon) {
                 $imagenes[] = [
-                    'src' => './img/murallon' . $murallon['indice'] . '.jpg',
-                    'alt' => 'Imagen de Murallón ' . $murallon['indice'],
-                    'caption' => 'Murallón ' . $murallon['indice'] . ' / ' . implode("-", $murallon['range'])
+                    "src" => "./img/murallon" . $murallon["indice"] . ".jpg",
+                    "alt" => "Imagen de Murallón " . $murallon["indice"],
+                    "caption" =>
+                        "Murallón " .
+                        $murallon["indice"] .
+                        " / " .
+                        implode("-", $murallon["range"]),
                 ];
             }
             $imagenes = array_slice($imagenes, 0, 12); // Solo 12 imágenes
             foreach ($imagenes as $img): ?>
-                <figure class="zoom" tabindex="0" role="button" aria-label="Ampliar <?= htmlspecialchars($img['alt']) ?>">
-                    <img loading="lazy" src="<?= htmlspecialchars($img['src']) ?>" alt="<?= htmlspecialchars($img['alt']) ?>">
-                    <figcaption><?= htmlspecialchars($img['caption']) ?></figcaption>
+                <figure class="zoom" tabindex="0" role="button" aria-label="Ampliar <?= htmlspecialchars(
+                    $img["alt"],
+                ) ?>">
+                    <img loading="lazy" src="<?= htmlspecialchars(
+                        $img["src"],
+                    ) ?>" alt="<?= htmlspecialchars($img["alt"]) ?>">
+                    <figcaption><?= htmlspecialchars(
+                        $img["caption"],
+                    ) ?></figcaption>
                 </figure>
-            <?php endforeach; ?>
+            <?php endforeach;
+            ?>
         </div>
     </main>
 
@@ -118,8 +140,9 @@ require_once __DIR__ . '/../constants.php';
         </figure>
     </div>
 
-    <script type="module" src="<?= JS_ADMIN . '/market_sections.js' ?>"></script>
-    <script src="<?= JS . '/helpers/dark_mode.js' ?>" defer></script>
+    <script type="module" src="<?= JS_ADMIN .
+        "/market_sections.js" ?>"></script>
+    <script src="<?= JS . "/helpers/dark_mode.js" ?>" defer></script>
 
 </body>
 

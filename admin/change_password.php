@@ -1,6 +1,5 @@
 <?php
-declare(strict_types=1);
-?>
+declare(strict_types=1) ?>
 <!DOCTYPE html>
 <html lang="es">
     
@@ -11,8 +10,8 @@ declare(strict_types=1);
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
         <style>
             <?php
-            require_once(CSS_ADMIN . 'theme.css');
-            require_once(CSS_ADMIN . 'header.css');
+            require_once CSS_ADMIN . "theme.css";
+            require_once CSS_ADMIN . "header.css";
             ?>
             /* body {
                 max-width: 80%;
@@ -356,17 +355,20 @@ declare(strict_types=1);
     <?php
     // Incluimos los archivos necesarios.  Es importante usar rutas absolutas o relativas correctas.
     // require_once 'config.php'; // Asegúrate de que este archivo define las constantes COMPONENT_ADMIN, HELPERS, etc.
-    require_once COMPONENT_ADMIN . 'sections' . DIRECTORY_SEPARATOR . 'header.php';
-    require_once HELPERS . 'clean_input.php';
-    require_once HELPERS . 'verify_strong_password.php';
+    require_once COMPONENT_ADMIN .
+        "sections" .
+        DIRECTORY_SEPARATOR .
+        "header.php";
+    require_once HELPERS . "clean_input.php";
+    require_once HELPERS . "verify_strong_password.php";
 
-    $pepper_config = include 'pepper2.php';  // Incluimos la configuración del pepper.
-    
-    $today = date('Y-m-d');
+    $pepper_config = include "pepper2.php"; // Incluimos la configuración del pepper.
+
+    $today = date("Y-m-d");
     $pepper = null;
     for ($i = 0; $i < count($pepper_config); $i++) {
-        if ($pepper_config[$i]['last_used'] >= $today) {
-            $pepper = $pepper_config[$i]['PASSWORD_PEPPER'];
+        if ($pepper_config[$i]["last_used"] >= $today) {
+            $pepper = $pepper_config[$i]["PASSWORD_PEPPER"];
             break;
         }
     }
@@ -385,99 +387,156 @@ declare(strict_types=1);
     }
 
     if (tiene_espacios_al_principio_o_al_final($pepper)) {
-        throw new Exception("El pepper no puede tener espacios al principio o al final.");
+        throw new Exception(
+            "El pepper no puede tener espacios al principio o al final.",
+        );
     }
 
     if (tiene_secuencias_alfabeticas_inseguras($pepper)) {
-        throw new Exception("El pepper no puede tener secuencias alfabéticas inseguras.");
+        throw new Exception(
+            "El pepper no puede tener secuencias alfabéticas inseguras.",
+        );
     }
 
     if (tiene_secuencias_numericas_inseguras($pepper)) {
-        throw new Exception("El pepper no puede tener secuencias numéricas inseguras.");
+        throw new Exception(
+            "El pepper no puede tener secuencias numéricas inseguras.",
+        );
     }
 
     if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
-        throw new Exception("El pepper no puede tener secuencias de caracteres especiales inseguras.");
+        throw new Exception(
+            "El pepper no puede tener secuencias de caracteres especiales inseguras.",
+        );
     }
 
-    $err = ''; // Inicializamos la variable de error.
-    $success_message = '';
+    $err = ""; // Inicializamos la variable de error.
+    $success_message = "";
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-       if (!isset($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $_POST['csrf'])) {
+    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+        if (
+            !isset($_SESSION["csrf"]) ||
+            !hash_equals($_SESSION["csrf"], $_POST["csrf"])
+        ) {
             throw new Exception("Token CSRF inválido.");
         }
 
         try {
-            $user_id = $_SESSION['id'];
-            $old_password = trim($_POST['old_password']);
-            $new_password = trim($_POST['new_password']);
-            $confirm_password = trim($_POST['confirm_password']);
+            $user_id = $_SESSION["id"];
+            $old_password = trim($_POST["old_password"]);
+            $new_password = trim($_POST["new_password"]);
+            $confirm_password = trim($_POST["confirm_password"]);
 
             // Validaciones de campos (las dejamos, el código original ya las incluía)
-            if (empty($old_password) || empty($new_password) || empty($confirm_password)) {
+            if (
+                empty($old_password) ||
+                empty($new_password) ||
+                empty($confirm_password)
+            ) {
                 throw new Exception("Todos los campos son obligatorios.");
             }
 
-            if (!is_string($old_password) || !is_string($new_password) || !is_string($confirm_password)) {
-                throw new Exception("Todos los campos deben ser cadenas de texto.");
+            if (
+                !is_string($old_password) ||
+                !is_string($new_password) ||
+                !is_string($confirm_password)
+            ) {
+                throw new Exception(
+                    "Todos los campos deben ser cadenas de texto.",
+                );
             }
 
             if ($new_password !== $confirm_password) {
                 throw new Exception("Las contraseñas no coinciden.");
             }
 
-            if (tiene_espacios_al_principio_o_al_final($_POST['new_password']) || tiene_espacios_al_principio_o_al_final($_POST['confirm_password']) || tiene_espacios_al_principio_o_al_final($_POST['old_password'])) {
-                throw new Exception("Las contraseñas no pueden tener espacios al principio o al final.");
+            if (
+                tiene_espacios_al_principio_o_al_final(
+                    $_POST["new_password"],
+                ) ||
+                tiene_espacios_al_principio_o_al_final(
+                    $_POST["confirm_password"],
+                ) ||
+                tiene_espacios_al_principio_o_al_final($_POST["old_password"])
+            ) {
+                throw new Exception(
+                    "Las contraseñas no pueden tener espacios al principio o al final.",
+                );
             }
 
             if (strlen($new_password) < 16 || strlen($new_password) > 1024) {
-                throw new Exception("La nueva contraseña debe tener entre 16 y 1024 caracteres.");
+                throw new Exception(
+                    "La nueva contraseña debe tener entre 16 y 1024 caracteres.",
+                );
             }
 
             if (!es_contrasenha_fuerte($new_password)) {
-                throw new Exception("La nueva contraseña no cumple con los requisitos de seguridad. Debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.");
+                throw new Exception(
+                    "La nueva contraseña no cumple con los requisitos de seguridad. Debe tener al menos 16 caracteres, una letra mayúscula, una letra minúscula, un número y tres caracteres especiales distintos.",
+                );
             }
 
             if (ha_sido_filtrada_en_brechas_de_seguridad($new_password)) {
-                throw new Exception("La nueva contraseña ha sido filtrada en brechas de seguridad. Por favor, elige una contraseña más segura.");
+                throw new Exception(
+                    "La nueva contraseña ha sido filtrada en brechas de seguridad. Por favor, elige una contraseña más segura.",
+                );
             }
 
-            if (contrasenha_similar_a_usuario($new_password, $_SESSION['nombre_usuario'])) {
-                throw new Exception("La nueva contraseña no puede ser similar al nombre de usuario.");
+            if (
+                contrasenha_similar_a_usuario(
+                    $new_password,
+                    $_SESSION["nombre_usuario"],
+                )
+            ) {
+                throw new Exception(
+                    "La nueva contraseña no puede ser similar al nombre de usuario.",
+                );
             }
 
             if (tiene_secuencias_numericas_inseguras($new_password)) {
-                throw new Exception("La nueva contraseña no puede tener secuencias numéricas inseguras como '1234', '12345', '123456', '1234567', '12345678', '123456789', '987654321', '87654321', '7654321', '654321', '54321', '4321', '321', '21', '147', '258', '369', '159', '357'");
+                throw new Exception(
+                    "La nueva contraseña no puede tener secuencias numéricas inseguras como '1234', '12345', '123456', '1234567', '12345678', '123456789', '987654321', '87654321', '7654321', '654321', '54321', '4321', '321', '21', '147', '258', '369', '159', '357'",
+                );
             }
 
             if (tiene_secuencias_alfabeticas_inseguras($new_password)) {
-                throw new Exception("La nueva contraseña no puede contener secuencias alfabéticas inseguras como 'abc', 'qwert', 'asdf', 'zxcv', 'poiuy', 'lkjh', 'mnbv'");
+                throw new Exception(
+                    "La nueva contraseña no puede contener secuencias alfabéticas inseguras como 'abc', 'qwert', 'asdf', 'zxcv', 'poiuy', 'lkjh', 'mnbv'",
+                );
             }
 
-            if (tiene_secuencias_caracteres_especiales_inseguras($new_password)) {
-                throw new Exception("La nueva contraseña no puede contener secuencias de caracteres especiales inseguras como '()'");
+            if (
+                tiene_secuencias_caracteres_especiales_inseguras($new_password)
+            ) {
+                throw new Exception(
+                    "La nueva contraseña no puede contener secuencias de caracteres especiales inseguras como '()'",
+                );
             }
 
-            $contrasenha_vieja_a_insertar_en_old_passwords_encriptada = ''; // Inicializar aquí
-    
+            $contrasenha_vieja_a_insertar_en_old_passwords_encriptada = ""; // Inicializar aquí
+
             // Para todos los pepper, verificar si la contraseña coincide con alguna de las contraseñas antiguas o si es similar a alguna de ellas
             $password_coincide = false; // Variable para controlar si la contraseña antigua coincide
             for ($i = 0; $i < count($pepper_config); $i++) {
-                $pepper_usado = $pepper_config[$i]['PASSWORD_PEPPER']; // Usar una variable diferente aquí
-    
+                $pepper_usado = $pepper_config[$i]["PASSWORD_PEPPER"]; // Usar una variable diferente aquí
+
                 // Consulta para obtener la contraseña actual del usuario
                 $sql = "SELECT password FROM usuarios WHERE id = ?";
                 $stmt = $conexion->prepare($sql);
-                $stmt->bind_param('i', $user_id);
+                $stmt->bind_param("i", $user_id);
                 $stmt->execute();
                 $result = $stmt->get_result();
 
                 if ($result->num_rows === 1) {
                     $usuario = $result->fetch_assoc();
-                    $stored_password = $usuario['password'];
+                    $stored_password = $usuario["password"];
 
-                    if (password_verify("{$old_password}{$pepper_usado}", $stored_password)) {
+                    if (
+                        password_verify(
+                            "{$old_password}{$pepper_usado}",
+                            $stored_password,
+                        )
+                    ) {
                         $password_coincide = true; // La contraseña antigua coincide
                         break; // Importante: Salir del bucle for si la contraseña coincide
                     }
@@ -490,26 +549,36 @@ declare(strict_types=1);
 
             $sql = "SELECT password FROM old_passwords WHERE id_usuario = ?";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param('i', $user_id);
+            $stmt->bind_param("i", $user_id);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
-                    $old_password_from_db = $row['password'];
+                    $old_password_from_db = $row["password"];
                     for ($i = 0; $i < count($pepper_config); $i++) {
-                        $pepper_usado = $pepper_config[$i]['PASSWORD_PEPPER'];
-                        if (password_verify($new_password . $pepper_usado, $old_password_from_db)) {
+                        $pepper_usado = $pepper_config[$i]["PASSWORD_PEPPER"];
+                        if (
+                            password_verify(
+                                $new_password . $pepper_usado,
+                                $old_password_from_db,
+                            )
+                        ) {
                             // Mostrar el mensaje de error si la nueva contraseña coincide con alguna de las antiguas en el class .error-message
                             echo "<div class='error-message'>La nueva contraseña no puede ser igual a una de las contraseñas antiguas.</div>";
                             // Finalizar la ejecución del script para evitar que se inserte la contraseña antigua en la base de datos
-                            exit;
+                            exit();
                         }
-                        if (contrasenha_similar_a_contrasenha_anterior($new_password, $old_password_from_db)) {
+                        if (
+                            contrasenha_similar_a_contrasenha_anterior(
+                                $new_password,
+                                $old_password_from_db,
+                            )
+                        ) {
                             // Mostrar el mensaje de error si la nueva contraseña es similar a alguna de las antiguas en el class .error-message
                             echo "<div class='error-message'>La nueva contraseña no puede ser similar a una de las contraseñas antiguas.</div>";
                             // Finalizar la ejecución del script para evitar que se inserte la contraseña antigua en la base de datos
-                            exit;
+                            exit();
                         }
                     }
                 }
@@ -517,39 +586,53 @@ declare(strict_types=1);
             // Volvemos a obtener la contraseña de la base de datos para el rehash
             $sql_select = "SELECT password FROM usuarios WHERE id = ?";
             $stmt_select = $conexion->prepare($sql_select);
-            $stmt_select->bind_param('i', $user_id);
+            $stmt_select->bind_param("i", $user_id);
             $stmt_select->execute();
             $result_select = $stmt_select->get_result();
 
             if ($result_select->num_rows === 1) {
                 $usuario = $result_select->fetch_assoc();
-                $stored_password = $usuario['password'];
+                $stored_password = $usuario["password"];
 
                 // Verificar la contraseña actual para todos los pepper
                 for ($i = 0; $i < count($pepper_config); $i++) {
-                    $pepper_usado = $pepper_config[$i]['PASSWORD_PEPPER'];
-                    if (password_verify("{$old_password}{$pepper_usado}", $stored_password)) {
-                        $pepper = $pepper_usado;  // Guardar el pepper que sí funcionó
+                    $pepper_usado = $pepper_config[$i]["PASSWORD_PEPPER"];
+                    if (
+                        password_verify(
+                            "{$old_password}{$pepper_usado}",
+                            $stored_password,
+                        )
+                    ) {
+                        $pepper = $pepper_usado; // Guardar el pepper que sí funcionó
                         break;
                     }
                 }
                 // Rehash
-                if (password_needs_rehash($stored_password, PASSWORD_ARGON2ID)) {
-                    $stored_password = password_hash("{$old_password}{$pepper}", PASSWORD_ARGON2ID);
-                    $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
+                if (
+                    password_needs_rehash($stored_password, PASSWORD_ARGON2ID)
+                ) {
+                    $stored_password = password_hash(
+                        "{$old_password}{$pepper}",
+                        PASSWORD_ARGON2ID,
+                    );
+                    $update_sql =
+                        "UPDATE usuarios SET password = ? WHERE id = ?";
                     $update_stmt = $conexion->prepare($update_sql);
-                    $update_stmt->bind_param('si', $stored_password, $user_id);
+                    $update_stmt->bind_param("si", $stored_password, $user_id);
                     $update_stmt->execute();
                 }
             }
 
             // Generar el hash de la nueva contraseña
-            $hashed_password = password_hash("{$new_password}{$pepper}", PASSWORD_ARGON2ID);
+            $hashed_password = password_hash(
+                "{$new_password}{$pepper}",
+                PASSWORD_ARGON2ID,
+            );
 
             // Actualizar la contraseña en la base de datos
             $update_sql = "UPDATE usuarios SET password = ? WHERE id = ?";
             $update_stmt = $conexion->prepare($update_sql);
-            $update_stmt->bind_param('si', $hashed_password, $user_id);
+            $update_stmt->bind_param("si", $hashed_password, $user_id);
             $update_stmt->execute();
 
             $success_message = "Contraseña cambiada correctamente.";
@@ -567,35 +650,47 @@ declare(strict_types=1);
                 </div>";
 
             // Insertar la vieja contraseña validada en la tabla de contraseñas antiguas
-            $contrasenha_vieja_a_insertar_en_old_passwords_encriptada = password_hash("{$old_password}{$pepper}", PASSWORD_ARGON2ID);
-            $sql = "INSERT INTO old_passwords (id, id_usuario, password, date) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";
+            $contrasenha_vieja_a_insertar_en_old_passwords_encriptada = password_hash(
+                "{$old_password}{$pepper}",
+                PASSWORD_ARGON2ID,
+            );
+            $sql =
+                "INSERT INTO old_passwords (id, id_usuario, password, date) VALUES (NULL, ?, ?, CURRENT_TIMESTAMP)";
             $stmt = $conexion->prepare($sql);
-            $stmt->bind_param('is', $user_id, $contrasenha_vieja_a_insertar_en_old_passwords_encriptada);
+            $stmt->bind_param(
+                "is",
+                $user_id,
+                $contrasenha_vieja_a_insertar_en_old_passwords_encriptada,
+            );
             $stmt->execute();
 
             /* Esperar un minuto y meido antes de redirigir para que le dé tiempo a leer los consejos  
             sleep(90);
             header("refresh:2;url=$protocolo/$servidor/$subdominio"); */
-            exit;
+            exit();
         } catch (Exception $e) {
-            $err = '<span class="admin-error-text" style="text-align: center;">' . htmlspecialchars($e->getMessage() ?? 'Error desconocido') . '</span>';
+            $err =
+                '<span class="admin-error-text" style="text-align: center;">' .
+                htmlspecialchars($e->getMessage() ?? "Error desconocido") .
+                "</span>";
         }
     }
-
     ?>
 
     <h1 style="text-align: center;">Cambiar contraseña</h1>
-    <?php
-    if (!isset($_SESSION['csrf'])) {
-        echo '<input type="hidden" name="csrf" value="' . ($_SESSION['csrf'] ?? '') . '">';
-    }
-    ?>
+    <?php if (!isset($_SESSION["csrf"])) {
+        echo '<input type="hidden" name="csrf" value="' .
+            ($_SESSION["csrf"] ?? "") .
+            '">';
+    } ?>
 
     <form method="POST" id="formulario-cambio-contrasena" aria-labelledby="formulario-titulo">
-        <input type="hidden" name="csrf" value="<?= $_SESSION['csrf'] ?? '' ?>">
+        <input type="hidden" name="csrf" value="<?= $_SESSION["csrf"] ?? "" ?>">
         <div id="form-group">
             <label for="nombre-usuario">Nombre de usuario: </label>
-            <input type="text" name="nombre_usuario" id="nombre-usuario" value="<?= $_SESSION['nombre_usuario'] ?>"
+            <input type="text" name="nombre_usuario" id="nombre-usuario" value="<?= $_SESSION[
+                "nombre_usuario"
+            ] ?>"
                 disabled aria-disabled="true">
         </div>
         <div id="form-group">
