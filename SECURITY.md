@@ -10,9 +10,9 @@ AppVenturers es un proyecto en desarrollo que ha completado una **revisión de s
 2. **Integración de un Captcha Seguro** en el formulario de login (alternativa a Google reCAPTCHA).
 3. **Implementación de un Rate Limiter** en el formulario de login para prevenir ataques de fuerza bruta y abuso.
 4. Se ha completado una **auditoría inicial del código** para identificar y corregir vulnerabilidades clave, incluyendo:
-   - Inyección SQL.
-   - XSS (Cross-Site Scripting).
-   - Manejo inseguro de sesiones.
+      - Inyección SQL.
+      - XSS (Cross-Site Scripting).
+      - Manejo inseguro de sesiones.
 
 ---
 
@@ -21,15 +21,15 @@ AppVenturers es un proyecto en desarrollo que ha completado una **revisión de s
 Si eres un experto en **PHP y ciberseguridad**, te invitamos a continuar colaborando en este proyecto open-source. Ahora nos centramos en las siguientes áreas:
 
 1. **Refinar la seguridad existente**:
-   - Revisar la implementación actual de **CSRF** y **Rate Limiting** para buscar posibles bypasses o mejoras de rendimiento.
-   - Proponer y aplicar mejoras en el filtrado y sanitización de entradas, buscando una seguridad *de defensa en profundidad*.
+      - Revisar la implementación actual de **CSRF** y **Rate Limiting** para buscar posibles bypasses o mejoras de rendimiento.
+      - Proponer y aplicar mejoras en el filtrado y sanitización de entradas, buscando una seguridad _de defensa en profundidad_.
 
 2. **Auditoría continua del código**:
-   - Realizar auditorías detalladas en nuevas secciones o funcionalidades en busca de vulnerabilidades (incluyendo las de la lista **OWASP**).
-   - Sugerir o enviar **Pull Requests** con soluciones para vulnerabilidades más sutiles o de lógica de negocio.
+      - Realizar auditorías detalladas en nuevas secciones o funcionalidades en busca de vulnerabilidades (incluyendo las de la lista **OWASP**).
+      - Sugerir o enviar **Pull Requests** con soluciones para vulnerabilidades más sutiles o de lógica de negocio.
 
 3. **Documentar buenas prácticas de seguridad**:
-   - Mantener y expandir la documentación sobre el manejo seguro de PHP (uso de PDO, sesiones seguras, etc.) y las protecciones ya implementadas.
+      - Mantener y expandir la documentación sobre el manejo seguro de PHP (uso de PDO, sesiones seguras, etc.) y las protecciones ya implementadas.
 
 ---
 
@@ -57,7 +57,7 @@ Para comenzar a colaborar, puedes revisar los siguientes recursos:
 
 **¡Gracias por ayudarnos a proteger AppVenturers y mejorar su seguridad!** 🚀🔐
 
-***
+---
 
 # 🔐 Security Policy - AppVenturers
 
@@ -71,9 +71,9 @@ AppVenturers is an open-source project under development that has completed an *
 2. **Integration of a Secure Captcha** in the login form (alternative to Google reCAPTCHA).
 3. **Implementation of a Rate Limiter** on the login form to prevent brute-force attacks and abuse.
 4. An **initial code audit has been completed** to identify and fix key vulnerabilities, including:
-   - SQL Injection.
-   - XSS (Cross-Site Scripting).
-   - Insecure session handling.
+      - SQL Injection.
+      - XSS (Cross-Site Scripting).
+      - Insecure session handling.
 
 ---
 
@@ -82,15 +82,15 @@ AppVenturers is an open-source project under development that has completed an *
 If you are a PHP developer with expertise in **web security**, we invite you to continue contributing to this open-source project. Our focus now shifts to the following areas:
 
 1. **Refining Existing Security Measures**:
-   - Review the current **CSRF** and **Rate Limiting** implementation for potential bypasses or performance enhancements.
-   - Propose and apply improvements in input filtering and sanitization, aiming for *defense-in-depth* security.
+      - Review the current **CSRF** and **Rate Limiting** implementation for potential bypasses or performance enhancements.
+      - Propose and apply improvements in input filtering and sanitization, aiming for _defense-in-depth_ security.
 
 2. **Continuous Code Auditing**:
-   - Conduct detailed audits on new sections or functionalities for remaining vulnerabilities (including those on the **OWASP** list).
-   - Submit Pull Requests with solutions for more subtle or business logic-related vulnerabilities.
+      - Conduct detailed audits on new sections or functionalities for remaining vulnerabilities (including those on the **OWASP** list).
+      - Submit Pull Requests with solutions for more subtle or business logic-related vulnerabilities.
 
 3. **Document Security Best Practices**:
-   - Maintain and expand the documentation for secure PHP handling (using PDO, secure sessions, etc.) and the protections already implemented.
+      - Maintain and expand the documentation for secure PHP handling (using PDO, secure sessions, etc.) and the protections already implemented.
 
 ---
 
