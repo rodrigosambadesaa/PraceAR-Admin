@@ -9,7 +9,11 @@ declare(strict_types=1) ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Página Principal del Panel de Administración</title>
     <style>
-        <?php require_once CSS_ADMIN . "theme.css"; ?><?php require_once CSS_ADMIN . "header.css"; ?><?php require_once CSS_ADMIN . "index_admin.css"; ?>
+        <?php
+        require_once CSS_ADMIN . "theme.css";
+        require_once CSS_ADMIN . "header.css";
+        require_once CSS_ADMIN . "index_admin.css";
+        ?>
     </style>
     <link rel='icon' href='./img/favicon.png' type='image/png'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -146,8 +150,8 @@ declare(strict_types=1) ?>
     $busqueda_hecha = false;
     $current_page =
         isset($_GET["page"]) && is_numeric($_GET["page"])
-        ? (int) $_GET["page"]
-        : 1;
+            ? (int) $_GET["page"]
+            : 1;
 
     if ($current_page < 1) {
         $current_page = 1;
@@ -228,27 +232,27 @@ declare(strict_types=1) ?>
                     <search role="search">
                         <form id="formulario-busqueda" action="?page=1" method="POST"
                             data-search-executed="<?= $busqueda_hecha
-                                                        ? "true"
-                                                        : "false" ?>">
+                                ? "true"
+                                : "false" ?>">
                             <input value="<?= htmlspecialchars(
-                                                $caseta,
-                                            ) ?>" type="text" id="input-busqueda"
+                                $caseta,
+                            ) ?>" type="text" id="input-busqueda"
                                 placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta"
                                 <?php if (!$busqueda_hecha) {
                                     echo "autofocus";
                                 } ?>>
                             <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(
-                                                                                    get_language(),
-                                                                                ) ?>">
+                                get_language(),
+                            ) ?>">
                             <input type="submit" value="Buscar">
                             <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">
                             <input id="input-deshacer-busqueda" type="button" value="Deshacer"
                                 data-redirect-url="<?= htmlspecialchars(
-                                                        "?lang=" . get_language(),
-                                                    ) ?>">
+                                    "?lang=" . get_language(),
+                                ) ?>">
                             <input type="hidden" name="csrf" id="csrf" value="<?= htmlspecialchars(
-                                                                                    $_SESSION["csrf"],
-                                                                                ) ?>">
+                                $_SESSION["csrf"],
+                            ) ?>">
                         </form>
                     </search>
                     <?php require_once SECTIONS . "pagination.php"; ?>
@@ -275,21 +279,21 @@ declare(strict_types=1) ?>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
                         <tr id="row-<?= htmlspecialchars(
-                                        (string) $row["id"],
-                                    ) ?>">
+                            (string) $row["id"],
+                        ) ?>">
                             <td scope="row" data-label="Editar">
                                 <a href="<?= "?page=edit&id=" .
-                                                htmlspecialchars((string) $row["id"]) .
-                                                "&lang=" .
-                                                htmlspecialchars(
-                                                    $_REQUEST["lang"] ?? "gl",
-                                                ) ?>"
+                                    htmlspecialchars((string) $row["id"]) .
+                                    "&lang=" .
+                                    htmlspecialchars(
+                                        $_REQUEST["lang"] ?? "gl",
+                                    ) ?>"
                                     aria-label="Editar puesto <?= htmlspecialchars(
-                                                                    $row["caseta"],
-                                                                ) ?>">
+                                        $row["caseta"],
+                                    ) ?>">
                                     <img loading="lazy" width='15' height='15' src="<?= htmlspecialchars(
-                                                                                        PENCIL_IMAGE_URL,
-                                                                                    ) ?>"
+                                        PENCIL_IMAGE_URL,
+                                    ) ?>"
                                         alt="Editar">
                                 </a>
                             </td>
@@ -326,56 +330,56 @@ declare(strict_types=1) ?>
                                 ?>
                             </td>
                             <td data-label="Caseta" data-editable="true" data-field="caseta" data-id="<?= htmlspecialchars(
-                                                                                                            (string) $row["id"],
-                                                                                                        ) ?>"><?= htmlspecialchars($row["caseta"]) ?></td>
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars($row["caseta"]) ?></td>
                             <td data-label="Nombre" data-editable="true" data-field="nombre" data-id="<?= htmlspecialchars(
-                                                                                                            (string) $row["id"],
-                                                                                                        ) ?>"><?= htmlspecialchars(
-                                        $row["nombre"] ?? "",
-                                    ) ?></td>
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    $row["nombre"] ?? "",
+) ?></td>
                             <td data-label="Tipo Unity"><?= htmlspecialchars(
-                                                            $row["tipo_unity"] ?? "",
-                                                        ) ?></td>
+                                $row["tipo_unity"] ?? "",
+                            ) ?></td>
                             <td data-label="Información de Contacto" data-editable="true" data-field="contacto" data-id="<?= htmlspecialchars(
-                                                                                                                                (string) $row["id"],
-                                                                                                                            ) ?>"><?= htmlspecialchars(
-                                        $row["contacto"] ?? "",
-                                    ) ?></td>
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    $row["contacto"] ?? "",
+) ?></td>
                             <td data-label="Teléfono" data-editable="true" data-field="telefono" data-id="<?= htmlspecialchars(
-                                                                                                                (string) $row["id"],
-                                                                                                            ) ?>"><?= htmlspecialchars(
-                                        $row["telefono"] ?? "",
-                                    ) ?></td>
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    $row["telefono"] ?? "",
+) ?></td>
                             <td data-label="ID Nave" data-editable="true" data-field="id_nave" data-id="<?= htmlspecialchars(
-                                                                                                            (string) $row["id"],
-                                                                                                        ) ?>"><?= htmlspecialchars(
-                                        (string) ($row["id_nave"] ?? ""),
-                                    ) ?></td>
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    (string) ($row["id_nave"] ?? ""),
+) ?></td>
                             <td data-label="Puesto padre" data-editable="true" data-field="caseta_padre" data-id="<?= htmlspecialchars(
-                                                                                                                        (string) $row["id"],
-                                                                                                                    ) ?>"><?= htmlspecialchars(
-                                        $row["caseta_padre"] ?? "Ninguno",
-                                    ) ?></td>
+                                (string) $row["id"],
+                            ) ?>"><?= htmlspecialchars(
+    $row["caseta_padre"] ?? "Ninguno",
+) ?></td>
                             <td data-label="" id="celda-especial"></td>
                             <td data-label="Editar Traducción">
                                 <a href="<?= "?page=language&id=" .
-                                                htmlspecialchars((string) $row["id"]) .
-                                                "&codigo_idioma=" .
-                                                htmlspecialchars(get_language()) ?>"
+                                    htmlspecialchars((string) $row["id"]) .
+                                    "&codigo_idioma=" .
+                                    htmlspecialchars(get_language()) ?>"
                                     aria-label="Editar traducción de <?= htmlspecialchars(
-                                                                            $row["caseta"],
-                                                                        ) ?>">
+                                        $row["caseta"],
+                                    ) ?>">
                                     <img src="<?= BASE_URL ?>img/flags/<?= htmlspecialchars(
-                                                                            get_language(),
-                                                                        ) ?>.png"
+    get_language(),
+) ?>.png"
                                         alt="Editar traducción" width="18" height="18">
                                 </a>
                             </td>
                             <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo" data-id="<?= htmlspecialchars(
-                                                                                                                                                    (string) $row["id"],
-                                                                                                                                                ) ?>" data-codigo_idioma="<?= htmlspecialchars(
-                                                            get_language(),
-                                                        ) ?>">
+                                (string) $row["id"],
+                            ) ?>" data-codigo_idioma="<?= htmlspecialchars(
+    get_language(),
+) ?>">
                                 <?= !empty($row["tipo"])
                                     ? htmlspecialchars(
                                         html_entity_decode($row["tipo"]),
@@ -383,10 +387,10 @@ declare(strict_types=1) ?>
                                     : "Sin tipo" ?>
                             </td>
                             <td data-label="Descripción" class="fondo-color-diferente editable-descripcion" data-editable="true" data-field="descripcion" data-id="<?= htmlspecialchars(
-                                                                                                                                                                        (string) $row["id"],
-                                                                                                                                                                    ) ?>" data-codigo_idioma="<?= htmlspecialchars(
-                                                            get_language(),
-                                                        ) ?>">
+                                (string) $row["id"],
+                            ) ?>" data-codigo_idioma="<?= htmlspecialchars(
+    get_language(),
+) ?>">
                                 <?= !empty($row["descripcion"])
                                     ? htmlspecialchars(
                                         truncate_text(
@@ -406,8 +410,8 @@ declare(strict_types=1) ?>
         <?php else: ?>
             <div style="text-align:center; margin-top:2em;">
                 <h2>No se encontraron resultados para <strong><?= htmlspecialchars(
-                                                                    $caseta,
-                                                                ) ?></strong>.</h2>
+                    $caseta,
+                ) ?></strong>.</h2>
                 <p>Prueba con otro código de caseta o revisa la ortografía.</p>
                 <ul style="display:inline-block; text-align:left; margin:1em auto;">
                     <li>Ejemplo: <code>CE001</code>, <code>CO121</code>, <code>MC001</code>, <code>NA338</code>, <code>NC041</code></li>
