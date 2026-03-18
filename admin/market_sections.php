@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 require_once __DIR__ . "/../constants.php";
 ?>
@@ -24,8 +25,6 @@ require_once __DIR__ . "/../constants.php";
         require_once CSS_ADMIN . "market_sections.php";
         ?>
 
-        /* ...existing code... */
-
         /* Botón de cerrar imagen ampliada */
         .zoomed-close {
             position: absolute;
@@ -33,7 +32,7 @@ require_once __DIR__ . "/../constants.php";
             right: 1rem;
             font-size: 2.5rem;
             color: #fff;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             border: none;
             border-radius: 50%;
             width: 2.5em;
@@ -56,7 +55,7 @@ require_once __DIR__ . "/../constants.php";
         /* Modo claro: asegúrate que la cruz sea visible */
         body:not(.darkmode) .zoomed-close {
             color: #222;
-            background: rgba(255,255,255,0.85);
+            background: rgba(255, 255, 255, 0.85);
         }
 
         body:not(.darkmode) .zoomed-close:hover,
@@ -64,7 +63,6 @@ require_once __DIR__ . "/../constants.php";
             background: #e53935;
             color: #fff;
         }
-/* ...existing code... */
     </style>
     <link rel="stylesheet" href="./css/darkmode.css">
 </head>
@@ -86,7 +84,7 @@ require_once __DIR__ . "/../constants.php";
                     "src" => "./img/amea" . $amea["indice"] . ".jpg",
                     "alt" => "Imagen de Amea " . $amea["indice"],
                     "caption" =>
-                        "Amea " .
+                    "Amea " .
                         $amea["indice"] .
                         " / " .
                         implode("-", $amea["range"]),
@@ -97,7 +95,7 @@ require_once __DIR__ . "/../constants.php";
                     "src" => "./img/nave" . $nave["indice"] . ".jpg",
                     "alt" => "Imagen de Nave " . $nave["indice"],
                     "caption" =>
-                        "Nave " .
+                    "Nave " .
                         $nave["indice"] .
                         " / " .
                         implode("-", $nave["range"]),
@@ -108,7 +106,7 @@ require_once __DIR__ . "/../constants.php";
                     "src" => "./img/murallon" . $murallon["indice"] . ".jpg",
                     "alt" => "Imagen de Murallón " . $murallon["indice"],
                     "caption" =>
-                        "Murallón " .
+                    "Murallón " .
                         $murallon["indice"] .
                         " / " .
                         implode("-", $murallon["range"]),
@@ -117,14 +115,14 @@ require_once __DIR__ . "/../constants.php";
             $imagenes = array_slice($imagenes, 0, 12); // Solo 12 imágenes
             foreach ($imagenes as $img): ?>
                 <figure class="zoom" tabindex="0" role="button" aria-label="Ampliar <?= htmlspecialchars(
-                    $img["alt"],
-                ) ?>">
+                                                                                        $img["alt"],
+                                                                                    ) ?>">
                     <img loading="lazy" src="<?= htmlspecialchars(
-                        $img["src"],
-                    ) ?>" alt="<?= htmlspecialchars($img["alt"]) ?>">
+                                                    $img["src"],
+                                                ) ?>" alt="<?= htmlspecialchars($img["alt"]) ?>">
                     <figcaption><?= htmlspecialchars(
-                        $img["caption"],
-                    ) ?></figcaption>
+                                    $img["caption"],
+                                ) ?></figcaption>
                 </figure>
             <?php endforeach;
             ?>
@@ -141,7 +139,7 @@ require_once __DIR__ . "/../constants.php";
     </div>
 
     <script type="module" src="<?= JS_ADMIN .
-        "/market_sections.js" ?>"></script>
+                                    "/market_sections.js" ?>"></script>
     <script src="<?= JS . "/helpers/dark_mode.js" ?>" defer></script>
 
 </body>
