@@ -7,6 +7,21 @@
   filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.14));
 }
 
+.login-shell {
+  min-height: calc(100vh - 7rem);
+  align-items: center;
+}
+
+.login-grid {
+  width: 100%;
+  justify-content: center;
+  justify-items: center;
+}
+
+.login-card {
+  width: min(100%, 560px);
+}
+
 .backg {
   position: absolute;
 }
@@ -248,6 +263,10 @@ body.dark-mode .p1 {
 }
 
 @media (max-width: 860px) {
+  .login-shell {
+    min-height: auto;
+  }
+
   .panda-login-panda {
     transform: scale(0.92);
     min-height: 220px;
