@@ -22,6 +22,14 @@ footer {
   font-size: 1.2em;
 }
 
+footer[role="contentinfo"] {
+  padding-top: 20px;
+}
+
+footer[role="contentinfo"] .paginacion {
+  margin-top: 0;
+}
+
 #cabecera-tabla {
   font-size: 1.75em;
 }
