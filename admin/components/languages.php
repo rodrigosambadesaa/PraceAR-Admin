@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1) ?>
 <nav class="language-selector" aria-label="Selector de idioma">
     <ul class="flags">
@@ -59,7 +60,7 @@ declare(strict_types=1) ?>
                 <a href="<?= $url ?>" aria-label="<?= $text_language ?>" tabindex="0">
                     <img class="language-flag" width="15" height="15"
                         src="<?= FLAG_IMAGES_URL .
-                            "$key_language.png" ?>" alt="<?= $text_language ?>">
+                                    "$key_language.png" ?>" alt="<?= $text_language ?>">
                 </a>
             </li>
         <?php endforeach;
