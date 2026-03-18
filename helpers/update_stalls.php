@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($scanResult["is_malicious"]) {
             throw new Exception(
                 $scanResult["message"] ?:
-                    "La imagen subida es maliciosa. Por favor, desinféctela y suba una imagen válida. Puede ser necesario desinfectar el dispositivo desde el que se capturó o el dispositivo desde el que se subió la imagen.",
+                "La imagen subida es maliciosa. Por favor, desinféctela y suba una imagen válida. Puede ser necesario desinfectar el dispositivo desde el que se capturó o el dispositivo desde el que se subió la imagen.",
             );
         }
 

@@ -27,12 +27,22 @@ function apply_security_headers(array $securityConfig): void
     header("X-Frame-Options: SAMEORIGIN");
     header("X-Permitted-Cross-Domain-Policies: none");
     header("Cross-Origin-Resource-Policy: same-origin");
-    header("Referrer-Policy: " . ($headersConfig["referrer_policy"] ?? "strict-origin-when-cross-origin"));
-    header("Permissions-Policy: " . ($headersConfig["permissions_policy"] ?? "geolocation=(), microphone=(), camera=(), payment=(), usb=()"));
+    header(
+        "Referrer-Policy: " .
+            ($headersConfig["referrer_policy"] ??
+                "strict-origin-when-cross-origin"),
+    );
+    header(
+        "Permissions-Policy: " .
+            ($headersConfig["permissions_policy"] ??
+                "geolocation=(), microphone=(), camera=(), payment=(), usb=()"),
+    );
 
     // HSTS solo cuando la conexión es HTTPS.
     if (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off") {
-        header("Strict-Transport-Security: max-age=31536000; includeSubDomains");
+        header(
+            "Strict-Transport-Security: max-age=31536000; includeSubDomains",
+        );
     }
 }
 
