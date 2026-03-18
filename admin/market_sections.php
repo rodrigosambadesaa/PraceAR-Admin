@@ -53,13 +53,13 @@ require_once __DIR__ . "/../constants.php";
         }
 
         /* Modo claro: asegúrate que la cruz sea visible */
-        body:not(.darkmode) .zoomed-close {
+        body:not(.dark-mode) .zoomed-close {
             color: #222;
             background: rgba(255, 255, 255, 0.85);
         }
 
-        body:not(.darkmode) .zoomed-close:hover,
-        body:not(.darkmode) .zoomed-close:focus {
+        body:not(.dark-mode) .zoomed-close:hover,
+        body:not(.dark-mode) .zoomed-close:focus {
             background: #e53935;
             color: #fff;
         }
