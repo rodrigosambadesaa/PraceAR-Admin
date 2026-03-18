@@ -368,11 +368,13 @@ body.admin-edit-translations nav.language-selector {
 
   body.admin-index nav.language-selector,
   body.admin-edit-translations nav.language-selector {
-    position: sticky;
+    position: fixed;
     top: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
     right: auto;
     align-self: center;
-    margin: 0 auto 0.85rem;
+    margin: 0;
     width: fit-content;
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(10px);
@@ -381,6 +383,11 @@ body.admin-edit-translations nav.language-selector {
     border: 1px solid rgba(67, 56, 202, 0.18);
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
     z-index: 1100;
+  }
+
+  body.admin-index,
+  body.admin-edit-translations {
+    padding-top: 4.2rem;
   }
 
   .language-selector .flags {
@@ -442,8 +449,16 @@ body.admin-edit-translations nav.language-selector {
   body.admin-index nav.language-selector,
   body.admin-edit-translations nav.language-selector {
     top: 0.35rem;
-    margin-bottom: 0.65rem;
     padding: 0.35rem 0.5rem;
+  }
+
+  .language-selector:hover {
+    transform: translateX(-50%);
+  }
+
+  body.admin-index,
+  body.admin-edit-translations {
+    padding-top: 3.8rem;
   }
 
   .main-nav {
