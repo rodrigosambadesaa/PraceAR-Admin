@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1) ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -8,9 +9,7 @@ declare(strict_types=1) ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Página Principal del Panel de Administración</title>
     <style>
-        <?php require_once CSS_ADMIN . "theme.css"; ?>
-        <?php require_once CSS_ADMIN . "header.css"; ?>
-        <?php require_once CSS_ADMIN . "index_admin.css"; ?>
+        <?php require_once CSS_ADMIN . "theme.css"; ?><?php require_once CSS_ADMIN . "header.css"; ?><?php require_once CSS_ADMIN . "index_admin.css"; ?>
     </style>
     <link rel='icon' href='./img/favicon.png' type='image/png'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,17 +21,17 @@ declare(strict_types=1) ?>
     <link rel="stylesheet" href="./css/darkmode.css">
 
     <style>
-
-            /* ...existing code... */
+        /* ...existing code... */
 
         /* Botón de cerrar imagen ampliada */
-        .zoomed-close, .close-button {
+        .zoomed-close,
+        .close-button {
             position: absolute;
             top: 1rem;
             right: 1rem;
             font-size: 2.5rem;
             color: #fff;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             border: none;
             border-radius: 50%;
             width: 2.5em;
@@ -45,8 +44,10 @@ declare(strict_types=1) ?>
             transition: background 0.2s, color 0.2s;
         }
 
-        .zoomed-close:hover, .zoomed-close:focus,
-        .close-button:hover, .close-button:focus {
+        .zoomed-close:hover,
+        .zoomed-close:focus,
+        .close-button:hover,
+        .close-button:focus {
             background: #e53935;
             color: #fff;
             outline: none;
@@ -64,13 +65,15 @@ declare(strict_types=1) ?>
         }
 
         /* Asegurar que el botón sigue teniendo prioridad visual dentro del modal */
-        #modal-close { z-index: 20; }
+        #modal-close {
+            z-index: 20;
+        }
 
         /* Modo claro: asegúrate que la cruz sea visible */
         body:not(.darkmode) .zoomed-close,
         body:not(.darkmode) .close-button {
             color: #222;
-            background: rgba(255,255,255,0.85);
+            background: rgba(255, 255, 255, 0.85);
         }
 
         body:not(.darkmode) .zoomed-close:hover,
@@ -80,9 +83,10 @@ declare(strict_types=1) ?>
             background: #e53935;
             color: #fff;
         }
+
         /* ...existing code... */
 
-/* Sugerencias elegantes debajo del campo de búsqueda */
+        /* Sugerencias elegantes debajo del campo de búsqueda */
         #sugerencias-busqueda {
             position: absolute;
             left: 0;
@@ -90,7 +94,7 @@ declare(strict_types=1) ?>
             background: #fff;
             border: 1px solid #ccc;
             border-radius: 0 0 8px 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
             width: 100%;
             max-height: 180px;
             overflow-y: auto;
@@ -98,12 +102,15 @@ declare(strict_types=1) ?>
             z-index: 100;
             margin-top: -2px;
         }
+
         #sugerencias-busqueda div {
             padding: 0.5em 1em;
             cursor: pointer;
             transition: background 0.15s;
         }
-        #sugerencias-busqueda div:hover, #sugerencias-busqueda div:focus {
+
+        #sugerencias-busqueda div:hover,
+        #sugerencias-busqueda div:focus {
             background: #f0f4fa;
         }
     </style>
@@ -139,8 +146,8 @@ declare(strict_types=1) ?>
     $busqueda_hecha = false;
     $current_page =
         isset($_GET["page"]) && is_numeric($_GET["page"])
-            ? (int) $_GET["page"]
-            : 1;
+        ? (int) $_GET["page"]
+        : 1;
 
     if ($current_page < 1) {
         $current_page = 1;
@@ -221,27 +228,27 @@ declare(strict_types=1) ?>
                     <search role="search">
                         <form id="formulario-busqueda" action="?page=1" method="POST"
                             data-search-executed="<?= $busqueda_hecha
-                                ? "true"
-                                : "false" ?>">
+                                                        ? "true"
+                                                        : "false" ?>">
                             <input value="<?= htmlspecialchars(
-                                $caseta,
-                            ) ?>" type="text" id="input-busqueda"
+                                                $caseta,
+                                            ) ?>" type="text" id="input-busqueda"
                                 placeholder="Código de caseta. P. ej. CE001, CO121, MC001, NA338, NC041" name="caseta"
                                 <?php if (!$busqueda_hecha) {
                                     echo "autofocus";
                                 } ?>>
                             <input type="hidden" name="lang" id="lang" value="<?= htmlspecialchars(
-                                get_language(),
-                            ) ?>">
+                                                                                    get_language(),
+                                                                                ) ?>">
                             <input type="submit" value="Buscar">
                             <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">
                             <input id="input-deshacer-busqueda" type="button" value="Deshacer"
                                 data-redirect-url="<?= htmlspecialchars(
-                                    "?lang=" . get_language(),
-                                ) ?>">
+                                                        "?lang=" . get_language(),
+                                                    ) ?>">
                             <input type="hidden" name="csrf" id="csrf" value="<?= htmlspecialchars(
-                                $_SESSION["csrf"],
-                            ) ?>">
+                                                                                    $_SESSION["csrf"],
+                                                                                ) ?>">
                         </form>
                     </search>
                     <?php require_once SECTIONS . "pagination.php"; ?>
@@ -268,21 +275,21 @@ declare(strict_types=1) ?>
                 <tbody>
                     <?php while ($row = $result->fetch_assoc()): ?>
                         <tr id="row-<?= htmlspecialchars(
-                            (string) $row["id"],
-                        ) ?>">
+                                        (string) $row["id"],
+                                    ) ?>">
                             <td scope="row" data-label="Editar">
                                 <a href="<?= "?page=edit&id=" .
-                                    htmlspecialchars((string) $row["id"]) .
-                                    "&lang=" .
-                                    htmlspecialchars(
-                                        $_REQUEST["lang"] ?? "gl",
-                                    ) ?>"
+                                                htmlspecialchars((string) $row["id"]) .
+                                                "&lang=" .
+                                                htmlspecialchars(
+                                                    $_REQUEST["lang"] ?? "gl",
+                                                ) ?>"
                                     aria-label="Editar puesto <?= htmlspecialchars(
-                                        $row["caseta"],
-                                    ) ?>">
+                                                                    $row["caseta"],
+                                                                ) ?>">
                                     <img loading="lazy" width='15' height='15' src="<?= htmlspecialchars(
-                                        PENCIL_IMAGE_URL,
-                                    ) ?>"
+                                                                                        PENCIL_IMAGE_URL,
+                                                                                    ) ?>"
                                         alt="Editar">
                                 </a>
                             </td>
@@ -319,56 +326,56 @@ declare(strict_types=1) ?>
                                 ?>
                             </td>
                             <td data-label="Caseta" data-editable="true" data-field="caseta" data-id="<?= htmlspecialchars(
-                                (string) $row["id"],
-                            ) ?>"><?= htmlspecialchars($row["caseta"]) ?></td>
+                                                                                                            (string) $row["id"],
+                                                                                                        ) ?>"><?= htmlspecialchars($row["caseta"]) ?></td>
                             <td data-label="Nombre" data-editable="true" data-field="nombre" data-id="<?= htmlspecialchars(
-                                (string) $row["id"],
-                            ) ?>"><?= htmlspecialchars(
-    $row["nombre"] ?? "",
-) ?></td>
+                                                                                                            (string) $row["id"],
+                                                                                                        ) ?>"><?= htmlspecialchars(
+                                        $row["nombre"] ?? "",
+                                    ) ?></td>
                             <td data-label="Tipo Unity"><?= htmlspecialchars(
-                                $row["tipo_unity"] ?? "",
-                            ) ?></td>
+                                                            $row["tipo_unity"] ?? "",
+                                                        ) ?></td>
                             <td data-label="Información de Contacto" data-editable="true" data-field="contacto" data-id="<?= htmlspecialchars(
-                                (string) $row["id"],
-                            ) ?>"><?= htmlspecialchars(
-    $row["contacto"] ?? "",
-) ?></td>
+                                                                                                                                (string) $row["id"],
+                                                                                                                            ) ?>"><?= htmlspecialchars(
+                                        $row["contacto"] ?? "",
+                                    ) ?></td>
                             <td data-label="Teléfono" data-editable="true" data-field="telefono" data-id="<?= htmlspecialchars(
-                                (string) $row["id"],
-                            ) ?>"><?= htmlspecialchars(
-    $row["telefono"] ?? "",
-) ?></td>
+                                                                                                                (string) $row["id"],
+                                                                                                            ) ?>"><?= htmlspecialchars(
+                                        $row["telefono"] ?? "",
+                                    ) ?></td>
                             <td data-label="ID Nave" data-editable="true" data-field="id_nave" data-id="<?= htmlspecialchars(
-                                (string) $row["id"],
-                            ) ?>"><?= htmlspecialchars(
-    (string) ($row["id_nave"] ?? ""),
-) ?></td>
+                                                                                                            (string) $row["id"],
+                                                                                                        ) ?>"><?= htmlspecialchars(
+                                        (string) ($row["id_nave"] ?? ""),
+                                    ) ?></td>
                             <td data-label="Puesto padre" data-editable="true" data-field="caseta_padre" data-id="<?= htmlspecialchars(
-                                (string) $row["id"],
-                            ) ?>"><?= htmlspecialchars(
-    $row["caseta_padre"] ?? "Ninguno",
-) ?></td>
+                                                                                                                        (string) $row["id"],
+                                                                                                                    ) ?>"><?= htmlspecialchars(
+                                        $row["caseta_padre"] ?? "Ninguno",
+                                    ) ?></td>
                             <td data-label="" id="celda-especial"></td>
                             <td data-label="Editar Traducción">
                                 <a href="<?= "?page=language&id=" .
-                                    htmlspecialchars((string) $row["id"]) .
-                                    "&codigo_idioma=" .
-                                    htmlspecialchars(get_language()) ?>"
-                                   aria-label="Editar traducción de <?= htmlspecialchars(
-                                       $row["caseta"],
-                                   ) ?>">
+                                                htmlspecialchars((string) $row["id"]) .
+                                                "&codigo_idioma=" .
+                                                htmlspecialchars(get_language()) ?>"
+                                    aria-label="Editar traducción de <?= htmlspecialchars(
+                                                                            $row["caseta"],
+                                                                        ) ?>">
                                     <img src="<?= BASE_URL ?>img/flags/<?= htmlspecialchars(
-    get_language(),
-) ?>.png"
-                                         alt="Editar traducción" width="18" height="18">
+                                                                            get_language(),
+                                                                        ) ?>.png"
+                                        alt="Editar traducción" width="18" height="18">
                                 </a>
                             </td>
                             <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo" data-id="<?= htmlspecialchars(
-                                (string) $row["id"],
-                            ) ?>" data-codigo_idioma="<?= htmlspecialchars(
-    get_language(),
-) ?>">
+                                                                                                                                                    (string) $row["id"],
+                                                                                                                                                ) ?>" data-codigo_idioma="<?= htmlspecialchars(
+                                                            get_language(),
+                                                        ) ?>">
                                 <?= !empty($row["tipo"])
                                     ? htmlspecialchars(
                                         html_entity_decode($row["tipo"]),
@@ -376,10 +383,10 @@ declare(strict_types=1) ?>
                                     : "Sin tipo" ?>
                             </td>
                             <td data-label="Descripción" class="fondo-color-diferente editable-descripcion" data-editable="true" data-field="descripcion" data-id="<?= htmlspecialchars(
-                                (string) $row["id"],
-                            ) ?>" data-codigo_idioma="<?= htmlspecialchars(
-    get_language(),
-) ?>">
+                                                                                                                                                                        (string) $row["id"],
+                                                                                                                                                                    ) ?>" data-codigo_idioma="<?= htmlspecialchars(
+                                                            get_language(),
+                                                        ) ?>">
                                 <?= !empty($row["descripcion"])
                                     ? htmlspecialchars(
                                         truncate_text(
@@ -399,8 +406,8 @@ declare(strict_types=1) ?>
         <?php else: ?>
             <div style="text-align:center; margin-top:2em;">
                 <h2>No se encontraron resultados para <strong><?= htmlspecialchars(
-                    $caseta,
-                ) ?></strong>.</h2>
+                                                                    $caseta,
+                                                                ) ?></strong>.</h2>
                 <p>Prueba con otro código de caseta o revisa la ortografía.</p>
                 <ul style="display:inline-block; text-align:left; margin:1em auto;">
                     <li>Ejemplo: <code>CE001</code>, <code>CO121</code>, <code>MC001</code>, <code>NA338</code>, <code>NC041</code></li>
@@ -414,14 +421,14 @@ declare(strict_types=1) ?>
         <?php require SECTIONS . "pagination.php"; ?>
     </footer>
 
-        <!-- Modal para edición rápida -->
-        <div id="modal-edicion" class="modal-edicion" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
-            <div id="modal-content" style="background:#fff; border-radius:10px; padding:3.5em 2em 2em 2em; min-width:300px; max-width:90vw; box-shadow:0 2px 20px rgba(0,0,0,0.2); position:relative;">
-                <!-- Usar mismas clases que el botón de cierre de la imagen ampliada para coherencia visual -->
-                <button id="modal-close" class="zoomed-close close-button" aria-label="Cerrar edición rápida">&times;</button>
-                <div id="modal-body"></div>
-            </div>
+    <!-- Modal para edición rápida -->
+    <div id="modal-edicion" class="modal-edicion" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:9999; align-items:center; justify-content:center;">
+        <div id="modal-content" style="background:#fff; border-radius:10px; padding:3.5em 2em 2em 2em; min-width:300px; max-width:90vw; box-shadow:0 2px 20px rgba(0,0,0,0.2); position:relative;">
+            <!-- Usar mismas clases que el botón de cierre de la imagen ampliada para coherencia visual -->
+            <button id="modal-close" class="zoomed-close close-button" aria-label="Cerrar edición rápida">&times;</button>
+            <div id="modal-body"></div>
         </div>
+    </div>
 
     <div id="zoomed-image-container" class="zoomed-container" role="dialog" aria-labelledby="zoomed-name"
         aria-hidden="true">
@@ -445,7 +452,7 @@ declare(strict_types=1) ?>
     <script src="<?= JS . "/helpers/dark_mode.js" ?>"></script>
     <script>
         document.querySelectorAll('.zoomable.editable-image').forEach(img => {
-            img.addEventListener('click', function () {
+            img.addEventListener('click', function() {
                 if (img.dataset.exists === "1") {
                     // Usa la ruta src del <img> original
                     document.getElementById('zoomed-image').src = img.src;

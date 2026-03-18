@@ -346,8 +346,8 @@ if (!$fila) {
                                 <option value="<?= htmlspecialchars(
                                                     (string) $fila_naves["id"],
                                                 ) ?>" <?= $fila["id_nave"] == $fila_naves["id"]
-                                            ? "selected"
-                                            : "" ?>>
+                                                            ? "selected"
+                                                            : "" ?>>
                                     <?= htmlspecialchars($fila_naves["tipo"]) ?>
                                 </option>
                             <?php }
