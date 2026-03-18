@@ -68,16 +68,16 @@ declare(strict_types=1) ?>
         }
 
         /* Modo claro: asegúrate que la cruz sea visible */
-        body:not(.darkmode) .zoomed-close,
-        body:not(.darkmode) .close-button {
+        body:not(.dark-mode) .zoomed-close,
+        body:not(.dark-mode) .close-button {
             color: #222;
             background: rgba(255, 255, 255, 0.85);
         }
 
-        body:not(.darkmode) .zoomed-close:hover,
-        body:not(.darkmode) .zoomed-close:focus,
-        body:not(.darkmode) .close-button:hover,
-        body:not(.darkmode) .close-button:focus {
+        body:not(.dark-mode) .zoomed-close:hover,
+        body:not(.dark-mode) .zoomed-close:focus,
+        body:not(.dark-mode) .close-button:hover,
+        body:not(.dark-mode) .close-button:focus {
             background: #e53935;
             color: #fff;
         }
