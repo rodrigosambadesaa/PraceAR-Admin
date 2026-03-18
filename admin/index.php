@@ -25,8 +25,6 @@ declare(strict_types=1) ?>
     <link rel="stylesheet" href="./css/darkmode.css">
 
     <style>
-        /* ...existing code... */
-
         /* Botón de cerrar imagen ampliada */
         .zoomed-close,
         .close-button {
@@ -87,8 +85,6 @@ declare(strict_types=1) ?>
             background: #e53935;
             color: #fff;
         }
-
-        /* ...existing code... */
 
         /* Sugerencias elegantes debajo del campo de búsqueda */
         #sugerencias-busqueda {
