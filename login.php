@@ -484,9 +484,11 @@ $captcha_question = captcha_get_question($captcha_key);
             <article class="login-card">
                 <h2 style="text-align: center;" id="form-title">Inicio de sesión</h2>
                 <form method="POST" id="formulario" aria-labelledby="form-title" novalidate>
-                    <input type="hidden" name="csrf" value="<?= isset($_SESSION["csrf"])
-                                                                ? $_SESSION["csrf"]
-                                                                : "" ?>">
+                    <input type="hidden" name="csrf" value="<?= isset(
+                        $_SESSION["csrf"],
+                    )
+                        ? $_SESSION["csrf"]
+                        : "" ?>">
                     <div id="form-group">
                         <label for="login" class="required"><strong>Usuario:</strong></label>
                         <input type="text" name="login" id="login" required aria-required="true"

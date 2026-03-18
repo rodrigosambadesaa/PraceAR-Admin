@@ -38,7 +38,10 @@ if (!(formulario instanceof HTMLFormElement)) {
   throw new Error("No se encontró el formulario de autenticación.");
 }
 
-function setStyles(selector: string, styles: Partial<CSSStyleDeclaration>): void {
+function setStyles(
+  selector: string,
+  styles: Partial<CSSStyleDeclaration>,
+): void {
   document.querySelectorAll<HTMLElement>(selector).forEach((element) => {
     Object.assign(element.style, styles);
   });

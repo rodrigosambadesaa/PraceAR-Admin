@@ -13,354 +13,15 @@ declare(strict_types=1) ?>
         <?php
         require_once CSS_ADMIN . "theme.css";
         require_once CSS_ADMIN . "header.css";
+        require_once CSS_ADMIN . "change_password.css";
         ?>
-        /* body {
-                max-width: 80%;
-                margin: 0 auto;
-                padding: 1.5rem;
-                box-sizing: border-box;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                min-height: 100vh;
-                background: var(--pico-background-color, #fff);
-            } */
-
-        main,
-        form,
-        #password-requirements,
-        h1,
-        .success-message,
-        .error-message,
-        p,
-        span,
-        ul {
-            width: 100%;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-        }
-
-        #formulario-cambio-contrasena {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            width: 100%;
-            max-width: 1200px;
-            background: var(--pico-card-background-color, #fff);
-            border-radius: var(--pico-border-radius, 0.5rem);
-            box-shadow: var(--admin-card-shadow);
-            border: 1px solid var(--admin-border);
-            padding: 2rem 2.5rem;
-            gap: 1.2rem;
-        }
-
-        #formulario-cambio-contrasena>div {
-            width: 100%;
-        }
-
-        label {
-            font-weight: 500;
-            margin-bottom: 0.3rem;
-            color: var(--pico-muted-color, #444);
-        }
-
-        .password-input-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: stretch;
-        }
-
-        .password-input-wrapper input[type="password"] {
-            flex: 1 1 260px;
-        }
-
-        .password-generator-toggle {
-            flex: 0 0 auto;
-            padding: 0.75rem 1.5rem;
-            border-radius: var(--pico-border-radius, 0.5rem);
-            background: var(--pico-secondary-background-color, #6c757d);
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
-        }
-
-        .password-generator-toggle:hover,
-        .password-generator-toggle:focus {
-            background: var(--pico-secondary-hover-background, #5c636a);
-            transform: translateY(-1px);
-        }
-
-        .password-generator-toggle:focus {
-            outline: 3px solid var(--pico-primary-background, #0d6efd);
-            outline-offset: 2px;
-        }
-
-        .password-generator-panel {
-            margin-top: 1rem;
-            padding: 1.25rem;
-            border-radius: var(--pico-border-radius, 0.5rem);
-            border: 1px solid var(--pico-muted-border-color, #ced4da);
-            background: var(--pico-card-background-color, #fff);
-            box-shadow: var(--admin-card-shadow);
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .password-generator-panel h2 {
-            margin: 0;
-            font-size: 1.2rem;
-            color: var(--pico-muted-color, #444);
-        }
-
-        .password-generator-length {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .password-generator-length label {
-            margin-bottom: 0;
-            font-weight: 600;
-        }
-
-        .password-generator-length input[type="number"] {
-            max-width: 100%;
-        }
-
-        .password-generator-length input[type="range"] {
-            width: 100%;
-        }
-
-        .password-length-output {
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .password-generator-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .password-generator-button {
-            padding: 0.75rem 1.25rem;
-            border-radius: var(--pico-border-radius, 0.5rem);
-            border: none;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
-            background: var(--pico-primary-background, #0d6efd);
-            color: #fff;
-        }
-
-        .password-generator-button:hover,
-        .password-generator-button:focus {
-            background: var(--pico-primary-hover-background, #0b5ed7);
-            transform: translateY(-1px);
-        }
-
-        .password-generator-feedback {
-            flex: 1 1 auto;
-            min-height: 1.2rem;
-        }
-
-        .password-generator-result {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            border-top: 1px solid var(--pico-muted-border-color, #ced4da);
-            padding-top: 1rem;
-        }
-
-        .password-generator-password {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .password-generator-password-label {
-            font-weight: 600;
-            color: green;
-        }
-
-        .password-generator-password-value {
-            font-family: 'Fira Code', 'Courier New', Courier, monospace;
-            font-size: 1.05rem;
-            word-break: break-all;
-            padding: 0.75rem;
-            background: var(--pico-muted-background-color, #f1f3f5);
-            border-radius: var(--pico-border-radius, 0.5rem);
-        }
-
-        .password-generator-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 0.75rem;
-        }
-
-        .password-generator-stats div {
-            background: var(--pico-muted-background-color, #f8f9fa);
-            padding: 0.75rem;
-            border-radius: var(--pico-border-radius, 0.5rem);
-            font-size: 0.95rem;
-        }
-
-        .password-generator-stat-label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 0.2rem;
-        }
-
-        .password-generator-stat-value {
-            font-size: 1.05rem;
-        }
-
-        .password-generator-stats dt {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .password-generator-resistance {
-            font-weight: 600;
-            margin: 0;
-        }
-
-        .password-generator-copy {
-            align-self: flex-start;
-        }
-
-        @media (max-width: 600px) {
-            .password-generator-toggle {
-                width: 100%;
-            }
-
-            .password-input-wrapper input[type="password"] {
-                flex: 1 1 100%;
-            }
-
-            .password-generator-actions {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .password-generator-actions .password-generator-button {
-                width: 100%;
-            }
-
-            .password-generator-feedback {
-                text-align: center;
-            }
-        }
-
-        input[type="password"],
-        input[type="text"] {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border-radius: var(--pico-border-radius, 0.5rem);
-            border: 1px solid var(--pico-muted-border-color, #ccc);
-            font-size: 1.1rem;
-            background: var(--pico-form-element-background-color, #f8f9fa);
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 0.9rem 0;
-            font-size: 1.1rem;
-            border-radius: var(--pico-border-radius, 0.5rem);
-            background: var(--pico-primary-background, #0d6efd);
-            color: #fff;
-            border: none;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
-        }
-
-        input[type="submit"]:hover {
-            background: var(--pico-primary-hover-background, #0b5ed7);
-        }
-
-        #password-requirements {
-            background: var(--pico-muted-background-color, #f1f3f5);
-            border-radius: var(--pico-border-radius, 0.5rem);
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 1.5rem;
-            font-size: 1.05rem;
-        }
-
-        .error-message {
-            color: var(--pico-danger, #d32f2f);
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        .success-message {
-            color: var(--pico-success, #388e3c);
-            text-align: center;
-            margin-bottom: 1rem;
-            font-weight: 500;
-        }
-
-        /* help-text same max-width as the form */
-        #help-text {
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-            display: block;
-            margin-top: 1rem;
-            font-size: 0.95rem;
-            text-align: justify;
-        }
-
-        ul {
-            text-align: left;
-            margin-top: 0.5rem;
-        }
-
-        li {
-            margin-bottom: 0.3rem;
-            font-size: .8rem;
-        }
-
-        @media (max-width: 900px) {
-
-            #formulario-cambio-contrasena,
-            #password-requirements,
-            main {
-                max-width: 98vw;
-                padding: 1rem;
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 600px) {
-
-            #formulario-cambio-contrasena,
-            #password-requirements,
-            main {
-                max-width: 100vw;
-                padding: 0.5rem;
-                font-size: 0.97rem;
-            }
-        }
     </style>
     <link rel="stylesheet" href="./css/darkmode.css">
     <link rel='icon' href='./img/favicon.png' type='image/png'>
 
     <link rel="apple-touch-icon" sizes="180x180" href="./img/apple-touch-icon-180x180.png">
     <script type="module" src="<?= JS_ADMIN ?>check_password_requirements.js" defer></script>
-    <!-- <script type="module" src="<?= JS_ADMIN ?>change_password.js" defer></script> -->
+    <script type="module" src="<?= JS_ADMIN ?>change_password.js" defer></script>
 </head>
 
 <body>
@@ -691,6 +352,7 @@ declare(strict_types=1) ?>
     ?>
 
     <h1 style="text-align: center;">Cambiar contraseña</h1>
+    <?= $err ?>
     <?php if (!isset($_SESSION["csrf"])) {
         echo '<input type="hidden" name="csrf" value="' .
             ($_SESSION["csrf"] ?? "") .
@@ -732,6 +394,7 @@ declare(strict_types=1) ?>
                     <output id="password-length-output" class="password-length-output">16</output>
                 </div>
                 <p id="password-length-help" class="sr-only">Selecciona una longitud entre 16 y 1024 caracteres.</p>
+                <p id="password-length-resistance" class="password-generator-resistance" aria-live="polite"></p>
                 <div class="password-generator-actions">
                     <button type="button" class="password-generator-button" id="generate-password-button">
                         Generar contraseña
@@ -775,7 +438,7 @@ declare(strict_types=1) ?>
                     <div class="password-generator-stats" style="margin-top: 0.5rem;">
                         <div style="grid-column: 1 / -1; font-size: 0.85rem; color: #555; text-align: left;">
                             <span class="password-generator-stat-label" style="font-weight: 600;">Resistencia estimada:</span>
-                            <span id="password-stat-resistance" class="password-generator-stat-value password-generator-resistance" style="font-weight: 600;">
+                            <span id="password-stat-hash" class="password-generator-stat-value password-generator-resistance" style="font-weight: 600;">
                                 -
                             </span>
                             <div style="font-size: 0.8rem; color: #888;">
@@ -824,9 +487,7 @@ declare(strict_types=1) ?>
         problema es que las contraseñas generadas por esos gestores suelen ser de 15 caracteres, por lo que puede usar
         una extensión como 1Password o el generador integrado junto al campo de nueva contraseña para crear una de 16
         caracteres o más.</span>
-    <!-- Consejos para mantener tus contraseñas seguras: -->
     <div class="success-message">
-        <!-- Contraseña cambiada correctamente.<br> -->
         <span style="text-align: center;">
             <strong>Consejos para mantener tus contraseñas seguras:</strong>
         </span>
@@ -837,78 +498,9 @@ declare(strict_types=1) ?>
             <li>No guardes tus contraseñas en un lugar visible o de fácil acceso, como en un post-it en tu escritorio o pegado a tu monitor.</li>
             <li>No uses información personal en tu contraseña, como tu nombre, fecha de nacimiento, nombre de tu mascota, DNI, etc, ni de tus amigos o familiares o información que hayas compartido en redes sociales o en otro lugar público de Internet o de fuera de Internet.</li>
             <li>No uses contraseñas comunes o fáciles de adivinar, como '123456', 'password', 'qwerty', 'abc123', 'admin', 'root', '1234', 'letmein', 'welcome', 'login', 'princess', 'sunshine'.</li>
-            <li>
-                <strong>
-                    En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.
-                </strong>
-                <script type="module">
-                    import {
-                        SecurePasswordGenerator
-                    } from "./js/helpers/secure_password_generator.js";
-                    const rangeInput = document.getElementById('password-length-range');
-                    const output = document.getElementById('password-length-output');
-                    const numberInput = document.getElementById('password-length-number');
-                    numberInput.addEventListener('input', function(e) {
-                        rangeInput.value = numberInput.value;
-                        output.textContent = numberInput.value;
-                    });
-                    rangeInput.addEventListener('input', function(e) {
-                        numberInput.value = rangeInput.value;
-                        output.textContent = rangeInput.value;
-                    });
-
-                    // Generar y aplicar contraseña
-                    document.getElementById('generate-password-button').addEventListener('click', function() {
-                        const length = parseInt(numberInput.value, 10);
-                        const feedback = document.getElementById('password-generator-feedback');
-                        if (length < 16 || length > 1024) {
-                            feedback.textContent = 'La longitud debe estar entre 16 y 1024.';
-                            return;
-                        }
-                        const password = SecurePasswordGenerator.generarPassword(length);
-                        const stats = SecurePasswordGenerator.getStats(password);
-                        document.getElementById('generated-password-value').textContent = password;
-                        document.getElementById('password-stat-uppercase').textContent = stats.uppercase.toString();
-                        document.getElementById('password-stat-lowercase').textContent = stats.lowercase.toString();
-                        document.getElementById('password-stat-digits').textContent = stats.digits.toString();
-                        document.getElementById('password-stat-special').textContent = stats.special.toString();
-                        document.getElementById('password-stat-entropy').textContent = stats.entropy;
-                        document.getElementById('password-stat-resistance').textContent = stats.resistanceTimeToBruteForceAttack || 'N/A';
-                        document.getElementById('generated-password-container').hidden = false;
-                        feedback.textContent = '';
-                        // Aplicar directamente al formulario
-                        document.getElementById('new-password').value = password;
-                        document.getElementById('confirm-password').value = password;
-                    });
-
-                    document.getElementById('copy-generated-password').addEventListener('click', function() {
-                        const password = document.getElementById('generated-password-value').textContent;
-                        navigator.clipboard.writeText(password).then(function() {
-                            document.getElementById('password-copy-feedback').textContent = '¡Copiada!';
-                        }, function() {
-                            document.getElementById('password-copy-feedback').textContent = 'No se pudo copiar.';
-                        });
-                    });
-
-                    // Mostrar/ocultar el panel correctamente
-                    const toggleBtn = document.getElementById('toggle-password-generator');
-                    const panel = document.getElementById('password-generator-panel');
-                    toggleBtn.addEventListener('click', function() {
-                        if (panel.style.display === "none" || panel.hasAttribute("hidden")) {
-                            panel.style.display = "block";
-                            panel.removeAttribute("hidden");
-                            this.setAttribute('aria-expanded', "true");
-                            panel.scrollIntoView({
-                                behavior: "smooth"
-                            });
-                        } else {
-                            panel.style.display = "none";
-                            panel.setAttribute("hidden", "");
-                            this.setAttribute('aria-expanded', "false");
-                        }
-                    });
-                </script>
-            </li>
+            <li><strong>En este sitio se verifica la fortaleza de la contraseña y se comprueba si ha sido filtrada en brechas de seguridad. Pero esto no indica que se haga en otros sitios, por lo que es importante que sigas estos consejos en todos los sitios donde tengas una cuenta.</strong></li>
+        </ul>
+    </div>
 </body>
 
 </html>
