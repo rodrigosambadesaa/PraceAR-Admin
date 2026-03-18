@@ -23,6 +23,10 @@ services:
       PRACEAR_DB_USER: appventurers
       PRACEAR_DB_PASSWORD: appventurers
       PRACEAR_DB_NAME: dbs13217995
+      PRACEAR_DB_HOST_LOCAL: db
+      PRACEAR_DB_USER_LOCAL: appventurers
+      PRACEAR_DB_PASSWORD_LOCAL: appventurers
+      PRACEAR_DB_NAME_LOCAL: dbs13217995
     volumes:
       - ./:/var/www/html
     depends_on:
