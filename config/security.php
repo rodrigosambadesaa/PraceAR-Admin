@@ -40,17 +40,31 @@ return [
     "headers" => [
         "enabled" => true,
         "referrer_policy" => "strict-origin-when-cross-origin",
-        "permissions_policy" => "geolocation=(), microphone=(), camera=(), payment=(), usb=()",
+        "permissions_policy" =>
+            "geolocation=(), microphone=(), camera=(), payment=(), usb=()",
         "content_security_policy" => [
             "default-src" => ["'self'"],
             "base-uri" => ["'self'"],
             "frame-ancestors" => ["'self'"],
             "form-action" => ["'self'"],
-            "script-src" => ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
-            "style-src" => ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com"],
+            "script-src" => [
+                "'self'",
+                "'unsafe-inline'",
+                "https://cdn.jsdelivr.net",
+            ],
+            "style-src" => [
+                "'self'",
+                "'unsafe-inline'",
+                "https://cdn.jsdelivr.net",
+                "https://fonts.googleapis.com",
+            ],
             "font-src" => ["'self'", "https://fonts.gstatic.com", "data:"],
             "img-src" => ["'self'", "data:", "https:"],
-            "connect-src" => ["'self'", "https://www.virustotal.com", "https://api.pwnedpasswords.com"],
+            "connect-src" => [
+                "'self'",
+                "https://www.virustotal.com",
+                "https://api.pwnedpasswords.com",
+            ],
             "object-src" => ["'none'"],
             "upgrade-insecure-requests" => [],
         ],
