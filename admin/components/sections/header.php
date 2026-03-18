@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 require_once HELPERS . "get_language.php";
 ?>
@@ -9,8 +10,8 @@ require_once HELPERS . "get_language.php";
             <strong class="admin-header__language">Idioma actual:
                 <img class="language-flag current-language-flag" width="15" height="15"
                     src="<?= FLAG_IMAGES_URL .
-                        get_language() .
-                        ".png" ?>" alt="<?= get_language() ?>" tabindex="0">
+                                get_language() .
+                                ".png" ?>" alt="<?= get_language() ?>" tabindex="0">
             </strong>
             <div class="admin-header__darkmode">
                 <button id="toggle-darkmode" aria-label="Cambiar modo oscuro"
