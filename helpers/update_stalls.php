@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 require_once dirname(__DIR__) . "/helpers/clean_input.php";
 require_once dirname(__DIR__) . "/helpers/get_language.php";
@@ -81,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if ($scanResult["is_malicious"]) {
             throw new Exception(
                 $scanResult["message"] ?:
-                "La imagen subida es maliciosa. Por favor, desinféctela y suba una imagen válida. Puede ser necesario desinfectar el dispositivo desde el que se capturó o el dispositivo desde el que se subió la imagen.",
+                    "La imagen subida es maliciosa. Por favor, desinféctela y suba una imagen válida. Puede ser necesario desinfectar el dispositivo desde el que se capturó o el dispositivo desde el que se subió la imagen.",
             );
         }
 
@@ -224,14 +225,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt->close();
         $conexion->close();
 
-            header(
-                "Location: " .
-                    BASE_URL .
-                    "?lang=" .
-                    get_language() .
-                    "#row_" .
-                    $stall_id,
-            );
+        header(
+            "Location: " .
+                BASE_URL .
+                "?lang=" .
+                get_language() .
+                "#row_" .
+                $stall_id,
+        );
     } else {
         $stmt->close();
         throw new Exception("Error al actualizar el puesto.");
