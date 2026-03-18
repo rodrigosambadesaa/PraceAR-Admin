@@ -412,6 +412,9 @@ $captcha_question = captcha_get_question($captcha_key);
         body.login-page {
             min-height: 100vh;
             margin: 0;
+            width: 100%;
+            max-width: none;
+            padding: 0;
             background: radial-gradient(circle at 20% 20%, #f0f8ff 0%, #e9eef7 40%, #dde5f2 100%);
         }
 
@@ -468,7 +471,7 @@ $captcha_question = captcha_get_question($captcha_key);
     <script type="module" src="./js/login.js" defer></script>
 </head>
 
-<body class="login-page container"
+<body class="login-page"
     style='font-family: "Inter", sans-serif !important;'>
     <?php require_once "components/sections/header.php"; ?>
 
