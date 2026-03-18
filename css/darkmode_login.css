@@ -56,7 +56,9 @@ body.dark-mode input[type="submit"] {
   color: #111621 !important;
   border: none !important;
   font-weight: 700;
-  transition: background 0.2s, transform 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s;
 }
 
 body.dark-mode input[type="submit"]:hover {

@@ -53,8 +53,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_GET["id"])) {
         $activo_filtrado !== null &&
         $activo_filtrado !== false &&
         intval($activo_filtrado) === 1
-        ? 1
-        : 0;
+            ? 1
+            : 0;
 
     // Obtener caseta actual para manejo de imágenes
     $sql_caseta = "SELECT caseta FROM puestos WHERE id = ?";
@@ -234,18 +234,20 @@ if (!$fila) {
 
         <article class="edit-card">
             <form action="?page=edit&id=<?= htmlspecialchars(
-                                            (string) $id,
-                                        ) ?>" method="POST" class="form-group" id="formulario-editar" enctype="multipart/form-data">
+                (string) $id,
+            ) ?>" method="POST" class="form-group" id="formulario-editar" enctype="multipart/form-data">
                 <input type="hidden" name="csrf" value="<?= $_SESSION["csrf"] ??
-                                                            "" ?>">
+                    "" ?>">
 
                 <div class="grid">
                     <div class="switch-field">
                         <label for="activo">Estado del puesto</label>
                         <label class="switch-control" for="activo">
-                            <input type="checkbox" id="activo" name="activo" value="1" <?= $fila["activo"]
-                                                                                            ? "checked"
-                                                                                            : "" ?>>
+                            <input type="checkbox" id="activo" name="activo" value="1" <?= $fila[
+                                "activo"
+                            ]
+                                ? "checked"
+                                : "" ?>>
                             <span>Activo</span>
                         </label>
                     </div>
@@ -265,8 +267,8 @@ if (!$fila) {
                     <div class="image-preview-wrapper">
                         <img src="<?= htmlspecialchars($ruta_a_imagen) ?>"
                             alt="Imagen del puesto <?= htmlspecialchars(
-                                                        $fila["nombre"],
-                                                    ) ?>" class="zoomable">
+                                $fila["nombre"],
+                            ) ?>" class="zoomable">
                     </div>
 
                     <div class="image-actions">
@@ -289,15 +291,15 @@ if (!$fila) {
                     <div>
                         <label for="caseta">Caseta</label>
                         <input type="text" id="caseta" name="caseta" value="<?= htmlspecialchars(
-                                                                                $fila["caseta"] ?? "",
-                                                                            ) ?>" readonly aria-label="Código de caseta">
+                            $fila["caseta"] ?? "",
+                        ) ?>" readonly aria-label="Código de caseta">
                     </div>
 
                     <div>
                         <label for="nombre">Nombre</label>
                         <input type="text" id="nombre" name="nombre" value="<?= htmlspecialchars(
-                                                                                $fila["nombre"] ?? "",
-                                                                            ) ?>"
+                            $fila["nombre"] ?? "",
+                        ) ?>"
                             placeholder="Nombre del puesto" aria-label="Nombre del puesto">
                     </div>
                 </div>
@@ -306,15 +308,15 @@ if (!$fila) {
                     <div>
                         <label for="contacto">Información de Contacto</label>
                         <input type="text" id="contacto" name="contacto" aria-label="Información de contacto" value="<?= htmlspecialchars(
-                                                                                                                            $fila["contacto"] ?? "",
-                                                                                                                        ) ?>">
+                            $fila["contacto"] ?? "",
+                        ) ?>">
                     </div>
 
                     <div>
                         <label for="telefono">Teléfono</label>
                         <input type="text" id="telefono" name="telefono" value="<?= htmlspecialchars(
-                                                                                    $fila["telefono"] ?? "",
-                                                                                ) ?>"
+                            $fila["telefono"] ?? "",
+                        ) ?>"
                             placeholder="Teléfono de contacto. Por ejemplo: '981 123 456'" aria-label="Teléfono de contacto">
                     </div>
                 </div>
@@ -324,11 +326,13 @@ if (!$fila) {
                         <label for="tipo-unity">Tipo en Unity <span class="admin-required" aria-hidden="true">*</span></label>
                         <select name="tipo_unity" id="tipo-unity" aria-required="true">
                             <?php foreach (UNITY_TYPE as $key => $value) { ?>
-                                <option value="<?= $key ?>" <?= ($fila["tipo_unity"] ??
-                                                                "") ==
-                                                                $key
-                                                                ? "selected"
-                                                                : "" ?>>
+                                <option value="<?= $key ?>" <?= ($fila[
+    "tipo_unity"
+] ??
+    "") ==
+$key
+    ? "selected"
+    : "" ?>>
                                     <?= $value ?>
                                 </option>
                             <?php } ?>
@@ -344,10 +348,10 @@ if (!$fila) {
                                 $fila_naves = $resultado_naves->fetch_assoc()
                             ) { ?>
                                 <option value="<?= htmlspecialchars(
-                                                    (string) $fila_naves["id"],
-                                                ) ?>" <?= $fila["id_nave"] == $fila_naves["id"]
-                                                            ? "selected"
-                                                            : "" ?>>
+                                    (string) $fila_naves["id"],
+                                ) ?>" <?= $fila["id_nave"] == $fila_naves["id"]
+    ? "selected"
+    : "" ?>>
                                     <?= htmlspecialchars($fila_naves["tipo"]) ?>
                                 </option>
                             <?php }
@@ -360,8 +364,8 @@ if (!$fila) {
                     <label for="caseta-padre">Caseta padre</label>
                     <input name="caseta_padre" type="text" id="caseta-padre"
                         value="<?= htmlspecialchars(
-                                    $fila["caseta_padre"] ?? "",
-                                ) ?>" placeholder="Código de caseta padre"
+                            $fila["caseta_padre"] ?? "",
+                        ) ?>" placeholder="Código de caseta padre"
                         aria-label="Caseta padre">
                 </div>
 
@@ -384,8 +388,8 @@ if (!$fila) {
 
         <?php if ($fila) { ?>
             <script type="module" src="<?= htmlspecialchars(
-                                            JS_ADMIN,
-                                        ) ?>edit_stall.js"></script>
+                JS_ADMIN,
+            ) ?>edit_stall.js"></script>
         <?php } ?>
 
         <script>

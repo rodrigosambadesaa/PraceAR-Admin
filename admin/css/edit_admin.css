@@ -1,264 +1,275 @@
 body.admin-edit {
-    margin: 0;
-    background:
-        radial-gradient(circle at 8% 12%,
-            color-mix(in oklab, var(--admin-primary) 16%, transparent),
-            transparent 32%),
-        radial-gradient(circle at 88% 8%,
-            color-mix(in oklab, var(--admin-info) 18%, transparent),
-            transparent 30%),
-        var(--admin-bg);
-    color: var(--admin-text);
+  margin: 0;
+  background:
+    radial-gradient(
+      circle at 8% 12%,
+      color-mix(in oklab, var(--admin-primary) 16%, transparent),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 88% 8%,
+      color-mix(in oklab, var(--admin-info) 18%, transparent),
+      transparent 30%
+    ),
+    var(--admin-bg);
+  color: var(--admin-text);
 }
 
 .edit-layout {
-    max-width: 1060px;
-    margin: 1.5rem auto 3rem;
-    padding: 0 1rem 2rem;
+  max-width: 1060px;
+  margin: 1.5rem auto 3rem;
+  padding: 0 1rem 2rem;
 }
 
 .edit-hero {
-    margin: 0 auto 1rem;
-    padding: 1.5rem 1.25rem;
-    border-radius: 18px;
-    background: linear-gradient(135deg,
-            color-mix(in oklab, var(--admin-primary) 16%, var(--admin-surface)) 0%,
-            color-mix(in oklab, var(--admin-info) 12%, var(--admin-surface)) 100%);
-    border: 1px solid color-mix(in oklab, var(--admin-primary) 30%, var(--admin-border));
-    box-shadow: var(--admin-card-shadow);
+  margin: 0 auto 1rem;
+  padding: 1.5rem 1.25rem;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--admin-primary) 16%, var(--admin-surface)) 0%,
+    color-mix(in oklab, var(--admin-info) 12%, var(--admin-surface)) 100%
+  );
+  border: 1px solid
+    color-mix(in oklab, var(--admin-primary) 30%, var(--admin-border));
+  box-shadow: var(--admin-card-shadow);
 }
 
 .edit-hero #edit-page-title {
-    margin: 0;
-    font-size: clamp(1.55rem, 2.6vw, 2.35rem);
-    letter-spacing: -0.01em;
-    color: var(--admin-heading);
+  margin: 0;
+  font-size: clamp(1.55rem, 2.6vw, 2.35rem);
+  letter-spacing: -0.01em;
+  color: var(--admin-heading);
 }
 
 .edit-subtitle {
-    margin: 0.65rem 0 0;
-    color: var(--admin-text-muted);
-    font-size: 1rem;
+  margin: 0.65rem 0 0;
+  color: var(--admin-text-muted);
+  font-size: 1rem;
 }
 
 .edit-card {
-    margin: 0;
-    padding: 1.25rem;
-    border-radius: 20px;
-    border: 1px solid var(--admin-border);
-    background: color-mix(in oklab, var(--admin-surface) 95%, transparent);
-    box-shadow: 0 16px 36px rgba(10, 16, 30, 0.12);
-    backdrop-filter: blur(4px);
+  margin: 0;
+  padding: 1.25rem;
+  border-radius: 20px;
+  border: 1px solid var(--admin-border);
+  background: color-mix(in oklab, var(--admin-surface) 95%, transparent);
+  box-shadow: 0 16px 36px rgba(10, 16, 30, 0.12);
+  backdrop-filter: blur(4px);
 }
 
 #formulario-editar {
-    margin: 0;
-    max-width: 100%;
-    width: 100%;
-    display: grid;
-    gap: 1rem;
+  margin: 0;
+  max-width: 100%;
+  width: 100%;
+  display: grid;
+  gap: 1rem;
 }
 
 #formulario-editar label {
-    margin-bottom: 0.35rem;
-    font-weight: 700;
-    color: var(--admin-text-muted);
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+  color: var(--admin-text-muted);
 }
 
 #formulario-editar input[type="text"],
 #formulario-editar input[type="file"],
 #formulario-editar select,
 #formulario-editar textarea {
-    width: 100%;
-    border-radius: 12px;
-    border: 1px solid var(--admin-border);
-    background: var(--admin-surface-muted);
-    color: var(--admin-text);
-    padding: 0.72rem 0.82rem;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface-muted);
+  color: var(--admin-text);
+  padding: 0.72rem 0.82rem;
 }
 
 #formulario-editar input:focus,
 #formulario-editar select:focus,
 #formulario-editar textarea:focus {
-    border-color: var(--admin-primary);
-    box-shadow: 0 0 0 3px var(--admin-primary-soft);
-    outline: none;
+  border-color: var(--admin-primary);
+  box-shadow: 0 0 0 3px var(--admin-primary-soft);
+  outline: none;
 }
 
 .switch-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
 }
 
 .switch-control {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.55rem;
-    border: 1px solid var(--admin-border);
-    background: var(--admin-surface-muted);
-    border-radius: 12px;
-    padding: 0.6rem 0.75rem;
-    font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  border: 1px solid var(--admin-border);
+  background: var(--admin-surface-muted);
+  border-radius: 12px;
+  padding: 0.6rem 0.75rem;
+  font-weight: 600;
 }
 
 .switch-control input[type="checkbox"] {
-    width: 1.05rem;
-    height: 1.05rem;
-    margin: 0;
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0;
 }
 
 .field-hint {
-    margin: 0.2rem 0 0;
-    color: var(--admin-text-muted);
-    font-size: 0.92rem;
+  margin: 0.2rem 0 0;
+  color: var(--admin-text-muted);
+  font-size: 0.92rem;
 }
 
 .section-label {
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--admin-text-muted);
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--admin-text-muted);
 }
 
 .image-preview-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.95rem;
-    border-radius: 14px;
-    border: 1px dashed var(--admin-border-strong);
-    background: color-mix(in oklab, var(--admin-surface-muted) 92%, transparent);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.95rem;
+  border-radius: 14px;
+  border: 1px dashed var(--admin-border-strong);
+  background: color-mix(in oklab, var(--admin-surface-muted) 92%, transparent);
 }
 
 .zoomable {
-    cursor: zoom-in;
-    object-fit: cover;
-    width: min(320px, 100%);
-    height: auto;
-    aspect-ratio: 1 / 1;
-    border-radius: 14px;
-    box-shadow: 0 10px 26px rgba(10, 16, 30, 0.2);
-    border: 1px solid var(--admin-border);
+  cursor: zoom-in;
+  object-fit: cover;
+  width: min(320px, 100%);
+  height: auto;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(10, 16, 30, 0.2);
+  border: 1px solid var(--admin-border);
 }
 
 .image-actions {
-    display: grid;
-    gap: 0.35rem;
+  display: grid;
+  gap: 0.35rem;
 }
 
 #caseta {
-    font-family: "Fira Code", "Consolas", "Courier New", monospace;
-    font-weight: 700;
+  font-family: "Fira Code", "Consolas", "Courier New", monospace;
+  font-weight: 700;
 }
 
 #div-botones {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 0.4rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.4rem;
 }
 
 #actualizar {
-    border: none;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--admin-primary) 0%, var(--admin-info) 100%);
-    color: var(--admin-primary-contrast);
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    min-width: 220px;
-    padding: 0.82rem 1.1rem;
-    transition:
-        transform 0.18s ease,
-        box-shadow 0.2s ease,
-        filter 0.18s ease;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    var(--admin-primary) 0%,
+    var(--admin-info) 100%
+  );
+  color: var(--admin-primary-contrast);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  min-width: 220px;
+  padding: 0.82rem 1.1rem;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.2s ease,
+    filter 0.18s ease;
 }
 
 #actualizar:hover,
 #actualizar:focus-visible {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 28px rgba(30, 125, 189, 0.28);
-    filter: saturate(1.08);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(30, 125, 189, 0.28);
+  filter: saturate(1.08);
 }
 
 #mensaje {
-    margin-top: 1rem;
-    min-height: 1.5rem;
-    text-align: center;
-    font-weight: 600;
+  margin-top: 1rem;
+  min-height: 1.5rem;
+  text-align: center;
+  font-weight: 600;
 }
 
 .note {
-    margin: 0.9rem 0 0;
-    text-align: center;
-    color: var(--admin-text-muted);
+  margin: 0.9rem 0 0;
+  text-align: center;
+  color: var(--admin-text-muted);
 }
 
 .zoomed-container {
-    position: fixed;
-    inset: 0;
-    background: rgba(5, 10, 18, 0.86);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    padding: 1.5rem;
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 18, 0.86);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  padding: 1.5rem;
 }
 
 .zoomed-container.show {
-    display: flex;
+  display: flex;
 }
 
 .zoomed-container img {
-    max-width: min(92vw, 820px);
-    max-height: 88vh;
-    border-radius: 14px;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.38);
+  max-width: min(92vw, 820px);
+  max-height: 88vh;
+  border-radius: 14px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.38);
 }
 
 .zoomed-close {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    border: none;
-    border-radius: 999px;
-    width: 2.35rem;
-    height: 2.35rem;
-    color: #fff;
-    background: rgba(0, 0, 0, 0.45);
-    font-size: 1.4rem;
-    cursor: pointer;
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: none;
+  border-radius: 999px;
+  width: 2.35rem;
+  height: 2.35rem;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.45);
+  font-size: 1.4rem;
+  cursor: pointer;
 }
 
 @media (max-width: 900px) {
-    .edit-layout {
-        margin-top: 1rem;
-    }
+  .edit-layout {
+    margin-top: 1rem;
+  }
 
-    .edit-card {
-        padding: 1rem;
-    }
+  .edit-card {
+    padding: 1rem;
+  }
 
-    #div-botones {
-        justify-content: stretch;
-    }
+  #div-botones {
+    justify-content: stretch;
+  }
 
-    #actualizar {
-        width: 100%;
-        min-width: 0;
-    }
+  #actualizar {
+    width: 100%;
+    min-width: 0;
+  }
 }
 
 @media (max-width: 640px) {
-    .edit-hero {
-        padding: 1rem;
-    }
+  .edit-hero {
+    padding: 1rem;
+  }
 
-    .edit-subtitle {
-        font-size: 0.92rem;
-    }
+  .edit-subtitle {
+    font-size: 0.92rem;
+  }
 
-    #formulario-editar {
-        gap: 0.9rem;
-    }
+  #formulario-editar {
+    gap: 0.9rem;
+  }
 }
