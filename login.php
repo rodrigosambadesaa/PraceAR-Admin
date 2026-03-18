@@ -408,49 +408,160 @@ $captcha_question = captcha_get_question($captcha_key);
         input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
+        body.login-page {
+            min-height: 100vh;
+            margin: 0;
+            background: radial-gradient(circle at 20% 20%, #f0f8ff 0%, #e9eef7 40%, #dde5f2 100%);
+        }
+
+        .login-shell {
+            width: min(980px, 94vw);
+            margin: 0 auto;
+            padding: 1.5rem 1rem 2.5rem;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .login-grid {
+            display: grid;
+            grid-template-columns: minmax(300px, 1fr) minmax(320px, 420px);
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .login-card {
+            margin: 0;
+            border-radius: 18px;
+            border: 1px solid rgba(45, 64, 89, 0.18);
+            box-shadow: 0 16px 36px rgba(34, 51, 72, 0.12);
+            backdrop-filter: blur(1px);
+        }
+
+        .login-card h2 {
+            margin-bottom: 0.35rem;
+        }
+
+        .login-messages {
+            margin-top: 1rem;
+            display: grid;
+            gap: 0.4rem;
+            text-align: center;
+        }
+
+        @media (max-width: 860px) {
+            .login-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .login-card {
+                order: 2;
+            }
+
+            .panda-login-panda {
+                order: 1;
+            }
+        }
     </style>
+    <link rel="stylesheet" href="./css/panda_login.css">
     <link rel="stylesheet" href="./css/darkmode_login.css">
     <script type="module" src="./js/login.js" defer></script>
 </head>
 
-<body class="container"
-    style='display: grid; place-content: center; min-height: 100vh; max-width: 100%; font-family: "Inter", sans-serif !important;'>
+<body class="login-page container"
+    style='font-family: "Inter", sans-serif !important;'>
     <?php require_once "components/sections/header.php"; ?>
-    <h2 style="text-align: center;" id="form-title">Inicio de sesión</h2>
+
     <?php if (!isset($_SESSION["csrf"])) {
         $_SESSION["csrf"] = bin2hex(random_bytes(32));
     } ?>
 
-    <form method="POST" id="formulario" aria-labelledby="form-title" novalidate>
-        <input type="hidden" name="csrf" value="<?= isset($_SESSION["csrf"])
-                                                    ? $_SESSION["csrf"]
-                                                    : "" ?>">
-        <div id="form-group">
-            <label for="login" class="required"><strong>Usuario:</strong></label>
-            <input type="text" name="login" id="login" required aria-required="true" aria-describedby="login-help">
-            <small id="login-help">Ingrese su nombre de usuario registrado.</small>
+    <main class="login-shell">
+        <div class="login-grid">
+            <article class="login-card">
+                <h2 style="text-align: center;" id="form-title">Inicio de sesión</h2>
+                <form method="POST" id="formulario" aria-labelledby="form-title" novalidate>
+                    <input type="hidden" name="csrf" value="<?= isset($_SESSION["csrf"])
+                                                                ? $_SESSION["csrf"]
+                                                                : "" ?>">
+                    <div id="form-group">
+                        <label for="login" class="required"><strong>Usuario:</strong></label>
+                        <input type="text" name="login" id="login" required aria-required="true"
+                            aria-describedby="login-help" autocomplete="username">
+                        <small id="login-help">Ingrese su nombre de usuario registrado.</small>
+                    </div>
+                    <div id="form-group">
+                        <label for="password" class="required"><strong>Contraseña:</strong></label>
+                        <input type="password" name="password" id="password" required aria-required="true"
+                            aria-describedby="password-help" autocomplete="current-password">
+                        <small id="password-help">Ingrese su contraseña. Debe tener entre 16 y 1024 caracteres.</small>
+                    </div>
+                    <div id="form-group">
+                        <label for="captcha" class="required"><strong>Verificación humana:</strong></label>
+                        <p id="captcha-question" style="margin-bottom: .5rem;">
+                            <?= htmlspecialchars($captcha_question) ?>
+                        </p>
+                        <input type="text" name="captcha_answer" id="captcha" required aria-required="true"
+                            aria-describedby="captcha-help" inputmode="numeric" pattern="[0-9]+">
+                        <small id="captcha-help">Responda con el resultado numérico de la pregunta.</small>
+                    </div>
+                    <div id="form-group">
+                        <input type="submit" value="Iniciar sesión" aria-label="Iniciar sesión">
+                    </div>
+                </form>
+                <div class="login-messages">
+                    <p class="note" role="alert" aria-live="polite">Los campos marcados con * son obligatorios</p>
+                    <?= $err ?>
+                </div>
+            </article>
+
+            <div class="panda-login-panda" aria-hidden="true">
+                <div class="backg">
+                    <div class="panda">
+                        <div class="earl"></div>
+                        <div class="earr"></div>
+                        <div class="face">
+                            <div class="blshl"></div>
+                            <div class="blshr"></div>
+                            <div class="eyel">
+                                <div class="eyeball1"></div>
+                            </div>
+                            <div class="eyer">
+                                <div class="eyeball2"></div>
+                            </div>
+                            <div class="nose">
+                                <div class="line"></div>
+                            </div>
+                            <div class="mouth">
+                                <div class="m">
+                                    <div class="m1"></div>
+                                </div>
+                                <div class="mm">
+                                    <div class="m1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="pawl">
+                    <div class="p1">
+                        <div class="p2"></div>
+                        <div class="p3"></div>
+                        <div class="p4"></div>
+                    </div>
+                </div>
+                <div class="pawr">
+                    <div class="p1">
+                        <div class="p2"></div>
+                        <div class="p3"></div>
+                        <div class="p4"></div>
+                    </div>
+                </div>
+                <div class="handl"></div>
+                <div class="handr"></div>
+            </div>
         </div>
-        <div id="form-group">
-            <label for="password" class="required"><strong>Contraseña:</strong></label>
-            <input type="password" name="password" id="password" required aria-required="true"
-                aria-describedby="password-help">
-            <small id="password-help">Ingrese su contraseña. Debe tener entre 16 y 1024 caracteres.</small>
-        </div>
-        <div id="form-group">
-            <label for="captcha" class="required"><strong>Verificación humana:</strong></label>
-            <p id="captcha-question" style="margin-bottom: .5rem;">
-                <?= htmlspecialchars($captcha_question) ?>
-            </p>
-            <input type="text" name="captcha_answer" id="captcha" required aria-required="true"
-                aria-describedby="captcha-help" inputmode="numeric" pattern="[0-9]+">
-            <small id="captcha-help">Responda con el resultado numérico de la pregunta.</small>
-        </div>
-        <div id="form-group">
-            <input type="submit" value="Iniciar sesión" aria-label="Iniciar sesión">
-        </div>
-    </form>
-    <p class="note" role="alert" aria-live="polite">Los campos marcados con * son obligatorios</p>
-    <?= $err ?>
+    </main>
     <script src="./js/helpers/dark_mode.js" defer></script>
 </body>
 
