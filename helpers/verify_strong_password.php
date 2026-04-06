@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 // $app_id_config = include __DIR__ . '/../wolfram_alpha_app_id.php';
@@ -215,8 +216,11 @@ function contrasenha_similar_a_usuario(
         return false;
     }
 
-    // Aseguramos que todos los valores sean minúsculas para comparaciones insensibles a mayúsculas
-    $contrasenha = strtolower($contrasenha);
+    // Comparaciones normalizadas para reducir falsos positivos y mantener la regla útil.
+    $contrasenha = strtolower(trim($contrasenha));
+    if ($contrasenha === "") {
+        return false;
+    }
 
     // Si el nombre de usuario es un solo valor, lo convertimos en un array para mayor flexibilidad
     $usuarios = is_array($usuario) ? $usuario : [$usuario];
@@ -227,18 +231,35 @@ function contrasenha_similar_a_usuario(
             continue;
         }
 
-        $nombre_usuario = strtolower($nombre_usuario);
-
-        // Verificar si la contraseña contiene el nombre de usuario completo
-        if (strpos($contrasenha, $nombre_usuario) !== false) {
-            return true;
+        $nombre_usuario = strtolower(trim($nombre_usuario));
+        if ($nombre_usuario === "") {
+            continue;
         }
 
-        // Verificar si la contraseña contiene una parte significativa del nombre de usuario
-        $longitud = strlen($nombre_usuario);
-        for ($i = 0; $i <= $longitud - 3; $i++) {
-            // Extraer substrings de al menos 3 caracteres
-            $subcadena = substr($nombre_usuario, $i, 3);
+        // Evitar coincidencias triviales en usuarios muy cortos.
+        if (strlen($nombre_usuario) >= 4) {
+            if (strpos($contrasenha, $nombre_usuario) !== false) {
+                return true;
+            }
+        }
+
+        // Revisar partes alfanuméricas relevantes del usuario (p. ej., en nombres con puntos/guiones).
+        $fragmentos = preg_split('/[^a-z0-9ñ]+/u', $nombre_usuario) ?: [];
+        foreach ($fragmentos as $fragmento) {
+            if (strlen($fragmento) >= 4 && strpos($contrasenha, $fragmento) !== false) {
+                return true;
+            }
+        }
+
+        // Para usuarios largos, comprobar subcadenas significativas de 4 caracteres.
+        $usuario_solo_alnum = preg_replace('/[^a-z0-9ñ]/u', '', $nombre_usuario);
+        if (!is_string($usuario_solo_alnum) || strlen($usuario_solo_alnum) < 6) {
+            continue;
+        }
+
+        $longitud = strlen($usuario_solo_alnum);
+        for ($i = 0; $i <= $longitud - 4; $i++) {
+            $subcadena = substr($usuario_solo_alnum, $i, 4);
             if (strpos($contrasenha, $subcadena) !== false) {
                 return true;
             }
