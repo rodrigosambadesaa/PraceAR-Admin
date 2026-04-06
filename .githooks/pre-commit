@@ -1,4 +1,8 @@
-#!/bin/sh
-# Ensure TypeScript assets are up to date before committing
+#!/usr/bin/env sh
+set -eu
 
-npm run build
+printf "[pre-commit] TypeScript build...\n"
+npm run -s build
+
+printf "[pre-commit] Secret scan on staged files...\n"
+node scripts/scan-secrets-staged.mjs

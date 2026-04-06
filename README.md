@@ -17,9 +17,13 @@ Clonar el repositorio en una carpeta llamada appventurers
 
 ![Requisitos](https://github.com/user-attachments/assets/2ba5d275-9420-436a-bc1a-619ddfcd072d)
 
-## Automatización del build de TypeScript
+## Automatización del build de TypeScript y control de secretos
 
-- Ejecuta `npm run setup:hooks` una vez para que Git use los hooks definidos en `.githooks/`. A partir de ese momento `npm run build` se lanzará automáticamente antes de cada commit y después de cada `git pull`/`git merge`.
+- Ejecuta `npm run setup:hooks` una vez para instalar hooks locales en `.githooks/` y configurar `core.hooksPath`.
+- A partir de ese momento, antes de cada commit se ejecutan dos controles automáticos:
+   - `npm run build` para compilar TypeScript.
+   - `node scripts/scan-secrets-staged.mjs` para bloquear ficheros y patrones sensibles en el staging.
+- Después de cada `git pull`/`git merge`, el hook `post-merge` también lanza `npm run build`.
 - Durante el desarrollo puedes mantener los bundles generados en todo momento usando `npm run watch`, que compila en caliente los proyectos TypeScript de `ts/` y `admin/ts/`.
 - En despliegues manuales basta con ejecutar `npm run build` (o dejar que el hook `post-merge` lo haga por ti) antes de subir la web al servidor.
 
@@ -41,8 +45,16 @@ La aplicación puede levantarse completa con un único comando usando Docker Com
 Servicios incluidos:
 
 - `frontend`: Nginx (sirve estáticos y enruta PHP hacia backend)
-- `backend`: PHP-FPM 8.2
+- `backend`: PHP-FPM 8.4 autocontenido con Laravel optimizado dentro de la imagen
 - `db`: MySQL 8.0 (inicializa automáticamente desde `dbs13217995.sql`)
+
+Notas importantes:
+
+- Los endpoints de `unity/` ya están migrados para servirse desde Laravel manteniendo las rutas históricas `unity/*.php`.
+- El backend Docker ya no usa bind mount para el código Laravel/PHP. Eso reduce mucho la latencia en Windows, pero cuando cambies código PHP/Blade debes reconstruir:
+   ```bash
+   docker compose up --build -d backend frontend
+   ```
 
 Documentación técnica completa de esta dockerización en `DOCKERIZATION.md`.
 
