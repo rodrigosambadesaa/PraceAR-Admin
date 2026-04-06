@@ -17,9 +17,11 @@ La dockerización se compone de 3 servicios en `docker-compose.yml`:
   - Configuración en `docker/frontend/default.conf`
 - `backend`:
   - Imagen propia desde `docker/backend/Dockerfile`
-  - Base `php:8.2-fpm-alpine`
-  - Extensiones instaladas: `mysqli`, `pdo`, `pdo_mysql`
+  - Base `php:8.4-fpm-alpine`
+  - Imagen autocontenida: copia el código del repo y ejecuta `composer install` dentro de la build
+  - Extensiones instaladas: `mysqli`, `pdo`, `pdo_mysql`, `mbstring`, `intl`, `zip`
   - Carga ajustes de PHP desde `docker/backend/php.ini`
+  - Arranca con optimización de Laravel (`config:cache`, `route:cache`, `view:cache`)
 - `db`:
   - Imagen `mysql:8.0`
   - Inicializa base de datos desde `dbs13217995.sql`
@@ -34,6 +36,7 @@ docker compose up --build -d
 Acceso por defecto:
 
 - `http://localhost:8081`
+- Endpoints Unity migrados a Laravel bajo `http://localhost:8081/unity/*.php`
 
 Parada del entorno:
 
@@ -62,6 +65,17 @@ En `constants.php`:
   - Si no existen `*_LOCAL`, utiliza `PRACEAR_DB_*`.
 
 Esto evita errores de rutas y conexión al ejecutar en contenedores.
+
+## Nota operativa importante
+
+- El `backend` ya no usa bind mount del código PHP/Laravel. Eso mejora drásticamente el rendimiento en Windows.
+- Cuando cambies archivos PHP, Blade, config o rutas de Laravel, debes reconstruir backend:
+
+```bash
+docker compose up --build -d backend frontend
+```
+
+- Si solo cambias estáticos legacy servidos por Nginx (`admin/css`, `admin/js`, `css`, `js`, `img`, `assets`), basta con recargar o reiniciar `frontend` si cambiaste `default.conf`.
 
 ## Resolución de problemas
 

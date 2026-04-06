@@ -91,21 +91,22 @@ function syncLengthFromRange() {
     lengthNumberInput.value = lengthRangeInput.value;
     updateLengthOutput(lengthRangeInput.value);
 }
-function toggleGeneratorPanel() {
-    if (!(generatorPanel instanceof HTMLElement) ||
-        !(generatorToggleButton instanceof HTMLButtonElement))
+function updateGeneratorToggleState(isExpanded) {
+    if (!(generatorToggleButton instanceof HTMLButtonElement)) {
         return;
-    const isHidden = generatorPanel.hasAttribute("hidden");
-    if (isHidden) {
+    }
+    generatorToggleButton.setAttribute("aria-expanded", isExpanded ? "true" : "false");
+}
+function revealGeneratorPanel() {
+    if (!(generatorPanel instanceof HTMLElement)) {
+        return;
+    }
+    if (generatorPanel.hasAttribute("hidden")) {
         generatorPanel.removeAttribute("hidden");
+        generatorPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
-    else {
-        generatorPanel.setAttribute("hidden", "");
-    }
-    const expanded = generatorPanel.hasAttribute("hidden") ? "false" : "true";
-    generatorToggleButton.setAttribute("aria-expanded", expanded);
-    if (!generatorPanel.hasAttribute("hidden"))
-        updateResistance();
+    updateGeneratorToggleState(true);
+    updateResistance();
 }
 function resetGeneratedPassword() {
     if (generatedPasswordContainer instanceof HTMLElement) {
@@ -143,13 +144,33 @@ async function handleGenerateClick() {
     try {
         generateButton.disabled = true;
         setGeneratorFeedback("Generando contraseña segura…", "info");
+        revealGeneratorPanel();
         const length = lengthNumberInput.value;
         const formData = new FormData();
         formData.append("length", length);
-        const response = await fetch("ajax/generate_password.php", {
+        formData.append("csrf", csrfToken);
+        formData.append("_token", csrfToken);
+        const endpoint = new URL("ajax/generate_password.php", window.location.href);
+        const response = await fetch(endpoint.toString(), {
             method: "POST",
+            credentials: "same-origin",
+            headers: {
+                Accept: "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+                "X-Requested-With": "XMLHttpRequest",
+            },
             body: formData,
         });
+        if (response.status === 401) {
+            setGeneratorFeedback("La sesión ha caducado. Recarga la página e inicia sesión de nuevo.", "error");
+            resetGeneratedPassword();
+            return;
+        }
+        if (response.status === 419) {
+            setGeneratorFeedback("No se pudo validar la petición. Recarga la página e inténtalo otra vez.", "error");
+            resetGeneratedPassword();
+            return;
+        }
         if (!response.ok)
             throw new Error(`Respuesta inesperada (${response.status})`);
         const data = await response.json();
@@ -229,6 +250,10 @@ async function handleGenerateClick() {
             generateButton.disabled = false;
         }
     }
+}
+async function handleGeneratorShortcutClick() {
+    revealGeneratorPanel();
+    await handleGenerateClick();
 }
 function resetCopyFeedback() {
     if (!(copyFeedback instanceof HTMLElement))
@@ -335,7 +360,9 @@ formulario.addEventListener("submit", (event) => {
     }
 });
 if (generatorToggleButton instanceof HTMLButtonElement) {
-    generatorToggleButton.addEventListener("click", toggleGeneratorPanel);
+    generatorToggleButton.addEventListener("click", () => {
+        void handleGeneratorShortcutClick();
+    });
 }
 if (lengthNumberInput instanceof HTMLInputElement) {
     lengthNumberInput.addEventListener("input", syncLengthFromNumber);
@@ -352,3 +379,4 @@ if (copyButton instanceof HTMLButtonElement) {
 if (lengthNumberInput instanceof HTMLInputElement) {
     updateLengthOutput(lengthNumberInput.value);
 }
+updateGeneratorToggleState(generatorPanel instanceof HTMLElement && !generatorPanel.hasAttribute("hidden"));

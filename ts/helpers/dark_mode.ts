@@ -2,6 +2,13 @@
   const STORAGE_KEY = "dark-mode";
   const LEGACY_STORAGE_KEY = "darkmode";
   const COOKIE_KEY = "dark_mode";
+  const storage = (() => {
+    try {
+      return window.localStorage;
+    } catch {
+      return null;
+    }
+  })();
 
   const darkModeIcon = document.getElementById("darkmode-icon") as
     | HTMLElement
@@ -11,9 +18,13 @@
     | null;
   const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
+  function escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
   function getCookieValue(name: string): string | null {
     const match = document.cookie.match(
-      new RegExp("(?:^|; )" + name.replace(/[.$?*|{}()\\[\\]\\/+^]/g, "\\$&") + "=([^;]*)")
+      new RegExp("(?:^|; )" + escapeRegExp(name) + "=([^;]*)")
     );
     return match ? decodeURIComponent(match[1]) : null;
   }
@@ -23,8 +34,25 @@
       `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=31536000; SameSite=Lax`;
   }
 
+  function getStorageValue(key: string): string | null {
+    return storage?.getItem(key) ?? null;
+  }
+
+  function setStorageValue(key: string, value: string): void {
+    storage?.setItem(key, value);
+  }
+
+  function removeStorageValue(key: string): void {
+    storage?.removeItem(key);
+  }
+
   function setDarkMode(on: boolean): void {
+    document.documentElement.classList.toggle("dark-mode", on);
+    document.documentElement.style.colorScheme = on ? "dark" : "light";
     document.body.classList.toggle("dark-mode", on);
+    if (toggleDarkModeButton) {
+      toggleDarkModeButton.setAttribute("aria-pressed", on ? "true" : "false");
+    }
     if (darkModeIcon) {
       darkModeIcon.textContent = on ? "☀️" : "🌙";
     }
@@ -33,19 +61,17 @@
   function readStoredPreference(): boolean | null {
     const cookieValue = getCookieValue(COOKIE_KEY);
     if (cookieValue === "true") {
-      localStorage.setItem(STORAGE_KEY, "true");
-      localStorage.removeItem(LEGACY_STORAGE_KEY);
+      setStorageValue(STORAGE_KEY, "true");
+      removeStorageValue(LEGACY_STORAGE_KEY);
       return true;
     }
     if (cookieValue === "false") {
-      localStorage.setItem(STORAGE_KEY, "false");
-      localStorage.removeItem(LEGACY_STORAGE_KEY);
+      setStorageValue(STORAGE_KEY, "false");
+      removeStorageValue(LEGACY_STORAGE_KEY);
       return false;
     }
 
-    const value =
-      localStorage.getItem(STORAGE_KEY) ??
-      localStorage.getItem(LEGACY_STORAGE_KEY);
+    const value = getStorageValue(STORAGE_KEY) ?? getStorageValue(LEGACY_STORAGE_KEY);
 
     if (value === "true") {
       return true;
@@ -56,18 +82,24 @@
     return null;
   }
 
-  function applyDarkModePreference(): void {
+  function resolvePreferredDarkMode(): boolean {
     const storedPreference = readStoredPreference();
-    if (storedPreference === null) {
-      setDarkMode(darkMediaQuery.matches);
-      return;
+    if (storedPreference !== null) {
+      return storedPreference;
     }
-    setDarkMode(storedPreference);
+
+    const systemPreference = darkMediaQuery.matches;
+    persistPreference(systemPreference);
+    return systemPreference;
+  }
+
+  function applyDarkModePreference(): void {
+    setDarkMode(resolvePreferredDarkMode());
   }
 
   function persistPreference(isDarkModeOn: boolean): void {
-    localStorage.setItem(STORAGE_KEY, String(isDarkModeOn));
-    localStorage.removeItem(LEGACY_STORAGE_KEY);
+    setStorageValue(STORAGE_KEY, String(isDarkModeOn));
+    removeStorageValue(LEGACY_STORAGE_KEY);
     setCookieValue(COOKIE_KEY, String(isDarkModeOn));
   }
 

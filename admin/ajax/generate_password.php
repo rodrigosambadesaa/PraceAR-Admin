@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 header("Content-Type: application/json");
 require_once __DIR__ . "/../../config/session.php";
@@ -41,6 +42,7 @@ try {
         $numeros,
         $especiales,
         $todos,
+        $nombre_usuario,
     ) {
         while (true) {
             $password_array = [];
@@ -73,7 +75,8 @@ try {
                 !tiene_secuencias_alfabeticas_inseguras($password) &&
                 !tiene_secuencias_numericas_inseguras($password) &&
                 !tiene_secuencias_caracteres_especiales_inseguras($password) &&
-                !tiene_espacios_al_principio_o_al_final($password)
+                !tiene_espacios_al_principio_o_al_final($password) &&
+                !contrasenha_similar_a_usuario($password, $nombre_usuario)
             ) {
                 return $password;
             }
@@ -97,6 +100,7 @@ try {
                     $numeros,
                     $especiales,
                     $todos,
+                    $_SESSION["nombre_usuario"] ?? "",
                 );
                 $password_final .= $sub;
             }
@@ -109,6 +113,10 @@ try {
                     $password_final,
                 ) &&
                 !tiene_espacios_al_principio_o_al_final($password_final) &&
+                !contrasenha_similar_a_usuario(
+                    $password_final,
+                    $_SESSION["nombre_usuario"] ?? "",
+                ) &&
                 (!isset($_SESSION["nombre_usuario"]) ||
                     !es_contrasenha_antigua(
                         $password_final,
@@ -144,6 +152,7 @@ try {
             $numeros,
             $especiales,
             $todos,
+            $_SESSION["nombre_usuario"] ?? "",
         );
         echo json_encode([
             "success" => true,

@@ -123,19 +123,50 @@ export function contrasenhaSimilarAUsuario(
   contrasenha: string,
   usuario: string | string[],
 ): boolean {
-  const contrasenhaMinusculas = contrasenha.toLowerCase();
+  const contrasenhaMinusculas = contrasenha.toLowerCase().trim();
+  if (!contrasenhaMinusculas) {
+    return false;
+  }
+
   const usuarios = Array.isArray(usuario) ? usuario : [usuario];
 
   for (const nombreUsuario of usuarios) {
-    const nombreUsuarioMinusculas = nombreUsuario.toLowerCase();
+    const nombreUsuarioMinusculas = String(nombreUsuario ?? "")
+      .toLowerCase()
+      .trim();
 
-    if (contrasenhaMinusculas.includes(nombreUsuarioMinusculas)) {
+    if (!nombreUsuarioMinusculas) {
+      continue;
+    }
+
+    if (
+      nombreUsuarioMinusculas.length >= 4 &&
+      contrasenhaMinusculas.includes(nombreUsuarioMinusculas)
+    ) {
       return true;
     }
 
-    const longitud = nombreUsuarioMinusculas.length;
-    for (let i = 0; i <= longitud - 3; i += 1) {
-      const subcadena = nombreUsuarioMinusculas.substring(i, i + 3);
+    const fragmentos = nombreUsuarioMinusculas
+      .split(/[^a-z0-9ñ]+/u)
+      .filter((fragmento) => fragmento.length >= 4);
+
+    for (const fragmento of fragmentos) {
+      if (contrasenhaMinusculas.includes(fragmento)) {
+        return true;
+      }
+    }
+
+    const usuarioSoloAlnum = nombreUsuarioMinusculas.replace(
+      /[^a-z0-9ñ]/gu,
+      "",
+    );
+
+    if (usuarioSoloAlnum.length < 6) {
+      continue;
+    }
+
+    for (let i = 0; i <= usuarioSoloAlnum.length - 4; i += 1) {
+      const subcadena = usuarioSoloAlnum.substring(i, i + 4);
       if (contrasenhaMinusculas.includes(subcadena)) {
         return true;
       }
