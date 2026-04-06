@@ -117,7 +117,6 @@ export function contrasenhaSimilarAUsuario(contrasenha, usuario) {
             contrasenhaMinusculas.includes(nombreUsuarioMinusculas)) {
             return true;
         }
-
         const fragmentos = nombreUsuarioMinusculas
             .split(/[^a-z0-9ñ]+/u)
             .filter((fragmento) => fragmento.length >= 4);
@@ -126,7 +125,6 @@ export function contrasenhaSimilarAUsuario(contrasenha, usuario) {
                 return true;
             }
         }
-
         const usuarioSoloAlnum = nombreUsuarioMinusculas.replace(/[^a-z0-9ñ]/gu, "");
         if (usuarioSoloAlnum.length < 6) {
             continue;
