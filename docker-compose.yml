@@ -16,19 +16,21 @@ services:
       context: .
       dockerfile: docker/backend/Dockerfile
     container_name: appventurers-backend
+    working_dir: /var/www/html/laravel-docker
     environment:
-      APP_ENV: development
-      APP_BASE_URL: http://localhost:${FRONTEND_PORT:-8081}/
-      PRACEAR_DB_HOST: db
-      PRACEAR_DB_USER: appventurers
-      PRACEAR_DB_PASSWORD: appventurers
-      PRACEAR_DB_NAME: dbs13217995
-      PRACEAR_DB_HOST_LOCAL: db
-      PRACEAR_DB_USER_LOCAL: appventurers
-      PRACEAR_DB_PASSWORD_LOCAL: appventurers
-      PRACEAR_DB_NAME_LOCAL: dbs13217995
-    volumes:
-      - ./:/var/www/html
+      APP_ENV: local
+      APP_DEBUG: "false"
+      APP_URL: http://localhost:${FRONTEND_PORT:-8081}
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: dbs13217995
+      DB_USERNAME: appventurers
+      DB_PASSWORD: appventurers
+      LOG_CHANNEL: stderr
+      SESSION_DRIVER: file
+      CACHE_STORE: file
+      QUEUE_CONNECTION: sync
     depends_on:
       db:
         condition: service_healthy

@@ -1,4 +1,5 @@
-#!/bin/sh
-# Rebuild TypeScript assets after pulling new changes
+#!/usr/bin/env sh
+set -eu
 
-npm run build
+printf "[post-merge] TypeScript build...\n"
+npm run -s build
