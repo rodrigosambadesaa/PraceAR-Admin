@@ -5,8 +5,8 @@
 @section('bodyClass', 'admin-change-password')
 
 @push('styles')
-<link rel="stylesheet" href="{{ url('/admin/css/change_password.css') }}">
-<link rel="stylesheet" href="{{ url('/admin/css/change_password_redesign.css') }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/change_password.css' }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/change_password_redesign.css' }}">
 @endpush
 
 @section('content')
@@ -59,7 +59,7 @@
                 </div>
             </div>
 
-            <form method="POST" action="{{ url('/') . '?' . http_build_query(['page' => 'change_password', 'lang' => $currentLang]) }}" id="formulario-cambio-contrasena" aria-labelledby="formulario-titulo">
+            <form method="POST" action="{{ rtrim($baseUrl, '/') . '/?' . http_build_query(['page' => 'change_password', 'lang' => $currentLang]) }}" id="formulario-cambio-contrasena" aria-labelledby="formulario-titulo">
                 @csrf
                 <input type="hidden" name="csrf" value="{{ csrf_token() }}">
 
@@ -165,6 +165,6 @@
 @endsection
 
 @push('scripts')
-<script type="module" src="{{ url('/admin/js/check_password_requirements.js') }}"></script>
-<script type="module" src="{{ url('/admin/js/change_password.js') }}"></script>
+<script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/check_password_requirements.js' }}"></script>
+<script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/change_password.js' }}"></script>
 @endpush

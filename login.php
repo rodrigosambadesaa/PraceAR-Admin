@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once HELPERS . "clean_input.php";
 require_once HELPERS . "validate_login.php";
 require_once HELPERS . "verify_strong_password.php";
+require_once HELPERS . "pepper.php";
 require_once HELPERS . "captcha.php";
 require_once HELPERS . "rate_limit.php";
 require_once __DIR__ . "/config/security_headers.php";
@@ -27,18 +28,9 @@ if (function_exists("ini_set")) {
 
 $captcha_key = "login_form";
 
-$pepper_config = include "pepper2.php";
-
-$today = date("Y-m-d");
-
-for ($i = 0; $i < count($pepper_config); $i++) {
-    if ($pepper_config[$i]["last_used"] < $today) {
-        continue;
-    }
-
-    $pepper = $pepper_config[$i]["PASSWORD_PEPPER"];
-    break;
-}
+$pepper_entries = pracear_pepper_entries_from_file(__DIR__ . "/pepper2.php");
+$all_peppers = pracear_pepper_all_secrets($pepper_entries);
+$pepper = pracear_pepper_current_secret($pepper_entries);
 
 // El pepper debe ser un string
 if (!is_string($pepper)) {
@@ -206,10 +198,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $stored_password = $usuario["password"];
 
                 // Verificar si la contraseña se ha hasheado con un pepper anterior y, si es así, actualizar el hash
-                for ($i = 0; $i < count($pepper_config); $i++) {
+                foreach ($all_peppers as $legacy_pepper) {
                     if (
                         password_verify(
-                            "{$password}{$pepper_config[$i]["PASSWORD_PEPPER"]}",
+                            "{$password}{$legacy_pepper}",
                             $stored_password,
                         )
                     ) {
@@ -485,10 +477,10 @@ $captcha_question = captcha_get_question($captcha_key);
                 <h2 style="text-align: center;" id="form-title">Inicio de sesión</h2>
                 <form method="POST" id="formulario" aria-labelledby="form-title" novalidate>
                     <input type="hidden" name="csrf" value="<?= isset(
-                        $_SESSION["csrf"],
-                    )
-                        ? $_SESSION["csrf"]
-                        : "" ?>">
+                                                                $_SESSION["csrf"],
+                                                            )
+                                                                ? $_SESSION["csrf"]
+                                                                : "" ?>">
                     <div id="form-group">
                         <label for="login" class="required"><strong>Usuario:</strong></label>
                         <input type="text" name="login" id="login" required aria-required="true"
