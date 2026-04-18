@@ -3,10 +3,11 @@
 @section('title', 'Admin - PraceAR - Panel principal')
 @section('activePage', 'index')
 @section('bodyClass', 'admin-index')
+@section('languageSelectorPlacement', 'content')
 
 @push('styles')
-<link rel="stylesheet" href="{{ url('/admin/css/index_admin.css') }}">
-<link rel="stylesheet" href="{{ url('/admin/css/index_admin_redesign.css') }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_admin.css' }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_admin_redesign.css' }}">
 <style>
     #modal-edicion {
         display: none;
@@ -190,13 +191,22 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
             <div class="admin-index-toolbar__meta">
                 <span class="admin-chip">Pág. {{ $stalls->currentPage() }} de {{ $stalls->lastPage() }}</span>
                 <span class="admin-chip">Búsqueda {{ $searchPerformed ? 'aplicada' : 'libre' }}</span>
+                <span id="admin-index-language-chip" class="admin-chip">Idioma {{ strtoupper($currentLang) }}</span>
+            </div>
+            <div class="admin-index-toolbar__language" id="table-language-controls" data-current-lang="{{ $currentLang }}">
+                <label for="table-language-selector">Idioma activo para traducciones y edición rápida</label>
+                <select id="table-language-selector" aria-label="Seleccionar idioma de trabajo en la tabla">
+                    @foreach ($languages as $languageCode => $languageLabel)
+                    <option value="{{ $languageCode }}" @selected($languageCode===$currentLang)>{{ $languageLabel }}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
 
         <div id="contenedor-separacion" aria-hidden="true"></div>
 
         <search class="admin-index-search" role="search">
-            <form id="formulario-busqueda" class="admin-search-form" action="{{ url('/') . '?' . http_build_query(['page' => 1, 'lang' => $currentLang]) }}" method="POST"
+            <form id="formulario-busqueda" class="admin-search-form" action="{{ rtrim($baseUrl, '/') . '/?' . http_build_query(['page' => 1, 'lang' => $currentLang]) }}" method="POST"
                 data-search-executed="{{ $searchPerformed ? 'true' : 'false' }}">
                 @csrf
                 <input value="{{ $search }}" type="text" id="input-busqueda"
@@ -206,7 +216,7 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
                 <input type="submit" value="Buscar">
                 <input id="input-reseteo" name="input_reseteo" type="reset" value="Reiniciar">
                 <input id="input-deshacer-busqueda" type="button" value="Deshacer"
-                    data-redirect-url="{{ url('/') . '?' . http_build_query(['lang' => $currentLang]) }}">
+                    data-redirect-url="{{ rtrim($baseUrl, '/') . '/?' . http_build_query(['lang' => $currentLang]) }}">
                 <input type="hidden" name="csrf" id="csrf" value="{{ csrf_token() }}">
             </form>
         </search>
@@ -240,16 +250,16 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
                     @foreach ($stalls as $stall)
                     <tr id="row-{{ $stall->id }}">
                         <td scope="row" data-label="Editar">
-                            <a href="{{ url('/') . '?' . http_build_query(['page' => 'edit', 'id' => $stall->id, 'lang' => $currentLang]) }}"
+                            <a href="{{ rtrim($baseUrl, '/') . '/?' . http_build_query(['page' => 'edit', 'id' => $stall->id, 'lang' => $currentLang]) }}"
                                 aria-label="Editar puesto {{ $stall->caseta }}">
-                                <img loading="lazy" width="15" height="15" src="{{ url('/img/pencil.png') }}" alt="Editar">
+                                <img loading="lazy" width="30" height="30" src="{{ rtrim($baseUrl, '/') . '/img/pencil.png' }}" alt="Editar">
                             </a>
                         </td>
                         <td data-label="Activo">{{ $stall->activo ? 'Sí' : 'No' }}</td>
                         <td data-label="Imagen">
                             @php
                             $imageExists = is_file(\App\Support\PracearSupport::imageDiskPath((string) $stall->caseta));
-                            $imageUrl = url('/' . \App\Support\PracearSupport::imagePublicPath((string) $stall->caseta));
+                            $imageUrl = url(\App\Support\PracearSupport::imagePublicPath((string) $stall->caseta));
                             @endphp
                             @if ($imageExists)
                             <img loading="lazy" class="zoomable editable-image" src="{{ $imageUrl }}"
@@ -270,9 +280,9 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
                         <td data-label="Puesto padre" data-editable="true" data-field="caseta_padre" data-id="{{ $stall->id }}">{{ $stall->caseta_padre ?: 'Ninguno' }}</td>
                         <td data-label="" id="celda-especial"></td>
                         <td data-label="Editar Traducción">
-                            <a href="{{ url('/') . '?' . http_build_query(['page' => 'language', 'id' => $stall->id, 'codigo_idioma' => $currentLang]) }}"
+                            <a data-translation-link="true" href="{{ rtrim($baseUrl, '/') . '/?' . http_build_query(['page' => 'language', 'id' => $stall->id, 'codigo_idioma' => $currentLang]) }}"
                                 aria-label="Editar traducción de {{ $stall->caseta }}">
-                                <img src="{{ url('/img/flags/' . $currentLang . '.png') }}" alt="Editar traducción" width="18" height="18">
+                                <img src="{{ rtrim($baseUrl, '/') . '/img/flags/' . $currentLang . '.png' }}" alt="Editar traducción" width="18" height="18">
                             </a>
                         </td>
                         <td data-label="Tipo" class="fondo-color-diferente editable-tipo" data-editable="true" data-field="tipo"
@@ -322,7 +332,7 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
 
 @push('scripts')
 @if ($resultsFound)
-<script type="module" src="{{ url('/admin/js/index.js') }}"></script>
+<script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/index.js' }}"></script>
 @endif
 
 <script>
@@ -339,6 +349,7 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
 
     document.addEventListener('DOMContentLoaded', () => {
         const inputBusqueda = document.getElementById('input-busqueda');
+        const tableLanguageSelector = document.getElementById('table-language-selector');
         const formulario = inputBusqueda?.closest('form');
         if (!inputBusqueda || !formulario) {
             return;
@@ -352,12 +363,16 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
 
         inputBusqueda.addEventListener('input', function() {
             const termino = this.value.trim();
+            const selectedLanguage =
+                tableLanguageSelector instanceof HTMLSelectElement && tableLanguageSelector.value ?
+                tableLanguageSelector.value :
+                '{{ $currentLang }}';
             if (termino.length < 2) {
                 sugerenciasDiv.style.display = 'none';
                 return;
             }
 
-            fetch(`${window.BASE_URL}admin/ajax_sugerencias.php?caseta=${encodeURIComponent(termino)}&lang={{ $currentLang }}`)
+            fetch(`${window.BASE_URL}admin/ajax_sugerencias.php?caseta=${encodeURIComponent(termino)}&lang=${encodeURIComponent(selectedLanguage)}`)
                 .then((response) => response.json())
                 .then((data) => {
                     sugerenciasDiv.innerHTML = '';

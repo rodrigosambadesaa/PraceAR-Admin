@@ -22,6 +22,11 @@ const formulario = getFormElement();
 const inputBusqueda = getSearchInput();
 const inputReseteo = document.getElementById("input-reseteo");
 const inputDeshacer = document.getElementById("input-deshacer-busqueda");
+const inputLang = document.getElementById("lang") as HTMLInputElement | null;
+const tableLanguageSelector = document.getElementById(
+  "table-language-selector",
+) as HTMLSelectElement | null;
+const languageChip = document.getElementById("admin-index-language-chip");
 
 function configureSearchControls(): void {
   const searchExecuted = formulario.dataset.searchExecuted === "true";
@@ -51,6 +56,85 @@ function configureSearchControls(): void {
       inputDeshacer.style.display = "none";
     }
   }
+}
+
+function getCurrentLanguageCode(): string {
+  if (tableLanguageSelector && tableLanguageSelector.value.trim() !== "") {
+    return tableLanguageSelector.value.trim();
+  }
+
+  if (inputLang && inputLang.value.trim() !== "") {
+    return inputLang.value.trim();
+  }
+
+  return "es";
+}
+
+function withUpdatedQueryParam(
+  urlValue: string,
+  key: string,
+  value: string,
+): string {
+  const parsed = new URL(urlValue, window.location.origin);
+  parsed.searchParams.set(key, value);
+
+  if (parsed.origin === window.location.origin) {
+    return `${parsed.pathname}${parsed.search}${parsed.hash}`;
+  }
+
+  return parsed.toString();
+}
+
+function synchronizeLanguageContext(languageCode: string): void {
+  if (inputLang) {
+    inputLang.value = languageCode;
+  }
+
+  formulario.action = withUpdatedQueryParam(formulario.action, "lang", languageCode);
+
+  if (inputDeshacer instanceof HTMLInputElement) {
+    const currentRedirect = inputDeshacer.dataset.redirectUrl;
+    if (currentRedirect) {
+      inputDeshacer.dataset.redirectUrl = withUpdatedQueryParam(
+        currentRedirect,
+        "lang",
+        languageCode,
+      );
+    }
+  }
+
+  document
+    .querySelectorAll<HTMLElement>("[data-codigo_idioma]")
+    .forEach((element) => {
+      element.dataset.codigo_idioma = languageCode;
+    });
+
+  document
+    .querySelectorAll<HTMLAnchorElement>("a[data-translation-link='true']")
+    .forEach((link) => {
+      link.href = withUpdatedQueryParam(link.href, "codigo_idioma", languageCode);
+      const flagImage = link.querySelector<HTMLImageElement>("img");
+      if (flagImage) {
+        // @ts-ignore
+        flagImage.src = `${window.BASE_URL}img/flags/${languageCode}.png`;
+      }
+    });
+
+  if (languageChip) {
+    languageChip.textContent = `Idioma ${languageCode.toUpperCase()}`;
+  }
+}
+
+function initializeTableLanguageSelector(): void {
+  if (!tableLanguageSelector) {
+    return;
+  }
+
+  synchronizeLanguageContext(tableLanguageSelector.value);
+
+  tableLanguageSelector.addEventListener("change", () => {
+    synchronizeLanguageContext(tableLanguageSelector.value);
+  });
 }
 
 formulario.addEventListener("submit", (event: SubmitEvent) => {
@@ -155,7 +239,6 @@ function openZoom(image: HTMLImageElement): void {
 
   // Usa la ruta src del <img> original, sin modificarla
   zoomElements.image.src = image.src;
-
   const row = image.closest("tr");
   const nameCell = row?.querySelector<HTMLElement>("td:nth-child(5)");
   zoomElements.name.textContent = nameCell?.textContent ?? "";
@@ -514,7 +597,7 @@ function attachEditableElement(element: Element): void {
 function handleEditableClick(element: HTMLElement): void {
   const field = element.dataset.field;
   const id = element.dataset.id;
-  const codigoIdioma = element.dataset.codigo_idioma;
+  const codigoIdioma = element.dataset.codigo_idioma ?? getCurrentLanguageCode();
 
   if (!field || !id) {
     return;
@@ -628,6 +711,7 @@ if (zoomElements.container) {
 }
 
 initializeZoomableImages();
+initializeTableLanguageSelector();
 initializeQuickEdit();
 
-export {};
+export { };

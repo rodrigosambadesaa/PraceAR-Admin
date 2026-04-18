@@ -11,7 +11,14 @@ final class PracearSupport
 {
     public static function projectRoot(): string
     {
-        return (string) config('pracear.project_root', dirname(base_path()));
+        $configuredRoot = (string) config('pracear.project_root', dirname(base_path()));
+        $securityPath = $configuredRoot . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'security.php';
+
+        if (is_file($securityPath)) {
+            return $configuredRoot;
+        }
+
+        return base_path();
     }
 
     public static function loadStrengthHelpers(): void
@@ -37,7 +44,9 @@ final class PracearSupport
 
     public static function baseUrl(): string
     {
-        return rtrim(url('/'), '/') . '/';
+        $configuredBaseUrl = (string) config('app.url', url('/'));
+
+        return rtrim($configuredBaseUrl, '/') . '/';
     }
 
     public static function isAuthenticated(Request $request): bool
@@ -107,11 +116,10 @@ final class PracearSupport
         static $pepperConfig;
 
         if ($pepperConfig === null) {
-            $pepperConfig = require self::projectRoot() . DIRECTORY_SEPARATOR . 'pepper2.php';
-        }
-
-        if (!is_array($pepperConfig) || $pepperConfig === []) {
-            throw new RuntimeException('No se pudo cargar la configuración de pepper.');
+            require_once self::projectRoot() . DIRECTORY_SEPARATOR . 'helpers' . DIRECTORY_SEPARATOR . 'pepper.php';
+            $pepperConfig = \pracear_pepper_entries_from_file(
+                self::projectRoot() . DIRECTORY_SEPARATOR . 'pepper2.php'
+            );
         }
 
         return $pepperConfig;
@@ -119,41 +127,16 @@ final class PracearSupport
 
     public static function currentPepper(): string
     {
-        $today = date('Y-m-d');
+        $entries = self::pepperConfig();
 
-        foreach (self::pepperConfig() as $pepperData) {
-            if (!is_array($pepperData)) {
-                continue;
-            }
-
-            $lastUsed = (string) ($pepperData['last_used'] ?? '');
-            $pepper = (string) ($pepperData['PASSWORD_PEPPER'] ?? '');
-
-            if ($lastUsed >= $today) {
-                return self::validatePepper($pepper);
-            }
-        }
-
-        $fallbackPepper = (string) (self::pepperConfig()[0]['PASSWORD_PEPPER'] ?? '');
-
-        return self::validatePepper($fallbackPepper);
+        return \pracear_pepper_current_secret($entries);
     }
 
     public static function matchingPepper(string $plainPassword, string $storedHash): ?string
     {
-        foreach (self::pepperConfig() as $pepperData) {
-            if (!is_array($pepperData)) {
-                continue;
-            }
+        $entries = self::pepperConfig();
 
-            $pepper = self::validatePepper((string) ($pepperData['PASSWORD_PEPPER'] ?? ''));
-
-            if (password_verify($plainPassword . $pepper, $storedHash)) {
-                return $pepper;
-            }
-        }
-
-        return null;
+        return \pracear_matching_pepper($plainPassword, $storedHash, $entries);
     }
 
     public static function hashPassword(string $plainPassword, ?string $pepper = null): string
@@ -207,20 +190,5 @@ final class PracearSupport
         }
 
         $image->move(dirname(self::imageDiskPath($caseta)), basename(self::imageDiskPath($caseta)));
-    }
-
-    private static function validatePepper(string $pepper): string
-    {
-        $normalizedPepper = trim($pepper);
-
-        if ($normalizedPepper === '' || $normalizedPepper !== $pepper) {
-            throw new RuntimeException('El pepper configurado no es válido.');
-        }
-
-        if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
-            throw new RuntimeException('El pepper configurado no cumple la longitud mínima requerida.');
-        }
-
-        return $pepper;
     }
 }

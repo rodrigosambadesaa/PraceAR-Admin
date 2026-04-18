@@ -5,8 +5,8 @@
 @section('bodyClass', 'admin-market-sections')
 
 @push('styles')
-<link rel="stylesheet" href="{{ url('/market_sections.css') }}">
-<link rel="stylesheet" href="{{ url('/market_sections_redesign.css') }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/market_sections.css' }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/market_sections_redesign.css' }}">
 @endpush
 
 @section('content')
@@ -55,5 +55,5 @@
 @endsection
 
 @push('scripts')
-<script type="module" src="{{ url('/admin/js/market_sections.js') }}"></script>
+<script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/market_sections.js' }}"></script>
 @endpush

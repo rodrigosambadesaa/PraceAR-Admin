@@ -85,11 +85,12 @@ class AdminController extends Controller
             return $redirect;
         }
 
+        $baseUrl = rtrim(PracearSupport::baseUrl(), '/');
         $images = [];
 
         foreach ((array) config('pracear.sections.ameas', []) as $section) {
             $images[] = [
-                'src' => '/img/amea' . $section['indice'] . '.jpg',
+                'src' => $baseUrl . '/img/amea' . $section['indice'] . '.jpg',
                 'alt' => 'Imagen de Amea ' . $section['indice'],
                 'caption' => 'Amea ' . $section['indice'] . ' / ' . implode('-', $section['range']),
             ];
@@ -97,7 +98,7 @@ class AdminController extends Controller
 
         foreach ((array) config('pracear.sections.naves', []) as $section) {
             $images[] = [
-                'src' => '/img/nave' . $section['indice'] . '.jpg',
+                'src' => $baseUrl . '/img/nave' . $section['indice'] . '.jpg',
                 'alt' => 'Imagen de Nave ' . $section['indice'],
                 'caption' => 'Nave ' . $section['indice'] . ' / ' . implode('-', $section['range']),
             ];
@@ -105,7 +106,7 @@ class AdminController extends Controller
 
         foreach ((array) config('pracear.sections.murallones', []) as $section) {
             $images[] = [
-                'src' => '/img/murallon' . $section['indice'] . '.jpg',
+                'src' => $baseUrl . '/img/murallon' . $section['indice'] . '.jpg',
                 'alt' => 'Imagen de Murallón ' . $section['indice'],
                 'caption' => 'Murallón ' . $section['indice'] . ' / ' . implode('-', $section['range']),
             ];
@@ -395,8 +396,12 @@ class AdminController extends Controller
 
     private function rootUrl(array $params = []): string
     {
-        $query = $params !== [] ? '?' . http_build_query($params) : '';
+        $baseUrl = rtrim(PracearSupport::baseUrl(), '/') . '/';
 
-        return url('/') . $query;
+        if ($params === []) {
+            return $baseUrl;
+        }
+
+        return $baseUrl . '?' . http_build_query($params);
     }
 }
