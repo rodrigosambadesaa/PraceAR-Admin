@@ -21,6 +21,7 @@ services:
       APP_ENV: local
       APP_DEBUG: "false"
       APP_URL: http://localhost:${FRONTEND_PORT:-8081}
+      APP_KEY: "${APP_KEY:-base64:SZdNiFbW1nb3kvAYd0jHvYJn0UbSLEDpfL1GfvXtPJU=}"
       DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: 3306

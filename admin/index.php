@@ -13,6 +13,7 @@ declare(strict_types=1) ?>
         require_once CSS_ADMIN . "theme.css";
         require_once CSS_ADMIN . "header.css";
         require_once CSS_ADMIN . "index_admin.css";
+        require_once CSS_ADMIN . "index_admin_redesign.css";
         ?>
     </style>
     <link rel='icon' href='./img/favicon.png' type='image/png'>
@@ -121,6 +122,7 @@ declare(strict_types=1) ?>
     require_once SECTIONS . "header.php";
     require_once HELPERS . "truncate_text.php";
     require_once HELPERS . "clean_input.php";
+    require_once HELPERS . "get_languages.php";
     ?>
 
     <?php
@@ -141,6 +143,8 @@ declare(strict_types=1) ?>
     }
 
     $custom_lang = get_language();
+
+    $available_languages = get_languages($conexion);
 
     $results_per_page = 50;
     $busqueda_hecha = false;
@@ -224,6 +228,20 @@ declare(strict_types=1) ?>
             <table id="tabla-puestos" role="table" aria-label="Lista de puestos del Mercado de Abastos">
                 <caption id="cabecera-tabla">
                     <h2 id="texto-cabecera-tabla">Lista de puestos del Mercado de Abastos</h2>
+                    <div class="admin-index-toolbar__language" id="table-language-controls" data-current-lang="<?= htmlspecialchars($custom_lang) ?>">
+                        <label for="table-language-selector">Idioma activo para traducciones y edición rápida</label>
+                        <select id="table-language-selector" aria-label="Seleccionar idioma de trabajo en la tabla">
+                            <?php foreach ($available_languages as $language): ?>
+                                <?php
+                                $languageCode = (string) ($language["codigo_idioma"] ?? "");
+                                $languageName = (string) ($language["nombre_idioma"] ?? $languageCode);
+                                ?>
+                                <option value="<?= htmlspecialchars($languageCode) ?>" <?= $languageCode === $custom_lang ? "selected" : "" ?>>
+                                    <?= htmlspecialchars($languageName) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                     <div id="contenedor-separacion"></div>
                     <search role="search">
                         <form id="formulario-busqueda" action="?page=1" method="POST"
@@ -358,10 +376,10 @@ declare(strict_types=1) ?>
                                                                                                                             ) ?></td>
                             <td data-label="" id="celda-especial"></td>
                             <td data-label="Editar Traducción">
-                                <a href="<?= "?page=language&id=" .
-                                                htmlspecialchars((string) $row["id"]) .
-                                                "&codigo_idioma=" .
-                                                htmlspecialchars(get_language()) ?>"
+                                <a data-translation-link="true" href="<?= "?page=language&id=" .
+                                                                            htmlspecialchars((string) $row["id"]) .
+                                                                            "&codigo_idioma=" .
+                                                                            htmlspecialchars(get_language()) ?>"
                                     aria-label="Editar traducción de <?= htmlspecialchars(
                                                                             $row["caseta"],
                                                                         ) ?>">
@@ -466,6 +484,7 @@ declare(strict_types=1) ?>
         // Sugerencias de búsqueda en tiempo real
         document.addEventListener('DOMContentLoaded', () => {
             const inputBusqueda = document.getElementById('input-busqueda');
+            const tableLanguageSelector = document.getElementById('table-language-selector');
             const formulario = inputBusqueda?.closest('form');
             if (!inputBusqueda || !formulario) return;
 
@@ -478,11 +497,15 @@ declare(strict_types=1) ?>
 
             inputBusqueda.addEventListener('input', function() {
                 const termino = this.value.trim();
+                const selectedLanguage =
+                    tableLanguageSelector instanceof HTMLSelectElement && tableLanguageSelector.value ?
+                    tableLanguageSelector.value :
+                    '<?= htmlspecialchars($custom_lang) ?>';
                 if (termino.length < 2) {
                     sugerenciasDiv.style.display = 'none';
                     return;
                 }
-                fetch(`${window.BASE_URL}admin/ajax_sugerencias.php?caseta=${encodeURIComponent(termino)}&lang=gl`)
+                fetch(`${window.BASE_URL}admin/ajax_sugerencias.php?caseta=${encodeURIComponent(termino)}&lang=${encodeURIComponent(selectedLanguage)}`)
                     .then(res => res.json())
                     .then(data => {
                         sugerenciasDiv.innerHTML = '';

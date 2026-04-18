@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 /**
@@ -14,6 +15,137 @@ function captcha_ensure_storage(): void
     if (!isset($_SESSION["captcha"]) || !is_array($_SESSION["captcha"])) {
         $_SESSION["captcha"] = [];
     }
+}
+
+/**
+ * Evaluates arithmetic expressions with +, -, *, and parentheses.
+ * Returns null for malformed expressions.
+ */
+function captcha_evaluate_expression(string $expr): ?int
+{
+    $length = strlen($expr);
+    $index = 0;
+
+    $skip_spaces = static function () use (&$index, $length, $expr): void {
+        while ($index < $length && ctype_space($expr[$index])) {
+            $index++;
+        }
+    };
+
+    $parse_expression = null;
+    $parse_term = null;
+    $parse_factor = null;
+
+    $parse_factor = static function () use (
+        &$index,
+        $length,
+        $expr,
+        $skip_spaces,
+        &$parse_expression
+    ): ?int {
+        $skip_spaces();
+        if ($index >= $length) {
+            return null;
+        }
+
+        if ($expr[$index] === "(") {
+            $index++;
+            $value = $parse_expression();
+            if ($value === null) {
+                return null;
+            }
+            $skip_spaces();
+            if ($index >= $length || $expr[$index] !== ")") {
+                return null;
+            }
+            $index++;
+            return $value;
+        }
+
+        $start = $index;
+        while ($index < $length && ctype_digit($expr[$index])) {
+            $index++;
+        }
+
+        if ($start === $index) {
+            return null;
+        }
+
+        return (int) substr($expr, $start, $index - $start);
+    };
+
+    $parse_term = static function () use (
+        &$index,
+        $length,
+        $expr,
+        $skip_spaces,
+        &$parse_factor
+    ): ?int {
+        $left = $parse_factor();
+        if ($left === null) {
+            return null;
+        }
+
+        while (true) {
+            $skip_spaces();
+            if ($index >= $length || $expr[$index] !== "*") {
+                break;
+            }
+
+            $index++;
+            $right = $parse_factor();
+            if ($right === null) {
+                return null;
+            }
+
+            $left *= $right;
+        }
+
+        return $left;
+    };
+
+    $parse_expression = static function () use (
+        &$index,
+        $length,
+        $expr,
+        $skip_spaces,
+        &$parse_term
+    ): ?int {
+        $left = $parse_term();
+        if ($left === null) {
+            return null;
+        }
+
+        while (true) {
+            $skip_spaces();
+            if ($index >= $length || ($expr[$index] !== "+" && $expr[$index] !== "-")) {
+                break;
+            }
+
+            $operator = $expr[$index];
+            $index++;
+            $right = $parse_term();
+            if ($right === null) {
+                return null;
+            }
+
+            $left = $operator === "+" ? $left + $right : $left - $right;
+        }
+
+        return $left;
+    };
+
+    $value = $parse_expression();
+    if ($value === null) {
+        return null;
+    }
+
+    $skip_spaces();
+    if ($index !== $length) {
+        return null;
+    }
+
+    return $value;
 }
 
 /**
@@ -89,14 +221,8 @@ function captcha_refresh(string $form_key): array
                 $expr .= " " . $op . " " . $numbers[$i];
             }
         }
-        // Evaluar la expresión de forma segura
-        $safe_expr = preg_replace("/[^0-9\+\-\*\(\) ]/", "", $expr);
-        try {
-            // eval solo de números y operaciones
-            $answer = eval("return " . $safe_expr . ";");
-        } catch (Throwable $e) {
-            $answer = null;
-        }
+        // Evaluar la expresión sin usar eval
+        $answer = captcha_evaluate_expression($expr);
         $question = "¿Cuánto es " . $expr . "?";
         $_SESSION["captcha"][$form_key] = [
             "question" => $question,

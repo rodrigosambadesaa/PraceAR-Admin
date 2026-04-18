@@ -6,6 +6,7 @@ use App\Support\PracearSupport;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\View\View;
 use Throwable;
@@ -59,7 +60,7 @@ class AuthController extends Controller
 
             $this->refreshCaptcha($request);
 
-            return back()
+            return redirect()->to($this->loginUrl($request))
                 ->withInput($request->except('password', 'captcha_answer'))
                 ->withErrors(['login' => $genericMessage]);
         }
@@ -68,18 +69,37 @@ class AuthController extends Controller
             RateLimiter::hit($ipKey, $ipDecay);
             RateLimiter::hit($accountKey, $accountDecay);
 
-            return back()
+            return redirect()->to($this->loginUrl($request))
                 ->withInput($request->except('password', 'captcha_answer'))
                 ->withErrors(['captcha_answer' => 'La verificación captcha no es correcta.']);
         }
 
-        $user = DB::table('usuarios')->where('login', $login)->first();
+        try {
+            $user = DB::table('usuarios')->where('login', $login)->first();
+        } catch (Throwable $exception) {
+            Log::error('No se pudo completar el login por un error de base de datos.', [
+                'login' => $login,
+                'message' => $exception->getMessage(),
+            ]);
+
+            $errorMessage = 'No se ha podido verificar el acceso en este momento. Inténtelo de nuevo en unos instantes.';
+            if ((bool) config('app.debug')) {
+                $errorMessage .= ' [' . $exception->getMessage() . ']';
+            }
+
+            RateLimiter::hit($ipKey, $ipDecay);
+            RateLimiter::hit($accountKey, $accountDecay);
+
+            return redirect()->to($this->loginUrl($request))
+                ->withInput($request->except('password', 'captcha_answer'))
+                ->withErrors(['login' => $errorMessage]);
+        }
 
         if (!$user) {
             RateLimiter::hit($ipKey, $ipDecay);
             RateLimiter::hit($accountKey, $accountDecay);
 
-            return back()
+            return redirect()->to($this->loginUrl($request))
                 ->withInput($request->except('password', 'captcha_answer'))
                 ->withErrors(['login' => $genericMessage]);
         }
@@ -90,7 +110,7 @@ class AuthController extends Controller
             RateLimiter::hit($ipKey, $ipDecay);
             RateLimiter::hit($accountKey, $accountDecay);
 
-            return back()
+            return redirect()->to($this->loginUrl($request))
                 ->withInput($request->except('password', 'captcha_answer'))
                 ->withErrors(['login' => $genericMessage]);
         }
@@ -112,13 +132,20 @@ class AuthController extends Controller
             'pracear.username' => (string) $user->login,
         ]);
 
-        DB::table('accesos')->insert([
-            'id_usuario' => (int) $user->id,
-            'ip' => (string) $request->ip(),
-            'user_agent' => (string) $request->userAgent(),
-            'fecha' => now(),
-            'tipo' => 'acceso',
-        ]);
+        try {
+            DB::table('accesos')->insert([
+                'id_usuario' => (int) $user->id,
+                'ip' => (string) $request->ip(),
+                'user_agent' => (string) $request->userAgent(),
+                'fecha' => now(),
+                'tipo' => 'acceso',
+            ]);
+        } catch (Throwable $exception) {
+            Log::warning('No se pudo registrar el acceso en la tabla de auditoria.', [
+                'user_id' => (int) $user->id,
+                'message' => $exception->getMessage(),
+            ]);
+        }
 
         return redirect()->to($this->rootUrl(['lang' => PracearSupport::language($request->input('lang'))]));
     }
@@ -127,7 +154,7 @@ class AuthController extends Controller
     {
         $retryAfter = RateLimiter::availableIn($key);
 
-        return back()
+        return redirect()->to($this->loginUrl($request))
             ->withInput($request->except('password', 'captcha_answer'))
             ->withErrors(['login' => 'Se superó el límite de intentos. Espere ' . max(1, $retryAfter) . ' segundos antes de volver a intentarlo.']);
     }
@@ -171,8 +198,19 @@ class AuthController extends Controller
 
     private function rootUrl(array $params = []): string
     {
-        $query = $params !== [] ? '?' . http_build_query($params) : '';
+        $baseUrl = rtrim(PracearSupport::baseUrl(), '/') . '/';
 
-        return url('/') . $query;
+        if ($params === []) {
+            return $baseUrl;
+        }
+
+        return $baseUrl . '?' . http_build_query($params);
+    }
+
+    private function loginUrl(Request $request): string
+    {
+        $language = PracearSupport::language((string) $request->input('lang', (string) $request->query('lang')));
+
+        return rtrim(PracearSupport::baseUrl(), '/') . '/login?lang=' . rawurlencode($language);
     }
 }

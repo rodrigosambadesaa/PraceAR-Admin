@@ -5,7 +5,7 @@
 @section('bodyClass', 'admin-edit-translations')
 
 @push('styles')
-<link rel="stylesheet" href="{{ url('/admin/css/translations.css') }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/translations.css' }}">
 @endpush
 
 @section('content')
@@ -57,7 +57,7 @@
             </div>
         </div>
 
-        <form class="pure-form translation-form" action="{{ url('/') . '?' . http_build_query(['page' => 'language', 'id' => $stallId, 'codigo_idioma' => $currentLang]) }}" method="POST" id="formulario" aria-labelledby="formulario-titulo">
+        <form class="pure-form translation-form" action="{{ rtrim($baseUrl, '/') . '/?' . http_build_query(['page' => 'language', 'id' => $stallId, 'codigo_idioma' => $currentLang]) }}" method="POST" id="formulario" aria-labelledby="formulario-titulo">
             @csrf
             <input type="hidden" name="csrf" value="{{ csrf_token() }}">
 
@@ -77,5 +77,5 @@
 @endsection
 
 @push('scripts')
-<script type="module" src="{{ url('/admin/js/edit_translations.js') }}"></script>
+<script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/edit_translations.js' }}"></script>
 @endpush

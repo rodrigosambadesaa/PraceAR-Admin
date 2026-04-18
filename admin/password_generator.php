@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 // ini_set('memory_limit', '2048M'); // o más, si es necesario
@@ -6,18 +7,12 @@ declare(strict_types=1);
 require_once HELPERS . "clean_input.php";
 require_once CONNECTION;
 require_once HELPERS . "password_generator.php";
+require_once HELPERS . "pepper.php";
 
-$pepper_config = include "pepper2.php";
-
-$today = date("Y-m-d");
-$pepper = null;
-for ($i = 0; $i < count($pepper_config); $i++) {
-    if ($pepper_config[$i]["last_used"] < $today) {
-        continue;
-    }
-    $pepper = $pepper_config[$i]["PASSWORD_PEPPER"];
-    break;
-}
+$pepper_entries = pracear_pepper_entries_from_file(
+    __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "pepper2.php",
+);
+$pepper = pracear_pepper_current_secret($pepper_entries);
 
 if ($pepper === null) {
     throw new Exception("No se pudo determinar un pepper válido.");
@@ -167,7 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - PraceAR - Generador de Contraseñas</title>
-     <style>
+    <style>
         <?php
         require_once CSS_ADMIN . "theme.css";
         require_once CSS_ADMIN . "header.css";
@@ -382,20 +377,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <label for="length-number">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="number" id="length-number" name="length" min="16" max="500"
             value="<?= htmlspecialchars(
-                (string) $length,
-                ENT_QUOTES,
-                "UTF-8",
-            ) ?>"
+                        (string) $length,
+                        ENT_QUOTES,
+                        "UTF-8",
+                    ) ?>"
             aria-describedby="length-help">
         <p id="length-help" class="sr-only">Introduce un número entre 16 y 500.</p>
 
         <label for="length-range">Longitud de la Contraseña: <span class="admin-required" aria-hidden="true">*</span></label>
         <input required type="range" id="length-range" name="length_range" min="16" max="500"
             value="<?= htmlspecialchars(
-                (string) $length,
-                ENT_QUOTES,
-                "UTF-8",
-            ) ?>"
+                        (string) $length,
+                        ENT_QUOTES,
+                        "UTF-8",
+                    ) ?>"
             aria-describedby="length-help">
 
         <output id="length-output" aria-live="polite">
@@ -411,7 +406,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
 
     <script type="module" src="<?= JS_ADMIN .
-        "/password_generator.js" ?>"></script>
+                                    "/password_generator.js" ?>"></script>
     <script src="<?= JS . "/helpers/dark_mode.js" ?>"></script>
 </body>
 
