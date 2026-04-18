@@ -17,6 +17,16 @@ pepper2.php
 # Frontend helper
 admin/js/helpers/api_key.*
 admin/js/helpers/api_key.js
+laravel-docker/public/admin/js/helpers/api_key.js
+
+# Database dumps / snapshots
+*.sql
+
+# Nested app secret files
+laravel-docker/pepper*.php
+laravel-no-docker/pepper*.php
+laravel-docker/virustotal_api_key.php
+laravel-no-docker/virustotal_api_key.php
 
 # Folders
 assets/
