@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>PraceAR - Acceso admin</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="{{ url('/img/favicon.png') }}" type="image/png">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url('/img/apple-touch-icon-180x180.png') }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ url('/img/apple-touch-icon-152x152.png') }}">
+    <link rel="icon" href="{{ rtrim($baseUrl, '/') . '/img/favicon.png' }}" type="image/png">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ rtrim($baseUrl, '/') . '/img/apple-touch-icon-180x180.png' }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ rtrim($baseUrl, '/') . '/img/apple-touch-icon-152x152.png' }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <link rel="stylesheet" href="{{ url('/css/panda_login.css') }}">
-    <link rel="stylesheet" href="{{ url('/css/darkmode_login.css') }}">
+    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/css/panda_login.css' }}">
+    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/css/darkmode_login.css' }}">
     <style>
         .required::after {
             content: " *";
@@ -103,7 +103,7 @@
             }
         }
     </style>
-    <script type="module" src="{{ url('/js/login.js') }}" defer></script>
+    <script type="module" src="{{ rtrim($baseUrl, '/') . '/js/login.js' }}" defer></script>
 </head>
 
 <body class="login-page">
@@ -121,7 +121,7 @@
                 </div>
                 @endif
 
-                <form method="POST" action="{{ url()->current() }}" id="formulario" aria-labelledby="form-title" novalidate>
+                <form method="POST" action="" id="formulario" aria-labelledby="form-title" novalidate>
                     @csrf
                     <input type="hidden" name="lang" value="{{ $currentLang }}">
 
@@ -201,7 +201,7 @@
             </div>
         </div>
     </main>
-    <script src="{{ url('/js/helpers/dark_mode.js') }}" defer></script>
+    <script src="{{ rtrim($baseUrl, '/') . '/js/helpers/dark_mode.js' }}" defer></script>
 </body>
 
 </html>
