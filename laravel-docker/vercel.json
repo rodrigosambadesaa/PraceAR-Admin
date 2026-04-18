@@ -1,0 +1,29 @@
+{
+    "version": 2,
+    "framework": null,
+    "builds": [
+        {
+            "src": "public/(.*)",
+            "use": "@vercel/static"
+        },
+        {
+            "src": "public/index.php",
+            "use": "vercel-php@0.7.3"
+        }
+    ],
+    "buildCommand": "npm ci && npm run build",
+    "routes": [
+        {
+            "src": "/appventurers",
+            "dest": "/public/index.php?__rewritten_path=/"
+        },
+        {
+            "src": "/appventurers/(.*)",
+            "dest": "/public/index.php?__rewritten_path=/$1"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/public/index.php"
+        }
+    ]
+}
