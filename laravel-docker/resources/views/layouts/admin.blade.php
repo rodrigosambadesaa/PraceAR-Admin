@@ -6,22 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Admin - PraceAR')</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="{{ url('/img/favicon.png') }}" type="image/png">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ url('/img/apple-touch-icon-180x180.png') }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ url('/img/apple-touch-icon-152x152.png') }}">
-    <link rel="manifest" href="{{ url('/manifest.json') }}">
+    <link rel="icon" href="{{ rtrim($baseUrl, '/') . '/img/favicon.png' }}" type="image/png">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ rtrim($baseUrl, '/') . '/img/apple-touch-icon-180x180.png' }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ rtrim($baseUrl, '/') . '/img/apple-touch-icon-152x152.png' }}">
+    <link rel="manifest" href="{{ rtrim($baseUrl, '/') . '/manifest.json' }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
-    <link rel="stylesheet" href="{{ url('/admin/css/theme.css') }}">
-    <link rel="stylesheet" href="{{ url('/admin/css/header.css') }}">
-    <link rel="stylesheet" href="{{ url('/admin/css/admin_shell.css') }}">
+    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/theme.css' }}">
+    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/header.css' }}">
+    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/admin_shell.css' }}">
     @stack('styles')
 </head>
 
 @php
-$rootUrl = url('/');
+$rootUrl = rtrim($baseUrl, '/') . '/';
 $activePage = trim($__env->yieldContent('activePage')) !== '' ? trim($__env->yieldContent('activePage')) : 'index';
 $currentQuery = request()->query();
 $languageSelectorPlacement = trim($__env->yieldContent('languageSelectorPlacement')) !== '' ? trim($__env->yieldContent('languageSelectorPlacement')) : 'header';
@@ -141,7 +141,7 @@ $currentSectionDescription = $pageDescriptions[$activePage] ?? 'Gestiona el cont
                     <strong class="admin-header__language">
                         <span>Idioma actual</span>
                         <img class="language-flag current-language-flag" width="15" height="15"
-                            src="{{ url('/img/flags/' . $currentLang . '.png') }}" alt="{{ $currentLang }}" tabindex="0">
+                            src="{{ rtrim($baseUrl, '/') . '/img/flags/' . $currentLang . '.png' }}" alt="{{ $currentLang }}" tabindex="0">
                         <span>{{ strtoupper($currentLang) }}</span>
                     </strong>
                     <div class="admin-header__darkmode">
@@ -180,7 +180,7 @@ $currentSectionDescription = $pageDescriptions[$activePage] ?? 'Gestiona el cont
                     aria-label="Cambiar contraseña"
                     @if ($activePage==='change_password' ) aria-current="page" @endif>Cambiar contraseña</a>
                 <a href="{{ $rootUrl . '?' . http_build_query(['page' => 'logout', 'lang' => $currentLang]) }}" class="nav-link enlace_cierre_sesion nav-link--logout" aria-label="Cerrar sesión">
-                    <img src="{{ url('/img/logout_icon.png') }}" alt="Cerrar sesión" title="Cerrar sesión">
+                    <img src="{{ rtrim($baseUrl, '/') . '/img/logout_icon.png' }}" alt="Cerrar sesión" title="Cerrar sesión">
                     <span>Salir</span>
                 </a>
             </nav>
@@ -195,7 +195,7 @@ $currentSectionDescription = $pageDescriptions[$activePage] ?? 'Gestiona el cont
         window.BASE_URL = "{{ $baseUrl }}";
     </script>
     @stack('scripts')
-    <script src="{{ url('/js/helpers/dark_mode.js') }}"></script>
+    <script src="{{ rtrim($baseUrl, '/') . '/js/helpers/dark_mode.js' }}"></script>
 </body>
 
 </html>

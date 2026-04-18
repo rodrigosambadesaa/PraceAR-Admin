@@ -1,0 +1,113 @@
+/* Estilos modo oscuro específicos para el formulario de login */
+
+body.dark-mode {
+  background:
+    radial-gradient(circle at 12% 10%, #26344a 0%, transparent 38%),
+    radial-gradient(circle at 88% 85%, #1c2940 0%, transparent 35%),
+    var(--admin-bg, #14171d) !important;
+  color: var(--admin-text, #e0e0e0) !important;
+}
+
+body.dark-mode form {
+  background: linear-gradient(180deg, #202834 0%, #1a212b 100%) !important;
+  color: var(--admin-text, #e0e0e0) !important;
+  border-radius: 14px;
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(138, 180, 248, 0.22) !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #fff !important;
+  /* Sin fondo ni borde extra */
+  background: none !important;
+  border: none !important;
+}
+
+body.dark-mode input[type="text"],
+body.dark-mode input[type="password"],
+body.dark-mode input[type="submit"],
+body.dark-mode input[type="number"],
+body.dark-mode input[type="email"],
+body.dark-mode textarea,
+body.dark-mode select {
+  background: #161c25 !important;
+  color: #f0f5ff !important;
+  border: 1px solid #37465d !important;
+  border-radius: 6px;
+}
+
+body.dark-mode input[type="text"]:focus,
+body.dark-mode input[type="password"]:focus,
+body.dark-mode input[type="number"]:focus,
+body.dark-mode input[type="email"]:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus {
+  border-color: #8ab4f8 !important;
+  box-shadow: 0 0 0 3px rgba(138, 180, 248, 0.28) !important;
+}
+
+body.dark-mode input[type="submit"] {
+  background: linear-gradient(135deg, #8ab4f8 0%, #5f8fda 100%) !important;
+  color: #111621 !important;
+  border: none !important;
+  font-weight: 700;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+
+body.dark-mode input[type="submit"]:hover {
+  background: linear-gradient(135deg, #9ec2ff 0%, #6a9ce9 100%) !important;
+  color: #0f1623 !important;
+  transform: translateY(-1px);
+}
+
+body.dark-mode label,
+body.dark-mode small,
+body.dark-mode #captcha-question {
+  color: var(--admin-text, #e0e0e0) !important;
+}
+
+body.dark-mode .note {
+  color: var(--admin-error, #ffb4b4) !important;
+  background: transparent !important;
+}
+
+body.dark-mode .required::after {
+  color: var(--admin-error, #ffb4b4) !important;
+}
+
+body.dark-mode a {
+  color: var(--admin-link, #8ab4f8) !important;
+}
+
+body.dark-mode .error-message,
+body.dark-mode [role="alert"] {
+  color: var(--admin-error, #ff7f7f) !important;
+}
+
+body.dark-mode .login-card {
+  background: rgba(24, 31, 41, 0.9) !important;
+  border-color: rgba(138, 180, 248, 0.22) !important;
+}
+
+body.dark-mode .panda-login-panda {
+  filter: drop-shadow(0 20px 28px rgba(0, 0, 0, 0.45));
+}
+
+body.dark-mode .note {
+  color: #ffb4b4 !important;
+}
+
+body.dark-mode .success-message {
+  color: var(--admin-success, #7fff7f) !important;
+}
+
+body.dark-mode img {
+  filter: brightness(0.95) contrast(1.05);
+}

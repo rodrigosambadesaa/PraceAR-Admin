@@ -5,6 +5,8 @@
 /public/storage
 /storage/*.key
 /storage/pail
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
 /vendor
 .env
 .env.backup
@@ -21,3 +23,6 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+.vercel
+.env*.local

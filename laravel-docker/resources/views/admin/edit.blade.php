@@ -5,8 +5,8 @@
 @section('bodyClass', 'admin-edit')
 
 @push('styles')
-<link rel="stylesheet" href="{{ url('/admin/css/edit_admin.css') }}">
-<link rel="stylesheet" href="{{ url('/admin/css/edit_admin_redesign.css') }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/edit_admin.css' }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/edit_admin_redesign.css' }}">
 @endpush
 
 @section('content')
@@ -41,7 +41,7 @@
 
     <section class="edit-grid">
         <article class="edit-card">
-            <form action="{{ url('/') . '?' . http_build_query(['page' => 'edit', 'id' => $stall->id, 'lang' => $currentLang]) }}" method="POST" class="form-group" id="formulario-editar" enctype="multipart/form-data">
+            <form action="{{ rtrim($baseUrl, '/') . '/?' . http_build_query(['page' => 'edit', 'id' => $stall->id, 'lang' => $currentLang]) }}" method="POST" class="form-group" id="formulario-editar" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="csrf" value="{{ csrf_token() }}">
 
@@ -61,7 +61,7 @@
                 @if ($imageExists)
                 <span class="section-label">Imagen actual</span>
                 <div class="image-preview-wrapper">
-                    <img src="{{ url('/' . \App\Support\PracearSupport::imagePublicPath((string) $stall->caseta)) }}" alt="Imagen del puesto {{ $stall->nombre }}" class="zoomable">
+                    <img src="{{ rtrim($baseUrl, '/') . '/' . \App\Support\PracearSupport::imagePublicPath((string) $stall->caseta) }}" alt="Imagen del puesto {{ $stall->nombre }}" class="zoomable">
                 </div>
 
                 <div class="image-actions">
@@ -174,5 +174,5 @@
 @endsection
 
 @push('scripts')
-<script type="module" src="{{ url('/admin/js/edit_stall.js') }}"></script>
+<script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/edit_stall.js' }}"></script>
 @endpush
