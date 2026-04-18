@@ -35,17 +35,13 @@ declare(strict_types=1) ?>
         "header.php";
     require_once HELPERS . "clean_input.php";
     require_once HELPERS . "verify_strong_password.php";
+    require_once HELPERS . "pepper.php";
 
-    $pepper_config = include "pepper2.php"; // Incluimos la configuración del pepper.
-
-    $today = date("Y-m-d");
-    $pepper = null;
-    for ($i = 0; $i < count($pepper_config); $i++) {
-        if ($pepper_config[$i]["last_used"] >= $today) {
-            $pepper = $pepper_config[$i]["PASSWORD_PEPPER"];
-            break;
-        }
-    }
+    $pepper_entries = pracear_pepper_entries_from_file(
+        __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "pepper2.php",
+    );
+    $all_peppers = pracear_pepper_all_secrets($pepper_entries);
+    $pepper = pracear_pepper_current_secret($pepper_entries);
 
     if ($pepper === null) {
         throw new Exception("No se pudo determinar un pepper válido.");
@@ -191,8 +187,7 @@ declare(strict_types=1) ?>
 
             // Para todos los pepper, verificar si la contraseña coincide con alguna de las contraseñas antiguas o si es similar a alguna de ellas
             $password_coincide = false; // Variable para controlar si la contraseña antigua coincide
-            for ($i = 0; $i < count($pepper_config); $i++) {
-                $pepper_usado = $pepper_config[$i]["PASSWORD_PEPPER"]; // Usar una variable diferente aquí
+            foreach ($all_peppers as $pepper_usado) {
 
                 // Consulta para obtener la contraseña actual del usuario
                 $sql = "SELECT password FROM usuarios WHERE id = ?";
@@ -230,8 +225,7 @@ declare(strict_types=1) ?>
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
                     $old_password_from_db = $row["password"];
-                    for ($i = 0; $i < count($pepper_config); $i++) {
-                        $pepper_usado = $pepper_config[$i]["PASSWORD_PEPPER"];
+                    foreach ($all_peppers as $pepper_usado) {
                         if (
                             password_verify(
                                 $new_password . $pepper_usado,
@@ -269,8 +263,7 @@ declare(strict_types=1) ?>
                 $stored_password = $usuario["password"];
 
                 // Verificar la contraseña actual para todos los pepper
-                for ($i = 0; $i < count($pepper_config); $i++) {
-                    $pepper_usado = $pepper_config[$i]["PASSWORD_PEPPER"];
+                foreach ($all_peppers as $pepper_usado) {
                     if (
                         password_verify(
                             "{$old_password}{$pepper_usado}",

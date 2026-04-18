@@ -35,54 +35,12 @@ function es_contrasenha_antigua(
 
     $nombre_usuario = (string) $nombre_usuario;
     require_once "./constants.php";
+    require_once HELPERS . "pepper.php";
 
-    $pepper_config = include "pepper2.php"; // Incluimos la configuración del pepper.
-
-    $today = date("Y-m-d");
-    $pepper = null;
-    $pepperCount = is_array($pepper_config) ? count($pepper_config) : 0;
-    for ($i = 0; $i < $pepperCount; $i++) {
-        if (
-            isset($pepper_config[$i]["last_used"]) &&
-            $pepper_config[$i]["last_used"] >= $today
-        ) {
-            $pepper = (string) $pepper_config[$i]["PASSWORD_PEPPER"];
-            break;
-        }
-    }
-
-    if ($pepper === null) {
-        throw new Exception("No se pudo determinar un pepper válido.");
-    }
-
-    // Validaciones del pepper (las dejamos, aunque en el código original ya estaban)
-    if (strlen($pepper) < 16 || strlen($pepper) > 1024) {
-        throw new Exception("El pepper debe tener entre 16 y 1024 caracteres.");
-    }
-
-    if (tiene_espacios_al_principio_o_al_final($pepper)) {
-        throw new Exception(
-            "El pepper no puede tener espacios al principio o al final.",
-        );
-    }
-
-    if (tiene_secuencias_alfabeticas_inseguras($pepper)) {
-        throw new Exception(
-            "El pepper no puede tener secuencias alfabéticas inseguras.",
-        );
-    }
-
-    if (tiene_secuencias_numericas_inseguras($pepper)) {
-        throw new Exception(
-            "El pepper no puede tener secuencias numéricas inseguras.",
-        );
-    }
-
-    if (tiene_secuencias_caracteres_especiales_inseguras($pepper)) {
-        throw new Exception(
-            "El pepper no puede tener secuencias de caracteres especiales inseguras.",
-        );
-    }
+    $pepper_entries = pracear_pepper_entries_from_file(
+        __DIR__ . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "pepper2.php",
+    );
+    $all_peppers = pracear_pepper_all_secrets($pepper_entries);
     $sentencia_sql = "SELECT password FROM old_passwords WHERE id_usuario = ?";
 
     global $servidor_bd, $usuario, $clave, $bd;
@@ -148,10 +106,11 @@ function es_contrasenha_antigua(
             $hashedPassword = $fila["password"] ?? "";
             if (
                 is_string($hashedPassword) &&
-                password_verify(
-                    $contrasenha_antigua_a_verificar . $pepper,
+                pracear_matching_pepper(
+                    $contrasenha_antigua_a_verificar,
                     $hashedPassword,
-                )
+                    $pepper_entries,
+                ) !== null
             ) {
                 return true; // La contraseña es antigua
             }

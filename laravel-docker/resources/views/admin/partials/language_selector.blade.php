@@ -23,7 +23,7 @@
                 tabindex="0"
                 @if ($languageCode===$currentLang) aria-current="true" @endif>
                 <img class="language-flag" width="15" height="15"
-                    src="{{ url('/img/flags/' . $languageCode . '.png') }}"
+                    src="{{ rtrim($baseUrl, '/') . '/img/flags/' . $languageCode . '.png' }}"
                     alt="{{ $languageLabel }}">
             </a>
         </li>
