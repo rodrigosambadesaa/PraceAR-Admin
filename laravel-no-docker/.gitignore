@@ -22,7 +22,24 @@ yarn-error.log
 /.vscode
 /.zed
 
+.env.vercel*
+
 # Local secrets
 pepper*.php
 virustotal_api_key.php
 public/admin/js/helpers/api_key.js
+
+# Credentials and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# Local diagnostics / temporary files
+tmp_*
+*.local.log
+*.secrets.json

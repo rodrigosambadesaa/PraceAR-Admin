@@ -1,6 +1,17 @@
 # Environment
 .env
 .env.*
+.env.vercel*
+
+# Credentials and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
 
 # API keys / app ids
 *_api_key.php
@@ -18,6 +29,7 @@ pepper2.php
 admin/js/helpers/api_key.*
 admin/js/helpers/api_key.js
 laravel-docker/public/admin/js/helpers/api_key.js
+laravel-no-docker/public/admin/js/helpers/api_key.js
 
 # Database dumps / snapshots
 *.sql
@@ -34,5 +46,11 @@ node_modules/
 .vscode/
 unity/constants.php
 .githooks/
+
+# Local diagnostics / temporary files
+tmp_*
+*.local.log
+*.secrets.json
+*.env.backup
 
 sync_config.jsonc
