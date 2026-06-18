@@ -19,6 +19,12 @@ const inputDeshacer = document.getElementById("input-deshacer-busqueda");
 const inputLang = document.getElementById("lang");
 const tableLanguageSelector = document.getElementById("table-language-selector");
 const languageChip = document.getElementById("admin-index-language-chip");
+function resolveBaseUrl(path) {
+    const normalizedBase = typeof window.BASE_URL === "string" && window.BASE_URL !== ""
+        ? window.BASE_URL
+        : "/";
+    return new URL(path, normalizedBase).toString();
+}
 function configureSearchControls() {
     const searchExecuted = formulario.dataset.searchExecuted === "true";
     if (inputReseteo instanceof HTMLInputElement) {
@@ -219,11 +225,12 @@ function validateQuickEditForm(form, field) {
         case "nombre":
         case "contacto": {
             const value = getTrimmedValue(form, "[name='value']");
-            if (!value) {
+            const maxLength = field === "nombre" ? 50 : 250;
+            if (!value && field === "nombre") {
                 message = `El campo ${field} es obligatorio.`;
             }
-            else if (value.length > 150) {
-                message = "El texto no puede superar los 150 caracteres.";
+            else if (value.length > maxLength) {
+                message = `El texto no puede superar los ${maxLength} caracteres.`;
             }
             break;
         }
@@ -241,9 +248,9 @@ function validateQuickEditForm(form, field) {
         }
         case "caseta_padre": {
             const value = getTrimmedValue(form, "[name='value']");
-            if (value && !/^[A-Za-z0-9_-]{2,15}$/.test(value)) {
+            if (value && !/^(CE|CO|MC|NA|NC)([0-9]{3})$/.test(value.toUpperCase())) {
                 message =
-                    "La caseta padre debe tener entre 2 y 15 caracteres alfanuméricos, guiones o guiones bajos.";
+                    "La caseta padre debe tener el formato correcto (por ejemplo, CE001).";
             }
             break;
         }
@@ -253,8 +260,8 @@ function validateQuickEditForm(form, field) {
             if (!tipo) {
                 message = "El tipo es obligatorio.";
             }
-            else if (tipo.length > 150) {
-                message = "El tipo no puede superar los 150 caracteres.";
+            else if (tipo.length > 50) {
+                message = "El tipo no puede superar los 50 caracteres.";
             }
             else if (descripcion.length > 450) {
                 message = "La descripción no puede superar los 450 caracteres.";
@@ -379,10 +386,7 @@ function updateCellAfterSuccess(context, form) {
                     newImage.dataset.id = id;
                     newImage.dataset.id = id;
                     // @ts-ignore
-                    newImage.src = `${window.BASE_URL}assets/${caseta}.jpg?${Date.now()}`;
-                    cell.appendChild(newImage);
-                    attachZoomableImage(newImage);
-                    attachEditableElement(newImage);
+                    newImage.src = `${resolveBaseUrl(`assets/${caseta}.jpg`)}?${Date.now()}`;
                     cell.appendChild(newImage);
                     attachZoomableImage(newImage);
                     attachEditableElement(newImage);
@@ -415,7 +419,7 @@ function overrideQuickEditSubmit(form, context) {
         }
         setQuickEditMessage("Guardando...", "info");
         const formData = new FormData(form);
-        fetch("admin/ajax_quick_edit_save.php", {
+        fetch(resolveBaseUrl("admin/ajax_quick_edit_save.php"), {
             method: "POST",
             body: formData,
         })
@@ -465,7 +469,7 @@ function handleEditableClick(element) {
         return;
     }
     openModalWithLoading();
-    fetch("admin/ajax_quick_edit.php", {
+    fetch(resolveBaseUrl("admin/ajax_quick_edit.php"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, field, codigo_idioma: codigoIdioma }),

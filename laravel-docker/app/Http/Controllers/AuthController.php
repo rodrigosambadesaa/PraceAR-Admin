@@ -198,10 +198,10 @@ class AuthController extends Controller
 
     private function rootUrl(array $params = []): string
     {
-        $baseUrl = rtrim(PracearSupport::baseUrl(), '/') . '/';
+        $baseUrl = rtrim(PracearSupport::baseUrl(), '/');
 
         if ($params === []) {
-            return $baseUrl;
+            return $baseUrl . '/';
         }
 
         return $baseUrl . '?' . http_build_query($params);

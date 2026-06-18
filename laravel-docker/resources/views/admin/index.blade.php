@@ -3,7 +3,6 @@
 @section('title', 'Admin - PraceAR - Panel principal')
 @section('activePage', 'index')
 @section('bodyClass', 'admin-index')
-@section('languageSelectorPlacement', 'content')
 
 @push('styles')
 <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_admin.css' }}">
@@ -259,7 +258,7 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
                         <td data-label="Imagen">
                             @php
                             $imageExists = is_file(\App\Support\PracearSupport::imageDiskPath((string) $stall->caseta));
-                            $imageUrl = url(\App\Support\PracearSupport::imagePublicPath((string) $stall->caseta));
+                            $imageUrl = \App\Support\PracearSupport::imageUrl((string) $stall->caseta);
                             @endphp
                             @if ($imageExists)
                             <img loading="lazy" class="zoomable editable-image" src="{{ $imageUrl }}"

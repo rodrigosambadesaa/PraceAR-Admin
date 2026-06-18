@@ -2,6 +2,7 @@
 
 return [
     'project_root' => dirname(__DIR__, 2),
+    'public_assets_directory' => 'assets',
     'results_per_page' => 50,
     'languages' => [
         'es' => 'Español',

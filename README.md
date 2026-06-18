@@ -27,6 +27,14 @@ Clonar el repositorio en una carpeta llamada appventurers
 - Durante el desarrollo puedes mantener los bundles generados en todo momento usando `npm run watch`, que compila en caliente los proyectos TypeScript de `ts/` y `admin/ts/`.
 - En despliegues manuales basta con ejecutar `npm run build` (o dejar que el hook `post-merge` lo haga por ti) antes de subir la web al servidor.
 
+## Railway
+
+La ruta recomendada para producción ahora es `laravel-docker/` con despliegue en Railway.
+
+- Guía preparada: `RAILWAY.md`
+- Limpieza de historial sensible: `SECRET_CLEANUP.md`
+- La app ya no depende de un dump SQL versionado para arrancar: usa migraciones propias y bootstrap del catálogo base.
+
 ## Docker (frontend + backend + base de datos)
 
 La aplicación puede levantarse completa con un único comando usando Docker Compose.
@@ -46,7 +54,7 @@ Servicios incluidos:
 
 - `frontend`: Nginx (sirve estáticos y enruta PHP hacia backend)
 - `backend`: PHP-FPM 8.4 autocontenido con Laravel optimizado dentro de la imagen
-- `db`: MySQL 8.0 (inicializa automáticamente desde `dbs13217995.sql`)
+- `db`: MySQL 8.0
 
 Notas importantes:
 
@@ -60,14 +68,14 @@ Documentación técnica completa de esta dockerización en `DOCKERIZATION.md`.
 
 ## Guía de uso
 
-- Lo primero que debe hacer es importar la base de datos, configurar un pepper como se indica más abajo, crear un usuario con su contraseña encriptada en Argon2ID (teniendo en cuenta el pepper), configurar los archivos que hacen referencia a la API Key de VirusTotal e iniciar sesión.
+- Lo primero que debe hacer es ejecutar las migraciones, configurar un pepper por variable de entorno, crear un usuario administrador o definirlo en variables de despliegue y, si va a validar imágenes, añadir la API Key de VirusTotal en variables de entorno.
 - Tras iniciar sesión se le redigirirá a la tabla de administración donde podrá buscar puestos, cambiar de idioma, editar un puesto o una traducción del mismo, cambiar su contraseña o ver un mapa de las ameas, naves y murallones
 
 ### Verificación de imágenes con VirusTotal
 
 Para evitar que se suban archivos maliciosos se integra una comprobación automática con la API de VirusTotal:
 
-1. **Configurar la clave**: cree un archivo `virustotal_api_key.php` en la raíz del proyecto con la constante `VIRUSTOTAL_API_KEY` que contenga su clave de API.
+1. **Configurar la clave**: defina `VIRUSTOTAL_API_KEY` como variable de entorno. La compatibilidad con `virustotal_api_key.php` se mantiene solo para entornos legacy.
 2. **Flujo de validación**: cuando el formulario de edición sube una imagen, el frontend llama a `helpers/verify_malicious_photo.php`, que reenvía el archivo temporal a VirusTotal usando `curl_file_create`, manteniendo activos `CURLOPT_SSL_VERIFYPEER` y `CURLOPT_SSL_VERIFYHOST` y aplicando timeouts razonables.
 3. **Validación en el servidor**: además del filtro en el navegador, `helpers/update_stalls.php` invoca la misma comprobación antes de aceptar definitivamente la imagen.
 

@@ -42,8 +42,17 @@ laravel-no-docker/virustotal_api_key.php
 
 # Folders
 assets/
+laravel-docker/vendor/
+laravel-no-docker/vendor/
+vendor/
 node_modules/
-.vscode/
+laravel-docker/node_modules/
+laravel-no-docker/node_modules/
+.vercel/
+.next/
+dist/
+build/
+public/build/
 unity/constants.php
 .githooks/
 
@@ -54,3 +63,4 @@ tmp_*
 *.env.backup
 
 sync_config.jsonc
+.vercel

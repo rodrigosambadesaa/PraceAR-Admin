@@ -47,7 +47,7 @@ class AdminAjaxController extends Controller
             $caseta = (string) DB::table('puestos')->where('id', $id)->value('caseta');
             $imageExists = $caseta !== '' && is_file(PracearSupport::imageDiskPath($caseta));
             $imageHtml = $imageExists
-                ? "<img src='/" . e(PracearSupport::imagePublicPath($caseta)) . "' style='max-width:200px;max-height:200px;'>"
+                ? "<img src='" . e(PracearSupport::imageUrl($caseta)) . "' style='max-width:200px;max-height:200px;'>"
                 : '<div>No hay imagen</div>';
 
             $html = "<form id='quick-edit-img-form' enctype='multipart/form-data'>

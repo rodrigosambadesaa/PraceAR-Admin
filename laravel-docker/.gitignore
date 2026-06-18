@@ -1,3 +1,15 @@
+# Dependencias PHP
+vendor/
+
+# Node y frontend
+node_modules/
+
+# Build y cachés
+.vercel/
+.next/
+dist/
+build/
+public/build/
 /.phpunit.cache
 /node_modules
 /public/build

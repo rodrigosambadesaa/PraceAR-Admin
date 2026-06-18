@@ -58,7 +58,7 @@ class AdminController extends Controller
         return view('admin.index', [
             'baseUrl' => PracearSupport::baseUrl(),
             'currentLang' => $currentLanguage,
-            'languages' => config('pracear.languages', []),
+            'languages' => PracearSupport::languages(),
             'stalls' => $stalls,
             'search' => $search,
             'searchPerformed' => $search !== '',
@@ -115,7 +115,7 @@ class AdminController extends Controller
         return view('admin.market_sections', [
             'baseUrl' => PracearSupport::baseUrl(),
             'currentLang' => PracearSupport::language($request->query('lang')),
-            'languages' => config('pracear.languages', []),
+            'languages' => PracearSupport::languages(),
             'images' => array_slice($images, 0, 12),
         ]);
     }
@@ -129,7 +129,7 @@ class AdminController extends Controller
         return view('admin.change_password', [
             'baseUrl' => PracearSupport::baseUrl(),
             'currentLang' => PracearSupport::language($request->query('lang')),
-            'languages' => config('pracear.languages', []),
+            'languages' => PracearSupport::languages(),
             'username' => PracearSupport::username($request),
         ]);
     }
@@ -224,7 +224,7 @@ class AdminController extends Controller
         return view('admin.edit', [
             'baseUrl' => PracearSupport::baseUrl(),
             'currentLang' => PracearSupport::language($request->query('lang')),
-            'languages' => config('pracear.languages', []),
+            'languages' => PracearSupport::languages(),
             'stall' => $stall,
             'naves' => DB::table('naves')->orderBy('id')->get(),
             'unityTypes' => config('pracear.unity_types', []),
@@ -328,7 +328,7 @@ class AdminController extends Controller
         return view('admin.translations', [
             'baseUrl' => PracearSupport::baseUrl(),
             'currentLang' => $translationLanguage,
-            'languages' => config('pracear.languages', []),
+            'languages' => PracearSupport::languages(),
             'translation' => $translation,
             'stallId' => $id,
             'stallName' => $stallName,
@@ -396,10 +396,10 @@ class AdminController extends Controller
 
     private function rootUrl(array $params = []): string
     {
-        $baseUrl = rtrim(PracearSupport::baseUrl(), '/') . '/';
+        $baseUrl = rtrim(PracearSupport::baseUrl(), '/');
 
         if ($params === []) {
-            return $baseUrl;
+            return $baseUrl . '/';
         }
 
         return $baseUrl . '?' . http_build_query($params);

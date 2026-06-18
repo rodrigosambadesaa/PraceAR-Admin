@@ -68,6 +68,42 @@
             text-align: center;
         }
 
+        .login-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .login-card-header h2 {
+            margin: 0;
+            flex: 1;
+            text-align: center;
+        }
+
+        .login-theme-toggle {
+            border: 1px solid rgba(45, 64, 89, 0.25);
+            background: #ffffff;
+            border-radius: 999px;
+            width: 2.35rem;
+            height: 2.35rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .login-theme-toggle:hover {
+            transform: translateY(-1px);
+        }
+
+        body.dark-mode .login-theme-toggle {
+            background: #1f2937;
+            border-color: rgba(255, 255, 255, 0.28);
+        }
+
         .login-intro {
             text-align: center;
             margin-bottom: 1rem;
@@ -110,7 +146,12 @@
     <main class="login-shell">
         <div class="login-grid">
             <article class="login-card">
-                <h2 id="form-title">Inicio de sesión</h2>
+                <div class="login-card-header">
+                    <h2 id="form-title">Inicio de sesión</h2>
+                    <button id="toggle-darkmode" class="login-theme-toggle" type="button" aria-label="Cambiar modo oscuro" aria-pressed="false">
+                        <span id="darkmode-icon" title="Cambiar modo oscuro">🌙</span>
+                    </button>
+                </div>
                 <p class="login-intro">Introduce tus credenciales para gestionar puestos, mapas, traducciones y seguridad.</p>
 
                 @if ($errors->any())

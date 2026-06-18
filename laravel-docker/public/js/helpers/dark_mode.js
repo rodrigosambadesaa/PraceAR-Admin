@@ -13,7 +13,6 @@
     })();
     const darkModeIcon = document.getElementById("darkmode-icon");
     const toggleDarkModeButton = document.getElementById("toggle-darkmode");
-    const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     function escapeRegExp(value) {
         return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     }
@@ -71,9 +70,7 @@
         if (storedPreference !== null) {
             return storedPreference;
         }
-        const systemPreference = darkMediaQuery.matches;
-        persistPreference(systemPreference);
-        return systemPreference;
+        return false;
     }
     function applyDarkModePreference() {
         setDarkMode(resolvePreferredDarkMode());
@@ -90,17 +87,6 @@
             setDarkMode(isDarkModeOn);
             persistPreference(isDarkModeOn);
         });
-    }
-    const onSystemThemeChange = (event) => {
-        if (readStoredPreference() === null) {
-            setDarkMode(event.matches);
-        }
-    };
-    if (typeof darkMediaQuery.addEventListener === "function") {
-        darkMediaQuery.addEventListener("change", onSystemThemeChange);
-    }
-    else {
-        darkMediaQuery.addListener(onSystemThemeChange);
     }
     window.addEventListener("storage", (event) => {
         if (event.key === STORAGE_KEY || event.key === LEGACY_STORAGE_KEY) {
