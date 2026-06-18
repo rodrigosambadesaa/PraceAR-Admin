@@ -28,6 +28,10 @@ mkdir -p \
 
 chown -R www-data:www-data public/assets storage bootstrap/cache
 
+a2dismod mpm_event >/dev/null 2>&1 || true
+a2dismod mpm_worker >/dev/null 2>&1 || true
+a2enmod mpm_prefork >/dev/null 2>&1 || true
+
 php artisan optimize:clear
 php artisan migrate --force
 php artisan pracear:bootstrap --force
