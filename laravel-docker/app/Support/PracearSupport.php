@@ -233,14 +233,36 @@ final class PracearSupport
     {
         $entries = self::pepperConfig();
 
-        return \pracear_pepper_current_secret($entries);
+        foreach ($entries as $entry) {
+            if (($entry['CURRENT'] ?? false) === true && trim((string) ($entry['PASSWORD_PEPPER'] ?? '')) !== '') {
+                return (string) $entry['PASSWORD_PEPPER'];
+            }
+        }
+
+        if (function_exists('pracear_pepper_current_secret')) {
+            return \pracear_pepper_current_secret($entries);
+        }
+
+        throw new RuntimeException('No se ha configurado un pepper actual válido.');
     }
 
     public static function matchingPepper(string $plainPassword, string $storedHash): ?string
     {
         $entries = self::pepperConfig();
 
-        return \pracear_matching_pepper($plainPassword, $storedHash, $entries);
+        foreach ($entries as $entry) {
+            $pepper = (string) ($entry['PASSWORD_PEPPER'] ?? '');
+
+            if ($pepper !== '' && password_verify($plainPassword . $pepper, $storedHash)) {
+                return $pepper;
+            }
+        }
+
+        if (function_exists('pracear_matching_pepper')) {
+            return \pracear_matching_pepper($plainPassword, $storedHash, $entries);
+        }
+
+        return null;
     }
 
     public static function hashPassword(string $plainPassword, ?string $pepper = null): string
