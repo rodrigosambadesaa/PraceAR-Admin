@@ -10,8 +10,6 @@ RUN apt-get update \
         libzip-dev \
         unzip \
     && docker-php-ext-install mysqli pdo pdo_mysql mbstring intl zip \
-    && a2dismod mpm_event || true \
-    && a2enmod mpm_prefork \
     && a2enmod rewrite \
     && rm -rf /var/lib/apt/lists/*
 
