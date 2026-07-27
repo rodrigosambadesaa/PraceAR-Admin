@@ -17,9 +17,68 @@ class BootstrapPracearCommand extends Command
     public function handle(): int
     {
         $this->seedNaves();
+        $this->seedCatalog();
         $this->seedAdminUser();
 
         return self::SUCCESS;
+    }
+
+    private function seedCatalog(): void
+    {
+        if (DB::table('puestos')->exists()) {
+            $this->line('El catálogo de puestos ya existe y se conserva sin cambios.');
+
+            return;
+        }
+
+        $catalogPath = database_path('data/catalog.json');
+        if (!is_file($catalogPath)) {
+            throw new \RuntimeException('No existe el catálogo base saneado.');
+        }
+
+        $catalog = json_decode(
+            (string) file_get_contents($catalogPath),
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
+        $stalls = $catalog['stalls'] ?? null;
+        $translations = $catalog['translations'] ?? null;
+
+        if (!is_array($stalls) || $stalls === [] || !is_array($translations) || $translations === []) {
+            throw new \RuntimeException('El catálogo base está vacío o tiene un formato inválido.');
+        }
+
+        $allowedStallKeys = ['id', 'caseta', 'nombre', 'id_nave', 'activo', 'tipo_unity', 'caseta_padre'];
+        $allowedTranslationKeys = ['id', 'puesto_id', 'codigo_idioma', 'nombre_idioma', 'tipo', 'descripcion'];
+
+        foreach ($stalls as $stall) {
+            if (!is_array($stall) || array_diff(array_keys($stall), $allowedStallKeys) !== []) {
+                throw new \RuntimeException('El catálogo contiene columnas de puesto no permitidas.');
+            }
+        }
+
+        foreach ($translations as $translation) {
+            if (!is_array($translation) || array_diff(array_keys($translation), $allowedTranslationKeys) !== []) {
+                throw new \RuntimeException('El catálogo contiene columnas de traducción no permitidas.');
+            }
+        }
+
+        DB::transaction(function () use ($stalls, $translations): void {
+            foreach (array_chunk($stalls, 100) as $chunk) {
+                DB::table('puestos')->insert($chunk);
+            }
+
+            foreach (array_chunk($translations, 250) as $chunk) {
+                DB::table('puestos_traducciones')->insert($chunk);
+            }
+        });
+
+        $this->info(sprintf(
+            'Catálogo base restaurado: %d puestos y %d traducciones.',
+            count($stalls),
+            count($translations),
+        ));
     }
 
     private function seedNaves(): void

@@ -60,6 +60,10 @@ final class SecurityCheckCommand extends Command
             if (!DB::table('usuarios')->exists()) {
                 $errors[] = 'No existe ninguna cuenta administradora.';
             }
+
+            if (!DB::table('puestos')->exists() || !DB::table('puestos_traducciones')->exists()) {
+                $errors[] = 'El catálogo de puestos no está inicializado.';
+            }
         } catch (Throwable) {
             $errors[] = 'No se pudo validar la base de datos.';
         }

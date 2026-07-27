@@ -20,6 +20,9 @@ La defensa es por capas y toma como referencia OWASP Top 10 2025.
 - Integridad de datos: imágenes JPEG se validan por MIME y dimensiones, se analizan
   opcionalmente con VirusTotal y se decodifican/recodifican para eliminar metadatos
   y contenido añadido.
+- Catálogo inicial: el fixture versionado usa una lista blanca de campos públicos.
+  Excluye contacto, teléfono, imagen, usuarios, hashes, accesos, IP y credenciales;
+  solo se carga cuando la tabla de puestos está completamente vacía.
 - Registro: accesos y cambios sensibles quedan auditados sin registrar contraseñas,
   pepper, tokens ni mensajes internos de excepción en producción.
 - Condiciones excepcionales: transacciones, fallo cerrado en análisis obligatorio,
