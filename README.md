@@ -1,40 +1,120 @@
-# PraceAR Admin
+# PraceAR
 
-Aplicación administrativa unificada. La única implementación ejecutable vive en
-`laravel-docker/`; Docker, Railway y las pruebas usan exactamente ese mismo código.
+## Aviso importante — Versión personal no oficial
 
-## Arranque local
+Este repositorio contiene una **versión personal mejorada** de la web desarrollada inicialmente en el marco del _Obradoiro de Emprego APPVENTURERS, Departamento de Emprego do Concello de Santiago de Compostela, octubre 2023 - octubre 2024_.
 
-Requisitos: Docker Desktop y Node.js 20 o posterior.
+- Autor de esta versión: **Rodrigo Sambade Saá**
+- Autor de la versión original finalizada durante el obradoiro y publicada en [PraceAR](https://pracear.com): **Rodrigo Sambade Saá**, con supervisión del profesor de programación **Jorge (Xurxo) González Tenreiro**, cuyo nombre de usuario en GitHub es **_webferrol_**
+- Estado: **Versión personal / no oficial**.
+- Propiedad original: El proyecto inicial pertenece a la entidad promotora del obradoiro, que puede ostentar derechos sobre la versión oficial.
+- Finalidad: Documentar correcciones técnicas y mejoras de seguridad realizadas a título personal.
+- Si representa a la entidad titular y desea discutir la integración o retirada de este contenido, contacte en: **[rsamsaa.appventurers@gmail.com]**.
 
-```powershell
-npm run env:init
-docker compose up --build -d
-```
+Clonar el repositorio en una carpeta llamada appventurers
 
-La web queda disponible en `http://localhost:8081`. Si el puerto está ocupado:
+## Requisitos de la App
 
-```powershell
-$env:FRONTEND_PORT = "8082"
-docker compose up --build -d
-```
+![Requisitos](https://github.com/user-attachments/assets/2ba5d275-9420-436a-bc1a-619ddfcd072d)
 
-`env:init` crea `.env` con secretos aleatorios y permisos restrictivos. Ese archivo,
-los volcados SQL, certificados, claves y ficheros de pepper están ignorados por Git.
-No copies valores reales a archivos versionados.
+## Automatización del build de TypeScript y control de secretos
 
-## Verificación
+- Ejecuta `npm run setup:hooks` una vez para instalar hooks locales en `.githooks/` y configurar `core.hooksPath`.
+- A partir de ese momento, antes de cada commit se ejecutan dos controles automáticos:
+   - `npm run build` para compilar TypeScript.
+   - `node scripts/scan-secrets-staged.mjs` para bloquear ficheros y patrones sensibles en el staging.
+- Después de cada `git pull`/`git merge`, el hook `post-merge` también lanza `npm run build`.
+- Durante el desarrollo puedes mantener los bundles generados en todo momento usando `npm run watch`, que compila en caliente los proyectos TypeScript de `ts/` y `admin/ts/`.
+- En despliegues manuales basta con ejecutar `npm run build` (o dejar que el hook `post-merge` lo haga por ti) antes de subir la web al servidor.
 
-```powershell
-npm run verify
-cd laravel-docker
-php vendor/bin/phpunit
-cd ..
-docker compose exec -T backend php artisan pracear:security-check
-docker compose exec -T backend composer audit
-```
+## Railway
 
-El panel usa un volumen persistente para las imágenes normalizadas. La base de datos
-no publica puertos al host y no se incluye una interfaz web de administración.
+La ruta recomendada para producción ahora es `laravel-docker/` con despliegue en Railway.
 
-Consulta `SECURITY.md` para el modelo de seguridad y `RAILWAY.md` para producción.
+- Guía preparada: `RAILWAY.md`
+- Limpieza de historial sensible: `SECRET_CLEANUP.md`
+- La app ya no depende de un dump SQL versionado para arrancar: usa migraciones propias y bootstrap del catálogo base.
+
+## Docker (frontend + backend + base de datos)
+
+La aplicación puede levantarse completa con un único comando usando Docker Compose.
+
+1. Construir y arrancar todo:
+   ```bash
+   docker compose up --build -d
+   ```
+2. Abrir la web en `http://localhost:8081`.
+   - Si necesitas otro puerto: `FRONTEND_PORT=8090 docker compose up --build -d`
+3. Parar los contenedores:
+   ```bash
+   docker compose down
+   ```
+
+Servicios incluidos:
+
+- `frontend`: Nginx (sirve estáticos y enruta PHP hacia backend)
+- `backend`: PHP-FPM 8.4 autocontenido con Laravel optimizado dentro de la imagen
+- `db`: MySQL 8.0
+
+Notas importantes:
+
+- Los endpoints de `unity/` ya están migrados para servirse desde Laravel manteniendo las rutas históricas `unity/*.php`.
+- El backend Docker ya no usa bind mount para el código Laravel/PHP. Eso reduce mucho la latencia en Windows, pero cuando cambies código PHP/Blade debes reconstruir:
+   ```bash
+   docker compose up --build -d backend frontend
+   ```
+
+Documentación técnica completa de esta dockerización en `DOCKERIZATION.md`.
+
+## Guía de uso
+
+- Lo primero que debe hacer es ejecutar las migraciones, configurar un pepper por variable de entorno, crear un usuario administrador o definirlo en variables de despliegue y, si va a validar imágenes, añadir la API Key de VirusTotal en variables de entorno.
+- Tras iniciar sesión se le redigirirá a la tabla de administración donde podrá buscar puestos, cambiar de idioma, editar un puesto o una traducción del mismo, cambiar su contraseña o ver un mapa de las ameas, naves y murallones
+
+### Verificación de imágenes con VirusTotal
+
+Para evitar que se suban archivos maliciosos se integra una comprobación automática con la API de VirusTotal:
+
+1. **Configurar la clave**: defina `VIRUSTOTAL_API_KEY` como variable de entorno. La compatibilidad con `virustotal_api_key.php` se mantiene solo para entornos legacy.
+2. **Flujo de validación**: cuando el formulario de edición sube una imagen, el frontend llama a `helpers/verify_malicious_photo.php`, que reenvía el archivo temporal a VirusTotal usando `curl_file_create`, manteniendo activos `CURLOPT_SSL_VERIFYPEER` y `CURLOPT_SSL_VERIFYHOST` y aplicando timeouts razonables.
+3. **Validación en el servidor**: además del filtro en el navegador, `helpers/update_stalls.php` invoca la misma comprobación antes de aceptar definitivamente la imagen.
+
+Si no se define la clave de la API o el servicio devuelve un error, el usuario recibirá un mensaje explicativo y la imagen no se subirá.
+
+### Página de inicio de sesión
+
+![Captura de pantalla (7)](https://github.com/user-attachments/assets/f28819db-32a8-478c-845b-8734242db901)
+
+### Página de administración
+
+![Captura de pantalla (8)](https://github.com/user-attachments/assets/7ce0f84c-870e-4f23-aea1-d8749267e46e)
+
+### Página de administración con una búsqueda hecha
+
+![Captura de pantalla (9)](https://github.com/user-attachments/assets/c95b6b92-91b6-4a4e-90bc-def0e3945bab)
+
+### Página de edición de datos generales
+
+![Captura de pantalla (10)](https://github.com/user-attachments/assets/027a3c50-3d5c-40fa-9771-a1031352edc8)
+
+### Página de edición de tipo y traducción
+
+![Captura de pantalla (11)](https://github.com/user-attachments/assets/f361824b-7f2e-4edd-ac89-fe455f27b84b)
+
+### Imagen y nombre de un puesto ampliados en la página de administración (haciendo clic sobre la imagen)
+
+![Captura de pantalla (12)](https://github.com/user-attachments/assets/b01259cd-21c2-4531-b58e-c97a89e6094e)
+
+### Página de naves con mapas de las ameas, naves y murallones
+
+![Captura de pantalla (13)](https://github.com/user-attachments/assets/85d2eaef-dd51-4808-a089-963a2096c229)
+
+### Imagen de un mapa ampliada en la página de naves con el nombre y el rango de naves correspondientes (como antes, para ampliar hacer clic en la imagen o en el texto)
+
+![Captura de pantalla (14)](https://github.com/user-attachments/assets/6464bdb6-fc6a-43c0-b171-190721d03445)
+
+### Página de cambio de contraseña
+
+![Captura de pantalla (15)](https://github.com/user-attachments/assets/f4e8ad4e-3371-43c4-9388-6c2e26883e01)
+
+-
