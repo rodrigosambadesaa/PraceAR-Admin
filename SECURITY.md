@@ -15,6 +15,9 @@ La defensa es por capas y toma como referencia OWASP Top 10 2025.
   validación de longitudes y formatos, y respuestas JSON generadas por Laravel.
 - Diseño seguro: privilegio mínimo, base de datos sin puerto público, límites de
   cuerpo, rate limiting por IP/cuenta/operación y operaciones sensibles separadas.
+- Administración de base de datos: phpMyAdmin es optativo, se fija por digest,
+  escucha solo en `127.0.0.1`, restringe el servidor y la base permitidos,
+  bloquea el acceso `root` y no conserva sesiones en un volumen persistente.
 - Autenticación: mensajes genéricos, verificación de coste constante para usuarios
   inexistentes, CAPTCHA, política de contraseña, historial y rehash automático.
 - Integridad de datos: imágenes JPEG se validan por MIME y dimensiones, se analizan

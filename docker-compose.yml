@@ -73,6 +73,41 @@ services:
       start_period: 20s
     restart: unless-stopped
 
+  phpmyadmin:
+    image: phpmyadmin:5.2.3@sha256:b68f318c5fd85541795ed8eb4ced28ea6908a89910871783b3e479cc6c6d1e1b
+    profiles: [ "admin-tools" ]
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${PHPMYADMIN_PORT:-8083}:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: "0"
+      HIDE_PHP_VERSION: "true"
+      UPLOAD_LIMIT: "16M"
+      MEMORY_LIMIT: "256M"
+      MAX_EXECUTION_TIME: "300"
+      TZ: Europe/Madrid
+    volumes:
+      - ./docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
+    tmpfs:
+      - /sessions:rw,noexec,nosuid,size=16m
+      - /tmp:rw,noexec,nosuid,size=32m
+    restart: "no"
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 384m
+    cpus: 1.0
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "--silent", "--show-error", "http://127.0.0.1/" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
 volumes:
   db_data:
   assets_data:
