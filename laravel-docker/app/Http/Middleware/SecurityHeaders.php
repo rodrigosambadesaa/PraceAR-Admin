@@ -27,7 +27,9 @@ final class SecurityHeaders
             "media-src 'self'",
             "object-src 'none'",
             "script-src 'self' 'nonce-{$nonce}'",
-            "style-src 'self' 'unsafe-inline'",
+            "style-src 'self'",
+            "style-src-attr 'unsafe-inline'",
+            "style-src-elem 'self'",
             "worker-src 'self'",
         ];
 
