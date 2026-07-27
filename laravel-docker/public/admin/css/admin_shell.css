@@ -543,6 +543,7 @@ body.admin-page.dark-mode .admin-header__selector:hover {
 
 .admin-header__selector {
     display: inline-flex;
+    flex-direction: row;
     align-items: center;
     width: fit-content;
     padding: 0.55rem 0.75rem;
@@ -553,6 +554,7 @@ body.admin-page.dark-mode .admin-header__selector:hover {
 .admin-header .language-selector {
     position: static !important;
     display: flex !important;
+    flex-flow: row nowrap !important;
     align-items: center;
     padding: 0 !important;
     margin: 0 !important;
@@ -570,9 +572,17 @@ body.admin-page.dark-mode .admin-header__selector:hover {
 
 .admin-header .flags,
 .admin-header .language-selector .flags {
-    display: flex;
+    display: inline-flex !important;
+    flex-flow: row nowrap !important;
     align-items: center;
+    width: max-content;
     gap: 0.4rem;
+    margin: 0;
+}
+
+.admin-header .language-selector .flags li {
+    display: inline-flex;
+    flex: 0 0 auto;
     margin: 0;
 }
 

@@ -132,47 +132,26 @@ body.admin-page.dark-mode #sugerencias-busqueda div:focus {
     margin-bottom: 1rem;
 }
 
-body.admin-index .admin-header nav.language-selector {
-    flex-direction: row;
-    width: auto;
-    min-width: 0;
-    padding: 0.5rem;
-    border: 1px solid rgba(100, 116, 139, 0.35);
-    border-radius: 14px;
+body.admin-index main {
+    padding-right: 1.25rem;
 }
 
-body.admin-index .admin-header nav.language-selector .flags {
-    flex-direction: row;
-    flex-wrap: nowrap;
-}
-
-.admin-table-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 13.5rem;
-    gap: 1.15rem;
-    align-items: start;
-    width: 100%;
-}
-
-.admin-table-layout .admin-table-shell {
-    grid-column: 1;
-    grid-row: 1;
-    min-width: 0;
+.admin-index-card {
+    margin-right: 14.5rem;
 }
 
 .table-language-dock {
-    position: sticky;
-    top: 1.25rem;
-    grid-column: 2;
-    grid-row: 1;
-    z-index: 4;
+    position: fixed;
+    top: 10.75rem;
+    right: 0;
+    z-index: 40;
     display: grid;
     gap: 0.7rem;
-    width: 100%;
-    min-width: 0;
+    width: 13.5rem;
     padding: 0.85rem;
     border: 1px solid rgba(15, 118, 110, 0.2);
-    border-radius: 20px;
+    border-right: 0;
+    border-radius: 20px 0 0 20px;
     background: rgba(255, 252, 247, 0.94);
     box-shadow: 0 22px 55px rgba(15, 23, 42, 0.18);
     backdrop-filter: blur(18px);
@@ -493,21 +472,16 @@ body.admin-page.dark-mode .fondo-color-diferente {
 }
 
 @media (max-width: 760px) {
-    .admin-table-layout {
-        grid-template-columns: 1fr;
-    }
-
-    .admin-table-layout .admin-table-shell {
-        grid-column: 1;
-        grid-row: 2;
-    }
-
     .table-language-dock {
         position: static;
-        grid-column: 1;
-        grid-row: 1;
         width: 100%;
         margin-bottom: 1rem;
+        border-right: 1px solid rgba(15, 118, 110, 0.2);
+        border-radius: 20px;
+    }
+
+    .admin-index-card {
+        margin-right: 0;
     }
 }
 

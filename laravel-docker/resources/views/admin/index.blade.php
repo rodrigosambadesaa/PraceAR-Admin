@@ -6,7 +6,7 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_admin.css' }}">
-<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_admin_redesign.css' }}">
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_admin_redesign.css?v=' . ((int) @filemtime(public_path('admin/css/index_admin_redesign.css'))) }}">
 <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_modal.css' }}">
 @endpush
 
@@ -56,6 +56,20 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
     @endif
 
     @if ($resultsFound)
+    <aside class="table-language-dock" aria-labelledby="table-language-dock-title">
+        <div class="table-language-dock__heading">
+            <span class="table-language-dock__eyebrow">Vista de tabla</span>
+            <strong id="table-language-dock-title">Idioma</strong>
+            <span class="table-language-dock__current">{{ strtoupper($currentLang) }}</span>
+        </div>
+        @include('admin.partials.language_selector', [
+            'activePage' => 'index',
+            'currentLang' => $currentLang,
+            'languages' => $languages,
+            'rootUrl' => rtrim($baseUrl, '/') . '/',
+        ])
+    </aside>
+
     <section class="admin-section-card admin-index-card">
         <div id="cabecera-tabla" class="admin-section-card__header admin-index-toolbar">
             <div>
@@ -100,23 +114,8 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
             @include('admin.partials.pagination', ['paginator' => $stalls, 'currentLang' => $currentLang])
         </div>
 
-        <div class="admin-table-layout">
-            <aside class="table-language-dock" aria-labelledby="table-language-dock-title">
-                <div class="table-language-dock__heading">
-                    <span class="table-language-dock__eyebrow">Vista de tabla</span>
-                    <strong id="table-language-dock-title">Idioma</strong>
-                    <span class="table-language-dock__current">{{ strtoupper($currentLang) }}</span>
-                </div>
-                @include('admin.partials.language_selector', [
-                    'activePage' => 'index',
-                    'currentLang' => $currentLang,
-                    'languages' => $languages,
-                    'rootUrl' => rtrim($baseUrl, '/') . '/',
-                ])
-            </aside>
-
-            <div class="admin-table-shell" role="region" aria-label="Tabla de puestos con desplazamiento horizontal">
-                <table id="tabla-puestos" role="table" aria-label="Lista de puestos del Mercado de Abastos">
+        <div class="admin-table-shell" role="region" aria-label="Tabla de puestos con desplazamiento horizontal">
+            <table id="tabla-puestos" role="table" aria-label="Lista de puestos del Mercado de Abastos">
                 <caption class="sr-only">Lista de puestos del Mercado de Abastos</caption>
                 <thead>
                     <tr>
@@ -186,8 +185,7 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
                     </tr>
                     @endforeach
                 </tbody>
-                </table>
-            </div>
+            </table>
         </div>
 
         <div class="admin-section-card__footer admin-index-pagination" role="contentinfo">

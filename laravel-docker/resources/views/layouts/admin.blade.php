@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/css/base.css' }}">
     <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/theme.css' }}">
     <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/header.css' }}">
-    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/admin_shell.css' }}">
+    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/admin_shell.css?v=' . ((int) @filemtime(public_path('admin/css/admin_shell.css'))) }}">
     @stack('styles')
 </head>
 
