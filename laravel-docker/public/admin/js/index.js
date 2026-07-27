@@ -25,6 +25,9 @@ function resolveBaseUrl(path) {
         : "/";
     return new URL(path, normalizedBase).toString();
 }
+function getCsrfToken() {
+    return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
+}
 function configureSearchControls() {
     const searchExecuted = formulario.dataset.searchExecuted === "true";
     if (inputReseteo instanceof HTMLInputElement) {
@@ -151,7 +154,7 @@ function openModalWithLoading() {
         return;
     }
     modalElements.body.innerHTML =
-        '<div style="text-align:center;">Cargando...</div>';
+        '<div class="modal-loading">Cargando...</div>';
     modalElements.container.style.display = "flex";
 }
 function closeModal() {
@@ -419,8 +422,16 @@ function overrideQuickEditSubmit(form, context) {
         }
         setQuickEditMessage("Guardando...", "info");
         const formData = new FormData(form);
+        const csrfToken = getCsrfToken();
+        formData.set("_token", csrfToken);
         fetch(resolveBaseUrl("admin/ajax_quick_edit_save.php"), {
             method: "POST",
+            credentials: "same-origin",
+            headers: {
+                Accept: "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+                "X-Requested-With": "XMLHttpRequest",
+            },
             body: formData,
         })
             .then(async (response) => {
@@ -469,10 +480,16 @@ function handleEditableClick(element) {
         return;
     }
     openModalWithLoading();
+    const csrfToken = getCsrfToken();
     fetch(resolveBaseUrl("admin/ajax_quick_edit.php"), {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, field, codigo_idioma: codigoIdioma }),
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": csrfToken,
+            "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify({ id, field, codigo_idioma: codigoIdioma, _token: csrfToken }),
     })
         .then((response) => response.text())
         .then((html) => {
@@ -530,7 +547,11 @@ function handleEditableClick(element) {
         .catch((error) => {
         const message = error instanceof Error ? error.message : String(error);
         if (modalElements.body) {
-            modalElements.body.innerHTML = `<div class="admin-error-text">Error al cargar el formulario: ${message}</div>`;
+            modalElements.body.replaceChildren();
+            const errorElement = document.createElement("div");
+            errorElement.className = "admin-error-text";
+            errorElement.textContent = `Error al cargar el formulario: ${message}`;
+            modalElements.body.appendChild(errorElement);
         }
     });
 }

@@ -68,4 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
             bloquearEnvio();
         }
     };
+    inputNuevaContrasena.addEventListener("blur", () => {
+        if (inputNuevaContrasena.value) {
+            void window.checkPasswordRequirements();
+        }
+    });
 });

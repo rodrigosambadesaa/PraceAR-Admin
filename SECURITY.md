@@ -1,121 +1,56 @@
-# Security Policy - AppVenturers
+# Seguridad
 
-## Alcance
+La defensa es por capas y toma como referencia OWASP Top 10 2025.
 
-Este documento describe la postura de seguridad actual del proyecto y el mínimo de cobertura aplicado respecto a OWASP Top 10 (2021).
+- Control de acceso: middleware de administración, sesiones cifradas, tiempo máximo
+  absoluto y por inactividad, rotación de identificador y cierre solo por POST.
+- Configuración segura: validación de `Host`, proxies explícitos, CSP con nonce,
+  HSTS en HTTPS, cabeceras anti-embedding/MIME, errores sin detalles y comprobación
+  obligatoria de configuración antes del arranque.
+- Cadena de suministro: Laravel y dependencias soportadas, lockfile, `composer audit`,
+  `npm audit`, imágenes versionadas y build que copia solo la aplicación canónica.
+- Criptografía: Argon2id sobre HMAC-SHA-384 con pepper de al menos 32 caracteres.
+  `PASSWORD_PEPPER_PREVIOUS` permite una rotación gradual sin duplicar ficheros.
+- Inyección e integridad: Query Builder parametrizado, salida Blade escapada, CSP,
+  validación de longitudes y formatos, y respuestas JSON generadas por Laravel.
+- Diseño seguro: privilegio mínimo, base de datos sin puerto público, límites de
+  cuerpo, rate limiting por IP/cuenta/operación y operaciones sensibles separadas.
+- Autenticación: mensajes genéricos, verificación de coste constante para usuarios
+  inexistentes, CAPTCHA, política de contraseña, historial y rehash automático.
+- Integridad de datos: imágenes JPEG se validan por MIME y dimensiones, se analizan
+  opcionalmente con VirusTotal y se decodifican/recodifican para eliminar metadatos
+  y contenido añadido.
+- Registro: accesos y cambios sensibles quedan auditados sin registrar contraseñas,
+  pepper, tokens ni mensajes internos de excepción en producción.
+- Condiciones excepcionales: transacciones, fallo cerrado en análisis obligatorio,
+  health checks y arranque detenido ante configuración insegura.
 
-## Controles implementados
+## Secretos
 
-- Gestión de sesión endurecida:
-  - Cookies `HttpOnly`, `SameSite=Strict` y `Secure` cuando hay HTTPS.
-  - Regeneración de sesión tras login (`session_regenerate_id(true)`).
-- Autenticación:
-  - Hash de contraseñas con `Argon2id` + `pepper`.
-  - Mensaje de error genérico en login para evitar enumeración de usuarios.
-  - Rate limiting por IP/cuenta y captcha en login.
-- Protección CSRF:
-  - Token CSRF en formularios críticos y validación en servidor.
-- Mitigación de inyección:
-  - Uso de sentencias preparadas para consultas SQL.
-  - Validación/sanitización de entradas en helpers.
-- Endurecimiento HTTP:
-  - `Content-Security-Policy`.
-  - `X-Content-Type-Options: nosniff`.
-  - `X-Frame-Options: SAMEORIGIN`.
-  - `Referrer-Policy: strict-origin-when-cross-origin`.
-  - `Permissions-Policy` restrictiva.
-  - `Cross-Origin-Resource-Policy: same-origin`.
-  - `Strict-Transport-Security` cuando la conexión es HTTPS.
-- Mitigación de Host Header Injection:
-  - Normalización de `HTTP_HOST` y lista blanca opcional `APP_ALLOWED_HOSTS`.
-- Manejo seguro de errores:
-  - En producción (`APP_ENV=production`) no se muestran errores detallados.
-- Carga de archivos:
-  - Validaciones de tipo y verificación de ficheros maliciosos vía integración externa.
-- Logging básico de eventos de seguridad:
-  - Intentos fallidos de login y eventos de control de velocidad.
+Solo existe `laravel-docker/config/pepper.php` y nunca contiene el valor secreto.
+Los valores reales se inyectan mediante variables de entorno:
 
-## Mapeo OWASP Top 10 (2021)
+- `APP_KEY`
+- `DB_PASSWORD` y `MYSQL_ROOT_PASSWORD`
+- `PASSWORD_PEPPER`
+- `VIRUSTOTAL_API_KEY`, si se habilita el análisis
+- `PRACEAR_BOOTSTRAP_ADMIN_PASSWORD`, solo durante el primer alta
 
-### A01: Broken Access Control
+Aunque el historial se sanee, cualquier secreto que hubiera estado publicado debe
+revocarse y rotarse: reescribir Git no invalida credenciales copiadas previamente.
 
-- Control de acceso por sesión para rutas de administración.
-- Validación de sesión en flujo principal.
+## Prevención en futuras actualizaciones
 
-### A02: Cryptographic Failures
+- `.gitignore` y `.dockerignore` excluyen secretos, dumps, claves y datos subidos.
+- `npm install` configura un `pre-commit` que revisa rutas prohibidas, firmas de
+  credenciales, CSS embebido y la implementación única.
+- GitHub Actions ejecuta Gitleaks 8.30.1 sobre todo el historial de cada push/PR,
+  además de PHPUnit y las reglas del repositorio.
+- El workflow usa permisos de solo lectura, checkout sin credenciales persistentes,
+  acciones fijadas por SHA y un binario Gitleaks validado por checksum.
 
-- Contraseñas con `Argon2id` + `pepper`.
-- Cookies de sesión endurecidas.
-- HSTS en HTTPS.
+## Notificación
 
-### A03: Injection
-
-- Sentencias preparadas (`mysqli->prepare`) en operaciones de base de datos.
-- Validación y normalización de entrada.
-
-### A04: Insecure Design
-
-- Defensa en profundidad en autenticación: captcha + rate limiting + CSRF.
-- Límites de tamaño de petición en login.
-
-### A05: Security Misconfiguration
-
-- Cabeceras de seguridad centralizadas.
-- Errores ocultos en producción.
-- Bloqueo de acceso a archivos sensibles mediante configuración web.
-
-### A06: Vulnerable and Outdated Components
-
-- Dependencias de frontend gestionadas por `npm`.
-- Recomendación operativa: ejecutar auditorías periódicas (`npm audit`) en CI/CD.
-
-### A07: Identification and Authentication Failures
-
-- Política de contraseñas robustas.
-- Argon2id + pepper.
-- Mensajes de login genéricos para evitar enumeración.
-- Regeneración de sesión post-login.
-
-### A08: Software and Data Integrity Failures
-
-- Validaciones server-side antes de persistir datos sensibles.
-- Recomendación operativa: firma/validación de artefactos en pipeline de despliegue.
-
-### A09: Security Logging and Monitoring Failures
-
-- Registro de fallos de autenticación y eventos de rate limit.
-- Recomendación operativa: centralizar logs y alertado en entorno productivo.
-
-### A10: Server-Side Request Forgery (SSRF)
-
-- No se aceptan URLs arbitrarias de usuario para fetch de recursos internos.
-- Integración externa acotada a endpoints conocidos en funcionalidades concretas.
-
-## Configuración mínima recomendada
-
-En `.env` de producción:
-
-```env
-APP_ENV="production"
-APP_BASE_URL="https://tu-dominio/"
-APP_ALLOWED_HOSTS="tu-dominio,www.tu-dominio"
-```
-
-Y mantener fuera de repositorio:
-
-- `pepper2.php`
-- `virustotal_api_key.php`
-
-## Vulnerability Disclosure
-
-Si detectas una vulnerabilidad, no la publiques en abierto de inmediato. Envíala por canal privado al mantenedor del proyecto con:
-
-- Descripción
-- Impacto
-- Pasos para reproducir
-- Prueba de concepto mínima
-- Propuesta de remediación
-
-## English Summary
-
-This project implements a baseline OWASP Top 10 coverage with hardening controls: secure sessions, Argon2id + pepper, CSRF, rate limiting, captcha, generic auth errors, SQL prepared statements, security headers (including CSP), host header validation, and production-safe error handling. Additional operational controls (CI dependency scanning, centralized logging, artifact integrity checks) are recommended for production environments.
+No abras incidencias públicas con credenciales o datos personales. Comunica el
+problema de forma privada al responsable del repositorio e incluye impacto,
+reproducción mínima y versión afectada.

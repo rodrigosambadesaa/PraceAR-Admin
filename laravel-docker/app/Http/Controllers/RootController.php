@@ -21,10 +21,6 @@ class RootController extends Controller
 
         $page = $request->query('page');
 
-        if ($page === 'logout') {
-            return $this->adminController->logout($request);
-        }
-
         if ($page === 'market_sections') {
             return $this->adminController->marketSections($request);
         }

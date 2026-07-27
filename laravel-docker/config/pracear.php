@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'project_root' => dirname(__DIR__, 2),
+    'project_root' => dirname(__DIR__),
     'public_assets_directory' => 'assets',
     'results_per_page' => 50,
     'languages' => [

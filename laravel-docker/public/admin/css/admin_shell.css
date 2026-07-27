@@ -846,3 +846,12 @@ body.admin-page.dark-mode .paginacion a {
         width: 100%;
     }
 }
+.admin-logout-form {
+    margin: 0;
+}
+
+.admin-logout-form .nav-link {
+    width: auto;
+    min-height: auto;
+    font: inherit;
+}

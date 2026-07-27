@@ -41,9 +41,11 @@ yarn-error.log
 .env.vercel*
 
 # Local secrets
-pepper*.php
+/pepper*.php
 virustotal_api_key.php
 public/admin/js/helpers/api_key.js
+/public/assets/*
+!/public/assets/.gitkeep
 
 # Credentials and certificates
 *.pem

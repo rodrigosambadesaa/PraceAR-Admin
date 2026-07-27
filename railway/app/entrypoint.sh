@@ -10,9 +10,20 @@ if [ -n "${MYSQL_URL:-}" ] && [ -z "${DATABASE_URL:-}" ] && [ -z "${DB_URL:-}" ]
   export DATABASE_URL="$MYSQL_URL"
 fi
 
+if [ -n "${RAILWAY_PUBLIC_DOMAIN:-}" ]; then
+  export APP_URL="${APP_URL:-https://${RAILWAY_PUBLIC_DOMAIN}}"
+  export APP_ALLOWED_HOSTS="${APP_ALLOWED_HOSTS:-${RAILWAY_PUBLIC_DOMAIN}}"
+fi
+
+export APP_ENV="${APP_ENV:-production}"
+export APP_DEBUG="false"
 export DB_CONNECTION="${DB_CONNECTION:-mysql}"
 export PRACEAR_ASSETS_PATH="${PRACEAR_ASSETS_PATH:-/var/www/html/laravel-docker/public/assets}"
 export SESSION_DRIVER="${SESSION_DRIVER:-file}"
+export SESSION_SECURE_COOKIE="${SESSION_SECURE_COOKIE:-true}"
+export SESSION_SAME_SITE="${SESSION_SAME_SITE:-strict}"
+export SESSION_ENCRYPT="${SESSION_ENCRYPT:-true}"
+export TRUSTED_PROXIES="${TRUSTED_PROXIES:-*}"
 export CACHE_STORE="${CACHE_STORE:-file}"
 export QUEUE_CONNECTION="${QUEUE_CONNECTION:-sync}"
 
@@ -34,7 +45,8 @@ a2enmod mpm_prefork >/dev/null 2>&1 || true
 
 php artisan optimize:clear
 php artisan migrate --force
-php artisan pracear:bootstrap --force
+php artisan pracear:bootstrap
+php artisan pracear:security-check --production
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache

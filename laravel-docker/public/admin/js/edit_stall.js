@@ -239,7 +239,14 @@ formulario.addEventListener("submit", async (event) => {
         alert(errores[0]);
         const div = document.createElement("div");
         div.classList.add("form-errors");
-        div.innerHTML = `<ul class="admin-error-text">${errores.map((mensaje) => `<li>${mensaje}</li>`).join("")}</ul>`;
+        const list = document.createElement("ul");
+        list.className = "admin-error-text";
+        errores.forEach((mensaje) => {
+            const item = document.createElement("li");
+            item.textContent = mensaje;
+            list.appendChild(item);
+        });
+        div.appendChild(list);
         formulario.insertAdjacentElement("afterend", div);
         return;
     }

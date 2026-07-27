@@ -1,5 +1,15 @@
 .git
 .gitignore
+**/.env
+**/.env.*
+!**/.env.example
+*.sql
+pepper*.php
+*_api_key.php
+*.pem
+*.key
+*.p12
+*.pfx
 node_modules
 npm-debug.log
 Dockerfile
@@ -13,3 +23,5 @@ laravel-docker/bootstrap/cache/*.php
 laravel-no-docker/storage/framework
 laravel-no-docker/storage/logs
 laravel-no-docker/bootstrap/cache/*.php
+assets
+laravel-docker/public/assets/*

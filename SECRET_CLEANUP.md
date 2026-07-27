@@ -1,52 +1,19 @@
-# Limpieza de historial sensible
+# Saneamiento del historial
 
-No he ejecutado `git filter-repo` automáticamente porque este repositorio ya tenía cambios locales sin confirmar y un rewrite de historial en ese estado sería arriesgado.
+El repositorio se audita con Gitleaks antes y después de `git filter-repo`. La
+reescritura elimina de todos los commits los `.env`, volcados SQL, claves heredadas,
+binarios de limpieza y las implementaciones retiradas, incluyendo los antiguos
+`pepper.php` y `pepper2.php` de la raíz.
 
-## Rutas a purgar del historial
+La implementación vigente conserva solo `laravel-docker/config/pepper.php`, que no
+almacena secretos. Tras una reescritura se deben forzar todas las ramas y etiquetas,
+pedir a cada colaborador un clon nuevo y rotar todas las credenciales que alguna vez
+hayan estado publicadas.
 
-Estas son las rutas que conviene eliminar del histórico remoto antes de volver a publicar:
+Comprobaciones reproducibles:
 
-```text
-bfg-1.15.0.jar
-dbs13217995.sql
-virustotal_api_key.php
-pepper.php
-pepper2.php
-.env
+```powershell
+gitleaks git . --redact
+git log --all -- .env pepper.php pepper2.php virustotal_api_key.php
+npm run verify
 ```
-
-## Procedimiento recomendado
-
-1. Haz una copia de seguridad local o un clon espejo.
-2. Asegúrate de trabajar con el árbol limpio.
-3. Ejecuta:
-
-```bash
-git filter-repo --force ^
-  --invert-paths ^
-  --path bfg-1.15.0.jar ^
-  --path dbs13217995.sql ^
-  --path virustotal_api_key.php ^
-  --path pepper.php ^
-  --path pepper2.php ^
-  --path .env
-```
-
-4. Revisa el resultado:
-
-```bash
-git log --stat -- .env virustotal_api_key.php pepper.php pepper2.php dbs13217995.sql bfg-1.15.0.jar
-```
-
-5. Fuerza la publicación del historial limpio:
-
-```bash
-git push origin --force --all
-git push origin --force --tags
-```
-
-## Después del rewrite
-
-- Revoca y rota cualquier secreto que haya estado en el historial.
-- Vuelve a configurar `APP_KEY`, `PASSWORD_PEPPER_CURRENT`, `PRACEAR_ADMIN_PASSWORD` y `VIRUSTOTAL_API_KEY` solo como variables del entorno.
-- No vuelvas a versionar dumps SQL reales ni utilidades binarias temporales.

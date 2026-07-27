@@ -1,66 +1,55 @@
-# Environment
+# Environment and platform metadata
 .env
 .env.*
-.env.vercel*
+!.env.example
+!laravel-docker/.env.example
+.vercel/
 
-# Credentials and certificates
+# Secrets, credentials and private keys
+/pepper*.php
+/**/*_api_key.php
+/**/*_app_id.php
 *.pem
 *.key
 *.p12
 *.pfx
-id_rsa
-id_rsa.pub
-id_ed25519
-id_ed25519.pub
+id_rsa*
+id_ed25519*
+auth.json
 
-# API keys / app ids
-*_api_key.php
-*_app_id.php
-virustotal_api_key.php
-wolfram_alpha_api_key.php
-wolfram_alpha_app_id.php
-
-# Pepper files
-pepper*.php
-pepper.php
-pepper2.php
-
-# Frontend helper
-admin/js/helpers/api_key.*
-admin/js/helpers/api_key.js
-laravel-docker/public/admin/js/helpers/api_key.js
-laravel-no-docker/public/admin/js/helpers/api_key.js
-
-# Database dumps / snapshots
+# Database exports and local user uploads
 *.sql
+/laravel-docker/public/assets/*
+!/laravel-docker/public/assets/.gitkeep
 
-# Nested app secret files
-laravel-docker/pepper*.php
-laravel-no-docker/pepper*.php
-laravel-docker/virustotal_api_key.php
-laravel-no-docker/virustotal_api_key.php
-
-# Folders
-assets/
-laravel-docker/vendor/
-laravel-no-docker/vendor/
-vendor/
+# Dependencies and generated assets
 node_modules/
+vendor/
+laravel-docker/vendor/
 laravel-docker/node_modules/
-laravel-no-docker/node_modules/
-.vercel/
-.next/
-dist/
-build/
 public/build/
-unity/constants.php
-.githooks/
+laravel-docker/public/build/
+laravel-docker/public/hot
 
-# Local diagnostics / temporary files
+# Runtime state and caches
+laravel-docker/bootstrap/cache/*.php
+!laravel-docker/bootstrap/cache/.gitignore
+laravel-docker/storage/framework/cache/data/*
+laravel-docker/storage/framework/sessions/*
+laravel-docker/storage/framework/views/*
+laravel-docker/storage/logs/*
+.phpunit.cache/
+.phpunit.result.cache
 tmp_*
 *.local.log
 *.secrets.json
 *.env.backup
 
-sync_config.jsonc
-.vercel
+# Editor and OS state
+.idea/
+.vscode/
+.fleet/
+.nova/
+.zed/
+Thumbs.db
+.DS_Store

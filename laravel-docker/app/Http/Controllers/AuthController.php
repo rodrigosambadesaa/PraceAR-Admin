@@ -74,18 +74,23 @@ class AuthController extends Controller
                 ->withErrors(['captcha_answer' => 'La verificación captcha no es correcta.']);
         }
 
+        if (strlen($password) < 1 || strlen($password) > 1024) {
+            RateLimiter::hit($ipKey, $ipDecay);
+            RateLimiter::hit($accountKey, $accountDecay);
+
+            return redirect()->to($this->loginUrl($request))
+                ->withInput($request->except('password', 'captcha_answer'))
+                ->withErrors(['login' => $genericMessage]);
+        }
+
         try {
             $user = DB::table('usuarios')->where('login', $login)->first();
         } catch (Throwable $exception) {
             Log::error('No se pudo completar el login por un error de base de datos.', [
-                'login' => $login,
-                'message' => $exception->getMessage(),
+                'exception' => $exception::class,
             ]);
 
             $errorMessage = 'No se ha podido verificar el acceso en este momento. Inténtelo de nuevo en unos instantes.';
-            if ((bool) config('app.debug')) {
-                $errorMessage .= ' [' . $exception->getMessage() . ']';
-            }
 
             RateLimiter::hit($ipKey, $ipDecay);
             RateLimiter::hit($accountKey, $accountDecay);
@@ -96,6 +101,7 @@ class AuthController extends Controller
         }
 
         if (!$user) {
+            password_verify($password, '$argon2id$v=19$m=65536,t=3,p=1$bmlRTlRzR3FYclhTbDRtSA$kAi8fzTlYq1W6mH9VPvzQ+mSsQMhe2YDv59mkMHN7gs');
             RateLimiter::hit($ipKey, $ipDecay);
             RateLimiter::hit($accountKey, $accountDecay);
 
@@ -116,10 +122,17 @@ class AuthController extends Controller
         }
 
         $currentPepper = PracearSupport::currentPepper();
-        if ($matchedPepper !== $currentPepper || PracearSupport::passwordNeedsRehash((string) $user->password)) {
-            DB::table('usuarios')
-                ->where('id', $user->id)
-                ->update(['password' => PracearSupport::hashPassword($password, $currentPepper)]);
+        if ($matchedPepper !== $currentPepper || PracearSupport::passwordNeedsRehash((string) $user->password, $matchedPepper)) {
+            try {
+                DB::table('usuarios')
+                    ->where('id', $user->id)
+                    ->update(['password' => PracearSupport::hashPassword($password, $currentPepper)]);
+            } catch (Throwable $exception) {
+                Log::warning('No se pudo rotar el hash de la contraseña durante el acceso.', [
+                    'user_id' => (int) $user->id,
+                    'exception' => $exception::class,
+                ]);
+            }
         }
 
         RateLimiter::clear($ipKey);
@@ -130,6 +143,8 @@ class AuthController extends Controller
         $request->session()->put([
             'pracear.user_id' => (int) $user->id,
             'pracear.username' => (string) $user->login,
+            'pracear.issued_at' => time(),
+            'pracear.last_activity' => time(),
         ]);
 
         try {
@@ -143,7 +158,7 @@ class AuthController extends Controller
         } catch (Throwable $exception) {
             Log::warning('No se pudo registrar el acceso en la tabla de auditoria.', [
                 'user_id' => (int) $user->id,
-                'message' => $exception->getMessage(),
+                'exception' => $exception::class,
             ]);
         }
 

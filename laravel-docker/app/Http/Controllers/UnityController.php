@@ -20,6 +20,7 @@ class UnityController extends Controller
     {
         try {
             $stalls = DB::table('puestos')
+                ->select(['id', 'caseta', 'nombre', 'contacto', 'telefono', 'id_nave', 'tipo_unity'])
                 ->whereNull('caseta_padre')
                 ->where('activo', 1)
                 ->get();
@@ -43,7 +44,11 @@ class UnityController extends Controller
         }
 
         try {
-            $stall = DB::table('puestos')->where('id', $stallId)->get();
+            $stall = DB::table('puestos')
+                ->select(['id', 'caseta', 'nombre', 'contacto', 'telefono', 'id_nave', 'tipo_unity', 'caseta_padre'])
+                ->where('id', $stallId)
+                ->where('activo', 1)
+                ->get();
 
             if ($stall->isEmpty()) {
                 return $this->jsonResponse(203, 'El puesto no existe en el sistema', '');
@@ -59,7 +64,7 @@ class UnityController extends Controller
     {
         $idNave = trim((string) $request->query('id_nave', ''));
 
-        if ($idNave === '') {
+        if (preg_match('/^[0-9]{1,2}$/', $idNave) !== 1 || (int) $idNave < 1 || (int) $idNave > 12) {
             return $this->jsonResponse(402, 'Faltan datos para ejecutar la acción solicitada', '');
         }
 

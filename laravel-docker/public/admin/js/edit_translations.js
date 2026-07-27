@@ -24,27 +24,33 @@ const formulario = getForm();
 const descripcionTextarea = getDescripcionTextarea();
 const tipoInput = getTipoInput();
 formulario.addEventListener("submit", (event) => {
-    let errorMessages = "";
+    const errorMessages = [];
     let errorExist = false;
     const descripcion = limpiarTextarea(descripcionTextarea.value);
     const tipo = tipoInput.value;
     if (descripcion !== "" && descripcion.length > 450) {
         event.preventDefault();
         alert("La descripción, si se ha introducido, debe tener un máximo de 450 caracteres");
-        errorMessages +=
-            "<li>La descripción, si se ha introducido, debe tener un máximo de 450 caracteres</li>";
+        errorMessages.push("La descripción, si se ha introducido, debe tener un máximo de 450 caracteres");
         errorExist = true;
     }
     if (tipo.length > 50) {
         event.preventDefault();
         alert("El tipo no puede tener más de 50 caracteres");
-        errorMessages += "<li>El tipo no puede tener más de 50 caracteres</li>";
+        errorMessages.push("El tipo no puede tener más de 50 caracteres");
         errorExist = true;
     }
     if (errorExist) {
         event.preventDefault();
         const div = document.createElement("div");
-        div.innerHTML = `<ul class="admin-error-text">${errorMessages}</ul>`;
+        const list = document.createElement("ul");
+        list.className = "admin-error-text";
+        errorMessages.forEach((message) => {
+            const item = document.createElement("li");
+            item.textContent = message;
+            list.appendChild(item);
+        });
+        div.appendChild(list);
         formulario.insertAdjacentElement("afterend", div);
     }
 });

@@ -77,7 +77,7 @@
                 <div class="password-form-group password-generator-group">
                     <label for="new-password">Nueva contraseña <span class="admin-required" aria-hidden="true">*</span></label>
                     <div class="password-input-wrapper">
-                        <input type="password" name="new_password" id="new-password" required onblur="if(this.value) checkPasswordRequirements()"
+                        <input type="password" name="new_password" id="new-password" required
                             aria-describedby="new-password-help">
                         <button type="button" id="toggle-password-generator" class="password-generator-toggle" aria-expanded="false"
                             aria-controls="password-generator-panel">

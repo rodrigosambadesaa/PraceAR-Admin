@@ -7,131 +7,7 @@
 @push('styles')
 <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_admin.css' }}">
 <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_admin_redesign.css' }}">
-<style>
-    #modal-edicion {
-        display: none;
-        position: fixed;
-        inset: 0;
-        padding: 1rem;
-        background: rgba(4, 9, 15, 0.52);
-        z-index: 9999;
-        align-items: center;
-        justify-content: center;
-        backdrop-filter: blur(10px);
-    }
-
-    body.admin-page.dark-mode #modal-edicion {
-        background: rgba(2, 6, 23, 0.72);
-    }
-
-    #modal-content {
-        width: min(92vw, 40rem);
-        min-width: 300px;
-        max-width: 90vw;
-        padding: 3.5em 2em 2em 2em;
-        border-radius: 26px;
-        border: 1px solid var(--admin-border);
-        background: linear-gradient(180deg, rgba(255, 252, 247, 0.98) 0%, rgba(248, 241, 230, 0.98) 100%);
-        color: var(--admin-text);
-        box-shadow: 0 20px 48px rgba(15, 23, 42, 0.18);
-        position: relative;
-    }
-
-    body.admin-page.dark-mode #modal-content {
-        background: linear-gradient(180deg, rgba(9, 17, 25, 0.98) 0%, rgba(16, 28, 38, 0.98) 100%);
-        border-color: rgba(148, 163, 184, 0.22);
-        box-shadow: 0 30px 65px rgba(2, 6, 23, 0.58);
-    }
-
-    .zoomed-close,
-    .close-button {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        font-size: 2.5rem;
-        color: #fff;
-        background: rgba(0, 0, 0, 0.5);
-        border: none;
-        border-radius: 50%;
-        width: 2.5em;
-        height: 2.5em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 10;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        box-shadow: 0 12px 24px rgba(2, 6, 23, 0.28);
-        transition: background 0.2s, color 0.2s;
-    }
-
-    body.admin-page.dark-mode .zoomed-close,
-    body.admin-page.dark-mode .close-button {
-        color: #f8fafc;
-        background: rgba(7, 15, 23, 0.82);
-        border-color: rgba(148, 163, 184, 0.18);
-    }
-
-    .zoomed-close:hover,
-    .zoomed-close:focus,
-    .close-button:hover,
-    .close-button:focus {
-        background: #e53935;
-        color: #fff;
-        outline: none;
-    }
-
-    #modal-close {
-        font-size: 1.6rem;
-        width: 2em;
-        height: 2em;
-        top: 0.6rem;
-        right: 0.6rem;
-        z-index: 20;
-    }
-
-    body:not(.dark-mode) .zoomed-close,
-    body:not(.dark-mode) .close-button {
-        color: #222;
-        background: rgba(255, 255, 255, 0.85);
-    }
-
-    body:not(.dark-mode) .zoomed-close:hover,
-    body:not(.dark-mode) .zoomed-close:focus,
-    body:not(.dark-mode) .close-button:hover,
-    body:not(.dark-mode) .close-button:focus {
-        background: #e53935;
-        color: #fff;
-    }
-
-    #sugerencias-busqueda {
-        position: absolute;
-        left: 0;
-        top: 100%;
-        background: var(--admin-surface);
-        color: var(--admin-text);
-        border: 1px solid var(--admin-border);
-        border-radius: 18px;
-        box-shadow: 0 18px 36px rgba(15, 23, 42, 0.12);
-        width: 100%;
-        max-height: 180px;
-        overflow-y: auto;
-        font-size: 0.95em;
-        z-index: 100;
-        margin-top: 0.45rem;
-    }
-
-    #sugerencias-busqueda div {
-        padding: 0.5em 1em;
-        cursor: pointer;
-        transition: background 0.15s;
-    }
-
-    #sugerencias-busqueda div:hover,
-    #sugerencias-busqueda div:focus {
-        background: var(--admin-primary-soft);
-    }
-</style>
+<link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/index_modal.css' }}">
 @endpush
 
 @section('content')
@@ -334,7 +210,7 @@ $totalCount = method_exists($stalls, 'total') ? $stalls->total() : $visibleCount
 <script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/index.js' }}"></script>
 @endif
 
-<script>
+<script nonce="{{ request()->attributes->get('csp_nonce') }}">
     document.querySelectorAll('.zoomable.editable-image').forEach((img) => {
         img.addEventListener('click', () => {
             if (img.dataset.exists === '1') {

@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Security\PasswordPolicy;
 use App\Support\PracearSupport;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -56,6 +57,15 @@ class BootstrapPracearCommand extends Command
 
         if ($login === '' || $password === '') {
             $this->warn('No se creó usuario admin porque faltan PRACEAR_ADMIN_LOGIN o PRACEAR_ADMIN_PASSWORD.');
+
+            return;
+        }
+
+        try {
+            $login = PracearSupport::validateLoginName($login);
+            PasswordPolicy::validate($password, $login);
+        } catch (\InvalidArgumentException $exception) {
+            $this->warn('No se creó el usuario admin: ' . $exception->getMessage());
 
             return;
         }

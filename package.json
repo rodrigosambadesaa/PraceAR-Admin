@@ -1,15 +1,12 @@
 {
   "name": "pracear-admin",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p admin/tsconfig.json",
-    "watch": "node scripts/watch.mjs",
+    "css:check": "node scripts/externalize-blade-css.mjs",
+    "env:init": "node scripts/create-local-env.mjs",
+    "prepare": "node scripts/setup-hooks.mjs",
+    "verify": "npm run css:check",
     "setup:hooks": "node scripts/setup-hooks.mjs"
-  },
-  "devDependencies": {
-    "@prettier/plugin-php": "^0.24.0",
-    "prettier": "^3.6.2",
-    "typescript": "^5.4.5"
   }
 }

@@ -2,6 +2,11 @@
 
 return [
 
+    'virustotal' => [
+        'key' => env('VIRUSTOTAL_API_KEY'),
+        'required' => env('VIRUSTOTAL_REQUIRED', true),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

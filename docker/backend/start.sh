@@ -13,8 +13,9 @@ mkdir -p \
 chown -R www-data:www-data storage bootstrap/cache
 
 php artisan optimize:clear >/dev/null 2>&1 || true
-php artisan migrate --force >/dev/null 2>&1 || true
-php artisan pracear:bootstrap --force >/dev/null 2>&1 || true
+php artisan migrate --force
+php artisan pracear:bootstrap
+php artisan pracear:security-check
 php artisan config:cache >/dev/null 2>&1 || true
 php artisan route:cache >/dev/null 2>&1 || true
 php artisan view:cache >/dev/null 2>&1 || true

@@ -7,19 +7,24 @@ RUN apk add --no-cache \
     icu-dev \
     oniguruma-dev \
     libzip-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    freetype-dev \
     unzip \
-    && docker-php-ext-install mysqli pdo pdo_mysql mbstring intl zip
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql mbstring intl zip gd
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-COPY . /var/www/html
+COPY laravel-docker /var/www/html/laravel-docker
 COPY docker/backend/php.ini /usr/local/etc/php/conf.d/app.ini
 COPY docker/backend/php-fpm-www.conf /usr/local/etc/php-fpm.d/zz-app.conf
 COPY docker/backend/start.sh /usr/local/bin/start-laravel
 
-RUN chmod +x /usr/local/bin/start-laravel \
+RUN sed -i 's/\r$//' /usr/local/bin/start-laravel \
+    && chmod +x /usr/local/bin/start-laravel \
     && cd /var/www/html/laravel-docker \
     && composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader --classmap-authoritative \
     && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \

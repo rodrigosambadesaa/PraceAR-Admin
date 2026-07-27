@@ -10,10 +10,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="{{ rtrim($baseUrl, '/') . '/img/apple-touch-icon-180x180.png' }}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ rtrim($baseUrl, '/') . '/img/apple-touch-icon-152x152.png' }}">
     <link rel="manifest" href="{{ rtrim($baseUrl, '/') . '/manifest.json' }}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/css/base.css' }}">
     <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/theme.css' }}">
     <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/header.css' }}">
     <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/admin_shell.css' }}">
@@ -44,7 +41,7 @@ $currentSectionDescription = $pageDescriptions[$activePage] ?? 'Gestiona el cont
 @endphp
 
 <body class="admin-page @yield('bodyClass', '') {{ request()->cookie('dark_mode') === 'true' ? 'dark-mode' : '' }}">
-    <script>
+    <script nonce="{{ request()->attributes->get('csp_nonce') }}">
         (function() {
             var storageKey = "dark-mode";
             var legacyStorageKey = "darkmode";
@@ -179,10 +176,13 @@ $currentSectionDescription = $pageDescriptions[$activePage] ?? 'Gestiona el cont
                     class="nav-link {{ $activePage === 'change_password' ? 'is-active' : '' }}"
                     aria-label="Cambiar contraseña"
                     @if ($activePage==='change_password' ) aria-current="page" @endif>Cambiar contraseña</a>
-                <a href="{{ $rootUrl . '?' . http_build_query(['page' => 'logout', 'lang' => $currentLang]) }}" class="nav-link enlace_cierre_sesion nav-link--logout" aria-label="Cerrar sesión">
-                    <img src="{{ rtrim($baseUrl, '/') . '/img/logout_icon.png' }}" alt="Cerrar sesión" title="Cerrar sesión">
-                    <span>Salir</span>
-                </a>
+                <form method="POST" action="{{ route('admin.logout') }}" class="admin-logout-form">
+                    @csrf
+                    <button type="submit" class="nav-link enlace_cierre_sesion nav-link--logout" aria-label="Cerrar sesión">
+                        <img src="{{ rtrim($baseUrl, '/') . '/img/logout_icon.png' }}" alt="" aria-hidden="true">
+                        <span>Salir</span>
+                    </button>
+                </form>
             </nav>
         </div>
     </header>
@@ -191,8 +191,8 @@ $currentSectionDescription = $pageDescriptions[$activePage] ?? 'Gestiona el cont
         @yield('content')
     </div>
 
-    <script>
-        window.BASE_URL = "{{ $baseUrl }}";
+    <script nonce="{{ request()->attributes->get('csp_nonce') }}">
+        window.BASE_URL = @json($baseUrl);
     </script>
     @stack('scripts')
     <script src="{{ rtrim($baseUrl, '/') . '/js/helpers/dark_mode.js' }}"></script>

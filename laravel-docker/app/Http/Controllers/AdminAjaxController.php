@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Security\PasswordPolicy;
+use App\Services\VirusTotalScanner;
 use App\Support\PracearSupport;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -47,7 +49,7 @@ class AdminAjaxController extends Controller
             $caseta = (string) DB::table('puestos')->where('id', $id)->value('caseta');
             $imageExists = $caseta !== '' && is_file(PracearSupport::imageDiskPath($caseta));
             $imageHtml = $imageExists
-                ? "<img src='" . e(PracearSupport::imageUrl($caseta)) . "' style='max-width:200px;max-height:200px;'>"
+                ? "<img class='quick-edit-preview' src='" . e(PracearSupport::imageUrl($caseta)) . "' alt='Vista previa del puesto'>"
                 : '<div>No hay imagen</div>';
 
             $html = "<form id='quick-edit-img-form' enctype='multipart/form-data'>
@@ -114,6 +116,27 @@ class AdminAjaxController extends Controller
 
         if (in_array($field, ['nombre', 'contacto', 'telefono', 'caseta_padre'], true)) {
             $value = PracearSupport::cleanText($request->input('value'));
+
+            $maximums = ['nombre' => 50, 'contacto' => 250, 'telefono' => 15, 'caseta_padre' => 5];
+            if (strlen($value) > $maximums[$field]) {
+                return new JsonResponse(['success' => false, 'msg' => 'El valor supera la longitud permitida.'], 422);
+            }
+
+            if ($field === 'telefono' && $value !== '' && preg_match('/^[0-9+\s().-]{3,15}$/', $value) !== 1) {
+                return new JsonResponse(['success' => false, 'msg' => 'El teléfono no tiene un formato válido.'], 422);
+            }
+
+            if ($field === 'caseta_padre') {
+                $value = strtoupper($value);
+                if ($value !== '' && preg_match('/^(?:CE|CO|MC|NA|NC)[0-9]{3}$/', $value) !== 1) {
+                    return new JsonResponse(['success' => false, 'msg' => 'La caseta padre no tiene un formato válido.'], 422);
+                }
+            }
+
+            if (!DB::table('puestos')->where('id', $id)->exists()) {
+                return new JsonResponse(['success' => false, 'msg' => 'No se encontró el puesto.'], 404);
+            }
+
             DB::table('puestos')->where('id', $id)->update([$field => $value]);
 
             return new JsonResponse(['success' => true, 'msg' => 'Actualizado correctamente']);
@@ -147,12 +170,19 @@ class AdminAjaxController extends Controller
 
         if (in_array($field, ['traduccion', 'tipo', 'descripcion'], true)) {
             $translationLanguage = PracearSupport::language($request->input('codigo_idioma'));
+            $type = PracearSupport::cleanText($request->input('tipo'));
+            $description = PracearSupport::cleanText($request->input('descripcion'));
+
+            if (strlen($type) > 50 || strlen($description) > 450) {
+                return new JsonResponse(['success' => false, 'msg' => 'La traducción supera la longitud permitida.'], 422);
+            }
+
             DB::table('puestos_traducciones')
                 ->where('puesto_id', $id)
                 ->where('codigo_idioma', $translationLanguage)
                 ->update([
-                    'tipo' => PracearSupport::cleanText($request->input('tipo')),
-                    'descripcion' => PracearSupport::cleanText($request->input('descripcion')),
+                    'tipo' => $type,
+                    'descripcion' => $description,
                 ]);
 
             return new JsonResponse(['success' => true, 'msg' => 'Traducción actualizada']);
@@ -193,31 +223,27 @@ class AdminAjaxController extends Controller
             return new JsonResponse(['success' => false, 'message' => 'Sesión caducada.'], 401);
         }
 
-        PracearSupport::loadStrengthHelpers();
-
-        $length = max(16, min(1024, (int) $request->input('length', 16)));
+        $length = max(16, min(PasswordPolicy::MAX_LENGTH, (int) $request->input('length', 20)));
         $username = PracearSupport::username($request);
 
         try {
-            $password = $this->buildSecurePassword($length, $username);
+            $password = PasswordPolicy::generate($length, $username);
 
             return new JsonResponse([
                 'success' => true,
                 'password' => $password,
-                'stats' => $this->buildPasswordStats($password),
+                'stats' => PasswordPolicy::statistics($password),
             ]);
         } catch (Throwable $throwable) {
             return new JsonResponse([
                 'success' => false,
-                'message' => 'Error interno: ' . $throwable->getMessage(),
+                'message' => 'No se pudo generar una contraseña en este momento.',
             ], 500);
         }
     }
 
-    public function verifyMaliciousPhoto(Request $request): JsonResponse
+    public function verifyMaliciousPhoto(Request $request, VirusTotalScanner $scanner): JsonResponse
     {
-        PracearSupport::loadVirusTotalHelper();
-
         if (!$request->hasFile('imagen')) {
             return new JsonResponse([
                 'success' => false,
@@ -226,10 +252,22 @@ class AdminAjaxController extends Controller
             ], 400);
         }
 
-        $result = check_virus_total($request->file('imagen')->getRealPath());
-        $statusCode = (int) ($result['http_status'] ?? (($result['success'] ?? false) ? 200 : 502));
+        try {
+            $image = $request->file('imagen');
+            if (!$image->isValid() || $image->getSize() === false || $image->getSize() > 4_194_304) {
+                return new JsonResponse(['success' => false, 'is_malicious' => false, 'message' => 'La imagen no es válida o supera 4 MB.'], 422);
+            }
 
-        return new JsonResponse($result, $statusCode);
+            $result = $scanner->scan((string) $image->getRealPath());
+
+            return new JsonResponse($result, 200);
+        } catch (Throwable $throwable) {
+            return new JsonResponse([
+                'success' => false,
+                'is_malicious' => false,
+                'message' => $throwable->getMessage(),
+            ], 422);
+        }
     }
 
 }

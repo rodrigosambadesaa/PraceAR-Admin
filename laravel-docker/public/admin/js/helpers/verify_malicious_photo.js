@@ -3,8 +3,16 @@ export async function verifyMaliciousPhoto(file) {
     try {
         const formData = new FormData();
         formData.append("imagen", file);
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
+        formData.append("_token", csrfToken);
         const response = await fetch(VERIFY_MALICIOUS_PHOTO_ENDPOINT, {
             method: "POST",
+            credentials: "same-origin",
+            headers: {
+                Accept: "application/json",
+                "X-CSRF-TOKEN": csrfToken,
+                "X-Requested-With": "XMLHttpRequest",
+            },
             body: formData,
         });
         if (!response.ok) {

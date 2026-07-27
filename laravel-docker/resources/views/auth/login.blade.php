@@ -9,136 +9,10 @@
     <link rel="icon" href="{{ rtrim($baseUrl, '/') . '/img/favicon.png' }}" type="image/png">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ rtrim($baseUrl, '/') . '/img/apple-touch-icon-180x180.png' }}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ rtrim($baseUrl, '/') . '/img/apple-touch-icon-152x152.png' }}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/css/base.css' }}">
     <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/css/panda_login.css' }}">
     <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/css/darkmode_login.css' }}">
-    <style>
-        .required::after {
-            content: " *";
-            color: red;
-        }
-
-        .note {
-            color: red;
-            text-align: center;
-        }
-
-        body.login-page {
-            min-height: 100vh;
-            margin: 0;
-            width: 100%;
-            max-width: none;
-            padding: 0;
-            font-family: "Inter", sans-serif !important;
-            background: radial-gradient(circle at 20% 20%, #f0f8ff 0%, #e9eef7 40%, #dde5f2 100%);
-            color: #333;
-        }
-
-        .login-shell {
-            width: min(980px, 94vw);
-            margin: 0 auto;
-            padding: 1.5rem 1rem 2.5rem;
-            display: grid;
-            gap: 1rem;
-        }
-
-        .login-grid {
-            display: grid;
-            grid-template-columns: minmax(300px, 1fr) minmax(320px, 420px);
-            align-items: center;
-            gap: 1.5rem;
-            width: 100%;
-            justify-content: center;
-            justify-items: center;
-        }
-
-        .login-card {
-            width: min(100%, 560px);
-            margin: 0;
-            border-radius: 18px;
-            border: 1px solid rgba(45, 64, 89, 0.18);
-            box-shadow: 0 16px 36px rgba(34, 51, 72, 0.12);
-            backdrop-filter: blur(1px);
-            background: rgba(255, 255, 255, 0.96);
-            padding: 1.5rem;
-        }
-
-        .login-card h2 {
-            margin-bottom: 0.35rem;
-            text-align: center;
-        }
-
-        .login-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-            margin-bottom: 0.35rem;
-        }
-
-        .login-card-header h2 {
-            margin: 0;
-            flex: 1;
-            text-align: center;
-        }
-
-        .login-theme-toggle {
-            border: 1px solid rgba(45, 64, 89, 0.25);
-            background: #ffffff;
-            border-radius: 999px;
-            width: 2.35rem;
-            height: 2.35rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .login-theme-toggle:hover {
-            transform: translateY(-1px);
-        }
-
-        body.dark-mode .login-theme-toggle {
-            background: #1f2937;
-            border-color: rgba(255, 255, 255, 0.28);
-        }
-
-        .login-intro {
-            text-align: center;
-            margin-bottom: 1rem;
-            color: #475569;
-        }
-
-        .login-messages {
-            margin-top: 1rem;
-            display: grid;
-            gap: 0.4rem;
-            text-align: center;
-        }
-
-        .error-list {
-            display: grid;
-            gap: 0.35rem;
-            color: #be123c;
-            margin-bottom: 0.8rem;
-            text-align: center;
-        }
-
-        @media (max-width: 820px) {
-            .login-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .login-card {
-                order: 2;
-            }
-
-            .panda-login-panda {
-                order: 1;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/css/login_shell.css' }}">
     <script type="module" src="{{ rtrim($baseUrl, '/') . '/js/login.js' }}" defer></script>
 </head>
 
@@ -180,7 +54,7 @@
 
                     <div id="form-group">
                         <label for="captcha" class="required"><strong>Verificación humana:</strong></label>
-                        <p id="captcha-question" style="margin-bottom: .5rem;">{{ $captchaQuestion }}</p>
+                        <p id="captcha-question" class="captcha-question">{{ $captchaQuestion }}</p>
                         <input type="text" id="captcha" name="captcha_answer" inputmode="numeric" required>
                         <small id="captcha-help">Responda con el resultado numérico de la pregunta.</small>
                     </div>

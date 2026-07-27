@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Security\PasswordPolicy;
 use App\Support\PracearSupport;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -140,13 +141,11 @@ class AdminController extends Controller
             return $redirect;
         }
 
-        PracearSupport::loadStrengthHelpers();
-
         $userId = PracearSupport::userId($request);
         $username = PracearSupport::username($request);
-        $oldPassword = trim((string) $request->input('old_password', ''));
-        $newPassword = trim((string) $request->input('new_password', ''));
-        $confirmPassword = trim((string) $request->input('confirm_password', ''));
+        $oldPassword = (string) $request->input('old_password', '');
+        $newPassword = (string) $request->input('new_password', '');
+        $confirmPassword = (string) $request->input('confirm_password', '');
 
         if ($oldPassword === '' || $newPassword === '' || $confirmPassword === '') {
             return back()->withErrors(['old_password' => 'Todos los campos son obligatorios.']);
@@ -156,16 +155,10 @@ class AdminController extends Controller
             return back()->withErrors(['confirm_password' => 'Las contraseñas no coinciden.']);
         }
 
-        if (tiene_espacios_al_principio_o_al_final((string) $request->input('new_password', '')) || tiene_espacios_al_principio_o_al_final((string) $request->input('confirm_password', '')) || tiene_espacios_al_principio_o_al_final((string) $request->input('old_password', ''))) {
-            return back()->withErrors(['new_password' => 'Las contraseñas no pueden tener espacios al principio o al final.']);
-        }
-
-        if (!es_contrasenha_fuerte($newPassword)) {
-            return back()->withErrors(['new_password' => 'La nueva contraseña no cumple con los requisitos de seguridad.']);
-        }
-
-        if (tiene_secuencias_numericas_inseguras($newPassword) || tiene_secuencias_alfabeticas_inseguras($newPassword) || tiene_secuencias_caracteres_especiales_inseguras($newPassword) || contrasenha_similar_a_usuario($newPassword, $username)) {
-            return back()->withErrors(['new_password' => 'La nueva contraseña no cumple con los requisitos de seguridad.']);
+        try {
+            PasswordPolicy::validate($newPassword, $username);
+        } catch (\InvalidArgumentException $exception) {
+            return back()->withErrors(['new_password' => $exception->getMessage()]);
         }
 
         $user = DB::table('usuarios')->where('id', $userId)->first();
@@ -185,24 +178,38 @@ class AdminController extends Controller
             ->pluck('password');
 
         foreach ($oldHashes as $oldHash) {
-            foreach (PracearSupport::pepperConfig() as $pepperData) {
-                $pepper = (string) ($pepperData['PASSWORD_PEPPER'] ?? '');
-
-                if ($pepper !== '' && password_verify($newPassword . $pepper, (string) $oldHash)) {
-                    return back()->withErrors(['new_password' => 'La nueva contraseña no puede ser igual a una de las contraseñas antiguas.']);
-                }
+            if (PracearSupport::matchingPepper($newPassword, (string) $oldHash) !== null) {
+                return back()->withErrors(['new_password' => 'La nueva contraseña no puede ser igual a una de las contraseñas antiguas.']);
             }
         }
 
-        DB::table('old_passwords')->insert([
-            'id_usuario' => $userId,
-            'password' => PracearSupport::hashPassword($oldPassword, $matchedPepper),
-            'date' => now(),
-        ]);
+        DB::transaction(function () use ($userId, $user, $newPassword): void {
+            DB::table('old_passwords')->insert([
+                'id_usuario' => $userId,
+                'password' => (string) $user->password,
+                'date' => now(),
+            ]);
 
-        DB::table('usuarios')
-            ->where('id', $userId)
-            ->update(['password' => PracearSupport::hashPassword($newPassword)]);
+            DB::table('usuarios')
+                ->where('id', $userId)
+                ->update(['password' => PracearSupport::hashPassword($newPassword)]);
+
+            $obsoleteIds = DB::table('old_passwords')
+                ->where('id_usuario', $userId)
+                ->orderByDesc('date')
+                ->orderByDesc('id')
+                ->skip(10)
+                ->take(1000)
+                ->pluck('id');
+
+            if ($obsoleteIds->isNotEmpty()) {
+                DB::table('old_passwords')->whereIn('id', $obsoleteIds)->delete();
+            }
+        });
+
+        $request->session()->regenerate();
+        $request->session()->put('pracear.issued_at', time());
+        $request->session()->put('pracear.last_activity', time());
 
         return back()->with('status', 'Contraseña cambiada correctamente.');
     }
@@ -370,13 +377,17 @@ class AdminController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         if (PracearSupport::isAuthenticated($request)) {
-            DB::table('accesos')->insert([
-                'id_usuario' => PracearSupport::userId($request),
-                'ip' => (string) $request->ip(),
-                'user_agent' => (string) $request->userAgent(),
-                'fecha' => now(),
-                'tipo' => 'desconexion',
-            ]);
+            try {
+                DB::table('accesos')->insert([
+                    'id_usuario' => PracearSupport::userId($request),
+                    'ip' => (string) $request->ip(),
+                    'user_agent' => (string) $request->userAgent(),
+                    'fecha' => now(),
+                    'tipo' => 'desconexion',
+                ]);
+            } catch (Throwable) {
+                // La sesión debe poder cerrarse incluso si falla el registro de auditoría.
+            }
         }
 
         $request->session()->invalidate();
