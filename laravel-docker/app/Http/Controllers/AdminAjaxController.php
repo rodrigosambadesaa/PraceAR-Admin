@@ -223,7 +223,28 @@ class AdminAjaxController extends Controller
             return new JsonResponse(['success' => false, 'message' => 'Sesión caducada.'], 401);
         }
 
-        $length = max(16, min(PasswordPolicy::MAX_LENGTH, (int) $request->input('length', 20)));
+        $length = filter_var(
+            $request->input('length', 20),
+            FILTER_VALIDATE_INT,
+            [
+                'options' => [
+                    'min_range' => PasswordPolicy::MIN_LENGTH,
+                    'max_range' => PasswordPolicy::MAX_LENGTH,
+                ],
+            ],
+        );
+
+        if ($length === false) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => sprintf(
+                    'La longitud debe estar entre %d y %d caracteres.',
+                    PasswordPolicy::MIN_LENGTH,
+                    PasswordPolicy::MAX_LENGTH,
+                ),
+            ], 422);
+        }
+
         $username = PracearSupport::username($request);
 
         try {

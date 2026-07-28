@@ -18,6 +18,23 @@ final class PasswordPolicyTest extends TestCase
         $this->assertSame(24, strlen($password));
     }
 
+    public function test_generated_passwords_support_lengths_above_128(): void
+    {
+        foreach ([129, 256, PasswordPolicy::MAX_LENGTH] as $length) {
+            $password = PasswordPolicy::generate($length, 'admin');
+
+            PasswordPolicy::validate($password, 'admin');
+            $this->assertSame($length, strlen($password));
+        }
+    }
+
+    public function test_generator_rejects_lengths_above_the_policy_limit(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        PasswordPolicy::generate(PasswordPolicy::MAX_LENGTH + 1, 'admin');
+    }
+
     public function test_predictable_password_is_rejected(): void
     {
         $this->expectException(InvalidArgumentException::class);

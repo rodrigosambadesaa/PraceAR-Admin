@@ -4,6 +4,11 @@
 @section('activePage', 'change_password')
 @section('bodyClass', 'admin-change-password')
 
+@php
+$passwordMinLength = \App\Security\PasswordPolicy::MIN_LENGTH;
+$passwordMaxLength = \App\Security\PasswordPolicy::MAX_LENGTH;
+@endphp
+
 @push('styles')
 <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/change_password.css' }}">
 <link rel="stylesheet" href="{{ rtrim($baseUrl, '/') . '/admin/css/change_password_redesign.css' }}">
@@ -70,14 +75,14 @@
 
                 <div class="password-form-group">
                     <label for="old-password">Contraseña actual <span class="admin-required" aria-hidden="true">*</span></label>
-                    <input type="password" name="old_password" id="old-password" required aria-describedby="password-help">
+                    <input type="password" name="old_password" id="old-password" required maxlength="{{ $passwordMaxLength }}" aria-describedby="password-help">
                     <p id="password-help" class="sr-only">Introduce tu contraseña actual.</p>
                 </div>
 
                 <div class="password-form-group password-generator-group">
                     <label for="new-password">Nueva contraseña <span class="admin-required" aria-hidden="true">*</span></label>
                     <div class="password-input-wrapper">
-                        <input type="password" name="new_password" id="new-password" required
+                        <input type="password" name="new_password" id="new-password" required maxlength="{{ $passwordMaxLength }}"
                             aria-describedby="new-password-help">
                         <button type="button" id="toggle-password-generator" class="password-generator-toggle" aria-expanded="false"
                             aria-controls="password-generator-panel">
@@ -89,12 +94,12 @@
                     <section id="password-generator-panel" class="password-generator-panel" aria-live="polite" hidden>
                         <h2 id="password-generator-heading">Generador de contraseñas</h2>
                         <div class="password-generator-length" role="group" aria-labelledby="password-generator-heading">
-                            <label for="password-length-number">Longitud de la contraseña (16-1024)</label>
-                            <input type="number" id="password-length-number" min="16" max="1024" value="16" aria-describedby="password-length-help">
-                            <input type="range" id="password-length-range" min="16" max="1024" value="16" aria-describedby="password-length-help">
-                            <output id="password-length-output" class="password-length-output">16</output>
+                            <label for="password-length-number">Longitud de la contraseña ({{ $passwordMinLength }}-{{ $passwordMaxLength }})</label>
+                            <input type="number" id="password-length-number" min="{{ $passwordMinLength }}" max="{{ $passwordMaxLength }}" value="{{ $passwordMinLength }}" aria-describedby="password-length-help">
+                            <input type="range" id="password-length-range" min="{{ $passwordMinLength }}" max="{{ $passwordMaxLength }}" value="{{ $passwordMinLength }}" aria-describedby="password-length-help">
+                            <output id="password-length-output" class="password-length-output">{{ $passwordMinLength }}</output>
                         </div>
-                        <p id="password-length-help" class="sr-only">Selecciona una longitud entre 16 y 1024 caracteres.</p>
+                        <p id="password-length-help" class="sr-only">Selecciona una longitud entre {{ $passwordMinLength }} y {{ $passwordMaxLength }} caracteres.</p>
                         <p id="password-length-resistance" class="password-generator-resistance" aria-live="polite"></p>
                         <div class="password-generator-actions">
                             <button type="button" class="password-generator-button" id="generate-password-button">Generar otra contraseña</button>
@@ -131,7 +136,7 @@
 
                 <div class="password-form-group">
                     <label for="confirm-password">Confirmar nueva contraseña <span class="admin-required" aria-hidden="true">*</span></label>
-                    <input type="password" name="confirm_password" id="confirm-password" required aria-describedby="confirm-password-help">
+                    <input type="password" name="confirm_password" id="confirm-password" required maxlength="{{ $passwordMaxLength }}" aria-describedby="confirm-password-help">
                     <p id="confirm-password-help" class="sr-only">Introduce nuevamente la nueva contraseña para confirmarla.</p>
                 </div>
 
@@ -145,7 +150,7 @@
             <div id="password-requirements" aria-live="polite">
                 <span>Requisitos de la nueva contraseña</span>
                 <ul>
-                    <li>Longitud entre 16 y 1024 caracteres.</li>
+                    <li>Longitud entre {{ $passwordMinLength }} y {{ $passwordMaxLength }} caracteres.</li>
                     <li>Una letra mayúscula.</li>
                     <li>Una letra minúscula.</li>
                     <li>Un número.</li>

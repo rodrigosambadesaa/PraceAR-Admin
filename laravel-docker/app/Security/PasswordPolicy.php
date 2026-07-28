@@ -49,7 +49,14 @@ final class PasswordPolicy
 
     public static function generate(int $length, string $username = ''): string
     {
-        $length = max(self::MIN_LENGTH, min(self::MAX_LENGTH, $length));
+        if ($length < self::MIN_LENGTH || $length > self::MAX_LENGTH) {
+            throw new InvalidArgumentException(sprintf(
+                'La longitud debe estar entre %d y %d caracteres.',
+                self::MIN_LENGTH,
+                self::MAX_LENGTH,
+            ));
+        }
+
         $sets = [
             'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
             'abcdefghijklmnopqrstuvwxyz',

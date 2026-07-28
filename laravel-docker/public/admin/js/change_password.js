@@ -26,6 +26,12 @@ const generatedPasswordValue = document.getElementById("generated-password-value
 const copyButton = document.getElementById("copy-generated-password");
 const copyFeedback = document.getElementById("password-copy-feedback");
 const resistanceElement = document.getElementById("password-length-resistance");
+const passwordMinLength = lengthNumberInput instanceof HTMLInputElement
+    ? Number.parseInt(lengthNumberInput.min, 10)
+    : 16;
+const passwordMaxLength = lengthNumberInput instanceof HTMLInputElement
+    ? Number.parseInt(lengthNumberInput.max, 10)
+    : 1024;
 const statsElements = {
     uppercase: document.getElementById("password-stat-uppercase"),
     lowercase: document.getElementById("password-stat-lowercase"),
@@ -130,8 +136,8 @@ async function handleGenerateClick() {
         resetGeneratedPassword();
         return;
     }
-    if (lengthValue < 16 || lengthValue > 1024) {
-        setGeneratorFeedback("La longitud debe estar entre 16 y 1024 caracteres.", "error");
+    if (lengthValue < passwordMinLength || lengthValue > passwordMaxLength) {
+        setGeneratorFeedback(`La longitud debe estar entre ${passwordMinLength} y ${passwordMaxLength} caracteres.`, "error");
         resetGeneratedPassword();
         return;
     }
@@ -314,12 +320,12 @@ formulario.addEventListener("submit", (event) => {
         alert("Las contraseñas no coinciden.");
         return;
     }
-    const longitudInvalida = (valor) => valor.length < 16 || valor.length > 1024;
+    const longitudInvalida = (valor) => valor.length < passwordMinLength || valor.length > passwordMaxLength;
     if (longitudInvalida(contrasenaActual) ||
         longitudInvalida(nuevaContrasena) ||
         longitudInvalida(confirmacion)) {
         event.preventDefault();
-        alert("Las contraseñas deben tener entre 16 y 1024 caracteres.");
+        alert(`Las contraseñas deben tener entre ${passwordMinLength} y ${passwordMaxLength} caracteres.`);
         return;
     }
     let numeroCaracteresEspeciales = 0;
