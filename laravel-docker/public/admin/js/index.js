@@ -20,10 +20,7 @@ const inputLang = document.getElementById("lang");
 const tableLanguageSelector = document.getElementById("table-language-selector");
 const languageChip = document.getElementById("admin-index-language-chip");
 function resolveBaseUrl(path) {
-    const normalizedBase = typeof window.BASE_URL === "string" && window.BASE_URL !== ""
-        ? window.BASE_URL
-        : "/";
-    return new URL(path, normalizedBase).toString();
+    return resolveAppUrl(path);
 }
 function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.getAttribute("content") ?? "";
@@ -95,8 +92,7 @@ function synchronizeLanguageContext(languageCode) {
         link.href = withUpdatedQueryParam(link.href, "codigo_idioma", languageCode);
         const flagImage = link.querySelector("img");
         if (flagImage) {
-            // @ts-ignore
-            flagImage.src = `${window.BASE_URL}img/flags/${languageCode}.png`;
+            flagImage.src = new URL(`img/flags/${languageCode}.png`, getBaseUrl()).toString();
         }
     });
     if (languageChip) {
@@ -120,19 +116,6 @@ formulario.addEventListener("submit", (event) => {
     }
 });
 configureSearchControls();
-// Cuando cargue la página, meter todas las etiquetas style en el head en una sola
-window.addEventListener("load", () => {
-    const styles = Array.from(document.querySelectorAll("style"));
-    const head = document.head;
-    if (styles.length > 0) {
-        const combinedStyle = document.createElement("style");
-        combinedStyle.textContent = styles
-            .map((style) => style.textContent ?? "")
-            .join("\n");
-        head.appendChild(combinedStyle);
-        styles.forEach((style) => style.remove());
-    }
-});
 const QUICK_EDIT_COLORS = {
     info: "#333333",
     error: "#b00020",
@@ -239,7 +222,7 @@ function validateQuickEditForm(form, field) {
         }
         case "telefono": {
             const value = getTrimmedValue(form, "[name='value']");
-            const telefonoRegex = /^[0-9+\s().-]{3,20}$/;
+            const telefonoRegex = /^[0-9+\s().-]{3,15}$/;
             if (!value) {
                 message = "El teléfono es obligatorio.";
             }
@@ -582,4 +565,4 @@ if (zoomElements.container) {
 initializeZoomableImages();
 initializeTableLanguageSelector();
 initializeQuickEdit();
-export {};
+import { getBaseUrl, resolveAppUrl } from "../../js/helpers/base_url.js";

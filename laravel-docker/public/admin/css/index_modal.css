@@ -111,14 +111,15 @@
         margin-top: 0.45rem;
     }
 
-    #sugerencias-busqueda div {
+    #sugerencias-busqueda div,
+    #sugerencias-busqueda button {
         padding: 0.5em 1em;
         cursor: pointer;
         transition: background 0.15s;
     }
 
-    #sugerencias-busqueda div:hover,
-    #sugerencias-busqueda div:focus {
+    #sugerencias-busqueda :is(div, button):hover,
+    #sugerencias-busqueda :is(div, button):focus {
         background: var(--admin-primary-soft);
     }
 .quick-edit-preview {

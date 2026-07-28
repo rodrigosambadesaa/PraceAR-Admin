@@ -2,11 +2,25 @@
   "name": "pracear-admin",
   "version": "2.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "css:check": "node scripts/externalize-blade-css.mjs",
-    "env:init": "node scripts/create-local-env.mjs",
-    "prepare": "node scripts/setup-hooks.mjs",
-    "verify": "npm run css:check",
-    "setup:hooks": "node scripts/setup-hooks.mjs"
+    "client:build": "tsc --project tsconfig.client.json",
+    "client:check": "tsc --project tsconfig.client.json --noEmit",
+    "css:check": "tsx scripts/externalize-blade-css.ts",
+    "env:init": "tsx scripts/create-local-env.ts",
+    "js:test": "tsx --test tests-ts/password-attack-estimator.test.ts",
+    "prepare": "tsx scripts/setup-hooks.ts",
+    "tools:check": "tsc --project tsconfig.tools.json --noEmit",
+    "vendor:check": "tsx scripts/verify-vendored-dependencies.ts",
+    "verify": "npm run css:check && npm run vendor:check && npm run client:check && npm run tools:check && npm run js:test",
+    "setup:hooks": "tsx scripts/setup-hooks.ts"
+  },
+  "dependencies": {
+    "big-integer": "1.6.36"
+  },
+  "devDependencies": {
+    "@types/node": "26.1.2",
+    "tsx": "4.23.1",
+    "typescript": "7.0.2"
   }
 }

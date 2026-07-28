@@ -122,19 +122,34 @@ class AdminAjaxController extends Controller
                 return new JsonResponse(['success' => false, 'msg' => 'El valor supera la longitud permitida.'], 422);
             }
 
+            if ($field === 'nombre' && $value === '') {
+                return new JsonResponse(['success' => false, 'msg' => 'El nombre es obligatorio.'], 422);
+            }
+
             if ($field === 'telefono' && $value !== '' && preg_match('/^[0-9+\s().-]{3,15}$/', $value) !== 1) {
                 return new JsonResponse(['success' => false, 'msg' => 'El teléfono no tiene un formato válido.'], 422);
             }
 
             if ($field === 'caseta_padre') {
                 $value = strtoupper($value);
-                if ($value !== '' && preg_match('/^(?:CE|CO|MC|NA|NC)[0-9]{3}$/', $value) !== 1) {
+                if ($value !== '' && !$this->validStallCode($value)) {
                     return new JsonResponse(['success' => false, 'msg' => 'La caseta padre no tiene un formato válido.'], 422);
                 }
             }
 
-            if (!DB::table('puestos')->where('id', $id)->exists()) {
+            $stall = DB::table('puestos')->select(['id', 'caseta'])->where('id', $id)->first();
+            if (!$stall) {
                 return new JsonResponse(['success' => false, 'msg' => 'No se encontró el puesto.'], 404);
+            }
+
+            if ($field === 'caseta_padre' && $value !== '') {
+                if ($value === (string) $stall->caseta) {
+                    return new JsonResponse(['success' => false, 'msg' => 'Un puesto no puede ser su propia caseta padre.'], 422);
+                }
+
+                if (!DB::table('puestos')->where('caseta', $value)->exists()) {
+                    return new JsonResponse(['success' => false, 'msg' => 'La caseta padre seleccionada no existe.'], 422);
+                }
             }
 
             DB::table('puestos')->where('id', $id)->update([$field => $value]);
@@ -173,13 +188,23 @@ class AdminAjaxController extends Controller
             $type = PracearSupport::cleanText($request->input('tipo'));
             $description = PracearSupport::cleanText($request->input('descripcion'));
 
+            if ($type === '') {
+                return new JsonResponse(['success' => false, 'msg' => 'El tipo es obligatorio.'], 422);
+            }
+
             if (strlen($type) > 50 || strlen($description) > 450) {
                 return new JsonResponse(['success' => false, 'msg' => 'La traducción supera la longitud permitida.'], 422);
             }
 
-            DB::table('puestos_traducciones')
+            $translation = DB::table('puestos_traducciones')
                 ->where('puesto_id', $id)
-                ->where('codigo_idioma', $translationLanguage)
+                ->where('codigo_idioma', $translationLanguage);
+
+            if (!$translation->exists()) {
+                return new JsonResponse(['success' => false, 'msg' => 'No se encontró la traducción.'], 404);
+            }
+
+            $translation
                 ->update([
                     'tipo' => $type,
                     'descripcion' => $description,
@@ -200,7 +225,11 @@ class AdminAjaxController extends Controller
         $caseta = trim((string) $request->query('caseta', ''));
         $language = PracearSupport::language($request->query('lang'));
 
-        if (strlen($caseta) < 2) {
+        if (
+            strlen($caseta) < 2
+            || strlen($caseta) > 10
+            || preg_match('/^[A-Za-z0-9-]+$/', $caseta) !== 1
+        ) {
             return new JsonResponse([]);
         }
 
@@ -289,6 +318,17 @@ class AdminAjaxController extends Controller
                 'message' => $throwable->getMessage(),
             ], 422);
         }
+    }
+
+    private function validStallCode(string $code): bool
+    {
+        if (preg_match('/^(?:CE|CO|MC|NA|NC)([0-9]{3})$/', $code, $matches) !== 1) {
+            return false;
+        }
+
+        $number = (int) $matches[1];
+
+        return $number >= 1 && $number <= 370;
     }
 
 }

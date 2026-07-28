@@ -7,10 +7,10 @@ use App\Http\Controllers\UnityController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [RootController::class, 'show'])->name('root.show');
-Route::post('/', [RootController::class, 'submit'])->name('root.submit');
+Route::post('/', [RootController::class, 'submit'])->middleware('throttle:admin')->name('root.submit');
 
 Route::get('/index.php', [RootController::class, 'show']);
-Route::post('/index.php', [RootController::class, 'submit']);
+Route::post('/index.php', [RootController::class, 'submit'])->middleware('throttle:admin');
 Route::get('/login', [RootController::class, 'show'])->name('login.show');
 Route::post('/login', [RootController::class, 'submit'])->middleware('throttle:login')->name('login.submit');
 Route::get('/login.php', [RootController::class, 'show']);

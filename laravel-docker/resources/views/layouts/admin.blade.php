@@ -40,89 +40,8 @@ $currentSection = $pageLabels[$activePage] ?? 'Panel';
 $currentSectionDescription = $pageDescriptions[$activePage] ?? 'Gestiona el contenido y la configuración del panel administrativo.';
 @endphp
 
-<body class="admin-page @yield('bodyClass', '') {{ request()->cookie('dark_mode') === 'true' ? 'dark-mode' : '' }}">
-    <script nonce="{{ request()->attributes->get('csp_nonce') }}">
-        (function() {
-            var storageKey = "dark-mode";
-            var legacyStorageKey = "darkmode";
-            var cookieKey = "dark_mode";
-
-            function escapeRegExp(value) {
-                return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-            }
-
-            function getCookieValue(name) {
-                var match = document.cookie.match(new RegExp("(?:^|; )" + escapeRegExp(name) + "=([^;]*)"));
-                return match ? decodeURIComponent(match[1]) : null;
-            }
-
-            function getStorageValue(key) {
-                try {
-                    return window.localStorage.getItem(key);
-                } catch (error) {
-                    return null;
-                }
-            }
-
-            function setStorageValue(key, value) {
-                try {
-                    window.localStorage.setItem(key, value);
-                } catch (error) {}
-            }
-
-            function removeStorageValue(key) {
-                try {
-                    window.localStorage.removeItem(key);
-                } catch (error) {}
-            }
-
-            function persistPreference(value) {
-                var serialized = String(value);
-                setStorageValue(storageKey, serialized);
-                removeStorageValue(legacyStorageKey);
-                document.cookie = cookieKey + "=" + encodeURIComponent(serialized) + "; Path=/; Max-Age=31536000; SameSite=Lax";
-            }
-
-            function readStoredPreference() {
-                var cookieValue = getCookieValue(cookieKey);
-                if (cookieValue === "true") {
-                    setStorageValue(storageKey, "true");
-                    removeStorageValue(legacyStorageKey);
-                    return true;
-                }
-                if (cookieValue === "false") {
-                    setStorageValue(storageKey, "false");
-                    removeStorageValue(legacyStorageKey);
-                    return false;
-                }
-
-                var storageValue = getStorageValue(storageKey);
-                if (storageValue === null) {
-                    storageValue = getStorageValue(legacyStorageKey);
-                }
-
-                if (storageValue === "true") {
-                    return true;
-                }
-                if (storageValue === "false") {
-                    return false;
-                }
-
-                return null;
-            }
-
-            var isDark = readStoredPreference();
-
-            if (isDark === null) {
-                isDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-                persistPreference(isDark);
-            }
-
-            document.documentElement.classList.toggle("dark-mode", isDark === true);
-            document.documentElement.style.colorScheme = isDark === true ? "dark" : "light";
-            document.body.classList.toggle("dark-mode", isDark === true);
-        })();
-    </script>
+<body data-base-url="{{ $baseUrl }}" class="admin-page @yield('bodyClass', '') {{ request()->cookie('dark_mode') === 'true' ? 'dark-mode' : '' }}">
+    <script src="{{ rtrim($baseUrl, '/') . '/js/theme_bootstrap.js' }}"></script>
     <header class="admin-header" role="banner">
         <div class="admin-header__top">
             <div class="admin-header__title-row">
@@ -191,9 +110,6 @@ $currentSectionDescription = $pageDescriptions[$activePage] ?? 'Gestiona el cont
         @yield('content')
     </div>
 
-    <script nonce="{{ request()->attributes->get('csp_nonce') }}">
-        window.BASE_URL = @json($baseUrl);
-    </script>
     @stack('scripts')
     <script src="{{ rtrim($baseUrl, '/') . '/js/helpers/dark_mode.js' }}"></script>
 </body>

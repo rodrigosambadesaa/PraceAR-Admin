@@ -211,12 +211,12 @@ formulario.addEventListener("submit", async (event) => {
     }
     if (archivo && archivo.size > 0) {
         const allowedTypes = new Set(["image/jpeg", "image/jpg"]);
-        const maxSize = 2048 * 1024; // 2MB en bytes
+        const maxSize = 4 * 1024 * 1024;
         if (!allowedTypes.has(archivo.type)) {
             errores.push("La imagen debe ser un archivo .jpg o .jpeg válido");
         }
         else if (archivo.size > maxSize) {
-            errores.push("La imagen no puede ser mayor a 2MB");
+            errores.push("La imagen no puede ser mayor a 4MB");
         }
         else {
             try {

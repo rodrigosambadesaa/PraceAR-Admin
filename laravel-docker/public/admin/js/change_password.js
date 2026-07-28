@@ -1,4 +1,5 @@
 import { tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneSecuenciasNumericasInseguras, } from "../../js/helpers/verify_strong_password.js";
+import { estimateBruteForceAttackTimes } from "./helpers/password_attack_estimator.js";
 function getPasswordInput(id) {
     const element = document.getElementById(id);
     if (!(element instanceof HTMLInputElement)) {
@@ -26,6 +27,8 @@ const generatedPasswordValue = document.getElementById("generated-password-value
 const copyButton = document.getElementById("copy-generated-password");
 const copyFeedback = document.getElementById("password-copy-feedback");
 const resistanceElement = document.getElementById("password-length-resistance");
+const attackSearchSpace = document.getElementById("password-attack-search-space");
+const attackEstimatesBody = document.getElementById("password-attack-estimates-body");
 const passwordMinLength = lengthNumberInput instanceof HTMLInputElement
     ? Number.parseInt(lengthNumberInput.min, 10)
     : 16;
@@ -53,6 +56,30 @@ function setGeneratorFeedback(message, type = "info") {
     }
     else {
         generatorFeedback.classList.add("admin-info-text");
+    }
+}
+function appendAttackEstimateCell(row, text) {
+    const cell = document.createElement("td");
+    cell.textContent = text;
+    row.append(cell);
+}
+function renderAttackEstimates(alphabetSize, passwordLength) {
+    if (!(attackEstimatesBody instanceof HTMLTableSectionElement) ||
+        !(attackSearchSpace instanceof HTMLElement)) {
+        return;
+    }
+    const result = estimateBruteForceAttackTimes(alphabetSize, passwordLength);
+    attackEstimatesBody.replaceChildren();
+    attackSearchSpace.textContent =
+        `Espacio de búsqueda: ${result.formattedSearchSpace} combinaciones; ` +
+            `promedio: ${result.formattedAverageGuesses} intentos.`;
+    for (const estimate of result.estimates) {
+        const row = document.createElement("tr");
+        appendAttackEstimateCell(row, estimate.label);
+        appendAttackEstimateCell(row, estimate.description);
+        appendAttackEstimateCell(row, estimate.formattedRate);
+        appendAttackEstimateCell(row, estimate.formattedDuration);
+        attackEstimatesBody.append(row);
     }
 }
 function calculateLengthResistance(length) {
@@ -120,6 +147,12 @@ function resetGeneratedPassword() {
     }
     if (generatedPasswordValue instanceof HTMLElement) {
         generatedPasswordValue.textContent = "";
+    }
+    if (attackSearchSpace instanceof HTMLElement) {
+        attackSearchSpace.textContent = "";
+    }
+    if (attackEstimatesBody instanceof HTMLTableSectionElement) {
+        attackEstimatesBody.replaceChildren();
     }
     if (copyFeedback instanceof HTMLElement) {
         copyFeedback.textContent = "";
@@ -243,6 +276,11 @@ async function handleGenerateClick() {
                 : "-";
             statsElements.entropy.textContent = String(value);
         }
+        const alphabetSize = Number.parseInt(String(stats.alphabetSize ?? ""), 10);
+        if (!Number.isSafeInteger(alphabetSize) || alphabetSize < 2) {
+            throw new Error("El servidor no devolvió un tamaño de alfabeto válido.");
+        }
+        renderAttackEstimates(alphabetSize, password.length);
         setGeneratorFeedback("Contraseña generada y aplicada al formulario.", "success");
         updateResistance();
     }

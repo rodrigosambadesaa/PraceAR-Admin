@@ -4,13 +4,14 @@ La defensa es por capas y toma como referencia OWASP Top 10 2025.
 
 - Control de acceso: middleware de administración, sesiones cifradas, tiempo máximo
   absoluto y por inactividad, rotación de identificador y cierre solo por POST.
-- Configuración segura: validación de `Host`, proxies explícitos, CSP con nonce,
+- Configuración segura: validación de `Host`, proxies explícitos, CSP sin scripts
+  inline,
   HSTS en HTTPS, cabeceras anti-embedding/MIME, errores sin detalles y comprobación
   obligatoria de configuración antes del arranque.
 - Cadena de suministro: Laravel y dependencias soportadas, lockfile, `composer audit`,
   `npm audit`, imágenes versionadas y build que copia solo la aplicación canónica.
 - Criptografía: Argon2id sobre HMAC-SHA-384 con pepper de al menos 32 caracteres.
-  `PASSWORD_PEPPER_PREVIOUS` permite una rotación gradual sin duplicar ficheros.
+  `PASSWORD_PEPPER_LEGACY_JSON` permite una rotación gradual sin duplicar ficheros.
 - Inyección e integridad: Query Builder parametrizado, salida Blade escapada, CSP,
   validación de longitudes y formatos, y respuestas JSON generadas por Laravel.
 - Diseño seguro: privilegio mínimo, base de datos sin puerto público, límites de
@@ -20,6 +21,15 @@ La defensa es por capas y toma como referencia OWASP Top 10 2025.
   bloquea el acceso `root` y no conserva sesiones en un volumen persistente.
 - Autenticación: mensajes genéricos, verificación de coste constante para usuarios
   inexistentes, CAPTCHA, política de contraseña, historial y rehash automático.
+  Las contraseñas nuevas se comprueban en el servidor frente a filtraciones con
+  k-anonymity; nunca se transmite la contraseña ni su hash completo.
+- Validación sin JavaScript: búsquedas, acceso, edición de puestos, traducciones,
+  imágenes y cambios de contraseña se vuelven a validar y autorizar en Laravel.
+  TypeScript solo aporta mejoras de interfaz y no constituye una frontera de
+  seguridad.
+- Código cliente: todo el código propio se mantiene en TypeScript y se compila a
+  JavaScript reproducible para el navegador. Las dependencias de terceros se fijan
+  por versión, integridad y licencia.
 - Integridad de datos: imágenes JPEG se validan por MIME y dimensiones, se analizan
   opcionalmente con VirusTotal y se decodifican/recodifican para eliminar metadatos
   y contenido añadido.
@@ -38,7 +48,8 @@ Los valores reales se inyectan mediante variables de entorno:
 
 - `APP_KEY`
 - `DB_PASSWORD` y `MYSQL_ROOT_PASSWORD`
-- `PASSWORD_PEPPER`
+- `PASSWORD_PEPPER_CURRENT`
+- `PASSWORD_PEPPER_LEGACY_JSON`, solo durante una rotación
 - `VIRUSTOTAL_API_KEY`, si se habilita el análisis
 - `PRACEAR_BOOTSTRAP_ADMIN_PASSWORD`, solo durante el primer alta
 

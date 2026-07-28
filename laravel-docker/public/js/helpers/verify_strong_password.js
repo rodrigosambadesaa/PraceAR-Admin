@@ -20,14 +20,23 @@ const secuenciasDiagonalesTecladoEspanol = [
     "yhnujm",
 ];
 const secuenciasCaracteresEspecialesInseguras = [
-    "!@#$%^&*()_+",
+    "!@#",
+    "@#$",
+    "#$%",
+    "$%^",
+    "%^&",
+    "^&*",
+    "&*(",
+    "*()",
+    "()_",
     "-=",
     "[]",
-    ";'",
-    ",./",
     "{}",
-    ':"',
-    "<>?",
+    ";:",
+    ",.",
+    "./",
+    "<>",
+    "password",
 ];
 const numeros = "0123456789";
 const numerosReverso = numeros.split("").reverse().join("");
@@ -66,39 +75,6 @@ export function verifyStrongPassword(password) {
         return false;
     }
     return true;
-}
-async function sha1Hash(password) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await window.crypto.subtle.digest("SHA-1", data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray
-        .map((b) => b.toString(16).padStart(2, "0"))
-        .join("")
-        .toUpperCase();
-}
-export async function haSidoFiltradaEnBrechas(password) {
-    const hash = (await sha1Hash(password)).toUpperCase();
-    const hashPrefix = hash.substring(0, 5);
-    const hashSuffix = hash.substring(5);
-    const url = `https://api.pwnedpasswords.com/range/${hashPrefix}`;
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            console.error("Error al acceder a la API de brechas de seguridad.");
-            return false;
-        }
-        const data = await response.text();
-        const hashes = data.split("\n");
-        return hashes.some((hashLine) => {
-            const [hashPart] = hashLine.split(":");
-            return hashPart.trim() === hashSuffix;
-        });
-    }
-    catch (error) {
-        console.error("Error al comprobar la contraseña:", error);
-        return false;
-    }
 }
 export function contrasenhaSimilarAUsuario(contrasenha, usuario) {
     const contrasenhaMinusculas = contrasenha.toLowerCase().trim();
@@ -140,7 +116,7 @@ export function contrasenhaSimilarAUsuario(contrasenha, usuario) {
 }
 export function tieneSecuenciasNumericasInseguras(contrasenha) {
     const secuenciasNumericasInseguras = [];
-    for (let longitud = 2; longitud <= 5; longitud += 1) {
+    for (let longitud = 3; longitud <= 6; longitud += 1) {
         for (let i = 0; i <= numeros.length - longitud; i += 1) {
             secuenciasNumericasInseguras.push(numeros.substring(i, i + longitud));
             secuenciasNumericasInseguras.push(numerosReverso.substring(i, i + longitud));
@@ -155,14 +131,14 @@ export function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
     const alfabeto = "abcdefghijklmnopqrstuvwxyz";
     const alfabetoReverso = alfabeto.split("").reverse().join("");
     const secuenciasAlfabeticasInseguras = [];
-    for (let longitud = 2; longitud <= 5; longitud += 1) {
+    for (let longitud = 3; longitud <= 6; longitud += 1) {
         for (let i = 0; i <= alfabeto.length - longitud; i += 1) {
             secuenciasAlfabeticasInseguras.push(alfabeto.substring(i, i + longitud));
             secuenciasAlfabeticasInseguras.push(alfabetoReverso.substring(i, i + longitud));
         }
     }
     for (const fila of tecladoEspanolFilas) {
-        for (let longitud = 2; longitud <= fila.length; longitud += 1) {
+        for (let longitud = 3; longitud <= Math.min(6, fila.length); longitud += 1) {
             const filaReverso = fila.split("").reverse().join("");
             for (let i = 0; i <= fila.length - longitud; i += 1) {
                 secuenciasAlfabeticasInseguras.push(fila.substring(i, i + longitud));
@@ -175,17 +151,7 @@ export function tieneSecuenciasAlfabeticasInseguras(contrasenha) {
     return secuenciasAlfabeticasInseguras.some((secuencia) => contrasenha.includes(secuencia));
 }
 export function tieneSecuenciasDeCaracteresEspecialesInseguras(contrasenha) {
-    const longitud = contrasenha.length;
-    for (const secuencia of secuenciasCaracteresEspecialesInseguras) {
-        const longitudSecuencia = secuencia.length;
-        for (let i = 0; i <= longitud - longitudSecuencia; i += 1) {
-            const subcadena = contrasenha.substring(i, i + longitudSecuencia);
-            if (secuencia.includes(subcadena)) {
-                return true;
-            }
-        }
-    }
-    return false;
+    return secuenciasCaracteresEspecialesInseguras.some((secuencia) => contrasenha.includes(secuencia));
 }
 export function tieneEspaciosAlPrincipioOAlFinal(contrasenha) {
     return contrasenha.startsWith(" ") || contrasenha.endsWith(" ");

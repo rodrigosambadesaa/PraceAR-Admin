@@ -11,7 +11,7 @@ use Tests\TestCase;
 
 final class SecurityHardeningTest extends TestCase
 {
-    public function test_login_response_has_defensive_headers_and_csp_nonce(): void
+    public function test_login_response_has_defensive_headers_and_external_script_only_csp(): void
     {
         $response = $this->get('/login');
 
@@ -25,7 +25,8 @@ final class SecurityHardeningTest extends TestCase
         $policy = (string) $response->headers->get('Content-Security-Policy');
         $this->assertStringContainsString("default-src 'self'", $policy);
         $this->assertStringContainsString("frame-ancestors 'none'", $policy);
-        $this->assertMatchesRegularExpression("/script-src 'self' 'nonce-[a-f0-9]{32}'/", $policy);
+        $this->assertStringContainsString("script-src 'self'", $policy);
+        $this->assertStringNotContainsString("'nonce-", $policy);
         $this->assertStringNotContainsString("'unsafe-inline'", explode('style-src', $policy)[0]);
     }
 

@@ -65,7 +65,7 @@
                 </div>
 
                 <div class="image-actions">
-                    <label for="imagen">Reemplazar imagen (.jpg, máx 2MB)</label>
+                    <label for="imagen">Reemplazar imagen (.jpg, máx 4MB)</label>
                     <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg" aria-label="Reemplazar imagen">
                 </div>
 
@@ -76,7 +76,7 @@
                     </label>
                 </div>
                 @else
-                <label for="imagen">Subir Imagen (.jpg, máx 2MB)</label>
+                <label for="imagen">Subir Imagen (.jpg, máx 4MB)</label>
                 <input type="file" id="imagen" name="imagen" accept=".jpg, .jpeg" aria-label="Subir imagen">
                 @endif
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Security\PasswordPolicy;
+use App\Security\PwnedPasswordChecker;
 use App\Support\PracearSupport;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -12,6 +13,10 @@ use Throwable;
 
 class AdminController extends Controller
 {
+    public function __construct(private readonly PwnedPasswordChecker $pwnedPasswordChecker)
+    {
+    }
+
     public function index(Request $request): View|RedirectResponse
     {
         if (($redirect = $this->requireAuthentication($request)) instanceof RedirectResponse) {
@@ -21,6 +26,11 @@ class AdminController extends Controller
         $currentLanguage = PracearSupport::language($request->query('lang'));
         $search = trim((string) $request->query('caseta', ''));
         $currentPage = max(1, (int) $request->query('page', 1));
+
+        if (strlen($search) > 10 || ($search !== '' && preg_match('/^[A-Za-z0-9-]+$/', $search) !== 1)) {
+            return redirect()->to($this->rootUrl(['lang' => $currentLanguage]))
+                ->withErrors(['caseta' => 'La búsqueda solo admite hasta 10 letras, números o guiones.']);
+        }
 
         $query = DB::table('puestos as p')
             ->join('puestos_traducciones as pt', function ($join) use ($currentLanguage): void {
@@ -73,9 +83,14 @@ class AdminController extends Controller
             return $redirect;
         }
 
+        $search = trim((string) $request->input('caseta', ''));
+        if (strlen($search) > 10 || ($search !== '' && preg_match('/^[A-Za-z0-9-]+$/', $search) !== 1)) {
+            return back()->withErrors(['caseta' => 'La búsqueda solo admite hasta 10 letras, números o guiones.']);
+        }
+
         return redirect()->to($this->rootUrl([
             'page' => 1,
-            'caseta' => trim((string) $request->input('caseta', '')),
+            'caseta' => $search,
             'lang' => PracearSupport::language($request->input('lang')),
         ]));
     }
@@ -151,6 +166,10 @@ class AdminController extends Controller
             return back()->withErrors(['old_password' => 'Todos los campos son obligatorios.']);
         }
 
+        if (strlen($oldPassword) > PasswordPolicy::MAX_LENGTH) {
+            return back()->withErrors(['old_password' => 'La contraseña actual supera la longitud permitida.']);
+        }
+
         if ($newPassword !== $confirmPassword) {
             return back()->withErrors(['confirm_password' => 'Las contraseñas no coinciden.']);
         }
@@ -158,6 +177,14 @@ class AdminController extends Controller
         try {
             PasswordPolicy::validate($newPassword, $username);
         } catch (\InvalidArgumentException $exception) {
+            return back()->withErrors(['new_password' => $exception->getMessage()]);
+        }
+
+        try {
+            if ($this->pwnedPasswordChecker->isCompromised($newPassword)) {
+                return back()->withErrors(['new_password' => 'La nueva contraseña aparece en filtraciones conocidas. Elija una distinta.']);
+            }
+        } catch (\RuntimeException $exception) {
             return back()->withErrors(['new_password' => $exception->getMessage()]);
         }
 
@@ -271,8 +298,20 @@ class AdminController extends Controller
             return back()->withErrors(['telefono' => 'El teléfono no puede tener más de 15 caracteres.']);
         }
 
-        if ($casetaPadre !== '' && preg_match('/^(CE|CO|MC|NA|NC)([0-9]{3})$/', $casetaPadre) !== 1) {
-            return back()->withErrors(['caseta_padre' => 'La caseta padre debe tener el formato correcto (ej: CE001).']);
+        if ($telefono !== '' && preg_match('/^[0-9+\s().-]{3,15}$/', $telefono) !== 1) {
+            return back()->withErrors(['telefono' => 'El teléfono solo puede contener números, espacios y los símbolos +, -, ( y ).']);
+        }
+
+        if ($casetaPadre !== '' && !$this->validStallCode($casetaPadre)) {
+            return back()->withErrors(['caseta_padre' => 'La caseta padre debe tener un código válido entre 001 y 370 (ej: CE001).']);
+        }
+
+        if ($casetaPadre !== '' && $casetaPadre === (string) $stall->caseta) {
+            return back()->withErrors(['caseta_padre' => 'Un puesto no puede ser su propia caseta padre.']);
+        }
+
+        if ($casetaPadre !== '' && !DB::table('puestos')->where('caseta', $casetaPadre)->exists()) {
+            return back()->withErrors(['caseta_padre' => 'La caseta padre seleccionada no existe.']);
         }
 
         if (!array_key_exists($tipoUnity, (array) config('pracear.unity_types', []))) {
@@ -281,6 +320,10 @@ class AdminController extends Controller
 
         if (!DB::table('naves')->where('id', $idNave)->exists()) {
             return back()->withErrors(['id_nave' => 'La nave seleccionada no es válida.']);
+        }
+
+        if ($request->boolean('eliminar_imagen') && $request->hasFile('imagen')) {
+            return back()->withErrors(['imagen' => 'No se puede eliminar y reemplazar la imagen en la misma operación.']);
         }
 
         try {
@@ -353,12 +396,23 @@ class AdminController extends Controller
         $tipo = PracearSupport::cleanText($request->input('tipo'));
         $descripcion = PracearSupport::cleanText($request->input('descripcion'));
 
+        if ($tipo === '') {
+            return back()->withErrors(['tipo' => 'El tipo es obligatorio.']);
+        }
+
         if (strlen($tipo) > 50) {
             return back()->withErrors(['tipo' => 'El tipo no puede tener más de 50 caracteres.']);
         }
 
         if (strlen($descripcion) > 450) {
             return back()->withErrors(['descripcion' => 'La descripción no puede tener más de 450 caracteres.']);
+        }
+
+        if (!DB::table('puestos_traducciones')
+            ->where('puesto_id', $id)
+            ->where('codigo_idioma', $translationLanguage)
+            ->exists()) {
+            return back()->withErrors(['language' => 'No se encontró la traducción solicitada.']);
         }
 
         DB::table('puestos_traducciones')
@@ -414,5 +468,16 @@ class AdminController extends Controller
         }
 
         return $baseUrl . '?' . http_build_query($params);
+    }
+
+    private function validStallCode(string $code): bool
+    {
+        if (preg_match('/^(?:CE|CO|MC|NA|NC)([0-9]{3})$/', $code, $matches) !== 1) {
+            return false;
+        }
+
+        $number = (int) $matches[1];
+
+        return $number >= 1 && $number <= 370;
     }
 }

@@ -12,21 +12,19 @@ final class SecurityHeaders
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $nonce = bin2hex(random_bytes(16));
-        $request->attributes->set('csp_nonce', $nonce);
         $response = $next($request);
 
         $directives = [
             "default-src 'self'",
             "base-uri 'self'",
-            "connect-src 'self' https://www.virustotal.com https://api.pwnedpasswords.com",
+            "connect-src 'self' https://www.virustotal.com",
             "font-src 'self' data:",
             "form-action 'self'",
             "frame-ancestors 'none'",
             "img-src 'self' data: blob:",
             "media-src 'self'",
             "object-src 'none'",
-            "script-src 'self' 'nonce-{$nonce}'",
+            "script-src 'self'",
             "style-src 'self'",
             "style-src-attr 'unsafe-inline'",
             "style-src-elem 'self'",

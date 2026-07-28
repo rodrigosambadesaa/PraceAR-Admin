@@ -126,10 +126,30 @@ $passwordMaxLength = \App\Security\PasswordPolicy::MAX_LENGTH;
                                     <span class="password-generator-stat-label">Resistencia estimada</span>
                                     <span id="password-stat-hash" class="password-generator-stat-value password-generator-resistance">-</span>
                                     <div class="password-generator-caption">
-                                        Tiempo estimado ante un ataque de fuerza bruta con hardware especializado. Considera usar un gestor de contraseñas.
+                                        Estimación cualitativa basada en la entropía. Considera usar un gestor de contraseñas.
                                     </div>
                                 </div>
                             </div>
+                            <section class="password-attack-estimates" aria-labelledby="password-attack-estimates-heading">
+                                <h3 id="password-attack-estimates-heading">Tiempo medio estimado por tipo de ataque</h3>
+                                <p id="password-attack-search-space" class="password-generator-caption"></p>
+                                <div class="password-attack-estimates__table-wrap">
+                                    <table class="password-attack-estimates__table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Escenario</th>
+                                                <th scope="col">Supuesto</th>
+                                                <th scope="col">Velocidad</th>
+                                                <th scope="col">Tiempo medio</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="password-attack-estimates-body"></tbody>
+                                    </table>
+                                </div>
+                                <p class="password-generator-caption">
+                                    Cálculo de fuerza bruta sobre la mitad del espacio de búsqueda, realizado con enteros arbitrariamente grandes y mostrado en notación científica. No contempla phishing, malware, reutilización ni filtraciones de la contraseña.
+                                </p>
+                            </section>
                         </div>
                     </section>
                 </div>
@@ -170,6 +190,7 @@ $passwordMaxLength = \App\Security\PasswordPolicy::MAX_LENGTH;
 @endsection
 
 @push('scripts')
+<script src="{{ rtrim($baseUrl, '/') . '/admin/third-party/big-integer/BigInteger.min.js' }}"></script>
 <script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/check_password_requirements.js' }}"></script>
 <script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/change_password.js' }}"></script>
 @endpush

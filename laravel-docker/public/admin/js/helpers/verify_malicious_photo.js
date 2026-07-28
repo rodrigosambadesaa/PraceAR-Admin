@@ -1,4 +1,5 @@
-const VERIFY_MALICIOUS_PHOTO_ENDPOINT = `${window.BASE_URL}helpers/verify_malicious_photo.php`;
+import { resolveAppUrl } from "../../../js/helpers/base_url.js";
+const VERIFY_MALICIOUS_PHOTO_ENDPOINT = resolveAppUrl("helpers/verify_malicious_photo.php");
 export async function verifyMaliciousPhoto(file) {
     try {
         const formData = new FormData();

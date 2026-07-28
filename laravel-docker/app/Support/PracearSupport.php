@@ -117,8 +117,8 @@ final class PracearSupport
             throw new InvalidArgumentException('El nombre de usuario solo puede contener letras, números, guiones, puntos y guiones bajos.');
         }
 
-        if (preg_match('/^[\d.-]/', $normalizedLogin) === 1) {
-            throw new InvalidArgumentException('El nombre de usuario no puede comenzar por un número, un guion o un punto.');
+        if (preg_match('/^[\d._-]/', $normalizedLogin) === 1) {
+            throw new InvalidArgumentException('El nombre de usuario no puede comenzar por un número, guion, guion bajo o punto.');
         }
 
         return $normalizedLogin;

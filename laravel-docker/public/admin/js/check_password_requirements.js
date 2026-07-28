@@ -1,4 +1,4 @@
-import { verifyStrongPassword, haSidoFiltradaEnBrechas, contrasenhaSimilarAUsuario, tieneSecuenciasNumericasInseguras, tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneEspaciosAlPrincipioOAlFinal, } from "../../js/helpers/verify_strong_password.js";
+import { verifyStrongPassword, contrasenhaSimilarAUsuario, tieneSecuenciasNumericasInseguras, tieneSecuenciasAlfabeticasInseguras, tieneSecuenciasDeCaracteresEspecialesInseguras, tieneEspaciosAlPrincipioOAlFinal, } from "../../js/helpers/verify_strong_password.js";
 function getForm() {
     const form = document.getElementById("formulario-cambio-contrasena");
     if (!(form instanceof HTMLFormElement)) {
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
             event.preventDefault();
         }, { once: true });
     }
-    window.checkPasswordRequirements = async () => {
+    function checkPasswordRequirements() {
         const nuevaContrasena = inputNuevaContrasena.value;
         const mensajesError = formulario.querySelectorAll(".admin-error-text");
         mensajesError.forEach((mensaje) => mensaje.remove());
@@ -63,14 +63,10 @@ document.addEventListener("DOMContentLoaded", () => {
             crearMensajeError("La nueva contraseña no puede ser similar al nombre de usuario.");
             bloquearEnvio();
         }
-        if (await haSidoFiltradaEnBrechas(nuevaContrasena)) {
-            crearMensajeError("La nueva contraseña ha sido filtrada en brechas de seguridad. Por favor, elige una contraseña más segura.");
-            bloquearEnvio();
-        }
-    };
+    }
     inputNuevaContrasena.addEventListener("blur", () => {
         if (inputNuevaContrasena.value) {
-            void window.checkPasswordRequirements();
+            checkPasswordRequirements();
         }
     });
 });

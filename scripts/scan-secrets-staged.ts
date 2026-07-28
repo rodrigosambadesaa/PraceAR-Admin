@@ -20,7 +20,7 @@ const SECRET_PATTERNS = [
   { name: "credential in connection url", regex: /\b(?:mysql|postgres(?:ql)?|mongodb(?:\+srv)?):\/\/[^:\s/@]+:[^@\s/]{8,}@/i },
 ];
 
-function runGit(args) {
+function runGit(args: string[]): string {
   const result = spawnSync("git", args, { encoding: "utf8" });
   if (result.status !== 0) {
     const stderr = (result.stderr || "").trim();
@@ -29,7 +29,7 @@ function runGit(args) {
   return result.stdout || "";
 }
 
-function fail(message) {
+function fail(message: string): never {
   console.error(`\n[secret-scan] BLOCKED: ${message}`);
   process.exit(1);
 }
@@ -38,7 +38,7 @@ let stagedRaw = "";
 try {
   stagedRaw = runGit(["diff", "--cached", "--name-only", "--diff-filter=ACMR"]);
 } catch (error) {
-  fail(error.message);
+  fail(error instanceof Error ? error.message : String(error));
 }
 
 const stagedFiles = stagedRaw

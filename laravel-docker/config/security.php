@@ -35,4 +35,11 @@ return [
     'auth' => [
         'generic_login_error_message' => 'Credenciales inválidas.',
     ],
+
+    'password_breach_check' => [
+        'enabled' => (bool) env('PASSWORD_BREACH_CHECK_ENABLED', true),
+        'endpoint' => 'https://api.pwnedpasswords.com/range',
+        'connect_timeout_seconds' => 3,
+        'timeout_seconds' => 5,
+    ],
 ];
