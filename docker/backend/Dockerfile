@@ -27,7 +27,9 @@ RUN sed -i 's/\r$//' /usr/local/bin/start-laravel \
     && chmod +x /usr/local/bin/start-laravel \
     && cd /var/www/html/laravel-docker \
     && composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader --classmap-authoritative \
-    && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
-    && chown -R www-data:www-data storage bootstrap/cache
+    && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache public/assets \
+    && chown -R www-data:www-data storage bootstrap/cache public/assets \
+    && find public/assets -type d -exec chmod 0755 {} + \
+    && find public/assets -type f -exec chmod 0644 {} +
 
 CMD ["/usr/local/bin/start-laravel"]

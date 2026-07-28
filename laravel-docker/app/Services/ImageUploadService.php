@@ -66,24 +66,33 @@ final class ImageUploadService
         }
 
         $targetDirectory = dirname($targetPath);
-        if (!is_dir($targetDirectory) && !mkdir($targetDirectory, 0750, true) && !is_dir($targetDirectory)) {
+        if (!is_dir($targetDirectory) && !@mkdir($targetDirectory, 0755, true) && !is_dir($targetDirectory)) {
             imagedestroy($decoded);
             throw new RuntimeException('No se pudo preparar el almacenamiento de imágenes.');
+        }
+
+        if (!is_writable($targetDirectory)) {
+            imagedestroy($decoded);
+            throw new RuntimeException('El almacenamiento de imágenes no admite escrituras.');
         }
 
         $temporaryPath = $targetDirectory . DIRECTORY_SEPARATOR . '.upload-' . bin2hex(random_bytes(12)) . '.jpg';
 
         try {
-            if (!imagejpeg($decoded, $temporaryPath, 88)) {
+            if (!@imagejpeg($decoded, $temporaryPath, 88)) {
+                @unlink($temporaryPath);
                 throw new RuntimeException('No se pudo normalizar la imagen.');
             }
         } finally {
             imagedestroy($decoded);
         }
 
-        @chmod($temporaryPath, 0640);
+        if (!@chmod($temporaryPath, 0644)) {
+            @unlink($temporaryPath);
+            throw new RuntimeException('No se pudieron aplicar permisos seguros a la imagen.');
+        }
 
-        if (!rename($temporaryPath, $targetPath)) {
+        if (!@rename($temporaryPath, $targetPath)) {
             @unlink($temporaryPath);
             throw new RuntimeException('No se pudo guardar la imagen.');
         }
