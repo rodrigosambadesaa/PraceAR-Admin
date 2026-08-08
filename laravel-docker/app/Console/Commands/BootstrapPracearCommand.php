@@ -84,16 +84,16 @@ class BootstrapPracearCommand extends Command
     private function seedNaves(): void
     {
         $naves = [
-            1 => 'Ameas 1',
-            2 => 'Ameas 2',
-            3 => 'Nave 1',
-            4 => 'Nave 2',
-            5 => 'Nave 3',
-            6 => 'Nave 4',
-            7 => 'Nave 5',
-            8 => 'Nave 6',
-            9 => 'Nave 7',
-            10 => 'Nave 8',
+            1 => 'Nave 1',
+            2 => 'Nave 2',
+            3 => 'Nave 3',
+            4 => 'Nave 4',
+            5 => 'Nave 5',
+            6 => 'Nave 6',
+            7 => 'Nave 7',
+            8 => 'Nave 8',
+            9 => 'Ameas 1',
+            10 => 'Ameas 2',
             11 => 'Murallón 1',
             12 => 'Murallón 2',
         ];
