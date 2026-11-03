@@ -4,6 +4,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN apk add --no-cache \
     git \
+    clamav-scanner \
+    freshclam \
     icu-dev \
     oniguruma-dev \
     libzip-dev \
