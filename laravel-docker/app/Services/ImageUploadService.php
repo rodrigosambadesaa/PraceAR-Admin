@@ -14,7 +14,10 @@ final class ImageUploadService
     private const MAX_PIXELS = 40_000_000;
     private const MAX_DIMENSION = 12_000;
 
-    public function __construct(private readonly VirusTotalScanner $scanner)
+    public function __construct(
+        private readonly VirusTotalScanner $scanner,
+        private readonly LocalAntivirusScanner $localScanner,
+    )
     {
     }
 
@@ -42,6 +45,10 @@ final class ImageUploadService
         if (!is_string($bytes) || $bytes === '' || strlen($bytes) > self::MAX_BYTES) {
             throw new InvalidArgumentException('La imagen no es válida o supera el límite de 4 MB.');
         }
+
+        // Scan a private copy of the original bytes BEFORE invoking image decoders.
+        // This is necessary because malformed images could target vulnerabilities in GD.
+        $this->scanOriginalSnapshot($bytes);
 
         $info = @getimagesizefromstring($bytes);
         if (
@@ -114,6 +121,9 @@ final class ImageUploadService
             }
             $expectedHash = hash_final($hash);
 
+            // Scan the exact normalized artifact as well; neither the original
+            // upload pathname nor the staged pathname is trusted after scanning.
+            $this->localScanner->scan($temporaryPath);
             $scan = $this->scanner->scan($temporaryPath);
             if (($scan['success'] ?? false) !== true || ($scan['is_malicious'] ?? true) !== false) {
                 throw new InvalidArgumentException((string) ($scan['message'] ?? 'La imagen no ha superado el análisis.'));
@@ -156,6 +166,33 @@ final class ImageUploadService
                 @unlink($temporaryPath);
             }
             imagedestroy($decoded);
+        }
+    }
+
+    /**
+     * Scan the uploaded byte snapshot (not PHP's mutable temporary upload).
+     * Use a private, exclusively created tempfile and verify it wasn't modified
+     * during the local AV scan; the original bytes stay in memory for decoding.
+     */
+    private function scanOriginalSnapshot(string $bytes): void
+    {
+        $path = @tempnam(sys_get_temp_dir(), 'pracear-av-');
+        if ($path === false) {
+            throw new RuntimeException('No se pudo preparar el análisis antivirus local.');
+        }
+
+        try {
+            if (!@chmod($path, 0600) || @file_put_contents($path, $bytes, LOCK_EX) !== strlen($bytes)) {
+                throw new RuntimeException('No se pudo preparar la copia privada de la imagen.');
+            }
+
+            $this->localScanner->scan($path);
+            $checked = @file_get_contents($path);
+            if (!is_string($checked) || !hash_equals(hash('sha256', $bytes), hash('sha256', $checked))) {
+                throw new RuntimeException('La imagen cambió durante el análisis antivirus local.');
+            }
+        } finally {
+            @unlink($path);
         }
     }
 }
