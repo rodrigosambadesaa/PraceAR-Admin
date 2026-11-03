@@ -152,7 +152,7 @@ final class ImageUploadServiceTest extends TestCase
         }
     }
 
-    private function cleanAnalysis(): \Illuminate\Http\Client\Response
+    private function cleanAnalysis(): mixed
     {
         return Http::response([
             'data' => [
