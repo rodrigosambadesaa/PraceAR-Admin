@@ -43,6 +43,12 @@ a2dismod mpm_event >/dev/null 2>&1 || true
 a2dismod mpm_worker >/dev/null 2>&1 || true
 a2enmod mpm_prefork >/dev/null 2>&1 || true
 
+# Run FreshClam as a daemon. No upload is accepted without a successful
+# local scan, including when signatures have not yet been downloaded.
+if command -v freshclam >/dev/null 2>&1; then
+  freshclam --daemon --checks=4 >/dev/null 2>&1 || echo "Aviso: no se pudo iniciar freshclam; las subidas fallarán de forma segura sin firmas." >&2
+fi
+
 php artisan optimize:clear
 php artisan migrate --force
 php artisan pracear:bootstrap
