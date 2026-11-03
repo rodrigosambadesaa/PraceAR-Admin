@@ -38,3 +38,18 @@ No copies ese valor al repositorio ni lo pases como argumento en la terminal.
 Los health checks de MySQL, PHP-FPM y Laravel controlan el orden de arranque. El
 contenedor backend se detiene si faltan claves, pepper, host permitido, HTTPS seguro
 en producción, usuario administrador o permisos de almacenamiento.
+
+## Escaneo antivirus de imágenes
+
+El backend instala `clamscan` y `freshclam`. El proceso de actualizaciones
+empieza con el backend y las firmas se persisten en el volumen `clamav_db`.
+No hay antivirus predeterminado en Linux: se utiliza ClamAV explícitamente.
+La subida falla cuando no hay firmas, hay un error, se detecta malware o se
+excede el tiempo límite. Monitoriza los logs de `freshclam`, recursos
+RAM/CPU y la actualidad de las firmas. La primera descarga puede requerir
+conectividad de salida y tardar en habilitar las subidas.
+
+La configuración Docker local conserva `VIRUSTOTAL_REQUIRED=false` para no
+requerir credenciales externas; el análisis local **no se puede desactivar**.
+En producción mantén `VIRUSTOTAL_REQUIRED=true` y aporta su API key para
+utilizar ambos análisis.
