@@ -23,6 +23,12 @@ if ! su www-data -s /bin/sh -c "test -w '$assets_directory'"; then
     exit 1
 fi
 
+# Refresh ClamAV signatures in the container; uploads fail closed until
+# the malware database is available. Keep refreshing after deployment.
+if command -v freshclam >/dev/null 2>&1; then
+    freshclam --daemon --checks=4 >/dev/null 2>&1 || echo "Aviso: freshclam no se inició; la subida de imágenes quedará bloqueada si faltan firmas." >&2
+fi
+
 php artisan optimize:clear >/dev/null 2>&1 || true
 php artisan migrate --force
 php artisan pracear:bootstrap
