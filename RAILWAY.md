@@ -29,3 +29,18 @@ contraseña del entorno después del primer arranque correcto.
 
 No despliegues Adminer, no expongas la base de datos a Internet y monta almacenamiento
 persistente en `PRACEAR_ASSETS_PATH` para las imágenes.
+
+## Antivirus local obligatorio
+
+La imagen de Railway instala **ClamAV** porque el contenedor es Linux, aunque
+quien administre el sitio use Windows o macOS. En cada arranque se inicia
+`freshclam` para descargar/actualizar las firmas. Si no existen firmas
+utilizables o falla el motor, **las subidas se rechazan**; nunca se consideran
+limpias por defecto. Planifica memoria y espacio suficientes para la base
+antivirus; en despliegues efímeros conviene persistir `/var/lib/clamav`.
+
+Se ejecuta ClamAV sobre una copia privada de los bytes recibidos **antes de GD**
+y también sobre el JPEG saneado **antes de publicar**. VirusTotal sigue
+operando como segunda fuente cuando `VIRUSTOTAL_REQUIRED=true` y hay una API
+key válida. No envíes datos sensibles de usuarios al servicio externo sin
+informarles y disponer de la base legal correspondiente.
