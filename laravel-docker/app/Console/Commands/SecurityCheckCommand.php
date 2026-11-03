@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Console\Commands;
 
 use App\Security\PepperedPasswordHasher;
+use App\Services\LocalAntivirusScanner;
 use App\Support\PracearSupport;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -54,6 +55,12 @@ final class SecurityCheckCommand extends Command
             && trim((string) config('services.virustotal.key', '')) === ''
         ) {
             $errors[] = 'VIRUSTOTAL_API_KEY es obligatoria cuando VIRUSTOTAL_REQUIRED=true.';
+        }
+
+        try {
+            app(LocalAntivirusScanner::class)->assertAvailable();
+        } catch (Throwable) {
+            $errors[] = 'No hay un antivirus local disponible para analizar las imágenes.';
         }
 
         try {
