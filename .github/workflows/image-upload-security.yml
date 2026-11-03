@@ -1,0 +1,31 @@
+name: Image upload TOCTOU regression tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  image-upload:
+    name: PHP upload security tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        with:
+          persist-credentials: false
+      - name: Set up supported PHP runtime
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240
+        with:
+          php-version: "8.4.27"
+          extensions: gd, intl, mbstring, pdo_sqlite, zip
+          coverage: none
+      - name: Install locked PHP dependencies
+        working-directory: laravel-docker
+        run: composer install --no-interaction --prefer-dist --no-progress
+      - name: Exercise image upload and race-condition regressions
+        working-directory: laravel-docker
+        run: vendor/bin/phpunit tests/Feature/ImageUploadServiceTest.php

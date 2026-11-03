@@ -24,13 +24,26 @@ final class ImageUploadService
             throw new InvalidArgumentException('El identificador de la caseta no es válido.');
         }
 
+        if (basename($targetPath) !== $caseta . '.jpg') {
+            throw new InvalidArgumentException('La ruta de destino no corresponde a la caseta.');
+        }
+
         if (!$image->isValid() || $image->getSize() === false || $image->getSize() > self::MAX_BYTES) {
             throw new InvalidArgumentException('La imagen no es válida o supera el límite de 4 MB.');
         }
 
+        // Snapshot the upload ONCE. A later change to PHP's upload temporary file
+        // must not change the bytes we validate, decode, scan or publish.
         $source = $image->getRealPath();
-        $info = $source !== false ? @getimagesize($source) : false;
+        $bytes = $source !== false
+            ? @file_get_contents($source, false, null, 0, self::MAX_BYTES + 1)
+            : false;
 
+        if (!is_string($bytes) || $bytes === '' || strlen($bytes) > self::MAX_BYTES) {
+            throw new InvalidArgumentException('La imagen no es válida o supera el límite de 4 MB.');
+        }
+
+        $info = @getimagesizefromstring($bytes);
         if (
             !is_array($info)
             || ($info[2] ?? null) !== IMAGETYPE_JPEG
@@ -51,50 +64,98 @@ final class ImageUploadService
             throw new InvalidArgumentException('Las dimensiones de la imagen no son seguras.');
         }
 
-        $scan = $this->scanner->scan($source);
-        if (($scan['is_malicious'] ?? true) === true) {
-            throw new InvalidArgumentException((string) ($scan['message'] ?? 'La imagen no ha superado el análisis.'));
-        }
-
-        if (!function_exists('imagecreatefromjpeg')) {
+        if (!function_exists('imagecreatefromstring') || !function_exists('imagejpeg')) {
             throw new RuntimeException('El servidor no dispone del procesador seguro de imágenes.');
         }
 
-        $decoded = @imagecreatefromjpeg($source);
+        $decoded = @imagecreatefromstring($bytes);
+        unset($bytes);
         if ($decoded === false) {
             throw new InvalidArgumentException('La imagen JPEG está dañada.');
         }
 
-        $targetDirectory = dirname($targetPath);
-        if (!is_dir($targetDirectory) && !@mkdir($targetDirectory, 0755, true) && !is_dir($targetDirectory)) {
-            imagedestroy($decoded);
-            throw new RuntimeException('No se pudo preparar el almacenamiento de imágenes.');
-        }
-
-        if (!is_writable($targetDirectory)) {
-            imagedestroy($decoded);
-            throw new RuntimeException('El almacenamiento de imágenes no admite escrituras.');
-        }
-
-        $temporaryPath = $targetDirectory . DIRECTORY_SEPARATOR . '.upload-' . bin2hex(random_bytes(12)) . '.jpg';
+        $temporaryPath = null;
+        $stream = null;
+        $published = false;
 
         try {
-            if (!@imagejpeg($decoded, $temporaryPath, 88)) {
-                @unlink($temporaryPath);
+            $targetDirectory = dirname($targetPath);
+            if (!is_dir($targetDirectory) && !@mkdir($targetDirectory, 0755, true) && !is_dir($targetDirectory)) {
+                throw new RuntimeException('No se pudo preparar el almacenamiento de imágenes.');
+            }
+
+            // Exclusive creation prevents a pre-existing file or symlink from being
+            // followed. Keep the handle open throughout normalization and scanning.
+            $temporaryPath = $targetDirectory . DIRECTORY_SEPARATOR . '.upload-' . bin2hex(random_bytes(16));
+            $stream = @fopen($temporaryPath, 'x+b');
+            if ($stream === false) {
+                throw new RuntimeException('No se pudo preparar el archivo temporal de imagen.');
+            }
+
+            if (!@chmod($temporaryPath, 0600)) {
+                throw new RuntimeException('No se pudieron aplicar permisos seguros a la imagen temporal.');
+            }
+
+            // The scanner sees the exact sanitized JPEG that we intend to publish,
+            // never the original upload (which might have changed after validation).
+            if (!@imagejpeg($decoded, $stream, 88) || !@fflush($stream)) {
                 throw new RuntimeException('No se pudo normalizar la imagen.');
             }
+
+            $metadata = @fstat($stream);
+            $size = is_array($metadata) ? (int) ($metadata['size'] ?? 0) : 0;
+            if ($size <= 0 || $size > self::MAX_BYTES || @fseek($stream, 0) !== 0) {
+                throw new RuntimeException('La imagen normalizada no tiene un tamaño seguro.');
+            }
+
+            $hash = hash_init('sha256');
+            if (hash_update_stream($hash, $stream) !== $size) {
+                throw new RuntimeException('No se pudo verificar la integridad de la imagen.');
+            }
+            $expectedHash = hash_final($hash);
+
+            $scan = $this->scanner->scan($temporaryPath);
+            if (($scan['success'] ?? false) !== true || ($scan['is_malicious'] ?? true) !== false) {
+                throw new InvalidArgumentException((string) ($scan['message'] ?? 'La imagen no ha superado el análisis.'));
+            }
+
+            // Fail closed if the staged file changed while the external scanner was
+            // running, or if its pathname was replaced with a different inode.
+            clearstatcache(true, $temporaryPath);
+            $pathStat = @stat($temporaryPath);
+            $handleStat = @fstat($stream);
+            if (
+                !is_array($pathStat)
+                || !is_array($handleStat)
+                || $pathStat['dev'] !== $handleStat['dev']
+                || $pathStat['ino'] !== $handleStat['ino']
+                || (int) $handleStat['size'] !== $size
+                || @fseek($stream, 0) !== 0
+            ) {
+                throw new RuntimeException('La imagen cambió durante el análisis de seguridad.');
+            }
+
+            $verifiedHash = hash_init('sha256');
+            if (
+                hash_update_stream($verifiedHash, $stream) !== $size
+                || !hash_equals($expectedHash, hash_final($verifiedHash))
+            ) {
+                throw new RuntimeException('La imagen cambió durante el análisis de seguridad.');
+            }
+
+            if (!@chmod($temporaryPath, 0644) || !@rename($temporaryPath, $targetPath)) {
+                throw new RuntimeException('No se pudo guardar la imagen.');
+            }
+
+            $published = true;
         } finally {
+            if (is_resource($stream)) {
+                fclose($stream);
+            }
+            if (!$published && $temporaryPath !== null) {
+                @unlink($temporaryPath);
+            }
             imagedestroy($decoded);
-        }
-
-        if (!@chmod($temporaryPath, 0644)) {
-            @unlink($temporaryPath);
-            throw new RuntimeException('No se pudieron aplicar permisos seguros a la imagen.');
-        }
-
-        if (!@rename($temporaryPath, $targetPath)) {
-            @unlink($temporaryPath);
-            throw new RuntimeException('No se pudo guardar la imagen.');
         }
     }
 }

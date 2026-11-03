@@ -30,9 +30,15 @@ La defensa es por capas y toma como referencia OWASP Top 10 2025.
 - Código cliente: todo el código propio se mantiene en TypeScript y se compila a
   JavaScript reproducible para el navegador. Las dependencias de terceros se fijan
   por versión, integridad y licencia.
-- Integridad de datos: imágenes JPEG se validan por MIME y dimensiones, se analizan
-  opcionalmente con VirusTotal y se decodifican/recodifican para eliminar metadatos
-  y contenido añadido.
+- Integridad de datos: imágenes JPEG se validan por MIME y dimensiones usando una
+  única copia de los bytes recibidos, se decodifican/recodifican para eliminar
+  metadatos y contenido añadido, y se analiza con VirusTotal **el JPEG normalizado**
+  que se va a publicar (obligatorio si así está configurado). La imagen temporal se
+  crea de forma exclusiva, con permisos privados; después del análisis se verifica
+  su hash SHA-256 y su identidad (dispositivo/inodo) antes de publicarla mediante
+  un renombrado atómico. Cualquier error conserva la imagen anterior y borra el
+  archivo temporal. El directorio de imágenes debe ser de confianza y no permitir
+  escrituras de usuarios o procesos no autorizados.
 - Catálogo inicial: el fixture versionado usa una lista blanca de campos públicos.
   Excluye contacto, teléfono, imagen, usuarios, hashes, accesos, IP y credenciales;
   solo se carga cuando la tabla de puestos está completamente vacía.
