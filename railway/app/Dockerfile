@@ -5,6 +5,8 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         git \
+        clamav \
+        clamav-freshclam \
         libicu-dev \
         libonig-dev \
         libzip-dev \
