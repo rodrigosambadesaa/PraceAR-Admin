@@ -32,13 +32,20 @@ La defensa es por capas y toma como referencia OWASP Top 10 2025.
   por versión, integridad y licencia.
 - Integridad de datos: imágenes JPEG se validan por MIME y dimensiones usando una
   única copia de los bytes recibidos, se decodifican/recodifican para eliminar
-  metadatos y contenido añadido, y se analiza con VirusTotal **el JPEG normalizado**
-  que se va a publicar (obligatorio si así está configurado). La imagen temporal se
+  metadatos y contenido añadido. Es obligatorio el antivirus local en dos fases:
+  escaneo de la copia privada de entrada ANTES de decodificar con GD y escaneo
+  del JPEG normalizado ANTES de publicarlo. Además, VirusTotal analiza el JPEG
+  normalizado cuando está habilitado (obligatorio si así está configurado). La imagen temporal se
   crea de forma exclusiva, con permisos privados; después del análisis se verifica
   su hash SHA-256 y su identidad (dispositivo/inodo) antes de publicarla mediante
   un renombrado atómico. Cualquier error conserva la imagen anterior y borra el
   archivo temporal. El directorio de imágenes debe ser de confianza y no permitir
-  escrituras de usuarios o procesos no autorizados.
+  escrituras de usuarios o procesos no autorizados. No se puede desactivar
+  el antivirus local: si no está instalado, faltan firmas o el resultado no es
+  concluyente, se rechaza la subida. Windows utiliza Microsoft Defender mediante
+  MpCmdRun con examen personalizado sin remediación; Linux/macOS requieren
+  ClamAV (XProtect no dispone de una CLI documentada para análisis bajo demanda).
+  Los antivirus reducen el riesgo pero no garantizan detección del 100 %. 
 - Catálogo inicial: el fixture versionado usa una lista blanca de campos públicos.
   Excluye contacto, teléfono, imagen, usuarios, hashes, accesos, IP y credenciales;
   solo se carga cuando la tabla de puestos está completamente vacía.

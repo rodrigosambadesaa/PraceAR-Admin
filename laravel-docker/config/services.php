@@ -7,6 +7,13 @@ return [
         'required' => env('VIRUSTOTAL_REQUIRED', true),
     ],
 
+    // Always mandatory. No bypass when the antivirus or definitions are missing.
+    // Linux/macOS use ClamAV; Windows uses the native Microsoft Defender CLI.
+    'local_antivirus' => [
+        'driver' => env('LOCAL_ANTIVIRUS_DRIVER', 'auto'),
+        'binary' => env('LOCAL_ANTIVIRUS_BINARY', ''),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Third Party Services

@@ -5,15 +5,27 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Services\ImageUploadService;
+use App\Services\LocalAntivirusScanner;
 use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
+use Mockery;
 use RuntimeException;
 use Tests\TestCase;
 
 final class ImageUploadServiceTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Existing upload regressions must not depend on the host's AV installation.
+        $local = Mockery::mock(LocalAntivirusScanner::class);
+        $local->shouldReceive('scan')->andReturnNull();
+        $this->app->instance(LocalAntivirusScanner::class, $local);
+    }
+
     public function test_a_verified_jpeg_is_stored_with_public_read_permissions(): void
     {
         config()->set('services.virustotal.required', false);
@@ -148,6 +160,69 @@ final class ImageUploadServiceTest extends TestCase
             $this->assertSame('previous-image', file_get_contents($target));
             $this->assertSame([], glob($directory . DIRECTORY_SEPARATOR . '.upload-*'));
         } finally {
+            $this->removeTemporaryDirectory($directory);
+        }
+    }
+
+    public function test_local_antivirus_blocks_a_threat_even_if_external_scanning_is_disabled(): void
+    {
+        config()->set('services.virustotal.required', false);
+        config()->set('services.virustotal.key', '');
+        $local = Mockery::mock(LocalAntivirusScanner::class);
+        $local->shouldReceive('scan')
+            ->once()
+            ->andThrow(new InvalidArgumentException('El antivirus local ha detectado una amenaza en la imagen.'));
+        $this->app->instance(LocalAntivirusScanner::class, $local);
+
+        $directory = $this->temporaryDirectory();
+        $target = $directory . DIRECTORY_SEPARATOR . 'CE001.jpg';
+        file_put_contents($target, 'previous-image');
+
+        try {
+            $this->expectException(InvalidArgumentException::class);
+            $this->expectExceptionMessage('antivirus local');
+            app(ImageUploadService::class)->storeJpeg(
+                'CE001',
+                UploadedFile::fake()->image('original.jpg', 640, 480),
+                $target,
+            );
+        } finally {
+            $this->assertSame('previous-image', file_get_contents($target));
+            $this->assertSame([], glob($directory . DIRECTORY_SEPARATOR . '.upload-*'));
+            $this->removeTemporaryDirectory($directory);
+        }
+    }
+
+    public function test_local_antivirus_rejects_malware_found_in_the_normalized_jpeg(): void
+    {
+        config()->set('services.virustotal.required', false);
+        config()->set('services.virustotal.key', '');
+        $calls = 0;
+        $local = Mockery::mock(LocalAntivirusScanner::class);
+        $local->shouldReceive('scan')->twice()->andReturnUsing(function (string $path) use (&$calls): void {
+            $this->assertFileExists($path);
+            $calls++;
+            if ($calls === 2) {
+                throw new InvalidArgumentException('El antivirus local ha detectado una amenaza.');
+            }
+        });
+        $this->app->instance(LocalAntivirusScanner::class, $local);
+
+        $directory = $this->temporaryDirectory();
+        $target = $directory . DIRECTORY_SEPARATOR . 'CE001.jpg';
+        file_put_contents($target, 'previous-image');
+        try {
+            $this->expectException(InvalidArgumentException::class);
+            $this->expectExceptionMessage('antivirus local');
+            app(ImageUploadService::class)->storeJpeg(
+                'CE001',
+                UploadedFile::fake()->image('original.jpg', 640, 480),
+                $target,
+            );
+        } finally {
+            $this->assertSame(2, $calls);
+            $this->assertSame('previous-image', file_get_contents($target));
+            $this->assertSame([], glob($directory . DIRECTORY_SEPARATOR . '.upload-*'));
             $this->removeTemporaryDirectory($directory);
         }
     }

@@ -28,4 +28,37 @@ jobs:
         run: composer install --no-interaction --prefer-dist --no-progress
       - name: Exercise image upload and race-condition regressions
         working-directory: laravel-docker
-        run: vendor/bin/phpunit tests/Feature/ImageUploadServiceTest.php
+        run: vendor/bin/phpunit tests/Feature/ImageUploadServiceTest.php tests/Feature/LocalAntivirusScannerTest.php
+
+  actual-clamav:
+    name: ClamAV EICAR detection smoke test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Install ClamAV and its signature updater
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y clamav clamav-freshclam
+          sudo systemctl stop clamav-freshclam || true
+      - name: Update signatures (never silently skip missing databases)
+        run: |
+          sudo freshclam --stdout
+      - name: Scan a harmless file and detect the standard EICAR test string
+        run: |
+          set -eu
+          mkdir -p "$RUNNER_TEMP/local-av-test"
+          cd "$RUNNER_TEMP/local-av-test"
+          printf 'harmless data' > clean.bin
+          python3 - <<'PY'
+          from pathlib import Path
+          # EICAR is the standard harmless antivirus test pattern, not malware.
+          prefix = "X5O!P%@AP[4\\PZX54(P^)7CC)7}"
+          suffix = "$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*"
+          Path("eicar-test.bin").write_bytes((prefix + suffix).encode("ascii"))
+          PY
+          clamscan --no-summary --stdout clean.bin
+          set +e
+          clamscan --no-summary --stdout eicar-test.bin
+          status=$?
+          set -e
+          test "$status" -eq 1
