@@ -25,6 +25,8 @@ fi
 
 # Refresh ClamAV signatures in the container; uploads fail closed until
 # the malware database is available. Keep refreshing after deployment.
+mkdir -p /var/lib/clamav
+chown -R clamav:clamav /var/lib/clamav
 if command -v freshclam >/dev/null 2>&1; then
     freshclam --daemon --checks=4 >/dev/null 2>&1 || echo "Aviso: freshclam no se inició; la subida de imágenes quedará bloqueada si faltan firmas." >&2
 fi
