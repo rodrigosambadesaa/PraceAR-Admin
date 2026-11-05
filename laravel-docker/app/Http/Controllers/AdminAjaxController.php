@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Security\PasswordPolicy;
+use App\Services\LocalAntivirusScanner;
 use App\Services\VirusTotalScanner;
 use App\Support\PracearSupport;
 use Illuminate\Http\JsonResponse;
@@ -292,8 +293,11 @@ class AdminAjaxController extends Controller
         }
     }
 
-    public function verifyMaliciousPhoto(Request $request, VirusTotalScanner $scanner): JsonResponse
-    {
+    public function verifyMaliciousPhoto(
+        Request $request,
+        VirusTotalScanner $scanner,
+        LocalAntivirusScanner $localScanner,
+    ): JsonResponse {
         if (!$request->hasFile('imagen')) {
             return new JsonResponse([
                 'success' => false,
@@ -302,13 +306,48 @@ class AdminAjaxController extends Controller
             ], 400);
         }
 
+        $snapshot = null;
+
         try {
             $image = $request->file('imagen');
             if (!$image->isValid() || $image->getSize() === false || $image->getSize() > 4_194_304) {
                 return new JsonResponse(['success' => false, 'is_malicious' => false, 'message' => 'La imagen no es válida o supera 4 MB.'], 422);
             }
 
-            $result = $scanner->scan((string) $image->getRealPath());
+            // Scan a private byte snapshot, not the mutable PHP upload pathname.
+            // Fail closed if ClamAV/Defender is absent, detects a threat or errors.
+            $source = $image->getRealPath();
+            $bytes = $source !== false ? @file_get_contents($source, false, null, 0, 4_194_305) : false;
+            if (!is_string($bytes) || $bytes === '' || strlen($bytes) > 4_194_304) {
+                throw new \RuntimeException('No se pudo preparar la imagen para el análisis.');
+            }
+
+            $snapshot = @tempnam(sys_get_temp_dir(), 'pracear-check-');
+            if ($snapshot === false || !@chmod($snapshot, 0600)
+                || @file_put_contents($snapshot, $bytes, LOCK_EX) !== strlen($bytes)) {
+                throw new \RuntimeException('No se pudo preparar una copia privada para el análisis.');
+            }
+
+            $identity = @stat($snapshot);
+            $localScanner->scan($snapshot);
+
+            $info = @getimagesizefromstring($bytes);
+            if (!is_array($info) || ($info[2] ?? null) !== IMAGETYPE_JPEG
+                || ($info['mime'] ?? '') !== 'image/jpeg') {
+                throw new \InvalidArgumentException('Solo se permiten imágenes JPEG auténticas.');
+            }
+
+            $result = $scanner->scan($snapshot);
+
+            clearstatcache(true, $snapshot);
+            $after = @stat($snapshot);
+            $verified = @file_get_contents($snapshot);
+            if (!is_array($identity) || !is_array($after)
+                || $identity['dev'] !== $after['dev'] || $identity['ino'] !== $after['ino']
+                || !is_string($verified)
+                || !hash_equals(hash('sha256', $bytes), hash('sha256', $verified))) {
+                throw new \RuntimeException('La imagen cambió durante el análisis.');
+            }
 
             return new JsonResponse($result, 200);
         } catch (Throwable $throwable) {
@@ -317,6 +356,10 @@ class AdminAjaxController extends Controller
                 'is_malicious' => false,
                 'message' => $throwable->getMessage(),
             ], 422);
+        } finally {
+            if (is_string($snapshot)) {
+                @unlink($snapshot);
+            }
         }
     }
 

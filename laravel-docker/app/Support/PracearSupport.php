@@ -86,9 +86,52 @@ final class PracearSupport
         return rtrim(url('/'), '/') . '/';
     }
 
+    /**
+     * Enforce the same server-side lifetime and account validity on all entry
+     * points, including legacy / and /index.php routes (not only /admin/*).
+     * A mere user_id in session storage must never confer authorization.
+     */
     public static function isAuthenticated(Request $request): bool
     {
-        return $request->session()->has('pracear.user_id');
+        $session = $request->session();
+        $userId = (int) $session->get('pracear.user_id', 0);
+
+        if ($userId <= 0) {
+            return false;
+        }
+
+        $issuedAt = (int) $session->get('pracear.issued_at', 0);
+        $lastActivity = (int) $session->get('pracear.last_activity', 0);
+        $now = time();
+        $idleTimeout = max(1, (int) config('security.session.idle_timeout_seconds', 1800));
+        $absoluteTimeout = max(1, (int) config('security.session.absolute_timeout_seconds', 28800));
+
+        $valid = $issuedAt > 0
+            && $issuedAt <= $now
+            && $lastActivity >= $issuedAt
+            && $lastActivity <= $now
+            && ($now - $lastActivity) <= $idleTimeout
+            && ($now - $issuedAt) <= $absoluteTimeout;
+
+        if ($valid) {
+            try {
+                $valid = DB::table('usuarios')->where('id', $userId)->exists();
+            } catch (Throwable) {
+                // Database failure must never be interpreted as authentication.
+                $valid = false;
+            }
+        }
+
+        if (!$valid) {
+            $session->invalidate();
+            $session->regenerateToken();
+
+            return false;
+        }
+
+        $session->put('pracear.last_activity', $now);
+
+        return true;
     }
 
     public static function userId(Request $request): int

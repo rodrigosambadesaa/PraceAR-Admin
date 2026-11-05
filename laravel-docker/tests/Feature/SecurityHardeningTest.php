@@ -5,6 +5,13 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Http\Middleware\ValidateHost;
+use App\Http\Controllers\AdminAjaxController;
+use App\Services\LocalAntivirusScanner;
+use App\Services\VirusTotalScanner;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Http;
+use Mockery;
+use RuntimeException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Tests\TestCase;
@@ -41,6 +48,30 @@ final class SecurityHardeningTest extends TestCase
 
         $this->post('/helpers/verify_malicious_photo.php')
             ->assertStatus(419);
+    }
+
+    public function test_photo_check_refuses_to_contact_external_scanner_if_local_av_fails(): void
+    {
+        $request = Request::create(
+            '/helpers/verify_malicious_photo.php',
+            'POST',
+            [],
+            [],
+            ['imagen' => UploadedFile::fake()->image('photo.jpg', 32, 32)],
+        );
+        $local = Mockery::mock(LocalAntivirusScanner::class);
+        $local->shouldReceive('scan')->once()->andThrow(new RuntimeException('Análisis local no disponible.'));
+        Http::fake();
+
+        $response = app(AdminAjaxController::class)->verifyMaliciousPhoto(
+            $request,
+            app(VirusTotalScanner::class),
+            $local,
+        );
+
+        $this->assertSame(422, $response->getStatusCode());
+        $this->assertFalse((bool) json_decode((string) $response->getContent(), true)['success']);
+        Http::assertNothingSent();
     }
 
     public function test_unknown_host_is_rejected(): void

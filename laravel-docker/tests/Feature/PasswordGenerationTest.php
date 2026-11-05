@@ -6,11 +6,25 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\AdminAjaxController;
 use App\Security\PasswordPolicy;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Tests\TestCase;
 
 final class PasswordGenerationTest extends TestCase
 {
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        DB::table('usuarios')->insert([
+            'login' => 'admin',
+            'password' => 'test-only-password-hash',
+        ]);
+    }
+
     public function test_endpoint_generates_the_exact_requested_length_above_128(): void
     {
         $request = $this->authenticatedRequest(256);
@@ -43,6 +57,8 @@ final class PasswordGenerationTest extends TestCase
         $session->put([
             'pracear.user_id' => 1,
             'pracear.username' => 'admin',
+            'pracear.issued_at' => time(),
+            'pracear.last_activity' => time(),
         ]);
         $request->setLaravelSession($session);
 

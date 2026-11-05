@@ -114,6 +114,8 @@ final class ServerSideValidationTest extends TestCase
         $session->put([
             'pracear.user_id' => 1,
             'pracear.username' => 'admin',
+            'pracear.issued_at' => time(),
+            'pracear.last_activity' => time(),
         ]);
         $request->setLaravelSession($session);
         $response = app(AdminAjaxController::class)->quickEditSave($request);

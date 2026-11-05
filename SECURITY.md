@@ -2,8 +2,11 @@
 
 La defensa es por capas y toma como referencia OWASP Top 10 2025.
 
-- Control de acceso: middleware de administración, sesiones cifradas, tiempo máximo
-  absoluto y por inactividad, rotación de identificador y cierre solo por POST.
+- Control de acceso: middleware de administración y validación compartida en todas
+  las rutas (incluidas las rutas heredadas / y /index.php), sesiones cifradas,
+  tiempo máximo absoluto y por inactividad comprobado en el servidor,
+  revocación de sesiones caducadas o de usuarios eliminados, rotación de
+  identificador y cierre solo por POST.
 - Configuración segura: validación de `Host`, proxies explícitos, CSP sin scripts
   inline,
   HSTS en HTTPS, cabeceras anti-embedding/MIME, errores sin detalles y comprobación
@@ -45,7 +48,10 @@ La defensa es por capas y toma como referencia OWASP Top 10 2025.
   concluyente, se rechaza la subida. Windows utiliza Microsoft Defender mediante
   MpCmdRun con examen personalizado sin remediación; Linux/macOS requieren
   ClamAV (XProtect no dispone de una CLI documentada para análisis bajo demanda).
-  Los antivirus reducen el riesgo pero no garantizan detección del 100 %. 
+  Los antivirus reducen el riesgo pero no garantizan detección del 100 %.
+  La comprobación manual del endpoint verify_malicious_photo.php también exige
+  escaneo local previo, un snapshot privado del archivo y control de integridad
+  antes de comunicar el resultado remoto.
 - Catálogo inicial: el fixture versionado usa una lista blanca de campos públicos.
   Excluye contacto, teléfono, imagen, usuarios, hashes, accesos, IP y credenciales;
   solo se carga cuando la tabla de puestos está completamente vacía.
