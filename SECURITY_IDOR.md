@@ -39,7 +39,7 @@ the session remains active. A session cannot elevate its own rights.
 
 ## Regression tests
 
-Run `cd laravel-docker && php artisan test --filter=InsecureDirectObjectReferenceTest`.
+Run `cd laravel-docker && ./vendor/bin/phpunit --filter=InsecureDirectObjectReferenceTest`.
 The CI workflow `idor-authorization.yml` executes the full PHPUnit suite.
 Test cross-user access to both reads and writes, including the legacy root
 dispatcher, translations, AJAX operations, suggestion/list enumeration, changing
