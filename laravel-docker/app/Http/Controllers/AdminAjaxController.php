@@ -244,13 +244,14 @@ class AdminAjaxController extends Controller
             return new JsonResponse([]);
         }
 
-        $suggestions = DB::table('puestos as p')
+        $query = DB::table('puestos as p')
             ->join('puestos_traducciones as pt', function ($join) use ($language): void {
                 $join->on('p.id', '=', 'pt.puesto_id')
                     ->where('pt.codigo_idioma', '=', $language);
             })
-            ->where('p.caseta', 'like', '%' . $caseta . '%')
-            ->whereIn('p.id_nave', StallAccess::allowedNaveIds($request))
+            ->where('p.caseta', 'like', '%' . $caseta . '%');
+
+        $suggestions = StallAccess::scope($query, $request, 'p')
             ->orderBy('p.caseta')
             ->limit(10)
             ->pluck('p.caseta');
