@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Security\PasswordPolicy;
+use App\Security\StallAccess;
 use App\Services\LocalAntivirusScanner;
 use App\Services\VirusTotalScanner;
 use App\Support\PracearSupport;
@@ -28,6 +29,10 @@ class AdminAjaxController extends Controller
 
         if ($id <= 0 || $field === '') {
             return new Response('<div class="admin-error-text">Petición inválida</div>', 422, ['Content-Type' => 'text/html; charset=utf-8']);
+        }
+
+        if (!StallAccess::scope(DB::table('puestos'), $request)->where('id', $id)->exists()) {
+            return new Response('<div class="admin-error-text">No se encontró el puesto</div>', 404, ['Content-Type' => 'text/html; charset=utf-8']);
         }
 
         if (in_array($field, ['nombre', 'contacto', 'telefono', 'caseta_padre'], true)) {
@@ -115,6 +120,10 @@ class AdminAjaxController extends Controller
             return new JsonResponse(['success' => false, 'msg' => 'Petición no válida (CSRF)'], 419);
         }
 
+        if (!StallAccess::scope(DB::table('puestos'), $request)->where('id', $id)->exists()) {
+            return new JsonResponse(['success' => false, 'msg' => 'No se encontró el puesto.'], 404);
+        }
+
         if (in_array($field, ['nombre', 'contacto', 'telefono', 'caseta_padre'], true)) {
             $value = PracearSupport::cleanText($request->input('value'));
 
@@ -148,12 +157,12 @@ class AdminAjaxController extends Controller
                     return new JsonResponse(['success' => false, 'msg' => 'Un puesto no puede ser su propia caseta padre.'], 422);
                 }
 
-                if (!DB::table('puestos')->where('caseta', $value)->exists()) {
+                if (!StallAccess::scope(DB::table('puestos'), $request)->where('caseta', $value)->exists()) {
                     return new JsonResponse(['success' => false, 'msg' => 'La caseta padre seleccionada no existe.'], 422);
                 }
             }
 
-            DB::table('puestos')->where('id', $id)->update([$field => $value]);
+            StallAccess::scope(DB::table('puestos'), $request)->where('id', $id)->update([$field => $value]);
 
             return new JsonResponse(['success' => true, 'msg' => 'Actualizado correctamente']);
         }
@@ -199,6 +208,7 @@ class AdminAjaxController extends Controller
 
             $translation = DB::table('puestos_traducciones')
                 ->where('puesto_id', $id)
+                ->whereIn('puesto_id', StallAccess::scope(DB::table('puestos'), $request)->select('id'))
                 ->where('codigo_idioma', $translationLanguage);
 
             if (!$translation->exists()) {
@@ -240,6 +250,7 @@ class AdminAjaxController extends Controller
                     ->where('pt.codigo_idioma', '=', $language);
             })
             ->where('p.caseta', 'like', '%' . $caseta . '%')
+            ->whereIn('p.id_nave', StallAccess::allowedNaveIds($request))
             ->orderBy('p.caseta')
             ->limit(10)
             ->pluck('p.caseta');
