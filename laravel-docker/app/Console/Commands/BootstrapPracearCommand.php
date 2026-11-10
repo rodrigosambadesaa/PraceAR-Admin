@@ -147,7 +147,7 @@ class BootstrapPracearCommand extends Command
 
         DB::table('usuarios')->updateOrInsert(
             ['login' => $login],
-            ['password' => $hash],
+            ['password' => $hash, ...($existingUser ? [] : ['es_superadmin' => true])],
         );
 
         $this->info('Usuario admin sincronizado.');

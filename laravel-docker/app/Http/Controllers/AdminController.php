@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Security\PasswordPolicy;
 use App\Security\PwnedPasswordChecker;
+use App\Security\StallAccess;
 use App\Support\PracearSupport;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -54,6 +55,8 @@ class AdminController extends Controller
                 'p.activo',
             ])
             ->orderBy('p.caseta');
+
+        StallAccess::scope($query, $request, 'p');
 
         if ($search !== '') {
             $query->where('p.caseta', 'like', '%' . $search . '%');
@@ -248,11 +251,10 @@ class AdminController extends Controller
         }
 
         $id = (int) $request->query('id');
-        $stall = DB::table('puestos')->where('id', $id)->first();
+        $stall = StallAccess::scope(DB::table('puestos'), $request)->where('id', $id)->first();
 
         if (!$stall) {
-            return redirect()->to($this->rootUrl(['lang' => PracearSupport::language($request->query('lang'))]))
-                ->withErrors(['edit' => 'No se encontró el puesto especificado.']);
+            abort(404);
         }
 
         return view('admin.edit', [
@@ -260,7 +262,7 @@ class AdminController extends Controller
             'currentLang' => PracearSupport::language($request->query('lang')),
             'languages' => PracearSupport::languages(),
             'stall' => $stall,
-            'naves' => DB::table('naves')->orderBy('id')->get(),
+            'naves' => StallAccess::availableNaves($request)->orderBy('id')->get(),
             'unityTypes' => config('pracear.unity_types', []),
             'imageExists' => is_file(PracearSupport::imageDiskPath((string) $stall->caseta)),
         ]);
@@ -273,10 +275,10 @@ class AdminController extends Controller
         }
 
         $id = (int) $request->query('id');
-        $stall = DB::table('puestos')->where('id', $id)->first();
+        $stall = StallAccess::scope(DB::table('puestos'), $request)->where('id', $id)->first();
 
         if (!$stall) {
-            return back()->withErrors(['edit' => 'No se encontró el puesto especificado.']);
+            abort(404);
         }
 
         $nombre = PracearSupport::cleanText($request->input('nombre'));
@@ -310,7 +312,7 @@ class AdminController extends Controller
             return back()->withErrors(['caseta_padre' => 'Un puesto no puede ser su propia caseta padre.']);
         }
 
-        if ($casetaPadre !== '' && !DB::table('puestos')->where('caseta', $casetaPadre)->exists()) {
+        if ($casetaPadre !== '' && !StallAccess::scope(DB::table('puestos'), $request)->where('caseta', $casetaPadre)->exists()) {
             return back()->withErrors(['caseta_padre' => 'La caseta padre seleccionada no existe.']);
         }
 
@@ -318,7 +320,7 @@ class AdminController extends Controller
             return back()->withErrors(['tipo_unity' => 'El tipo de Unity seleccionado no es válido.']);
         }
 
-        if (!DB::table('naves')->where('id', $idNave)->exists()) {
+        if (!StallAccess::canManageNave($request, $idNave)) {
             return back()->withErrors(['id_nave' => 'La nave seleccionada no es válida.']);
         }
 
@@ -338,7 +340,7 @@ class AdminController extends Controller
             return back()->withErrors(['imagen' => $throwable->getMessage()]);
         }
 
-        DB::table('puestos')
+        StallAccess::scope(DB::table('puestos'), $request)
             ->where('id', $id)
             ->update([
                 'activo' => $request->boolean('activo'),
@@ -362,6 +364,7 @@ class AdminController extends Controller
         }
 
         $id = (int) $request->query('id');
+        abort_unless(StallAccess::scope(DB::table('puestos'), $request)->where('id', $id)->exists(), 404);
         $translationLanguage = PracearSupport::language($request->query('codigo_idioma'));
         $translation = DB::table('puestos_traducciones')
             ->where('puesto_id', $id)
@@ -373,7 +376,7 @@ class AdminController extends Controller
                 ->withErrors(['language' => 'No se encontró la traducción solicitada.']);
         }
 
-        $stallName = DB::table('puestos')->where('id', $id)->value('nombre');
+        $stallName = StallAccess::scope(DB::table('puestos'), $request)->where('id', $id)->value('nombre');
 
         return view('admin.translations', [
             'baseUrl' => PracearSupport::baseUrl(),
@@ -392,6 +395,7 @@ class AdminController extends Controller
         }
 
         $id = (int) $request->query('id');
+        abort_unless(StallAccess::scope(DB::table('puestos'), $request)->where('id', $id)->exists(), 404);
         $translationLanguage = PracearSupport::language($request->query('codigo_idioma'));
         $tipo = PracearSupport::cleanText($request->input('tipo'));
         $descripcion = PracearSupport::cleanText($request->input('descripcion'));
@@ -417,6 +421,7 @@ class AdminController extends Controller
 
         DB::table('puestos_traducciones')
             ->where('puesto_id', $id)
+            ->whereIn('puesto_id', StallAccess::scope(DB::table('puestos'), $request)->select('id'))
             ->where('codigo_idioma', $translationLanguage)
             ->update([
                 'tipo' => $tipo,
