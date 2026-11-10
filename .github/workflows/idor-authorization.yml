@@ -27,4 +27,4 @@ jobs:
       - name: Install locked dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
       - name: Test object-level access and existing application behavior
-        run: php artisan test
+        run: ./vendor/bin/phpunit
