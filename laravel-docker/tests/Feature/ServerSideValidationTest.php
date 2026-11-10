@@ -21,6 +21,7 @@ final class ServerSideValidationTest extends TestCase
         DB::table('naves')->insert(['id' => 1, 'tipo' => 'Mercado']);
         $userId = DB::table('usuarios')->insertGetId([
             'login' => 'admin_test',
+            'es_superadmin' => true,
             'password' => 'not-used-by-these-validation-tests',
         ]);
         $stallId = DB::table('puestos')->insertGetId([
