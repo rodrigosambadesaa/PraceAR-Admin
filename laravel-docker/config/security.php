@@ -8,7 +8,7 @@ return [
         explode(',', (string) env('APP_ALLOWED_HOSTS', '')),
     ))),
 
-    'max_request_body_bytes' => 5 * 1024 * 1024,
+    'max_request_body_bytes' => 16 * 1024 * 1024,
 
     'session' => [
         'idle_timeout_seconds' => 30 * 60,

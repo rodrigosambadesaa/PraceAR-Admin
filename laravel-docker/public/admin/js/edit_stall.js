@@ -1,6 +1,5 @@
 import { limpiarInput } from "../../js/helpers/clean_input.js";
 import { UNITY_TYPE } from "../../js/constants.js";
-import { verifyMaliciousPhoto } from "./helpers/verify_malicious_photo.js";
 function getForm() {
     const form = document.getElementById("formulario-editar");
     if (!(form instanceof HTMLFormElement)) {
@@ -71,9 +70,6 @@ function validateCasetaPadre(casetaPadre) {
         return 'Las dos primeras letras de caseta padre deben ser "CE", "CO", "MC", "NA", o "NC" y las tres últimas un número entre 001 y 370';
     }
     return null;
-}
-async function verifyImage(file) {
-    return verifyMaliciousPhoto(file);
 }
 const formulario = getForm();
 const casetaInput = getInputElement("caseta");
@@ -217,22 +213,6 @@ formulario.addEventListener("submit", async (event) => {
         }
         else if (archivo.size > maxSize) {
             errores.push("La imagen no puede ser mayor a 4MB");
-        }
-        else {
-            try {
-                const verification = await verifyImage(archivo);
-                if (!verification.success) {
-                    errores.push(verification.message || "No se pudo verificar la imagen.");
-                }
-                else if (verification.isMalicious) {
-                    errores.push(verification.message ||
-                        "La foto es maliciosa. Por favor, desinfecte el archivo o cargue una nueva imagen segura.");
-                }
-            }
-            catch (error) {
-                console.error("Error en verificación de imagen:", error);
-                errores.push("Error al verificar la imagen. Por favor, inténtelo de nuevo.");
-            }
         }
     }
     if (errores.length > 0) {

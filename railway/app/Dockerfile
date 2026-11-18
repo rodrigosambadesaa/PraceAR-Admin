@@ -1,5 +1,7 @@
 FROM php:8.4.27-apache
 
+RUN printf '%s\n' 'session.upload_progress.enabled=0' > /usr/local/etc/php/conf.d/php2shell-hardening.ini
+
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN apt-get update \

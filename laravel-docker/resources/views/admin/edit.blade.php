@@ -61,7 +61,7 @@
                 @if ($imageExists)
                 <span class="section-label">Imagen actual</span>
                 <div class="image-preview-wrapper">
-                    <img src="{{ rtrim($baseUrl, '/') . '/' . \App\Support\PracearSupport::imagePublicPath((string) $stall->caseta) }}" alt="Imagen del puesto {{ $stall->nombre }}" class="zoomable">
+                    <img src="{{ \App\Support\PracearSupport::imageUrl((string) $stall->caseta) }}" alt="Imagen del puesto {{ $stall->nombre }}" class="zoomable">
                 </div>
 
                 <div class="image-actions">
@@ -174,5 +174,5 @@
 @endsection
 
 @push('scripts')
-<script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/edit_stall.js' }}"></script>
+<script type="module" src="{{ rtrim($baseUrl, '/') . '/admin/js/edit_stall.js?v=' . filemtime(public_path('admin/js/edit_stall.js')) }}"></script>
 @endpush

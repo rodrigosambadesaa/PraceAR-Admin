@@ -15,14 +15,17 @@ final class LimitRequestBody
         if (!$request->isMethodSafe()) {
             $maximum = 64 * 1024;
 
-            if ($request->is('/', 'index.php', 'login', 'login.php')) {
-                $maximum = 16 * 1024;
-            } elseif (
+            $isEditPage = $request->query('page') === 'edit';
+
+            if (
                 $request->is('admin/edit.php')
                 || $request->is('admin/ajax_quick_edit_save.php')
                 || $request->is('helpers/verify_malicious_photo.php')
+                || $isEditPage
             ) {
                 $maximum = (int) config('security.max_request_body_bytes', 5 * 1024 * 1024);
+            } elseif ($request->is('/', 'index.php', 'login', 'login.php')) {
+                $maximum = 16 * 1024;
             }
 
             $contentLength = (int) $request->server('CONTENT_LENGTH', 0);

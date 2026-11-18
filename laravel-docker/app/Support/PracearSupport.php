@@ -219,7 +219,11 @@ final class PracearSupport
 
     public static function imageUrl(string $caseta): string
     {
-        return rtrim(self::baseUrl(), '/') . '/' . ltrim(self::imagePublicPath($caseta), '/');
+        $url = rtrim(self::baseUrl(), '/') . '/' . ltrim(self::imagePublicPath($caseta), '/');
+        $path = self::imageDiskPath($caseta);
+        $version = is_file($path) ? (string) @sha1_file($path) : 'missing';
+
+        return $url . '?v=' . ($version !== '' ? $version : 'missing');
     }
 
     public static function imageStorageDirectory(): string

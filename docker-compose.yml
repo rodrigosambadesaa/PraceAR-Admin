@@ -5,7 +5,7 @@ services:
       backend:
         condition: service_healthy
     ports:
-      - "${FRONTEND_PORT:-8081}:80"
+      - "127.0.0.1:${FRONTEND_PORT:-8081}:80"
     volumes:
       - ./:/var/www/html:ro
       - ./docker/frontend/default.conf:/etc/nginx/conf.d/default.conf:ro
@@ -36,7 +36,9 @@ services:
       PASSWORD_BREACH_CHECK_ENABLED: "${PASSWORD_BREACH_CHECK_ENABLED:-true}"
       PRACEAR_ADMIN_LOGIN: "${PRACEAR_ADMIN_LOGIN:?Set PRACEAR_ADMIN_LOGIN in the environment}"
       PRACEAR_ADMIN_PASSWORD: "${PRACEAR_ADMIN_PASSWORD:?Set PRACEAR_ADMIN_PASSWORD in the environment}"
-      VIRUSTOTAL_REQUIRED: "false"
+      VIRUSTOTAL_ENABLED: "${VIRUSTOTAL_ENABLED:-true}"
+      VIRUSTOTAL_REQUIRED: "${VIRUSTOTAL_REQUIRED:-true}"
+      VIRUSTOTAL_API_KEY: "${VIRUSTOTAL_API_KEY:-}"
       PRACEAR_ASSETS_PATH: /var/www/html/laravel-docker/public/assets
       LOG_CHANNEL: stderr
       SESSION_DRIVER: file
@@ -76,7 +78,7 @@ services:
     restart: unless-stopped
 
   phpmyadmin:
-    image: phpmyadmin:5.2.3@sha256:b68f318c5fd85541795ed8eb4ced28ea6908a89910871783b3e479cc6c6d1e1b
+    image: phpmyadmin:5.2.3@sha256:62a50b1419fe55b9b4c3cd6f5aed03a18f8f5b4a236f24735d76400bea75a5ff
     profiles: [ "admin-tools" ]
     depends_on:
       db:
@@ -94,6 +96,7 @@ services:
       TZ: Europe/Madrid
     volumes:
       - ./docker/phpmyadmin/config.user.inc.php:/etc/phpmyadmin/config.user.inc.php:ro
+      - ./docker/phpmyadmin/php2shell-hardening.ini:/usr/local/etc/php/conf.d/zz-php2shell-hardening.ini:ro
     tmpfs:
       - /sessions:rw,noexec,nosuid,size=16m
       - /tmp:rw,noexec,nosuid,size=32m

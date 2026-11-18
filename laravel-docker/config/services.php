@@ -3,6 +3,7 @@
 return [
 
     'virustotal' => [
+        'enabled' => env('VIRUSTOTAL_ENABLED', true),
         'key' => env('VIRUSTOTAL_API_KEY'),
         'required' => env('VIRUSTOTAL_REQUIRED', true),
     ],
