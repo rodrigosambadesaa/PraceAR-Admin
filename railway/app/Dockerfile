@@ -1,4 +1,4 @@
-FROM php:8.4.27-apache
+FROM php:8.4.28-apache
 
 RUN printf '%s\n' 'session.upload_progress.enabled=0' > /usr/local/etc/php/conf.d/php2shell-hardening.ini
 
